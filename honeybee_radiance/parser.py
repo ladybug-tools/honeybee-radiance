@@ -105,7 +105,7 @@ def string_to_dicts(string):
                     # didn't find any
                     pass
                 else:
-                    objects[-(count + 1)]['depends_on'].append(other_obj)
+                    objects[-(count + 1)]['dependencies'].append(other_obj)
                     remove_index.append(o_count)
 
     if remove_index:
@@ -146,5 +146,5 @@ def string_to_dict(string):
         'type': type,
         'name': name,
         'values': {0: l1, 1: l2, 2: l3},
-        'depends_on': []
+        'dependencies': []
     }

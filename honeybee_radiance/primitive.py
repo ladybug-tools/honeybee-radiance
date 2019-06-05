@@ -82,7 +82,7 @@ class Primitive(object):
     VOID = Void()
 
     def __init__(self, name, modifier=None, values=None, is_opaque=None,
-                 dependents=None):
+                 dependencies=None):
         """Create primitive base.
 
         args:
@@ -94,7 +94,7 @@ class Primitive(object):
             values: A dictionary of primitive data. key is line number and item is the
                 list of values {0: [], 1: [], 2: ['0.500', '0.500', '0.500', '0.000',
                 '0.050']}
-            dependents: A list of primitives that this primitive depends on. This
+            dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
 
@@ -104,9 +104,9 @@ class Primitive(object):
         self.modifier = modifier
         self.values = values or {0: [], 1: [], 2: []}
         self._is_opaque = is_opaque
-        self._depends_on = []
-        dependents = dependents or []
-        for dep in dependents:
+        self._dependencies = []
+        dependencies = dependencies or []
+        for dep in dependencies:
             self.add_dependent(dep)
 
     @classmethod
@@ -129,23 +129,25 @@ class Primitive(object):
             "type": "custom", // primitive type
             "name": "", // primitive Name
             "values": {} // values,
-            "depends_on": []
+            "dependencies": []
         }
         """
         modifier = mat_dict['modifier']
         modifier = cls.VOID if modifier == 'void' else cls.from_dict(modifier)
-        if 'depends_on' in mat_dict:
-            depends_on = [cls.from_dict(dep) for dep in mat_dict['depends_on']]
+        if 'dependencies' in mat_dict:
+            dependencies = [cls.from_dict(dep) for dep in mat_dict['dependencies']]
+        else:
+            dependencies = []
 
         # TODO: return the appropriate subclass
         cls_ = cls(
             name=mat_dict['name'],
             modifier=modifier,
-            values=mat_dict['values']
+            values=mat_dict['values'],
+            dependencies=dependencies
         )
 
         cls_.type = mat_dict['type']
-        cls_._depends_on = depends_on
 
         return cls_
 
@@ -178,7 +180,7 @@ class Primitive(object):
     @property
     def dependencies(self):
         """Get list of dependencies."""
-        return self._depends_on
+        return self._dependencies
 
     @property
     def is_radiance_primitive(self):
@@ -303,9 +305,9 @@ class Primitive(object):
 
     def add_dependent(self, dep):
         """Add dependent."""
-        assert isinstance(dep, self), \
+        assert isinstance(dep, Primitive), \
             '{} is not a valid dependent type'.format(type(dep))
-        self._depends_on.append(dep)
+        self._dependencies.append(dep)
 
     @staticmethod
     def _to_radiance(primitive, minimal=False):
@@ -315,8 +317,8 @@ class Primitive(object):
         output = [header]
         for line_count in range(3):
             try:
-                values = (str(v) for v in  primitive.values[line_count])
-            except BaseException:
+                values = [str(v) for v in  primitive.values[line_count]]
+            except KeyError:
                 values = []  # line will be printed as 0
             else:
                 count = len( primitive.values[line_count])
@@ -326,11 +328,11 @@ class Primitive(object):
         return " ".join(output) if minimal else "\n".join(output)
 
     # add string format for float values
-    def to_radiance(self, minimal=False, include_modifier=True, include_dependents=True):
+    def to_radiance(self, minimal=False, include_modifier=True, include_dependencies=True):
         """Return full radiance definition."""
         output = []
 
-        if include_dependents:
+        if include_dependencies:
             for dep in self.dependencies:
                 output.append(self._to_radiance(dep, minimal))
 
@@ -341,7 +343,7 @@ class Primitive(object):
         return '\n'.join(output)
 
     def to_dict(self):
-        """Translate radiance primitive to json
+        """Translate radiance primitive to a dictionary.
         {
             "modifier": "", // primitive modifier (Default: "void")
             "type": "", // primitive type
@@ -354,7 +356,7 @@ class Primitive(object):
             "type": self.type,
             "name": self.name,
             "values": self.values,
-            "depends_on": [dep.to_dict() for dep in self._depends_on]
+            "dependencies": [dep.to_dict() for dep in self._dependencies]
         }
 
     def ToString(self):
