@@ -1,5 +1,4 @@
 """Radiance Properties."""
-from .material.materialbase import Material
 
 
 class RadianceProperties(object):
@@ -32,19 +31,21 @@ class RadianceProperties(object):
 
     @modifier.setter
     def modifier(self, value):
-        if value:
-            assert isinstance(value, Material), \
-                'Expected Radiance modifier not {}'.format(type(value))
-        self._modifier = value
+        if hasattr(value, 'can_be_modifier') and value.can_be_modifier:
+                self._modifier = value
+        else:
+            raise TypeError(
+                '{} is not a valid Radiance modifier.'.format(type(value))
+            )
 
     @property
     def is_modifier_set_by_user(self):
-        """Check if construction is set by user."""
+        """Check if modifier is set by user."""
         return self._modifier is not None
 
     @property
     def is_modifier_set_by_zone(self):
-        """Check if construction is set by user."""
+        """Check if modifier is set by user."""
         return not self.is_modifier_set_by_user \
             and self._modifierset is not None
 
@@ -55,10 +56,12 @@ class RadianceProperties(object):
 
     @modifier_dir.setter
     def modifier_dir(self, value):
-        if value:
-            assert isinstance(value, Material), \
-                'Expected Radiance modifier not {}'.format(type(value))
-        self._modifier_dir = value
+        if hasattr(value, 'can_be_modifier') and value.can_be_modifier:
+                self._modifier_dir = value
+        else:
+            raise TypeError(
+                '{} is not a valid Radiance modifier.'.format(type(value))
+            )
 
     def to_dict(self):
         """Return radiance properties as a dictionary."""
