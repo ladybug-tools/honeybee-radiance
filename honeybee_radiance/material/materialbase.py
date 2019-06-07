@@ -2,21 +2,13 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """
-# from ..primitive import Primitive
+from honeybee_radiance.primitive import Primitive
 
 
-class Material(object):
+class Material(Primitive):
     """Base class for Radiance materials."""
 
-    def __init__(self, name, modifier=None, values=None, is_opaque=None):
-        """Create primitive base."""
-        material_type = self.__class__.__name__.lower()
-        self.type = material_type
-        self.name = name
-        # Primitive.__init__(self, name, material_type, modifier, values, is_opaque)
-
-    def to_dict(self):
-        return {
-            'type': self.type,
-            'name': self.name
-        }
+    @property
+    def is_radiance_material(self):
+        """Indicate that this object is a Radiance Material."""
+        return True
