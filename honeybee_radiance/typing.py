@@ -35,3 +35,19 @@ def int_positive(value):
     number = int(value)
     assert 0 <= number, 'Input (%d) must be positive.' % number
     return number
+
+
+def tuple_with_length(value, length=3, item_type=float):
+    """Try to create a tuple with a certain value."""
+    value = tuple(item_type(v) for v in value)
+    assert len(value) == length, 'Input length must be %d not %d' % (
+        length, len(value))
+    return value
+
+
+def list_with_length(value, length=3, item_type=float):
+    """Try to create a list with a certain value."""
+    value = [item_type(v) for v in value]
+    assert len(value) == length, 'Input length must be %d not %d' % (
+        length, len(value))
+    return value

@@ -24,6 +24,6 @@ def test_microshade():
 def test_parser_three():
     objects = parse_from_string(metal_cone)
     assert len(objects) == 2
-    assert objects[0] == 'void metal new_wall 0 0 5 0.000 0.000 0.000 0.950 0.000'
-    assert objects[1] == 'new_wall cone floor_0_0_0 0 0 8 -77.3022 -78.4625 415.900' \
-        ' -81.9842 -78.9436 420.900 10 20'
+    assert objects[0] == 'void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0'
+    assert objects[1] == 'metal_wall cone cone_one 0 0 8 -77.3022 -78.4625 415.9' \
+        ' -81.9842 -78.9436 420.9 10.0 20.0'

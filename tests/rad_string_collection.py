@@ -34,13 +34,69 @@ void mixfunc microshade_a_mat
 
 """
 
+
 metal_cone = """
-void metal new_wall 0 0 5 0.000 0.000 0.000 0.950 0.000
-new_wall cone floor_0_0_0
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+metal_wall cone cone_one
 0
 0
 8
--77.3022 -78.4625 415.900
--81.9842 -78.9436 420.900
-10 20
+-77.3022 -78.4625 415.9
+-81.9842 -78.9436 420.9
+10.0 20.0
+"""
+
+
+metal_cylinder = """
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+
+
+metal_wall cylinder cylinder_one
+0
+0
+7 -77.3022 -78.4625 415.9 -81.9842 -78.9436 420.9 10.0
+"""
+
+
+metal_sphere = """
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+
+
+metal_wall sphere sphere_one
+0
+0
+4 -77.3022 -78.4625 415.9 10.0
+"""
+
+
+metal_polygon = """
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+
+
+metal_wall polygon polygon_one
+0
+0
+12
+    3.0 -7.0 15.0
+    3.0 -1.0 15.0
+    3.0 -1.0 0.0
+    3.0 -7.0 0.0
+"""
+
+
+metal_ring = """
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+metal_wall ring ring_one
+0
+0
+8
+0.0 0.0 0.0
+0.0 0.0 1.0
+10.0 20.0
+"""
+
+
+metal_source = """
+void metal metal_wall 0 0 5 0.0 0.0 0.0 0.95 0.0
+metal_wall source source_one 0 0 4 0.0 0.0 -1.0 0.533
 """
