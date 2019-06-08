@@ -12,3 +12,5 @@ tox.ini
 /.cache
 /.vscode
 .eggs
+/radiance*
+/tests/assets/temp/*
