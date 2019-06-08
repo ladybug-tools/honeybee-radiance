@@ -2,7 +2,7 @@
 
 http://radsite.lbl.gov/radiance/refer/ray.html#Materials
 """
-from honeybee_radiance.primitive import Primitive
+from honeybee_radiance.primitive.primitivebase import Primitive
 
 
 class Material(Primitive):
