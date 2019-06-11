@@ -15,7 +15,7 @@ def float_in_range(value, mi=0.0, ma=1.0):
     return number
 
 
-def int_in_range(value, mi=0.0, ma=1.0):
+def int_in_range(value, mi=0, ma=1):
     """Check an integer value to be between minimum and maximum."""
     number = int(value)
     assert mi <= number <= ma, 'Input number must be between %f and %f.' % (
