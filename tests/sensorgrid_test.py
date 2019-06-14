@@ -28,27 +28,27 @@ def test_invalid_input():
 
 
 def test_from_planar_grid():
-    locations = [[0, 0, 0], [0, 0, 5], [0, 0, 10]]
+    positions = [[0, 0, 0], [0, 0, 5], [0, 0, 10]]
     plane_normal = [0, 0, 1]
-    sg = SensorGrid.from_planar_grid('test_grid', locations, plane_normal)
+    sg = SensorGrid.from_planar_grid('test_grid', positions, plane_normal)
     assert len(sg) == 3
     for sensor in sg:
         assert sensor.direction == (0, 0, 1)
 
 
 def test_from_loc_dir():
-    locations = [[0, 0, 0], [0, 0, 5], [0, 0, 10]]
+    positions = [[0, 0, 0], [0, 0, 5], [0, 0, 10]]
     directions = [[0, 0, 1], [0, 0, -1], [0, 0, 10]]
-    sg = SensorGrid.from_location_and_direction('sg', locations, directions)
+    sg = SensorGrid.from_position_and_direction('sg', positions, directions)
     for count, sensor in enumerate(sg):
-        list(sensor.location) == locations[count]
+        list(sensor.position) == positions[count]
         list(sensor.direction) == directions[count]
 
 
 def test_from_file():
     sensor_grid = SensorGrid.from_file('./tests/assets/test_points.pts')
     assert sensor_grid.name == 'test_points'
-    assert sensor_grid[0].location == (0, 0, 0)
+    assert sensor_grid[0].position == (0, 0, 0)
     assert sensor_grid[0].direction == (0, 0, 1)
     assert len(sensor_grid) == 3
     assert sensor_grid[1].to_radiance() == '0.2 0.3 0.4 0.5 0.6 0.7'

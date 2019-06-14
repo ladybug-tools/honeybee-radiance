@@ -17,7 +17,7 @@ class SensorGrid(object):
     Attributes:
         name
         sensors
-        locations
+        positions
         directions
     """
 
@@ -45,28 +45,28 @@ class SensorGrid(object):
         return cls(name=ag_dict["name"], sensors=sensors)
 
     @classmethod
-    def from_planar_grid(cls, name, locations, plane_normal):
-        """Create a sensor grid from a collection of locations with the same direction.
+    def from_planar_grid(cls, name, positions, plane_normal):
+        """Create a sensor grid from a collection of positions with the same direction.
 
         Args:
-            locations: A list of (x, y ,z) for location of sensors.
+            positions: A list of (x, y ,z) for position of sensors.
             plane_normal: (x, y, z) for direction of sensors.
         """
-        sg = (Sensor(l, plane_normal) for l in locations)
+        sg = (Sensor(l, plane_normal) for l in positions)
         return cls(name, sg)
 
     @classmethod
-    def from_location_and_direction(cls, name, locations, directions):
-        """Create a sensor grid from a collection of locations and directions.
+    def from_position_and_direction(cls, name, positions, directions):
+        """Create a sensor grid from a collection of positions and directions.
 
-        The length of locations and directions should be the same. In case the lists have
+        The length of positions and directions should be the same. In case the lists have
         different lengths the shorter list will be used as the reference.
 
         Args:
-            locations: A list of (x, y ,z) for location of sensors.
+            positions: A list of (x, y ,z) for position of sensors.
             directions: A list of (x, y, z) for direction of sensors.
         """
-        sg = tuple(Sensor(l, v) for l, v in zip(locations, directions))
+        sg = tuple(Sensor(l, v) for l, v in zip(positions, directions))
         return cls(name, sg)
 
     @classmethod
@@ -127,9 +127,9 @@ class SensorGrid(object):
         self._name = typing.valid_string(n)
 
     @property
-    def locations(self):
-        """A generator of sensor locations as x, y, z."""
-        return (ap.location for ap in self.sensors)
+    def positions(self):
+        """A generator of sensor positions as x, y, z."""
+        return (ap.position for ap in self.sensors)
 
     @property
     def directions(self):
@@ -150,7 +150,7 @@ class SensorGrid(object):
         return "\n".join((ap.to_radiance() for ap in self._sensors))
 
     def to_file(self, folder, file_name=None, mkdir=False):
-        """Write this sensor grid to file.
+        """Write this sensor grid to a Radiance sensors file.
         
         Args:
             folder: Target folder.

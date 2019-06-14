@@ -5,13 +5,13 @@ import pytest
 
 def test_default_values():
     sensor = Sensor()
-    assert sensor.location == (0, 0, 0)
+    assert sensor.position == (0, 0, 0)
     assert sensor.direction == (0, 0, 1)
 
 
 def test_assign_values():
     sensor = Sensor((0, 0, 10), (0, 0, -1))
-    assert sensor.location == (0, 0, 10)
+    assert sensor.position == (0, 0, 10)
     assert sensor.direction == (0, 0, -1)
 
 
@@ -31,7 +31,7 @@ def test_invalid_input():
 
 def test_converting_string():
     sensor = Sensor(('0', '0', '10'), ('0', '0', '-1'))
-    assert sensor.location == (0, 0, 10)
+    assert sensor.position == (0, 0, 10)
     assert sensor.direction == (0, 0, -1)
 
 
@@ -46,9 +46,9 @@ def test_to_and_from_dict():
 
 def test_from_values():
     sensor = Sensor.from_raw_values()
-    assert sensor.location == (0, 0, 0)
+    assert sensor.position == (0, 0, 0)
     assert sensor.direction == (0, 0, 1)
 
     sensor = Sensor.from_raw_values(-1, 1, 2, 3, 4, 5)
-    assert sensor.location == (-1, 1, 2)
+    assert sensor.position == (-1, 1, 2)
     assert sensor.direction == (3, 4, 5)
