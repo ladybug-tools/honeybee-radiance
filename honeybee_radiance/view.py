@@ -393,6 +393,14 @@ class View(object):
 
     @classmethod
     def from_file(self, file_path, name=None):
+        """Create view from a view file.
+
+        Args:
+            file_path: Full path to view file.
+            name: Optional name for this view. View name will be set to file name if not
+            provided.
+        """
+
         if not os.path.isfile(file_path):
             raise IOError("Can't find {}.".format(file_path))
         name = name or os.path.split(os.path.splitext(file_path)[0])[-1]
@@ -435,7 +443,7 @@ class View(object):
         else:
             hv_ratio = vh / vv
 
-        # radiance keeps the larges max size and tries to scale the other size
+        # radiance keeps the largest max size and tries to scale the other size
         # to fit the aspect ratio. In case the size doesn't match it reverses
         # the process.
         if y_res <= x_res:
@@ -532,7 +540,7 @@ class View(object):
         return _views
 
     def to_radiance(self):
-        """Return full Radiance definition."""
+        """Return full Radiance definition as a string."""
         # create base information of view
         view = '-%s -vp %s -vd %s -vu %s' % (self.vt, self.vp, self.vd, self.vu)
         # view size properties

@@ -133,6 +133,9 @@ html_sidebars = {
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
+
+autodoc_member_order = 'groupwise'
+
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'hbradiancedoc'
 
