@@ -1,5 +1,5 @@
-honeybee-radiance
-=======
+honeybee_radiance
+=================
 
 .. toctree::
    :maxdepth: 4
