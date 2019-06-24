@@ -14,3 +14,5 @@ tox.ini
 .eggs
 /radiance*
 /tests/assets/temp/*
+
+*.code-workspace
