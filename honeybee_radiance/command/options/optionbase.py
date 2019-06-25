@@ -2,6 +2,8 @@
 import honeybee_radiance.typing as typing
 import honeybee_radiance.parser as parser
 import ladybug.futil as futil
+import os
+import warnings
 
 
 class Option(object):
@@ -45,9 +47,14 @@ class Option(object):
     def value(self, value):
         self._value = value
 
+    @property
+    def is_set(self):
+        """Return True if the value is set by user."""
+        return self.value is not None
+
     def to_radiance(self):
         """Translate option to Radiance format."""
-        if self.value is not None:
+        if self.is_set:
             return '-%s %s' % (self.name, self.value)
         else:
             return ''
@@ -56,7 +63,7 @@ class Option(object):
         return self.__repr__()
 
     def __repr__(self):
-        if self.value is not None:
+        if self.is_set:
             return '%s\t\t# %s' % (self.to_radiance(), self.description)
         else:
             return '-%s <unset>\t\t# %s' % (self.name, self.description)
@@ -84,10 +91,26 @@ class Option(object):
         return value in self._value
 
 
-class StringOption(Option):
-    __slots__ = ('valid_values')
+class FileOption(Option):
+    __slots__ = ()
 
-    def __init__(self, name, description, value=None, valid_values=None):
+    @property
+    def value(self):
+        """Option value."""
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        if value is None:
+            self._value = value
+        else:
+            self._value = os.path.normpath(value)
+
+
+class StringOption(Option):
+    __slots__ = ('valid_values', 'whole')
+
+    def __init__(self, name, description, value=None, valid_values=None, whole=True):
         """A string Radiance option.
 
         Args:
@@ -96,8 +119,12 @@ class StringOption(Option):
             value: Optional value for aa (Default: None).
             valid_values: An optional list of valid values. By default all the string
                 values are valid.
+            whole: Set to true if the whole input string should be compared against valid
+            values. If set to False the validator will run for each charecter in input
+            string.
         """
         self.valid_values = valid_values
+        self.whole = whole
         Option.__init__(self, name, description)
         self.value = value
 
@@ -112,8 +139,15 @@ class StringOption(Option):
             self._value = value
         else:
             if self.valid_values is not None:
-                assert value in self.valid_values, \
-                    'Invalid input value. Valid values are: %s' % self.valid_values
+                if self.whole:
+                    assert value in self.valid_values, \
+                        'Invalid input value: "%s". Valid values are: %s' \
+                            % (value, self.valid_values)
+                else:
+                    for v in value:
+                        assert v in self.valid_values, \
+                            'Invalid input value: "%s". Valid values are: %s' \
+                                % (v, self.valid_values)
             self._value = value
 
 
@@ -251,6 +285,9 @@ class BoolOption(Option):
     @value.setter
     def value(self, value):
         if value is not None:
+            # this is a special case to handle read from string when + is not used
+            # in Radiance -I means -I+ and -h means -h+ and so on.
+            value = True if value == '' else value 
             self._value = False if value == '-' else bool(value)
         else:
             self._value = None
@@ -309,15 +346,18 @@ class TupleOption(Option):
         self._value[key] = val
 
 
-# TODO: catch assignment of additional values if not a property
 class OptionCollection(object):
     """Collection of Radiance Options.
 
     This is base class for difference Radiance command options.
     """
-    __slots__ = ('additional_options',)
+    __slots__ = ('additional_options', '_on_setattr_check')
 
     def __init__(self):
+        # run on_setattr method on every attribute assignment
+        # set to False if you are assigning several attributes all together when
+        # initiating a new instance. 
+        object.__setattr__(self, '_on_setattr_check', False)
         self.additional_options = {}
 
     @property
@@ -344,6 +384,11 @@ class OptionCollection(object):
             if '_%s' % p in self.__slots__:
                 setattr(self, p, v)
             else:
+                warnings.warn(
+                    '"%s" is a non-standard option for %s.' % (
+                        p, self.__class__.__name__
+                    )
+                )
                 # add to additional options
                 self.additional_options[p] = v
 
@@ -374,5 +419,19 @@ class OptionCollection(object):
                 raise AttributeError(
                     '"{1}" object has no attribute "{0}".'
                     '\nYou can still try to use `update_from_string` method to add or'
-                    ' update the value for "{0}".'.format(name, self.__class__.__name__)
+                    ' update the value for "{0}" from a string. Note that there will be'
+                    ' no checks for the input value from string inputs'.format(
+                        name, self.__class__.__name__)
                 )
+        else:
+            if self._on_setattr_check:
+                self.on_setattr()
+
+    def on_setattr(self):
+        """This method executes after setting each new attribute.
+
+        Use this method to add checks that are necessary for OptionCollection. For
+        instance in rtrace option collection -ti and -te are exclusive. You can include a
+        check to ensure this is always correct.
+        """
+        pass
