@@ -61,6 +61,28 @@ class Option(object):
         else:
             return '-%s <unset>\t\t# %s' % (self.name, self.description)
 
+    def __eq__(self, other):
+        return self._value == other
+
+    def __ne__(self, other):
+        return self._value != other
+
+    def __add__(self, other):
+        return self._value + other
+
+    def __nonzero__(self):
+        return bool(self._value)
+
+    def __bool__(self):
+        # python 3
+        return bool(self._value)
+
+    def __iter__(self):
+        return iter(self.value)
+
+    def __contains__(self, value):
+        return value in self._value
+
 
 class StringOption(Option):
     __slots__ = ('valid_values')
@@ -124,9 +146,9 @@ class NumericOption(Option):
             max_value: Maximum valid value for this option.
         """
         Option.__init__(self, name, description)
-        self.value = value
         self.min_value = min_value
         self.max_value = max_value
+        self.value = value
 
     @property
     def value(self):
@@ -139,6 +161,63 @@ class NumericOption(Option):
             self._value = typing.float_in_range(value, self.min_value, self.max_value)
         else:
             self._value = None
+
+    def __int__(self):
+        return int(self._value)
+
+    def __float__(self):
+        return float(self._value)
+
+    def __sub__(self, other):
+        return self._value - other
+
+    def __lt__(self, other):
+        return self._value < other
+
+    def __gt__(self, other):
+        return self._value > other
+
+    def __le__(self, other):
+        return self._value <= other
+
+    def __ge__(self, other):
+        return self._value >= other
+
+    def __mul__(self, other):
+        return self._value * other
+
+    def __floordiv__(self, other):
+        return self._value // other
+
+    def __div__(self, other):
+        return self._value / other
+
+    def __mod__(self, other):
+        return self._value % other
+
+    def __pow__(self, other):
+        return self._value ** other
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return other - self._value
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __rfloordiv__(self, other):
+        return other // self._value
+
+    def __rdiv__(self, other):
+        return other / self._value
+
+    def __rmod__(self, other):
+        return other % self._value
+
+    def __rpow__(self, other):
+        return other ** self._value
 
 
 class IntegerOption(NumericOption):
@@ -200,9 +279,9 @@ class TupleOption(Option):
             numtype: Numerical type (Default: int).
         """
         Option.__init__(self, name, description)
-        self.value = value
         self.length = length
         self.numtype = numtype
+        self.value = value
 
     @property
     def value(self):
@@ -212,7 +291,7 @@ class TupleOption(Option):
     @value.setter
     def value(self, value):
         if value is not None:
-            self._value = typing.tuple_with_length(value, self.length, self.num_type)
+            self._value = typing.tuple_with_length(value, self.length, self.numtype)
         else:
             self._value = None
 
@@ -223,10 +302,19 @@ class TupleOption(Option):
         else:
             return ''
 
+    def __getitem__(self, key):
+        return self._value[key]
+
+    def __setitem__(self, key, val):
+        self._value[key] = val
+
 
 # TODO: catch assignment of additional values if not a property
 class OptionCollection(object):
-    """Collection of objects."""
+    """Collection of Radiance Options.
+
+    This is base class for difference Radiance command options.
+    """
     __slots__ = ('additional_options',)
 
     def __init__(self):
@@ -284,7 +372,7 @@ class OptionCollection(object):
                 object.__setattr__(self, '_' + name, value)
             except AttributeError:
                 raise AttributeError(
-                '"{1}" object has no attribute "{0}".' \
-                '\nYou can still try to use `update_from_string` method to add or' \
-                ' update the value for "{0}".'.format(name, self.__class__.__name__)
+                    '"{1}" object has no attribute "{0}".'
+                    '\nYou can still try to use `update_from_string` method to add or'
+                    ' update the value for "{0}".'.format(name, self.__class__.__name__)
                 )

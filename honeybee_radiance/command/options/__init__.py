@@ -1,2 +1,2 @@
 from .optionbase import StringOption, NumericOption, IntegerOption, BoolOption, \
-    OptionCollection, StringOptionJoined
+    OptionCollection, StringOptionJoined, TupleOption
