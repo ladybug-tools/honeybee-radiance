@@ -43,7 +43,7 @@ def test_boolean_assignment():
     options.w = False
     options.h = True
     assert '-w-' in options.to_radiance()
-    assert '-h+' in options.to_radiance()
+    assert '-h' in options.to_radiance()
 
 
 def test_invalid_assignment():

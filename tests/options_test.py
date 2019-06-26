@@ -55,7 +55,7 @@ def test_bool_option():
     assert ld.to_radiance() == ''
 
     ld.value = True
-    assert ld.to_radiance() == '-ld+'
+    assert ld.to_radiance() == '-ld'
 
     ld.value = False
     assert ld.to_radiance() == '-ld-'
@@ -114,7 +114,7 @@ def test_collection():
 
     options_test.ab = None
     options_test.ld = True
-    assert options_test.to_radiance() == '-ld+ -ad 2500'
+    assert options_test.to_radiance() == '-ld -ad 2500'
 
     with pytest.raises(AttributeError):
         options_test.ad = 2400

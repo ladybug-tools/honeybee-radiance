@@ -295,7 +295,7 @@ class BoolOption(Option):
     def to_radiance(self):
         """Translate option to Radiance format."""
         if self.value is not None:
-            return '-%s%s' % (self.name, '+' if self.value else '-')
+            return '-%s%s' % (self.name, '' if self.value else '-')
         else:
             return ''
 
