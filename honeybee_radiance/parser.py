@@ -181,3 +181,28 @@ def parse_radiance_options(string):
         options[k[1:]] = values
     
     return options
+
+
+def parse_header(filepath):
+    """Return radiance file header if exist.
+
+    This method returns all the lines between `#?RADIANCE` and `FORMAT=*` and number of
+    header lines including the white line after last header line.
+    
+    Args:
+        filepath: Full path to Radiance file.
+    
+    Returns:
+        line_count, header as a single multiline string
+    """
+    with open(filepath, 'r', encoding='utf-8') as inf:
+        first_line = next(inf)
+        if first_line[:10] != '#?RADIANCE':
+            raise ValueError('File with Radiance header must start with #?RADIANCE.')
+        header_lines =[first_line]
+        for line in inf:
+            header_lines.append(line)
+            if line[:7] == 'FORMAT=':
+                break
+        
+        return len(header_lines) + 1, '\n'.join(header_lines)
