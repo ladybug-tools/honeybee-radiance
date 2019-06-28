@@ -22,11 +22,11 @@ class RtraceOptions(OptionCollection):
 
             options = RtraceOptions()
             options.ab = 5
-            print(options)
+            print(options.to_radiance())
             -ab 5
 
             options.u = False
-            print(options)
+            print(options.to_radiance())
             -ab 5 -u-
         """
         OptionCollection.__init__(self)
@@ -113,11 +113,11 @@ class RtraceOptions(OptionCollection):
         if self.n.is_set and self.n > 1:
             assert not 't' in self.o.to_radiance().lower(), \
             'Multiple processes also do not work properly with ray tree output using' \
-            ' any of the `−o*t*` options.'
+            ' any of the `-o*t*` options.'
 
         if self.n.is_set and self.x.is_set:
             assert self.n <= self.x, \
-                'There is no benefit from specifying more processes than the −x ' \
+                'There is no benefit from specifying more processes than the -x ' \
                 'setting, which forces a wait at each flush.'
 
     @property
@@ -128,10 +128,10 @@ class RtraceOptions(OptionCollection):
         
         NOTE:
         
-        This option is incompatible with the −P and −PP, options. Multiple processes also
-        do not work properly with ray tree output using any of the `−o*t*` options. There
+        This option is incompatible with the -P and -PP, options. Multiple processes also
+        do not work properly with ray tree output using any of the `-o*t*` options. There
         is no benefit from specifying more processes than there are cores available on
-        the system or the −x setting, which forces a wait at each flush.
+        the system or the -x setting, which forces a wait at each flush.
         """
         return self._n
 
@@ -144,8 +144,8 @@ class RtraceOptions(OptionCollection):
         """flush interval - default: 0
 
         Set the x resolution to res. The output will be flushed after every res input
-        rays if −y is set to zero. A value of one means that every ray will be flushed,
-        whatever the setting of −y. A value of zero means that no output flushing will
+        rays if -y is set to zero. A value of one means that every ray will be flushed,
+        whatever the setting of -y. A value of zero means that no output flushing will
         take place.
         """
         return self._x
@@ -159,14 +159,14 @@ class RtraceOptions(OptionCollection):
         """y resolution - default: 0
         
         Set the y resolution to res. The program will exit after res scanlines have been
-        processed, where a scanline is the number of rays given by the −x option, or 1 if
-        −x is zero. A value of zero means the program will not halt until the end of file
+        processed, where a scanline is the number of rays given by the -x option, or 1 if
+        -x is zero. A value of zero means the program will not halt until the end of file
         is reached. 
         
-        If both −x and −y options are given, a resolution string is printed at the
+        If both -x and -y options are given, a resolution string is printed at the
         beginning of the output. This is mostly useful for recovering image dimensions
         with pvalue, and for creating valid Radiance picture files using the color output
-        format. (See the −f option, above.) 
+        format. (See the -f option, above.) 
         """
         return self._y
 
@@ -206,7 +206,7 @@ class RtraceOptions(OptionCollection):
         - `d` for double-precision floating point
 
         In addition to these three choices, the character `c` may be used to denote
-        4-byte floating point (Radiance) color format for the output of values only (−ov
+        4-byte floating point (Radiance) color format for the output of values only (-ov
         option, below). If the output character is missing, the input format is used.
         """
         return self._f
@@ -256,7 +256,7 @@ class RtraceOptions(OptionCollection):
     def te(self):
         """Append modifier to the trace exclude list.
         
-        The excluded modifier will not be reported by the trace option `−o*t*`. Any ray
+        The excluded modifier will not be reported by the trace option `-o*t*`. Any ray
         striking an object having mod as its modifier will not be reported to the
         standard output with the rest of the rays being traced. This option has no
         effect unless either the `t` or `T` option has been given as part of the output
@@ -287,7 +287,7 @@ class RtraceOptions(OptionCollection):
     def tE(self):
         """Append modifier to the trace exclude list from file.
         
-        Same as −te, except read modifiers to be excluded from file. The RAYPATH
+        Same as -te, except read modifiers to be excluded from file. The RAYPATH
         environment variable determines which directories are searched for this file. The
         modifier names are separated by white space in the file.
         """
@@ -301,7 +301,7 @@ class RtraceOptions(OptionCollection):
     def tI(self):
         """Add modifier to the trace include list from file.
 
-        Same as −ti, except read modifiers to be included from file.
+        Same as -ti, except read modifiers to be included from file.
         """
         return self._tI
 
@@ -514,7 +514,7 @@ class RtraceOptions(OptionCollection):
         black when viewed directly although they will still participate in the direct
         calculation. This option is mostly for the program `mkillum` to avoid
         inappropriate counting of light sources, but it may also be desirable in
-        conjunction with the −i option.
+        conjunction with the -i option.
         """
         return self._dv
 
@@ -694,7 +694,7 @@ class RtraceOptions(OptionCollection):
     def aE(self):
         """Append modifier to the ambient exclude list from file.
 
-        Same as −ae, except read modifiers to be excluded from file. The RAYPATH
+        Same as -ae, except read modifiers to be excluded from file. The RAYPATH
         environment variable determines which directories are searched for this file. The
         modifier names are separated by white space in the file. 
         """
@@ -708,7 +708,7 @@ class RtraceOptions(OptionCollection):
     def aI(self):
         """Add modifier to the ambient include list from file.
 
-        Same as −ai, except read modifiers to be included from file.
+        Same as -ai, except read modifiers to be included from file.
         """
         return self._aI
 

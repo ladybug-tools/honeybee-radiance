@@ -22,6 +22,17 @@ class CertainIrradiance(Sky):
     It also includes ground glow source. Ground reflectance is set to %20 by default
     which is gensky's default value. Use `ground_reflectance` property to adjust this
     value.
+
+    NOTE:
+
+    The conversion factor in the Radiance system for luminous efficacy is fixed at
+    KR= 179 lumens/watt (lm/w). This should not be confused with the more usual
+    daylighting value, which can be anywhere between 50 and 150 lm/w depending on the
+    type of sky or light considered.
+
+    For more information see links below on the Radiance forum:
+    - https://discourse.radiance-online.org/t/coefficient-179/547
+    - https://discourse.radiance-online.org/t/luminous-efficacy/1400
     """
     __slots__ = (
         '_irradiance', '_ground', '_ground_reflectance',

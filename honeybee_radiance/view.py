@@ -79,7 +79,7 @@ class View(object):
                 image will be shifted to the right of the specified view. This
                 option is useful for generating skewed perspectives or rendering
                 an image a piece at a time. A value of 1 means that the rendered
-                image starts just to the right of the normal view. A value of −1
+                image starts just to the right of the normal view. A value of -1
                 would be to the left. Larger or fractional values are permitted
                 as well.
             lift: Set the view lift (-vl) to a value. This is the amount the
@@ -255,7 +255,7 @@ class View(object):
         This is the amount the actual image will be shifted to the right of the specified
         view. This option is useful for generating skewed perspectives or rendering an
         image a piece at a time. A value of 1 means that the rendered image starts just
-        to the right of the normal view. A value of −1 would be to the left. Larger or
+        to the right of the normal view. A value of -1 would be to the left. Larger or
         fractional values are permitted as well.
         """
         return self._shift
