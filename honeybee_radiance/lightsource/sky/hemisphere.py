@@ -40,7 +40,7 @@ class Hemisphere(object):
 
     @r_emittance.setter
     def r_emittance(self, value):
-        self._r_emittance = typing.float_in_range(value)
+        self._r_emittance = typing.float_in_range(value, 0, 1, 'r_emittance')
 
     @property
     def g_emittance(self):
@@ -49,7 +49,7 @@ class Hemisphere(object):
 
     @g_emittance.setter
     def g_emittance(self, value):
-        self._g_emittance = typing.float_in_range(value)
+        self._g_emittance = typing.float_in_range(value, 0, 1, 'g_emittance')
 
     @property
     def b_emittance(self):
@@ -58,7 +58,7 @@ class Hemisphere(object):
 
     @b_emittance.setter
     def b_emittance(self, value):
-        self._b_emittance = typing.float_in_range(value)
+        self._b_emittance = typing.float_in_range(value, 0, 1, 'b_emittance')
 
     @classmethod
     def from_dict(cls, input_dict):

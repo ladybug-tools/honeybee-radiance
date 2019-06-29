@@ -99,7 +99,8 @@ class CertainIrradiance(Sky):
 
     @ground_reflectance.setter
     def ground_reflectance(self, ground_reflectance):
-        self._ground_reflectance = typing.float_in_range(ground_reflectance) \
+        self._ground_reflectance = \
+            typing.float_in_range(ground_reflectance, 0, 1, 'ground reflectance') \
             if ground_reflectance is not None else 0.2
 
     @property

@@ -69,7 +69,8 @@ class Trans(Material):
 
     @r_reflectance.setter
     def r_reflectance(self, reflectance):
-        self._r_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._r_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'red reflectance')
 
     @property
     def g_reflectance(self):
@@ -81,7 +82,8 @@ class Trans(Material):
 
     @g_reflectance.setter
     def g_reflectance(self, reflectance):
-        self._g_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._g_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'green reflectance')
 
     @property
     def b_reflectance(self):
@@ -93,7 +95,8 @@ class Trans(Material):
 
     @b_reflectance.setter
     def b_reflectance(self, reflectance):
-        self._b_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._b_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'blue reflectance')
 
     @property
     def specularity(self):
@@ -106,7 +109,7 @@ class Trans(Material):
 
     @specularity.setter
     def specularity(self, spec_value):
-        self._specularity = typing.float_in_range(spec_value, 0, 1)
+        self._specularity = typing.float_in_range(spec_value, 0, 1, 'specularity')
 
     @property
     def roughness(self):
@@ -120,7 +123,7 @@ class Trans(Material):
 
     @roughness.setter
     def roughness(self, roughness_value):
-        self._roughness = typing.float_in_range(roughness_value, 0, 1)
+        self._roughness = typing.float_in_range(roughness_value, 0, 1, 'roughness')
 
     @property
     def transmitted_diff(self):
@@ -133,7 +136,8 @@ class Trans(Material):
 
     @transmitted_diff.setter
     def transmitted_diff(self, value):
-        self._transmitted_diff = typing.float_in_range(value, 0, 1)
+        self._transmitted_diff = \
+            typing.float_in_range(value, 0, 1, 'diffuse transmission')
 
     @property
     def transmitted_spec(self):
@@ -146,7 +150,8 @@ class Trans(Material):
 
     @transmitted_spec.setter
     def transmitted_spec(self, value):
-        self._transmitted_spec = typing.float_in_range(value, 0, 1)
+        self._transmitted_spec = \
+            typing.float_in_range(value, 0, 1, 'specular transmission')
 
     @classmethod
     def from_reflected_specularity(
