@@ -9,7 +9,7 @@ class RtraceOptions(OptionCollection):
     """
 
     __slots__ = (
-        '_n', '_x', '_y', '_ld', '_h', '_f', '_o', '_w', '_i', '_u', '_bv', '_dt',
+        '_n', '_x', '_y', '_ld', '_h', '_fio', '_o', '_w', '_i', '_u', '_bv', '_dt',
         '_dc', '_dj', '_ds', '_dr', '_dp', '_dv', '_ss', '_st', '_av', '_aw', '_ab',
         '_aa', '_ar', '_ad', '_as', '_me', '_ma', '_mg', '_ms', '_lr', '_lw', '_I',
         '_e', '_te', '_tE', '_ti', '_tI', '_af', '_ae', '_ai', '_aE', '_aI'
@@ -35,7 +35,7 @@ class RtraceOptions(OptionCollection):
         self._y = IntegerOption('y', 'y resolution - default: 0')
         self._ld = BoolOption('ld', 'limit distance - default: off')
         self._h = BoolOption('h', 'output header - default: on')
-        self._f = StringOptionJoined(
+        self._fio = StringOptionJoined(
             'f', 'format input/output = ascii/ascii - default: faa',
             valid_values=['a', 'f', 'd', 'c'], whole=False
         )
@@ -120,6 +120,56 @@ class RtraceOptions(OptionCollection):
                 'There is no benefit from specifying more processes than the -x ' \
                 'setting, which forces a wait at each flush.'
 
+        # if aa == 0 and ar is set warn user that ar value doesn't matter
+
+    @classmethod
+    def direct_studies(cls):
+        """Options for direct studies.
+
+        In particular this classmethod will set options below:
+        irradiance_calc (-I) = True
+        ambient_bounces (-ab) = 0
+        direct_certainty (-dc) = 1
+        direct_threshold (-dt) = 0
+        direct_jitter (-dj) = 0
+        direct_sec_relays (-dr) = 0
+        """
+        cls_ = cls()
+        cls_.I = True
+        cls_.ab = 0
+        cls_.dc = 1
+        cls_.dt = 0
+        cls_.dj = 0
+        cls_.dr = 0
+        return cls_
+
+    def adjust_limit_weight(self):
+        """Adjust lw to be 1 / ad if the value is larger than 1 / ad."""
+        if not self.ad.is_set:
+            print('-ad is not set.')
+            return
+        try:
+            suggested_lw = 1.0 / self.ad
+        except TypeError:
+            # ambient_divisions is not set
+            pass
+        except ZeroDivisionError:
+            # ambient_divisions is set to 0!
+            pass
+        else:
+            try:
+                lw = self.lw
+            except TypeError:
+                # lw is not set so let's set the value
+                print('-lw is set to %f.' % suggested_lw)
+                self.lw = suggested_lw
+            else:
+                if lw > suggested_lw:
+                    print('-lw is set to %f.' % suggested_lw)
+                    self.lw = suggested_lw
+                else:
+                    print('-lw ({}) is already <= {}.'.format(self.lw, suggested_lw))
+
     @property
     def n(self):
         """number of rendering processes - default: 1
@@ -196,7 +246,7 @@ class RtraceOptions(OptionCollection):
         self._h.value = value
 
     @property
-    def f(self):
+    def fio(self):
         """format input/output = ascii/ascii - default: faa
 
         Format input according to the character `i` and output according to the character
@@ -209,11 +259,11 @@ class RtraceOptions(OptionCollection):
         4-byte floating point (Radiance) color format for the output of values only (-ov
         option, below). If the output character is missing, the input format is used.
         """
-        return self._f
+        return self._fio
 
-    @f.setter
-    def f(self, value):
-        self._f.value = value
+    @fio.setter
+    def fio(self, value):
+        self._fio.value = value
 
     @property
     def o(self):

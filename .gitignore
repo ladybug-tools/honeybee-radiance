@@ -18,3 +18,5 @@ tox.ini
 *.code-workspace
 
 tests/__pycache__/
+
+tests/command/options/__pycache__/

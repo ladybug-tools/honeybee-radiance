@@ -119,6 +119,11 @@ class FileOption(Option):
         else:
             return ''
 
+    def __len__(self):
+        if self.value is not None:
+            return len(self.value)
+        else:
+            return 0
 
 class StringOption(FileOption):
     __slots__ = ('valid_values', 'whole', 'pattern_in', 'pattern_out')

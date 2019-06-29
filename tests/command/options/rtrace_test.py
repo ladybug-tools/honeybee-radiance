@@ -79,9 +79,10 @@ def test_from_string_non_standard():
 
 def test_from_string():
     opt = RtraceOptions()
-    opt_str = '-I -u- -h+ -lw 2e-06'
+    opt_str = '-I -u- -h+ -lw 2e-06 -fa'
     opt.update_from_string(opt_str)
     assert opt.I == True
     assert opt.u == False
     assert opt.h == True
     assert opt.lw == 2e-06
+    assert opt.fio == 'a'

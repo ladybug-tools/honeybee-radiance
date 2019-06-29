@@ -195,14 +195,23 @@ def parse_header(filepath):
     Returns:
         line_count, header as a single multiline string
     """
-    with open(filepath, 'r', encoding='utf-8') as inf:
+    try:
+        inf = open(filepath, 'r', encoding='utf-8')
+    except:
+        #python 2
+        inf = open(filepath, 'r')
+    try:
         first_line = next(inf)
         if first_line[:10] != '#?RADIANCE':
-            raise ValueError('File with Radiance header must start with #?RADIANCE.')
+            raise ValueError(
+                'File with Radiance header must start with #?RADIANCE '
+                'not {}.'.format(first_line)
+                )
         header_lines =[first_line]
         for line in inf:
             header_lines.append(line)
             if line[:7] == 'FORMAT=':
                 break
-        
         return len(header_lines) + 1, '\n'.join(header_lines)
+    finally:
+        inf.close()
