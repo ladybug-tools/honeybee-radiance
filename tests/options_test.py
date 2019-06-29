@@ -2,6 +2,7 @@
 from honeybee_radiance.command.options import StringOptionJoined, NumericOption, \
     IntegerOption, BoolOption,  OptionCollection
 import pytest
+import honeybee_radiance.exception as exception
 
 
 def test_string_option():
@@ -13,7 +14,7 @@ def test_string_option():
     view_type.value = 'v'
     assert view_type.to_radiance() == '-vtv'
     # test invalid value
-    with pytest.raises(AssertionError):
+    with pytest.raises(exception.InvalidValueError):
         view_type.value = 'm'
     # check the value is still there
     assert view_type.to_radiance() == '-vtv'

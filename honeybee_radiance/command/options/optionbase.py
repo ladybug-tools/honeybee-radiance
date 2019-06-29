@@ -1,6 +1,7 @@
 """Base classes for Radiance Options."""
 import honeybee.typing as typing
 import honeybee_radiance.parser as parser
+import honeybee_radiance.exception as exception
 import ladybug.futil as futil
 import os
 import warnings
@@ -8,8 +9,6 @@ from itertools import chain
 import re
 
 
-# TODO(): move wrapper to typing module
-# TODO(): add support for filepath to typing
 class Option(object):
     """Radiance Option base class."""
     __slots__ = ('_name', '_value', '_description')
@@ -70,7 +69,7 @@ class Option(object):
         if self.is_set:
             return '%s\t\t# %s' % (self.to_radiance(), self.description)
         else:
-            return '-%s <unset>\t\t# %s' % (self.name, self.description)
+            return '-%s <unset>\t# %s' % (self.name, self.description)
 
     def __eq__(self, other):
         return self._value == other
@@ -108,13 +107,24 @@ class FileOption(Option):
         if value is None:
             self._value = value
         else:
-            self._value = os.path.normpath(value)
+            self._value = typing.normpath(value)
+
+    def to_radiance(self):
+        """Translate option to Radiance format."""
+        if self.is_set:
+            return '-%s %s' % (
+                self.name,
+                self.value.replace('"', typing.wrapper).replace("'", typing.wrapper)
+            )
+        else:
+            return ''
 
 
-class StringOption(Option):
-    __slots__ = ('valid_values', 'whole')
+class StringOption(FileOption):
+    __slots__ = ('valid_values', 'whole', 'pattern_in', 'pattern_out')
 
-    def __init__(self, name, description, value=None, valid_values=None, whole=True):
+    def __init__(self, name, description, value=None, valid_values=None, whole=True,
+            pattern_in=None, pattern_out=None):
         """A string Radiance option.
 
         Args:
@@ -124,12 +134,17 @@ class StringOption(Option):
             valid_values: An optional list of valid values. By default all the string
                 values are valid.
             whole: Set to true if the whole input string should be compared against valid
-            values. If set to False the validator will run for each charecter in input
-            string.
+                values. If set to False the validator will run for each charecter in
+                input string.
+            pattern_in: A regex pattern that input values should match (Default: None).
+            pattern_out: A format pattern to be applied to value for output e.g. "'%s'"
+                (Default: None).
         """
         self.valid_values = valid_values
         self.whole = whole
-        Option.__init__(self, name, description)
+        FileOption.__init__(self, name, description)
+        self.pattern_in = pattern_in
+        self.pattern_out = pattern_out
         self.value = value
 
     @property
@@ -142,17 +157,25 @@ class StringOption(Option):
         if value is None:
             self._value = value
         else:
+            if self.pattern_in is not None:
+                if not re.match(self.pattern_in, value):
+                    raise ValueError(
+                        'Input values for {} must match "{}" pattern.'
+                        ' Invalid input value: "{}".'.format(
+                            self.name, self.pattern_in, value)
+                        )
             if self.valid_values is not None:
                 if self.whole:
-                    assert value in self.valid_values, \
-                        'Invalid input value: "%s". Valid values are: %s' \
-                            % (value, self.valid_values)
+                    if value not in self.valid_values:
+                        raise exception.InvalidValueError(self.name, value,
+                                                          self.valid_values)
                 else:
                     for v in value:
-                        assert v in self.valid_values, \
-                            'Invalid input value: "%s". Valid values are: %s' \
-                                % (v, self.valid_values)
-            self._value = value
+                        if v not in self.valid_values:
+                            raise exception.InvalidValueError(self.name, v,
+                                                              self.valid_values)
+
+            self._value = value if not self.pattern_out else self.pattern_out % value
 
 
 class StringOptionJoined(StringOption):
@@ -196,7 +219,8 @@ class NumericOption(Option):
     @value.setter
     def value(self, value):
         if value is not None:
-            self._value = typing.float_in_range(value, self.min_value, self.max_value)
+            self._value = typing.float_in_range(
+                value, self.min_value, self.max_value, self.name)
         else:
             self._value = None
 
@@ -271,7 +295,8 @@ class IntegerOption(NumericOption):
     @value.setter
     def value(self, value):
         if value is not None:
-            self._value = typing.int_in_range(value, self.min_value, self.max_value)
+            self._value = typing.int_in_range(
+                value, self.min_value, self.max_value, self.name)
         else:
             self._value = None
 
@@ -332,7 +357,8 @@ class TupleOption(Option):
     @value.setter
     def value(self, value):
         if value is not None:
-            self._value = typing.tuple_with_length(value, self.length, self.numtype)
+            self._value = typing.tuple_with_length(
+                value, self.length, self.numtype, self.name)
         else:
             self._value = None
 
@@ -355,7 +381,7 @@ class OptionCollection(object):
 
     This is base class for difference Radiance command options.
     """
-    __slots__ = ('additional_options', '_on_setattr_check')
+    __slots__ = ('additional_options', '_on_setattr_check', '_protected')
 
     def __init__(self):
         # run on_setattr method on every attribute assignment
@@ -363,12 +389,35 @@ class OptionCollection(object):
         # initiating a new instance. 
         object.__setattr__(self, '_on_setattr_check', False)
         self.additional_options = {}
+        # collection of protected options that cannot be set by user. This is necessary
+        # for cases like rfluxmtx. Even though rfluxmtx options subclasses from rcontrib
+        # a handful number of options are controlled by rfluxmtx and may not be set by
+        # user.
+        self._protected = ()
+
+    @property
+    def command(self):
+        """Command name."""
+        return self.__class__.__name__.replace('Options', '').lower()
+
+    @property
+    def slots(self):
+        """Return slots including the ones from the baseclass if any."""
+        slots = set(self.__slots__)
+        for cls in self.__class__.__mro__[1:-2]:
+            for s in getattr(cls, '__slots__', tuple()):
+                if s in slots:
+                    continue
+                slots.add(s)
+        slots = [s for s in slots if s not in self._protected]
+        slots.sort()
+        return slots
 
     @property
     def options(self):
         """Print out list of options."""
         options = []
-        for opt in self.__slots__:
+        for opt in self.slots:
             option = getattr(self, opt)
             if not isinstance(option, Option):
                 continue
@@ -383,11 +432,26 @@ class OptionCollection(object):
         If the option is not currently part of the collection, it will be added to
         additional_options.
         """
+        slots = self.slots
         opt_dict = parser.parse_radiance_options(string)
         for p, v in opt_dict.items():
-            if '_%s' % p in self.__slots__:
+            if '_%s' % p in slots:
                 setattr(self, p, v)
             else:
+                if len(p) > 1:
+                    # joined string
+                    # catch special case -fio
+                    try:
+                        if p.startswith('f') and '_fio' in slots:
+                            setattr(self, 'fio', p[1:])
+                        else:
+                            setattr(self, p[1], p[1:])
+                    except AttributeError:
+                        # fall back to unknown item 
+                        pass
+                    else:
+                        # it is assigned - go for the next one
+                        continue
                 warnings.warn(
                     '"%s" is a non-standard option for %s.' % (
                         p, self.__class__.__name__
@@ -399,7 +463,7 @@ class OptionCollection(object):
     def to_radiance(self):
         """Translate options to Radiance format."""
         options = \
-            ' '.join(getattr(self, opt).to_radiance() for opt in self.__slots__)
+            ' '.join(getattr(self, opt).to_radiance() for opt in self.slots)
         additional_options = \
             ' '.join('-%s %s' % (k, v) for k, v in self.additional_options.items())
 
