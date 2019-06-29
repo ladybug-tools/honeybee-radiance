@@ -1,5 +1,5 @@
 """Radiance sky hemisphere."""
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import ladybug.futil as futil
 import os
 

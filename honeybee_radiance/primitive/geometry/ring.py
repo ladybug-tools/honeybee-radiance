@@ -4,7 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Ring
 """
 from .geometrybase import Geometry
 import ladybug_geometry.geometry3d.pointvector as pv
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Ring(Geometry):

@@ -3,7 +3,7 @@ from __future__ import division
 from ._skybase import Sky
 from .hemisphere import Hemisphere
 from honeybee_radiance.lightsource.ground import Ground
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import ladybug.futil as futil
 
 

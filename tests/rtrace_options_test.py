@@ -51,7 +51,7 @@ def test_invalid_assignment():
     with pytest.raises(AttributeError):
         opts.mm = 20
     
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         opts.ab = 'ambient bounces'  # must be a numeric value
 
 

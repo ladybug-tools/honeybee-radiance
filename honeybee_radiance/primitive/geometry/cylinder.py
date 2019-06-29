@@ -3,7 +3,7 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Cylinder
 """
 from .geometrybase import Geometry
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
 
 

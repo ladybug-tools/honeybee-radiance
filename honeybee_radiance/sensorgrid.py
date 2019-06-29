@@ -1,7 +1,7 @@
 """A grid of sensors."""
 from __future__ import division
 import ladybug.futil as futil
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 from .sensor import Sensor
 
 import os

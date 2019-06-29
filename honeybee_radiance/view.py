@@ -1,7 +1,7 @@
 # coding=utf-8
 u"""Create a Radiance view."""
 from __future__ import division
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import honeybee_radiance.parser as parser
 import math
 import os

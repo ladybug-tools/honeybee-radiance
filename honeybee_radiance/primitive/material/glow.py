@@ -4,7 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glow
 """
 
 from .materialbase import Material
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Glow(Material):

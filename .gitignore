@@ -16,3 +16,5 @@ tox.ini
 /tests/assets/temp/*
 
 *.code-workspace
+
+tests/__pycache__/

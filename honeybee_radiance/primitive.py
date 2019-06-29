@@ -6,7 +6,7 @@ and honeybee.radiance.geometry
 
 http://radsite.lbl.gov/radiance/refer/ray.html
 """
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 from .parser import string_to_dicts
 
 

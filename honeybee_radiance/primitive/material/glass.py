@@ -4,7 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
 from .materialbase import Material
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Glass(Material):

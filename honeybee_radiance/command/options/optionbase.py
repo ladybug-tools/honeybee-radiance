@@ -1,11 +1,15 @@
 """Base classes for Radiance Options."""
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import honeybee_radiance.parser as parser
 import ladybug.futil as futil
 import os
 import warnings
+from itertools import chain
+import re
 
 
+# TODO(): move wrapper to typing module
+# TODO(): add support for filepath to typing
 class Option(object):
     """Radiance Option base class."""
     __slots__ = ('_name', '_value', '_description')

@@ -5,7 +5,7 @@ https://radiance-online.org//community/workshops/2010-freiburg/PDF/DavidMead.pdf
 """
 from __future__ import division
 from .materialbase import Material
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Trans(Material):

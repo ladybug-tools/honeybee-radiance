@@ -26,7 +26,7 @@ def test_numeric_option():
     aa.value = 0
     assert aa.to_radiance() == '-aa 0.0'
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         aa.value = 'm'
 
     with pytest.raises(AssertionError):
@@ -43,7 +43,7 @@ def test_integer_option():
     ab.value = 6.21
     assert ab.to_radiance() == '-ab 6'
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         ab.value = 'm'
 
     with pytest.raises(AssertionError):
