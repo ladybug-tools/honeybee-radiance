@@ -9,11 +9,10 @@ from copy import deepcopy
 import ladybug_geometry.geometry3d.pointvector as pv
 import ladybug_geometry.geometry3d.plane as plane
 import ladybug.futil as futil
-from honeybee_radiance.command.options import BoolOption, TupleOption, \
+from honeybee_radiance_command.options import BoolOption, TupleOption, \
     StringOptionJoined, NumericOption
 
 
-# TODO: Add support for move, rotate, etc.
 class View(object):
     u"""A Radiance view.
 
@@ -50,7 +49,7 @@ class View(object):
         u"""Create a view.
 
         Arg:
-            position: Set the view position location (-vp) to (x, y, z). This is the focal
+            position: Set the view position (-vp) to (x, y, z). This is the focal
                 point of a perspective view or the center of a parallel projection.
                 Default: (0, 0, 0)
             direction: Set the view direction (-vd) vector to (x, y, z). The

@@ -2,6 +2,7 @@
 import re
 import os
 import collections
+from honeybee_radiance_command.cutil import parse_radiance_options
 
 
 # TODO: Add support for comments [#] and commands [!]
@@ -149,38 +150,6 @@ def string_to_dict(string):
         'values': {0: l1, 1: l2, 2: l3},
         'dependencies': []
     }
-
-_rad_opt_pattern = r'-[a-zA-Z]+'
-_rad_opt_compiled_pattern = re.compile(_rad_opt_pattern)
-
-def parse_radiance_options(string):
-    """Parse a radiance options string (e.g. '-ab 4 -ad 256').
-
-    The string should start with a '-' otherwise it will be trimmed to the first '-' in
-    string.
-    """
-    try:
-        index = string.index('-')
-    except ValueError:
-        raise ValueError(
-            'Invalid Radiance options string input. Failed to find - in input string.'
-        )
-
-    sub_string = ' '.join(string[index:].split())
-    value = re.split(_rad_opt_compiled_pattern, sub_string)[1:]
-    key = re.findall(_rad_opt_pattern, sub_string)
-
-    options = collections.OrderedDict()
-    for k, v in zip(key, value):
-        values = v.split()
-        count = len(values)
-        if count == 0:
-            values = ''
-        elif count == 1:
-            values = values[0]
-        options[k[1:]] = values
-    
-    return options
 
 
 def parse_header(filepath):
