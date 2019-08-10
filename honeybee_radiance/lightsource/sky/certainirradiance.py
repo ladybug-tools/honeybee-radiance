@@ -23,7 +23,7 @@ class CertainIrradiance(Sky):
     which is gensky's default value. Use `ground_reflectance` property to adjust this
     value.
 
-    NOTE:
+    Note:
 
     The conversion factor in the Radiance system for luminous efficacy is fixed at
     KR= 179 lumens/watt (lm/w). This should not be confused with the more usual
