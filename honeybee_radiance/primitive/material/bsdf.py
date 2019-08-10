@@ -338,11 +338,12 @@ class BSDF(Material):
         fp = os.path.join(folder, '%s.xml' % input_dict['name'])
         # write bytes to xml file
         cls.decompress_bytes_to_file(input_dict['bsdf_data'], fp)
-
+        
+        uo_dict = input_dict['up_orientation']
         cls_ = cls(
             bsdf_file=fp,
             name=input_dict['name'],
-            up_orientation=list(input_dict['up_orientation'].values()),
+            up_orientation=[uo_dict['x'], uo_dict['y'], uo_dict['z']],
             thickness=input_dict['thickness'],
             modifier=modifier,
             dependencies=dependencies
