@@ -1,6 +1,6 @@
 """A light version of test points."""
 from __future__ import division
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Sensor(object):

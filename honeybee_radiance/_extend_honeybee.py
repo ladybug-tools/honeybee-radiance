@@ -1,11 +1,18 @@
-from honeybee.properties import Properties
+from honeybee.properties import FaceProperties
 import honeybee.writer as writer
-from .properties import RadianceProperties
+from .properties import FaceRadianceProperties
 from .writer import face_to_rad
 
+
 # add radiance properties to Properties class
-Properties.radiance = property(lambda self: RadianceProperties(
-    self.face_type, self.boundary_condition))
+def face_radiance_properties(self):
+    if self._radiance is None:
+        self._radiance = FaceRadianceProperties(self.host)
+    return self._radiance
+
+
+FaceProperties._radiance = None
+FaceProperties.radiance = property(face_radiance_properties)
 
 # add radiance writer to idf
 setattr(writer, 'radiance', face_to_rad)

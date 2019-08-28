@@ -3,7 +3,7 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Plastic
 """
 from .materialbase import Material
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Plastic(Material):
@@ -69,7 +69,8 @@ class Plastic(Material):
 
     @r_reflectance.setter
     def r_reflectance(self, reflectance):
-        self._r_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._r_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'red reflectance')
 
     @property
     def g_reflectance(self):
@@ -81,7 +82,8 @@ class Plastic(Material):
 
     @g_reflectance.setter
     def g_reflectance(self, reflectance):
-        self._g_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._g_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'green reflectance')
 
     @property
     def b_reflectance(self):
@@ -93,7 +95,8 @@ class Plastic(Material):
 
     @b_reflectance.setter
     def b_reflectance(self, reflectance):
-        self._b_reflectance = typing.float_in_range(reflectance, 0, 1)
+        self._b_reflectance = \
+            typing.float_in_range(reflectance, 0, 1, 'blue reflectance')
 
     @property
     def specularity(self):
@@ -106,7 +109,7 @@ class Plastic(Material):
 
     @specularity.setter
     def specularity(self, spec_value):
-        self._specularity = typing.float_in_range(spec_value, 0, 1)
+        self._specularity = typing.float_in_range(spec_value, 0, 1, 'specularity')
 
     @property
     def roughness(self):
@@ -120,7 +123,7 @@ class Plastic(Material):
 
     @roughness.setter
     def roughness(self, roughness_values):
-        self._roughness = typing.float_in_range(roughness_values, 0, 1)
+        self._roughness = typing.float_in_range(roughness_values, 0, 1, 'roughness')
 
     @property
     def average_reflectance(self):
