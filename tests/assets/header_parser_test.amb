@@ -1,0 +1,8 @@
+#?RADIANCE
+rpict -av 0 0 0 -aw 0 -ab 3 -aa 0.2 -ad 2048 -as 2048 -ar 64 water_cube_IMG.oct
+SOFTWARE= NREL 5.0.a.12 (by googs 2016.10.04) based on RADIANCE 5.0 Official Release by G. Ward
+CAPDATE= 2017:02:06 10:57:34
+GMT= 2017:02:06 15:57:34
+FORMAT=Radiance_ambval
+
+/

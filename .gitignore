@@ -14,3 +14,9 @@ tox.ini
 .eggs
 /radiance*
 /tests/assets/temp/*
+
+*.code-workspace
+
+tests/__pycache__/
+
+tests/command/options/__pycache__/

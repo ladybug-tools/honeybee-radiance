@@ -1,7 +1,7 @@
 # coding=utf-8
 u"""Create a Radiance view."""
 from __future__ import division
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 import honeybee_radiance.parser as parser
 import math
 import os
@@ -9,9 +9,10 @@ from copy import deepcopy
 import ladybug_geometry.geometry3d.pointvector as pv
 import ladybug_geometry.geometry3d.plane as plane
 import ladybug.futil as futil
+from honeybee_radiance_command.options import BoolOption, TupleOption, \
+    StringOptionJoined, NumericOption
 
 
-# TODO: Add support for move, rotate, etc.
 class View(object):
     u"""A Radiance view.
 
@@ -31,30 +32,24 @@ class View(object):
             print(g)
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl -0.500
-           -vo 100.000
+           0.000 -vh 29.341 -vv 32.204  -vs -0.500 -vl -0.500 -vo 100.000
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl -0.500
-           -vo 100.000
+           0.000 -vh 29.341 -vv 32.204 -vs 0.500 -vl -0.500 -vo 100.000
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-           0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs -0.500 -vl 0.500
-           -vo 100.000
+           0.000 -vh 29.341 -vv 32.204 -vs -0.500 -vl 0.500 -vo 100.000
 
         > -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 -vu 0.000 1.000
-          0.000 -vh 29.341 -vv 32.204 -x 300 -y 300 -vs 0.500 -vl 0.500
-          -vo 100.000
+          0.000 -vh 29.341 -vv 32.204 -vs 0.500 -vl 0.500 -vo 100.000
     """
 
-    VIEWTYPES = {0: 'vtv', 1: 'vth', 2: 'vtl', 3: 'vtc', 4: 'vta', 5: 'vts'}
-
-    def __init__(self, name, origin=None, direction=None, up_vector=None, type=0,
-                 h_size=60, v_size=60, shift=0, lift=0):
+    def __init__(self, name, position=None, direction=None, up_vector=None, type='v',
+                 h_size=60, v_size=60, shift=None, lift=None):
         u"""Create a view.
 
         Arg:
-            origin: Set the view origin location (-vp) to (x, y, z). This is the focal
+            position: Set the view position (-vp) to (x, y, z). This is the focal
                 point of a perspective view or the center of a parallel projection.
                 Default: (0, 0, 0)
             direction: Set the view direction (-vd) vector to (x, y, z). The
@@ -83,24 +78,32 @@ class View(object):
                 image will be shifted to the right of the specified view. This
                 option is useful for generating skewed perspectives or rendering
                 an image a piece at a time. A value of 1 means that the rendered
-                image starts just to the right of the normal view. A value of −1
+                image starts just to the right of the normal view. A value of -1
                 would be to the left. Larger or fractional values are permitted
                 as well.
             lift: Set the view lift (-vl) to a value. This is the amount the
-                actual image will be lifted up from the specified view.        
+                actual image will be lifted up from the specified view.
         """
         self.name = name
-        self.origin = origin
-        self.direction = direction
-        self.up_vector = up_vector
-        self.h_size = h_size
-        self.v_size = v_size
-        self.shift = shift
-        self.lift = lift
-        self.type = type
+        self._position = TupleOption(
+            'vp', 'view position', position if position is not None else (0, 0, 0)
+        )
+        self._direction = TupleOption(
+            'vd', 'view direction', direction if direction is not None else (0, 0, 1)
+        )
+        self._up_vector = TupleOption(
+            'vu', 'view up vector', up_vector if up_vector is not None else (0, 1, 0)
+        )
+        self._h_size = NumericOption('vh', 'view horizontal size', h_size, min_value=0)
+        self._v_size = NumericOption('vv', 'view vertical size', v_size, min_value=0)
+        self._shift = NumericOption('vs', 'view shift', shift)
+        self._lift =  NumericOption('vl', 'view lift', lift)
+        self._type = StringOptionJoined(
+            'vt', 'view type', type, valid_values=['v', 'h', 'l', 'c', 'a', 's']
+        )
         # set for_clip to None
-        self._fore_clip = None
-        self._aft_clip = None
+        self._fore_clip = NumericOption('vo', 'view fore clip')
+        self._aft_clip = NumericOption('va', 'view aft clip')
 
     @property
     def name(self):
@@ -112,27 +115,32 @@ class View(object):
         self._name = typing.valid_string(n)
 
     @property
-    def type(self):
-        """Set and get view type (-vt) to one of the choices below (0-5).
+    def is_fisheye(self):
+        """Check if the view type is one of the fisheye views."""
+        return self.type in ('h', 'a', 's')
 
-        0 - Perspective (v), 1 - Hemispherical fisheye (h),
-        2 - Parallel (l),    3 - Cylindrical panorma (c),
-        4 - Angular fisheye (a),
-        5 - Planisphere [stereographic] projection (s)
+    @property
+    def type(self):
+        """Set and get view type (-vt) to one of the choices below.
+
+        v - Perspective (v), h - Hemispherical fisheye (h),
+        l - Parallel (l),    c - Cylindrical panorma (c),
+        a - Angular fisheye (a),
+        s - Planisphere [stereographic] projection (s)
         """
         return self._type
 
     @property
     def vt(self):
-        """view type in radiance format."""
-        return self.VIEWTYPES[self._type]
+        """View type as a string in radiance format."""
+        return self._type.to_radiance()
 
     @type.setter
     def type(self, value):
-        self._type = typing.int_in_range(value, 0, 5)
+        self._type.value = value[-1:]  # this will handle both vtv and v inputs
 
         # set view size to 180 degrees for fisheye views
-        if self.type in (1, 4, 5):
+        if self.type in ('h', 'a', 's'):
             if self.h_size != 180:
                 self.h_size = 180
                 print("Changed h_size to 180 for fisheye view type.")
@@ -140,7 +148,7 @@ class View(object):
                 self.v_size = 180
                 print("Changed v_size to 180 for fisheye view type.")
 
-        elif self.type == 0:
+        elif self.type == 'v':
             assert self.h_size < 180, ValueError(
                 '\n{} is an invalid horizontal view size for Perspective view.\n'
                 'The size should be smaller than 180.'.format(self.h_size))
@@ -149,23 +157,22 @@ class View(object):
                 'The size should be smaller than 180.'.format(self.v_size))
 
     @property
-    def origin(self):
-        """Set the view origin (-vp) to (x, y, z).
+    def position(self):
+        """Set the view position (-vp) to (x, y, z).
 
         This is the focal point of a perspective view or the center of a parallel
         projection. Default: (0, 0, 0)
         """
-        return self._location
+        return self._position
 
     @property
     def vp(self):
-        """View point / origin."""
-        return '%.3f %.3f %.3f' % (self.origin.x, self.origin.y, self.origin.z)
+        """View point / position as a string in radiance format."""
+        return self._position.to_radiance()
 
-    @origin.setter
-    def origin(self, value):
-        self._location = pv.Point3D(*(float(v) for v in value)) \
-            if value is not None else pv.Point3D(0, 0, 0)
+    @position.setter
+    def position(self, value):
+        self._position.value = value
 
     @property
     def direction(self):
@@ -178,31 +185,29 @@ class View(object):
 
     @property
     def vd(self):
-        """View direction."""
-        return '%.3f %.3f %.3f' % (self.direction.x, self.direction.y, self.direction.z)
+        """View direction as a string in radiance format."""
+        return self._direction.to_radiance()
 
     @direction.setter
     def direction(self, value):
-        self._direction = pv.Vector3D(*(float(v) for v in value)) \
-            if value is not None else pv.Vector3D(0, 0, 1)
+        self._direction.value = value
 
     @property
     def up_vector(self):
-        return self._up_vector
-
-    @up_vector.setter
-    def up_vector(self, value):
-        """Set the view up (-vu) vector (vertical direction) to (x, y, z)
+        """Set and get the view up (-vu) vector (vertical direction) to (x, y, z)
 
         Default: (0, 1, 0).
         """
-        self._up_vector = pv.Vector3D(*(float(v) for v in value)) \
-            if value is not None else pv.Vector3D(0, 1, 0)
+        return self._up_vector
 
     @property
     def vu(self):
-        """View up."""
-        return '%.3f %.3f %.3f' % (self.up_vector.x, self.up_vector.y, self.up_vector.z)
+        """View up as a string in radiance format."""
+        return self._up_vector.to_radiance()
+
+    @up_vector.setter
+    def up_vector(self, value):
+        self._up_vector.value = value
 
     @property
     def h_size(self):
@@ -216,12 +221,12 @@ class View(object):
 
     @property
     def vh(self):
-        """View horizontal size."""
-        return str(self.h_size)
+        """View horizontal size as a string in radiance format."""
+        return self._h_size.to_radiance()
 
     @h_size.setter
     def h_size(self, value):
-        self._h_size = typing.float_positive(value) if value is not None else 0
+        self._h_size.value = value if value is not None else 60
 
     @property
     def v_size(self):
@@ -235,12 +240,12 @@ class View(object):
 
     @property
     def vv(self):
-        """View vertical size."""
-        return str(self.v_size)
+        """View vertical size as a string in radiance format."""
+        return self.v_size.to_radiance()
 
     @v_size.setter
     def v_size(self, value):
-        self._v_size = typing.float_positive(value) if value is not None else 0
+        self._v_size.value = value if value is not None else 60
 
     @property
     def shift(self):
@@ -249,19 +254,19 @@ class View(object):
         This is the amount the actual image will be shifted to the right of the specified
         view. This option is useful for generating skewed perspectives or rendering an
         image a piece at a time. A value of 1 means that the rendered image starts just
-        to the right of the normal view. A value of −1 would be to the left. Larger or
+        to the right of the normal view. A value of -1 would be to the left. Larger or
         fractional values are permitted as well.
         """
         return self._shift
 
     @property
     def vs(self):
-        """View shift."""
-        return str(self.shift)
+        """View shift as a string in radiance format."""
+        return self._shift.to_radiance()
 
     @shift.setter
     def shift(self, value):
-        self._shift = float(value) if value is not None else 0
+        self._shift.value = value
 
     @property
     def lift(self):
@@ -273,12 +278,12 @@ class View(object):
 
     @property
     def vl(self):
-        """View lift."""
-        return str(self.lift)
+        """View lift as a string in radiance format."""
+        return self.lift.to_radiance()
 
     @lift.setter
     def lift(self, value):
-        self._lift = float(value) if value is not None else 0
+        self._lift.value = value
 
     @property
     def fore_clip(self):
@@ -297,12 +302,12 @@ class View(object):
 
     @property
     def vo(self):
-        """View fore clip."""
-        return str(self.fore_clip)
+        """View fore clip as a string in radiance format."""
+        return self._fore_clip.to_radiance()
 
     @fore_clip.setter
     def fore_clip(self, distance):
-        self._fore_clip = float(distance) if distance is not None else 0
+        self._fore_clip.value = distance
 
     @property
     def aft_clip(self):
@@ -320,12 +325,12 @@ class View(object):
 
     @property
     def va(self):
-        """View aft clip."""
-        return str(self.aft_clip)
+        """View aft clip as a string in radiance format."""
+        return self._aft_clip.to_radiance()
 
     @aft_clip.setter
     def aft_clip(self, distance):
-        self._aft_clip = float(distance) if distance is not None else 0
+        self._aft_clip.value = distance
 
     @classmethod
     def from_dict(cls, view_dict):
@@ -333,7 +338,7 @@ class View(object):
 
         view = cls(
             name=view_dict['name'],
-            origin=view_dict['origin'],
+            position=view_dict['position'],
             direction=view_dict['direction'],
             up_vector=view_dict['up_vector'],
             h_size=view_dict['h_size'],
@@ -342,11 +347,9 @@ class View(object):
             lift=view_dict['lift'],
         )
 
-        if view_dict['fore_clip'] is not None:
-            view.fore_clip = view_dict['fore_clip']
-        if view_dict['aft_clip'] is not None:
-            view.aft_clip = view_dict['aft_clip']
-        
+        view.fore_clip = view_dict['fore_clip']
+        view.aft_clip = view_dict['aft_clip']
+
         return view
 
     @classmethod
@@ -356,17 +359,15 @@ class View(object):
         This method is similar to from_string method for radiance parameters with the
         difference that all the parameters that are not related to view will be ignored.
         """
-        view_mapper = {k:v for v, k in cls.VIEWTYPES.items()}
-
         mapper = {
-            'name': name, 'vp': 'origin', 'vd': 'direction', 'vu': 'up_vector',
+            'name': name, 'vp': 'position', 'vd': 'direction', 'vu': 'up_vector',
             'vh': 'h_size', 'vv': 'v_size', 'vs': 'shift', 'vl': 'lift',
             'vo': 'fore_clip', 'va': 'aft_clip'
         }
 
         base = {
             'name': name,
-            'origin': None,
+            'position': None,
             'direction': None,
             'up_vector': None, 
             'h_size': None,
@@ -385,7 +386,7 @@ class View(object):
             if opt in mapper:
                 base[mapper[opt]] = value
             elif opt[:2] == 'vt':
-                base['type'] = view_mapper[opt]
+                base['type'] = opt
             else:
                 print('%s is not a view parameter and is ignored.' % opt)
 
@@ -420,7 +421,10 @@ class View(object):
         """
         x, y = self.dimension_x_y(x_res, y_res)
         return '-x %d -y %d -ld%s' % (
-            x, y, '-' if (self.fore_clip is None and self.aft_clip is None) else '+')
+            x, y,
+            '-' if (self.fore_clip.to_radiance() + self.aft_clip.to_radiance() == '')
+            else '+'
+        )
 
     def dimension_x_y(self, x_res=None, y_res=None):
         """Get dimensions for this view as x, y.
@@ -431,13 +435,13 @@ class View(object):
         x_res = int(x_res) if x_res is not None else 512
         y_res = int(y_res) if y_res is not None else 512
 
-        if self.type in (1, 4, 5):
+        if self.is_fisheye:
             return min(x_res, y_res), min(x_res, y_res)
 
-        vh = self.h_size
-        vv = self.v_size
+        vh = self.h_size.value
+        vv = self.v_size.value
 
-        if self.type == 0:
+        if self.type == 'v':
             hv_ratio = math.tan(math.radians(vh) / 2.0) / \
                 math.tan(math.radians(vv) / 2.0)
         else:
@@ -487,19 +491,19 @@ class View(object):
 
         _views = list(range(x_div_count * y_div_count))
 
-        if self.type == 2:
+        if self.type == 'l':
             # parallel view (vtl)
             _vh = self.h_size / x_div_count
             _vv = self.v_size / y_div_count
 
-        elif self.type == 0:
+        elif self.type == 'v':
             # perspective (vtv)
             _vh = (2. * 180. / PI) * \
                 math.atan(((PI / 180. / 2.) * self.h_size) / x_div_count)
             _vv = (2. * 180. / PI) * \
                 math.atan(math.tan((PI / 180. / 2.) * self.v_size) / y_div_count)
 
-        elif self.type in [1, 4, 5]:
+        elif self.is_fisheye:
             # fish eye
             _vh = (2. * 180. / PI) * \
                 math.asin(math.sin((PI / 180. / 2.) * self.h_size) / x_div_count)
@@ -507,7 +511,7 @@ class View(object):
                 math.asin(math.sin((PI / 180. / 2.) * self.v_size) / y_div_count)
 
         else:
-            print("Grid views are not supported for %s." % self.type)
+            print("Grid views are not supported for %s." % self.type.to_radiance())
             return [self]
 
         # create a set of new views
@@ -542,38 +546,28 @@ class View(object):
     def to_radiance(self):
         """Return full Radiance definition as a string."""
         # create base information of view
-        view = '-%s -vp %s -vd %s -vu %s' % (self.vt, self.vp, self.vd, self.vu)
-        # view size properties
-        viewSize = '-vh %.3f -vv %.3f' % (self.h_size, self.v_size)
+        view_options = ' '.join((
+            self.vt, self.vp, self.vd, self.vu,
+            self.vh, self.vv, self.vs, self.vl,
+            self.vo, self.va
+        ))
 
-        components = [view, viewSize]
-
-        # add lift and shift if not 0
-        if self.lift != 0 or self.shift != 0:
-            components.append('-vs %.3f -vl %.3f' % (self.shift, self.lift))
-
-        if self.fore_clip is not None:
-            components.append('-vo %.3f' % self.fore_clip)
-
-        if self.aft_clip is not None:
-            components.append('-va %.3f' % self.aft_clip)
-
-        return ' '.join(components)
+        return ' '.join(view_options.split())  # remove white spaces
 
     def to_dict(self):
         """Translate view to a dictionary."""
         return {
             'name': self.name,
-            'origin': self.origin.to_dict(),
-            'direction': self.direction.to_dict(),
-            'up_vector': self.up_vector.to_dict(), 
-            'h_size': self.h_size,
-            'v_size': self.v_size, 
-            'shift': self.shift,
-            'lift': self.lift,
-            'type': self.type, 
-            'fore_clip': self.fore_clip,
-            'aft_clip': self.aft_clip
+            'position': self.position.value,
+            'direction': self.direction.value,
+            'up_vector': self.up_vector.value, 
+            'h_size': self.h_size.value,
+            'v_size': self.v_size.value, 
+            'shift': self.shift.value,
+            'lift': self.lift.value,
+            'type': self.type.value, 
+            'fore_clip': self.fore_clip.value,
+            'aft_clip': self.aft_clip.value
         }
 
     def to_file(self, folder, file_name=None, mkdir=False):
@@ -596,22 +590,27 @@ class View(object):
 
     def move(self, vector):
         """Move view."""
-        self.origin = self.origin.move(pv.Vector3D(*vector))
+        position = pv.Point3D(*self.position)
+        self.position = tuple(position.move(pv.Vector3D(*vector)))
 
-    def rotate(self, angle, axis, origin):
+    def rotate(self, angle, axis=None, position=None):
         """Rotate view around an axis.
 
         Args:
             angle: Rotation angle in radians.
             axis: Rotation axis as a Vector3D (Default: self.up_vector).
-            origin: Rotation origin point as a Point3D (Default: self.origin)
+            position: Rotation position point as a Point3D (Default: self.position)
         """
-        view_plane = plane.Plane(self.up_vector, self.origin, self.direction)
-        axis = pv.Vector3D(*axis) or self.up_vector
-        origin = pv.Point3D(*origin) or self.origin
+        view_up_vector = pv.Vector3D(*self.up_vector)
+        view_position = pv.Point3D(*self.position)
+        view_direction = pv.Vector3D(*self.direction)
+        view_plane = plane.Plane(n=view_up_vector, o=view_position, x=view_direction)
+        axis = pv.Vector3D(*axis) or view_up_vector
+        position = pv.Point3D(*position) or view_position
         
-        rotated_plane = view_plane.rotate(axis, angle, origin)
-        self.origin = rotated_plane.o
+        rotated_plane = view_plane.rotate(axis, angle, position)
+
+        self.position = rotated_plane.o
         self.direction = rotated_plane.x
         self.up_vector = rotated_plane.n
 

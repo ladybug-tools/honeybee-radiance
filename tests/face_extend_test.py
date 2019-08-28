@@ -1,6 +1,6 @@
 """Tests for features add to honeybee by honeybee_radiance."""
 from honeybee.face import Face
-from honeybee_radiance.properties import RadianceProperties
+from honeybee_radiance.properties import FaceRadianceProperties
 
 
 face = Face.from_vertices(
@@ -9,8 +9,7 @@ face = Face.from_vertices(
 
 def test_radiance_properties():
     assert hasattr(face.properties, 'radiance')
-    assert isinstance(face.properties.radiance, RadianceProperties)
-    assert face.properties.radiance.modifier == None
+    assert isinstance(face.properties.radiance, FaceRadianceProperties)
 
 
 def test_writer_to_rad():

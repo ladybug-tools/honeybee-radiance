@@ -1,16 +1,19 @@
-from honeybee_radiance.properties import RadianceProperties
-from honeybee.facetype import face_types
-from honeybee.boundarycondition import boundary_conditions
+from honeybee.face import Face
+from honeybee_radiance.properties import FaceRadianceProperties
+from honeybee_radiance.lib.modifiers import generic_exterior_wall
+
+
+face = Face.from_vertices(
+    'wall_face', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
 
 
 def test_defaults():
-    rp = RadianceProperties(face_types.wall, boundary_conditions.outdoors)
-    assert rp.modifier == None
-    assert rp._boundary_condition.name == 'Outdoors'
+    rp = FaceRadianceProperties(face)
+    assert rp.modifier == generic_exterior_wall
 
 
 def test_to_dict():
-    rp = RadianceProperties(face_types.wall, boundary_conditions.outdoors)
+    rp = FaceRadianceProperties(face)
     rp_dict = rp.to_dict()
     assert 'radiance' in rp_dict
     assert 'modifier' in rp_dict['radiance']

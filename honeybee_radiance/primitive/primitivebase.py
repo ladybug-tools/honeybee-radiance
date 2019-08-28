@@ -6,12 +6,13 @@ and honeybee.radiance.geometry
 
 http://radsite.lbl.gov/radiance/refer/ray.html
 """
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 from honeybee_radiance.parser import string_to_dicts
 
 
 class Void(object):
     """Void modifier."""
+    __slots__ = ()
 
     @property
     def name(self):
@@ -339,8 +340,9 @@ class Primitive(object):
 
         return ' '.join(output) if minimal else '\n'.join(output)
 
-    # add string format for float values
-    def to_radiance(self, minimal=False, include_modifier=True, include_dependencies=True):
+    # TODO: add string format for float values
+    def to_radiance(self, minimal=False, include_modifier=True,
+            include_dependencies=True):
         """Return full radiance definition."""
         output = []
 
@@ -354,6 +356,7 @@ class Primitive(object):
 
         return '\n'.join(output)
 
+    # TODO: make it consistent with radiance-energy implementation
     def to_dict(self):
         """Translate radiance primitive to json
         {

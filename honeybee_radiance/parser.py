@@ -2,6 +2,7 @@
 import re
 import os
 import collections
+from honeybee_radiance_command.cutil import parse_radiance_options
 
 
 # TODO: Add support for comments [#] and commands [!]
@@ -150,34 +151,36 @@ def string_to_dict(string):
         'dependencies': []
     }
 
-_rad_opt_pattern = r'-[a-zA-Z]+'
-_rad_opt_compiled_pattern = re.compile(_rad_opt_pattern)
 
-def parse_radiance_options(string):
-    """Parse a radiance options string (e.g. '-ab 4 -ad 256').
+def parse_header(filepath):
+    """Return radiance file header if exist.
 
-    The string should start with a '-' otherwise it will be trimmed to the first '-' in
-    string.
+    This method returns all the lines between `#?RADIANCE` and `FORMAT=*` and number of
+    header lines including the white line after last header line.
+    
+    Args:
+        filepath: Full path to Radiance file.
+    
+    Returns:
+        line_count, header as a single multiline string
     """
     try:
-        index = string.index('-')
-    except ValueError:
-        raise ValueError(
-            'Invalid Radiance options string input. Failed to find - in input string.'
-        )
-
-    sub_string = ' '.join(string[index:].split())
-    value = re.split(_rad_opt_compiled_pattern, sub_string)[1:]
-    key = re.findall(_rad_opt_pattern, sub_string)
-
-    options = collections.OrderedDict()
-    for k, v in zip(key, value):
-        values = v.split()
-        count = len(values)
-        if count == 0:
-            values = ''
-        elif count == 1:
-            values = values[0]
-        options[k[1:]] = values
-    
-    return options
+        inf = open(filepath, 'r', encoding='utf-8')
+    except:
+        #python 2
+        inf = open(filepath, 'r')
+    try:
+        first_line = next(inf)
+        if first_line[:10] != '#?RADIANCE':
+            raise ValueError(
+                'File with Radiance header must start with #?RADIANCE '
+                'not {}.'.format(first_line)
+                )
+        header_lines =[first_line]
+        for line in inf:
+            header_lines.append(line)
+            if line[:7] == 'FORMAT=':
+                break
+        return len(header_lines) + 1, '\n'.join(header_lines)
+    finally:
+        inf.close()

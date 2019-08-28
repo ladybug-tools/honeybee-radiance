@@ -4,7 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 import math
 from .materialbase import Material
-import honeybee_radiance.typing as typing
+import honeybee.typing as typing
 
 
 class Glass(Material):
@@ -65,8 +65,9 @@ class Glass(Material):
         return self._r_transmissivity
 
     @r_transmissivity.setter
-    def r_transmissivity(self, transmittance):
-        self._r_transmissivity = typing.float_in_range(transmittance, 0, 1)
+    def r_transmissivity(self, transmissivity):
+        self._r_transmissivity = \
+            typing.float_in_range(transmissivity, 0, 1, 'red transmissivity')
 
     @property
     def g_transmissivity(self):
@@ -77,8 +78,9 @@ class Glass(Material):
         return self._g_transmissivity
 
     @g_transmissivity.setter
-    def g_transmissivity(self, transmittance):
-        self._g_transmissivity = typing.float_in_range(transmittance, 0, 1)
+    def g_transmissivity(self, transmissivity):
+        self._g_transmissivity = \
+            typing.float_in_range(transmissivity, 0, 1, 'green transmissivity')
 
     @property
     def b_transmissivity(self):
@@ -89,8 +91,9 @@ class Glass(Material):
         return self._b_transmissivity
 
     @b_transmissivity.setter
-    def b_transmissivity(self, transmittance):
-        self._b_transmissivity = typing.float_in_range(transmittance, 0, 1)
+    def b_transmissivity(self, transmissivity):
+        self._b_transmissivity = \
+            typing.float_in_range(transmissivity, 0, 1, 'blue transmissivity')
 
     @property
     def refraction_index(self):
