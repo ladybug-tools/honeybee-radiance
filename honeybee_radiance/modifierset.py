@@ -6,7 +6,9 @@ from honeybee_radiance.lib.modifiers import (
     generic_exterior_wall, generic_interior_wall,
     generic_roof, generic_ceiling,
     generic_floor, air_wall,
-    generic_exterior_glass, generic_interior_glass
+    generic_exterior_glass, generic_interior_glass,
+    generic_exterior_glass_door, generic_interior_glass_door, generic_opaque_door,
+    generic_exterior_shade, generic_interior_shade
 )
 from honeybee._lockable import lockable
 import honeybee.typing as typing
@@ -29,13 +31,19 @@ _default_modifiers = {
     'ApertureSet': {
         'exterior': generic_exterior_glass,
         'interior': generic_interior_glass,
-        'skylight': generic_exterior_glass,
-        'glass_door': generic_exterior_glass
+        'operable': generic_interior_glass,
+        'skylight': generic_exterior_glass
     },
     'DoorSet': {
-        'exterior': generic_exterior_wall,
-        'interior': generic_interior_wall,
-        'overhead': generic_interior_wall
+        'exterior': generic_opaque_door,
+        'interior': generic_opaque_door,
+        'exterior_glass': generic_exterior_glass_door,
+        'interior_glass': generic_interior_glass_door,
+        'overhead': generic_opaque_door
+    },
+    'ShadeSet': {
+        'exterior': generic_exterior_shade,
+        'interior': generic_interior_shade
     }
 }
 
@@ -134,8 +142,7 @@ class _BaseSet(object):
         if value is not None:
             assert isinstance(value, Primitive) and value.can_be_modifier , \
                 'Expected modifier. Got {}'.format(type(value))
-            # TODO: This should be uncommented once this is addressed
-            # 
+            # TODO: Remove the comment once lockable is implemented
             # value.lock()   # lock editing in case modifier has multiple references
         return value
 
@@ -218,34 +225,56 @@ class ApertureSet(_BaseSet):
     """Set containing all radiance modifiers needed to for a radiance model's Apertures.
 
     Properties:
-        exterior_modifier
+        window_modifier
         interior_modifier
         skylight_modifier
-        glass_door_modifier
+        operable_modifier
         modifiers
         modified_modifiers
         is_modified
     """
-    __slots__ = ('_skylight_modifier', '_glass_door_modifier')
+    __slots__ = ('_skylight_modifier', '_operable_modifier')
 
-    def __init__(self, exterior_modifier=None, interior_modifier=None,
-                 skylight_modifier=None, glass_door_modifier=None):
+    def __init__(self, window_modifier=None, interior_modifier=None,
+                 skylight_modifier=None, operable_modifier=None):
         """Initialize aperture set.
 
         Args:
-            exterior_modifier: A window modifier object for apertures
-                with an Outdoors boundary condition.
+            window_modifier: A window modifier object for apertures
+                with an Outdoors boundary condition and Wall parent Face.
             interior_modifier: A window modifier object for apertures
                 with a Surface boundary condition.
             skylight_modifier: : A window modifier object for apertures with a
                 Outdoors boundary condition, and RoofCeiling or Floor face type for
                 their parent face.
-            glass_door_modifier: A window modifier object for apertures
-                with an Outdoors boundary condition and GlassDoor aperture type.
+            operable_modifier: A window modifier object for apertures
+                with an Outdoors boundary condition and a True is_operable property.
         """
-        _BaseSet.__init__(self, exterior_modifier, interior_modifier)
+        _BaseSet.__init__(self, window_modifier, interior_modifier)
         self.skylight_modifier = skylight_modifier
-        self.glass_door_modifier = glass_door_modifier
+        self.operable_modifier = operable_modifier
+
+    @property
+    def window_modifier(self):
+        """Get or set the modifier for glass doors."""
+        if self._exterior_modifier is None:
+            return _default_modifiers[self.__class__.__name__]['exterior']
+        return self._exterior_modifier
+
+    @window_modifier.setter
+    def window_modifier(self, value):
+        self._exterior_modifier = self._validate_modifier(value)
+
+    @property
+    def operable_modifier(self):
+        """Get or set the modifier for operable window."""
+        if self._operable_modifier is None:
+            return _default_modifiers[self.__class__.__name__]['operable']
+        return self._operable_modifier
+
+    @operable_modifier.setter
+    def operable_modifier(self, value):
+        self._operable_modifier = self._validate_modifier(value)
 
     @property
     def skylight_modifier(self):
@@ -258,17 +287,6 @@ class ApertureSet(_BaseSet):
     def skylight_modifier(self, value):
         self._skylight_modifier = self._validate_modifier(value)
 
-    @property
-    def glass_door_modifier(self):
-        """Get or set the modifier for glass doors."""
-        if self._glass_door_modifier is None:
-            return _default_modifiers[self.__class__.__name__]['glass_door']
-        return self._glass_door_modifier
-
-    @glass_door_modifier.setter
-    def glass_door_modifier(self, value):
-        self._glass_door_modifier = self._validate_modifier(value)
-
     # TODO: make a decision on validating aperture modifiers
     # though technically it should only be a material that light can go through
     # there are cases that one might need to set the aperture to a black wall
@@ -279,8 +297,7 @@ class ApertureSet(_BaseSet):
         if value is not None:
             assert isinstance(value, Primitive) and value.can_be_modifier , \
                 'Expected modifier. Got {}'.format(type(value))
-            # TODO: This should be uncommented once this is addressed
-            # 
+            # TODO: Remove the comment once lockable is implemented
             # value.lock()   # lock editing in case modifier has multiple references
         return value
 
@@ -292,7 +309,7 @@ class ApertureSet(_BaseSet):
             self._exterior_modifier,
             self._interior_modifier,
             self._skylight_modifier,
-            self._glass_door_modifier
+            self._operable_modifier
         )
 
     def __repr__(self):
@@ -314,14 +331,18 @@ class DoorSet(_BaseSet):
     Properties:
         exterior_modifier
         interior_modifier
+        exterior_glass_modifier
+        interior_glass_modifier
         overhead_modifier
         modifiers
         modified_modifiers
         is_modified
     """
-    __slots__ = ('_overhead_modifier',)
+    __slots__ = ('_overhead_modifier', '_exterior_glass_modifier',
+                 '_interior_glass_modifier')
 
     def __init__(self, exterior_modifier=None, interior_modifier=None,
+                 exterior_glass_modifier=None, interior_glass_modifier=None,
                  overhead_modifier=None):
         """Initialize aperture set.
 
@@ -330,12 +351,38 @@ class DoorSet(_BaseSet):
                 with an Outdoors boundary condition.
             interior_modifier: A window modifier object for apertures
                 with a Surface boundary condition.
+            exterior_glass_modifier:
+            interior_glass_modifier:
             overhead_modifier: : A window modifier object for doors with an
                 Outdoors boundary condition and a RoofCeiling or Floor face type for
                 their parent face.
         """
         _BaseSet.__init__(self, exterior_modifier, interior_modifier)
+        self.exterior_glass_modifier = exterior_glass_modifier
+        self.interior_glass_modifier = interior_glass_modifier
         self.overhead_modifier = overhead_modifier
+
+    @property
+    def exterior_glass_modifier(self):
+        """Get or set the modifier for exterior glass doors."""
+        if self._exterior_glass_modifier is None:
+            return _default_modifiers[self.__class__.__name__]['exterior_glass']
+        return self._exterior_glass_modifier
+
+    @exterior_glass_modifier.setter
+    def exterior_glass_modifier(self, value):
+        self._exterior_glass_modifier = self._validate_modifier(value)
+
+    @property
+    def interior_glass_modifier(self):
+        """Get or set the modifier for interior glass doors."""
+        if self._interior_glass_modifier is None:
+            return _default_modifiers[self.__class__.__name__]['interior_glass']
+        return self._interior_glass_modifier
+
+    @interior_glass_modifier.setter
+    def interior_glass_modifier(self, value):
+        self._interior_glass_modifier = self._validate_modifier(value)
 
     @property
     def overhead_modifier(self):
@@ -370,6 +417,20 @@ class DoorSet(_BaseSet):
 
 
 @lockable
+class ShadeSet(_BaseSet):
+    """Set containing all radiance modifiers needed to for an radiance model's Shade.
+
+    Properties:
+        exterior_modifier
+        interior_modifier
+        modifiers
+        modified_modifiers
+        is_modified
+    """
+    __slots__ = ()
+
+
+@lockable
 class ModifierSet(object):
     """Set containting all radiance modifiers to create a radiance model.
 
@@ -382,6 +443,7 @@ class ModifierSet(object):
         roof_ceiling_set
         aperture_set
         door_set
+        shade_set
         modifiers
         modified_modifiers
         unique_modifiers
@@ -389,10 +451,10 @@ class ModifierSet(object):
     """
 
     __slots__ = ('_name', '_wall_set', '_floor_set', '_roof_ceiling_set',
-        '_aperture_set', '_door_set', '_locked')
+        '_aperture_set', '_door_set', '_shade_set', '_locked')
 
     def __init__(self, name, wall_set=None, floor_set=None, roof_ceiling_set=None,
-                 aperture_set=None, door_set=None):
+                 aperture_set=None, door_set=None, shade_set=None):
         """Initialize radiance modifier set.
 
         Args:
@@ -407,6 +469,8 @@ class ModifierSet(object):
                 If None, it will be the honeybee generic default ApertureSet.
             door_set: An optional DoorSet object for this ModifierSet.
                 If None, it will be the honeybee generic default DoorSet.
+            shade_set: An optional ShadeSet object for this ModifierSet.
+                If None, it will be the honeybee generic default ShadeSet.
         """
         self._locked = False  # unlocked by default
         self.name = name
@@ -415,6 +479,7 @@ class ModifierSet(object):
         self.roof_ceiling_set = roof_ceiling_set
         self.aperture_set = aperture_set
         self.door_set = door_set
+        self.shade_set = shade_set
 
     @property
     def name(self):
@@ -496,13 +561,28 @@ class ModifierSet(object):
             self._door_set = DoorSet()
 
     @property
+    def shade_set(self):
+        """Get or set the ShadeSet assigned to this ModifierSet."""
+        return self._shade_set
+
+    @shade_set.setter
+    def shade_set(self, value):
+        if value is not None:
+            assert isinstance(value, ShadeSet), \
+                'Expected ShadeSet. Got {}'.format(type(value))
+            self._shade_set = value
+        else:
+            self._shade_set = ShadeSet()
+
+    @property
     def modifiers(self):
         """List of all modifiers contained within the set."""
         return self.wall_set.modifiers + \
             self.floor_set.modifiers + \
             self.roof_ceiling_set.modifiers + \
             self.aperture_set.modifiers + \
-            self.door_set.modifiers
+            self.door_set.modifiers + \
+            self.shade_set.modifiers
 
     @property
     def modified_modifiers(self):
@@ -511,7 +591,8 @@ class ModifierSet(object):
             self.floor_set.modified_modifiers + \
             self.roof_ceiling_set.modified_modifiers + \
             self.aperture_set.modified_modifiers + \
-            self.door_set.modified_modifiers
+            self.door_set.modified_modifiers + \
+            self.shade_set.modified_modifiers
 
     @property
     def unique_modifiers(self):
@@ -544,28 +625,24 @@ class ModifierSet(object):
             raise NotImplementedError(
                 'Face type {} is not recognized for ModifierSet'.format(face_type))
 
-    def get_aperture_modifier(self, boundary_condition, aperture_type, parent_face_type):
+    def get_aperture_modifier(self, boundary_condition, is_operable, parent_face_type):
         """Get a modifier object that will be assigned to a given type of aperture.
 
         Args:
             boundary_condition: Text string for the boundary condition
                 (eg. 'Outdoors', 'Surface')
-            aperture_type: Text string for the type of aperture
-                (eg. 'Window', 'OperableWindow', 'GlassDoor').
+            is_operable: Boolean to note whether the aperture is operable.
             parent_face_type: Text string for the type of face to which the aperture
                 is a child (eg. 'Wall', 'Floor', 'Roof').
         """
         if boundary_condition == 'Outdoors':
-            if aperture_type in ('Window', 'OperableWindow'):
+            if not is_operable:
                 if parent_face_type == 'Wall':
-                    return self.aperture_set.exterior_window_modifier
+                    return self.aperture_set.window_modifier
                 else:
                     return self.aperture_set.skylight_modifier
-            elif aperture_type == 'GlassDoor':
-                return self.aperture_set.glass_door_modifier
             else:
-                raise NotImplementedError('Aperture type {} is not recognized for '
-                                          'ModifierSet'.format(aperture_type))
+                return self.aperture_set.operable_modifier
         elif boundary_condition == 'Surface':
             return self.aperture_set.interior_modifier
         else:
@@ -594,6 +671,18 @@ class ModifierSet(object):
                 'Boundary condition {} is not recognized for doors in '
                 'ModifierSet'.format(boundary_condition)
                 )
+
+    def get_shade_modifier(self, exterior=True):
+        """Get a modifier object that will be assigned to a shade.
+
+        Args:
+            boundary_condition: A boolean to indicate if the shade is an exterior or and
+            interior shade (Default: True).
+        """
+        if exterior:
+            return self.shade_set.exterior_modifier
+        else:
+            return self.shade_set.interior_modifier
 
     @classmethod
     def from_dict(cls, data):
@@ -635,6 +724,7 @@ class ModifierSet(object):
         base['roof_ceiling_set'] = self.roof_ceiling_set._to_dict(none_for_defaults)
         base['aperture_set'] = self.aperture_set._to_dict(none_for_defaults)
         base['door_set'] = self.door_set._to_dict(none_for_defaults)
+        base['shade_set'] = self.shade_set._to_dict(none_for_defaults)
 
         if not abridged:
             modifiers = self.unique_modified_modifiers if none_for_defaults \
@@ -655,6 +745,7 @@ class ModifierSet(object):
         self._roof_ceiling_set._locked = True
         self._aperture_set._locked = True
         self._door_set._locked = True
+        self._shade_set._locked = True
 
     def unlock(self):
         """The unlock() method will also unlock the WallSet, FloorSet, etc."""
@@ -664,6 +755,7 @@ class ModifierSet(object):
         self._roof_ceiling_set._locked = False
         self._aperture_set._locked = False
         self._door_set._locked = False
+        self._shade_set._locked = False
 
     def _get_modifier_from_set(self, face_type_set, boundary_condition):
         """Get a specific modifier from a face_type_set."""
@@ -688,7 +780,8 @@ class ModifierSet(object):
             self.floor_set.duplicate(),
             self.roof_ceiling_set.duplicate(),
             self.aperture_set.duplicate(),
-            self.door_set.duplicate()
+            self.door_set.duplicate(),
+            self.shade_set.duplicate()
         )
 
     def __eq__(self, other):
