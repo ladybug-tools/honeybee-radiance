@@ -7,14 +7,14 @@ import pytest
 
 
 def test_modifierset_init():
-    """Test the initalization of ModifierSet and basic properties."""
+    """Test the initialization of ModifierSet and basic properties."""
     default_set = ModifierSet('Default Set')
 
     str(default_set)  # test the string representation of the modifier
 
     assert default_set.name == 'DefaultSet'
-    assert len(default_set.modifiers) == 13
-    assert len(default_set.unique_modifiers) == 7
+    assert len(default_set.modifiers) == 17
+    assert len(default_set.unique_modifiers) == 10
     assert len(default_set.unique_modified_modifiers) == 0
 
     assert isinstance(default_set.wall_set, WallSet)
@@ -55,7 +55,7 @@ def test_modifierset_defaults():
     assert isinstance(default_set.aperture_set.interior_modifier, Primitive)
     assert isinstance(default_set.aperture_set.skylight_modifier, Primitive)
     assert isinstance(default_set.aperture_set.exterior_modifier, Primitive)
-    assert isinstance(default_set.aperture_set.glass_door_modifier, Primitive)
+    assert isinstance(default_set.aperture_set.window_modifier, Primitive)
     assert isinstance(default_set.door_set.exterior_modifier, Primitive)
     assert isinstance(default_set.door_set.interior_modifier, Primitive)
     assert isinstance(default_set.door_set.overhead_modifier, Primitive)
@@ -106,8 +106,8 @@ def test_setting_aperture_modifier():
     assert default_set.aperture_set.skylight_modifier == glass_material_dark
     default_set.aperture_set.exterior_modifier = glass_material
     assert default_set.aperture_set.exterior_modifier == glass_material
-    default_set.aperture_set.glass_door_modifier = glass_material_dark
-    assert default_set.aperture_set.glass_door_modifier == glass_material_dark
+    default_set.aperture_set.window_modifier = glass_material_dark
+    assert default_set.aperture_set.window_modifier == glass_material_dark
 
     assert len(default_set.unique_modified_modifiers) == 2
 
@@ -142,7 +142,8 @@ def test_modifierset_to_dict_full():
     assert modifier_dict['aperture_set']['interior_modifier'] is not None
     assert modifier_dict['aperture_set']['skylight_modifier'] is not None
     assert modifier_dict['aperture_set']['exterior_modifier'] is not None
-    assert modifier_dict['aperture_set']['glass_door_modifier'] is not None
     assert modifier_dict['door_set']['exterior_modifier'] is not None
     assert modifier_dict['door_set']['interior_modifier'] is not None
     assert modifier_dict['door_set']['overhead_modifier'] is not None
+    assert modifier_dict['shade_set']['exterior_modifier'] is not None
+    assert modifier_dict['shade_set']['interior_modifier'] is not None

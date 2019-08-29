@@ -1,5 +1,5 @@
 """Radiance Properties."""
-from honeybee_radiance.lib.modifierset import generic_modifier_set
+from honeybee_radiance.lib.modifierset import generic_modifier_set_visible
 
 
 class FaceRadianceProperties(object):
@@ -36,7 +36,7 @@ class FaceRadianceProperties(object):
             return modifier_set.get_face_modifier(
                 self._host.type.name, self._host.boundary_condition.name)
         else:
-            return generic_modifier_set.get_face_modifier(
+            return generic_modifier_set_visible.get_face_modifier(
                 self._host.type.name, self._host.boundary_condition.name)
 
     @modifier.setter
