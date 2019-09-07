@@ -1,2 +1,2 @@
-honeybee-core
+honeybee-core>=1.7.0
 honeybee-radiance-command

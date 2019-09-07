@@ -56,8 +56,8 @@ def merge_grid(input_folder, base_name, extension, folder):
     \b
     Args:
         input_folder: Input folder.
-        base_name: File base name. All the file must star with base name and continue
-            with _ and integer values.
+        base_name: File base name. All of the files must start with base name and
+            continue with _ and an integer values.
         extension: File extention. [Default: .pts]
     """
     try:
