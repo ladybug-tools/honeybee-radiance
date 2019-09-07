@@ -141,6 +141,11 @@ class SensorGrid(object):
         """Return a list of sensors."""
         return self._sensors
 
+    @property
+    def count(self):
+        """Number of sensors."""
+        return len(self._sensors)
+
     def duplicate(self):
         """Duplicate SensorGrid."""
         return SensorGrid(self.name, (sen.duplicate() for sen in self.sensors))
@@ -164,6 +169,49 @@ class SensorGrid(object):
         name = file_name or self.name + '.pts'
         return futil.write_to_file_by_name(
             folder, name, self.to_radiance() + '\n', mkdir)
+
+    def to_files(self, folder, count, base_name=None, mkdir=False, full_path=False):
+        """Split this sensor grid and write them to several files.
+
+        Args:
+            folder: Target folder.
+            count: Number of files.
+            base_name: Optional name for base_name for sensor files (Default: self.name).
+            mkdir: A boolean to indicate if the folder should be created in case it
+                doesn't exist already (Default: False).
+            full_path: A boolean to indicate if this method should return the full_path
+                to the newly created files or just the name.
+
+        Returns:
+            A list of filepaths to newly created files. The path can be full_path or just
+            the file name based on ``full_path`` input. Default is set to False which
+            means this method only returns the file-names.
+        """
+        count = typing.int_in_range(count, 1, input_name='file count')
+        if count == 1 or self.count == 0:
+            return [self.to_file(folder, base_name, mkdir)]
+        base_name = base_name or self.name
+        # calculate sensor count in each file
+        sc = int(round(self.count / count))
+        sensors = iter(self._sensors)
+        for fc in range(count - 1):
+            name = '%s_%04d.pts' % (base_name, fc)
+            content = '\n'.join((next(sensors).to_radiance() for _ in range(sc)))
+            futil.write_to_file_by_name(folder, name, content + '\n', mkdir)
+        
+        # write whatever is left to the last file
+        name = '%s_%04d.pts' % (base_name, count - 1)
+        content = '\n'.join((sensor.to_radiance() for sensor in sensors))
+        futil.write_to_file_by_name(folder, name, content + '\n', mkdir)
+
+        # return filenames
+        if full_path:
+            return [
+                os.path.join(folder, '%s_%04d.pts' % (base_name, c))
+                for c in range(count)
+            ]
+        else:
+            return ['%s_%04d.pts' % (base_name, c) for c in range(count)]
 
     def ToString(self):
         """Overwrite ToString .NET method."""

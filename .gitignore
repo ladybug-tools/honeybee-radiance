@@ -2,7 +2,7 @@
 test.py
 *.gh
 .pytest_cache
-/__pycache__
+*/__pycache__
 .coverage
 *.ipynb
 .ipynb_checkpoints
@@ -14,9 +14,5 @@ tox.ini
 .eggs
 /radiance*
 /tests/assets/temp/*
-
 *.code-workspace
-
-tests/__pycache__/
-
-tests/command/options/__pycache__/
+honeybee.log*

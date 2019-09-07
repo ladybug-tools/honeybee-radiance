@@ -1,5 +1,6 @@
 honeybee-core
 honeybee-radiance-command
+click>=5.1
 coverage==4.5.2
 coveralls==1.5.1
 pytest==4.1.0
