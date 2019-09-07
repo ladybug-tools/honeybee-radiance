@@ -1,6 +1,6 @@
 """honeybee-radiance library."""
 
-from honeybee.logging import get_logger
+from honeybee.logutil import get_logger
 
 # use the same logger settings across honeybee extensions
 # this does NOT mean that the logs will be written to the same file but they will have
