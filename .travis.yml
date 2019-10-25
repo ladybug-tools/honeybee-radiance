@@ -24,11 +24,17 @@ jobs:
     - "3.6"
     install:
     - pip install -r dev-requirements.txt
+    - pip install -r requirements.txt 
     - npm install @semantic-release/exec
     script:
     - git config --global user.email "releases@ladybug.tools"
     - git config --global user.name "ladybugbot"
     - npx semantic-release
+  - stage: docs
+    if: branch = master AND (NOT type IN (pull_request))
+    script:
+    - sphinx-apidoc -f -e -d 4 -o ./docs ./honeybee_radiance
+    - sphinx-build -b html ./docs ./docs/_build/docs
     deploy:
       provider: pages
       skip_cleanup: true
