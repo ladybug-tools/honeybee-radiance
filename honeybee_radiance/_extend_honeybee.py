@@ -1,5 +1,5 @@
 from honeybee.properties import FaceProperties
-import honeybee.writer as writer
+import honeybee.writer.face as face_writer
 from .properties import FaceRadianceProperties
 from .writer import face_to_rad
 
@@ -15,4 +15,4 @@ FaceProperties._radiance = None
 FaceProperties.radiance = property(face_radiance_properties)
 
 # add radiance writer to idf
-setattr(writer, 'radiance', face_to_rad)
+face_writer.radiance = face_to_rad
