@@ -10,4 +10,3 @@ WORKDIR /usr/app/
 
 COPY . .
 RUN pip install .[cli]
-ENTRYPOINT [ "honeybee-radiance" ]
