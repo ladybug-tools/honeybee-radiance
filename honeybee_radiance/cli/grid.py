@@ -1,4 +1,4 @@
-"""honeybee radiance grid commands.""" 
+"""honeybee radiance grid commands."""
 
 try:
     import click
@@ -15,15 +15,20 @@ import re
 
 _logger = logging.getLogger(__name__)
 
+
 @click.group(help='Commands for generating and modifying sensor grids.')
 def grid():
     pass
 
+
 @grid.command('split')
 @click.argument('grid-file')
 @click.argument('count', type=int)
-@click.option('--folder', help='Optional output folder.', default='.', show_default=True)
-def split_grid(grid_file, count, folder):
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--log-file', help='Optional log file to output the name of the newly'
+              ' created grids. By default the list will be printed out to stdout',
+              type=click.File('w'), default='-')
+def split_grid(grid_file, count, folder, log_file):
     """Split a radiance grid file into smaller grids based on maximum sensor count.
 
     \b
@@ -38,11 +43,12 @@ def split_grid(grid_file, count, folder):
         grid = sensorgrid.SensorGrid.from_file(grid_file)
         file_count = int(round(grid.count / count))
         files = grid.to_files(folder, file_count, mkdir=True)
-        for f in files:
-            click.echo(f)
+        log_file.write('\n'.join(files))
     except Exception:
         _logger.exception('Failed to split grid file.')
         sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 @grid.command('merge')
@@ -74,5 +80,7 @@ def merge_grid(input_folder, base_name, extension, folder):
                             continue
                         outf.write(line)
     except Exception:
-        _logger.exception('Failed to merge grid file.')
+        _logger.exception('Failed to merge grid files.')
         sys.exit(1)
+    else:
+        sys.exit(0)
