@@ -181,9 +181,8 @@ class SensorGrid(object):
                 doesn't exist already (Default: False).
 
         Returns:
-            A list of filepaths to newly created files. The path can be full_path or just
-            the file name based on ``full_path`` input. Default is set to False which
-            means this method only returns the file-names.
+            A list of dicts containing the grid name, path to the grid and full path
+            to the grid.
         """
         count = typing.int_in_range(count, 1, input_name='file count')
         if count == 1 or self.count == 0:
