@@ -170,7 +170,7 @@ class SensorGrid(object):
         return futil.write_to_file_by_name(
             folder, name, self.to_radiance() + '\n', mkdir)
 
-    def to_files(self, folder, count, base_name=None, mkdir=False, full_path=False):
+    def to_files(self, folder, count, base_name=None, mkdir=False):
         """Split this sensor grid and write them to several files.
 
         Args:
@@ -179,8 +179,6 @@ class SensorGrid(object):
             base_name: Optional name for base_name for sensor files (Default: self.name).
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
-            full_path: A boolean to indicate if this method should return the full_path
-                to the newly created files or just the name.
 
         Returns:
             A list of filepaths to newly created files. The path can be full_path or just
@@ -204,14 +202,20 @@ class SensorGrid(object):
         content = '\n'.join((sensor.to_radiance() for sensor in sensors))
         futil.write_to_file_by_name(folder, name, content + '\n', mkdir)
 
-        # return filenames
-        if full_path:
-            return [
-                os.path.join(folder, '%s_%04d.pts' % (base_name, c))
-                for c in range(count)
-            ]
-        else:
-            return ['%s_%04d.pts' % (base_name, c) for c in range(count)]
+        grids_info = []
+
+        for c in range(count):
+            name = '%s_%04d' % (base_name, c)
+            path = '%s.pts' % name
+            full_path = os.path.join(folder, path)
+
+            grids_info.append({
+                'name': name,
+                'path': path,
+                'full_path': full_path
+            })
+
+        return grids_info
 
     def ToString(self):
         """Overwrite ToString .NET method."""

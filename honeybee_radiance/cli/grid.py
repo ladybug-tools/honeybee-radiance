@@ -12,6 +12,7 @@ import honeybee_radiance.sensorgrid as sensorgrid
 import os
 import logging
 import re
+import json
 
 _logger = logging.getLogger(__name__)
 
@@ -43,7 +44,8 @@ def split_grid(grid_file, count, folder, log_file):
         grid = sensorgrid.SensorGrid.from_file(grid_file)
         file_count = int(round(grid.count / count))
         files = grid.to_files(folder, file_count, mkdir=True)
-        log_file.write('\n'.join(files))
+        
+        log_file.write(json.dumps(files))
     except Exception:
         _logger.exception('Failed to split grid file.')
         sys.exit(1)
@@ -72,6 +74,10 @@ def merge_grid(input_folder, base_name, extension, folder):
         if len(grids) == 0:
             raise ValueError('Found no file to merge.')
         output_file = os.path.join(folder, base_name + extension)
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
         with open(output_file, 'w') as outf:
             for f in grids:
                 with open(os.path.join(input_folder, f)) as inf:
