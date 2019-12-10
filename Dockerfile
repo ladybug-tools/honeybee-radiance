@@ -6,6 +6,8 @@ RUN curl -L https://github.com/NREL/Radiance/releases/download/5.2/radiance-5.2.
 && mv `ls`/usr/local/radiance/lib/* /usr/local/lib \
 && rm -rf `ls`
 
+ENV RAYPATH=/usr/local/lib
+
 WORKDIR /usr/app/
 
 COPY . .
