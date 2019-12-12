@@ -12,3 +12,5 @@ WORKDIR /usr/app/
 
 COPY . .
 RUN pip install .[cli]
+
+WORKDIR /opt/run-folder/
