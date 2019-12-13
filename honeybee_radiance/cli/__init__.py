@@ -10,6 +10,7 @@ except ImportError:
 from honeybee.cli import main
 from .sky import sky
 from .grid import grid
+from .sunpath import sunpath
 
 # command group for all radiance extension commands.
 @click.group(help='honeybee radiance commands.')
@@ -19,6 +20,7 @@ def radiance():
 # add sub-commands to radiance
 radiance.add_command(sky)
 radiance.add_command(grid)
+radiance.add_command(sunpath)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)
