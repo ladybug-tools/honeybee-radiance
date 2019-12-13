@@ -54,14 +54,17 @@ def sunpath():
     help='An optional integer to set the number of time steps per hour. Default is 1'
     ' for one value per hour.'
     )
-@click.option('--leap-year', is_flag=True, help='dates are for a leap year.')
+@click.option('--leap-year', is_flag=True, help='Dates are for a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
 @click.option('--log-file', help='Optional log file to output the name of the newly'
     ' created modifier files. By default the list will be printed out to stdout',
     type=click.File('w'), default='-')
+@click.option('--reverse-vectors', is_flag=True,
+    help='Reverse sun vectors to go from ground to sky.')
 def sunpath_from_location(lat, lon, tz, north, folder, name, log_file,
-        start_date, start_time, end_date, end_time, timestep, leap_year):
+        start_date, start_time, end_date, end_time, timestep, leap_year,
+        reverse_vectors):
     """Generate a non climate-based sunpath for a location.
 
     This command also generates a mod file which includes all the modifiers in sunpath.
@@ -77,7 +80,8 @@ def sunpath_from_location(lat, lon, tz, north, folder, name, log_file,
     try:
         sp = Sunpath(location, north)
         hoys = get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year)
-        sp_files = sp.to_file(folder, name, hoys=hoys, leap_year=leap_year)
+        sp_files = sp.to_file(folder, name, hoys=hoys, leap_year=leap_year,
+        reverse_vectors=reverse_vectors)
 
         files = [
             {'path': os.path.relpath(path, folder), 'full_path': path }
@@ -116,8 +120,10 @@ def sunpath_from_location(lat, lon, tz, north, folder, name, log_file,
 @click.option('--log-file', help='Optional log file to output the name of the newly'
     ' created modifier files. By default the list will be printed out to stdout',
     type=click.File('w'), default='-')
+@click.option('--reverse-vectors', is_flag=True,
+    help='Reverse sun vectors to go from ground to sky.')
 def sunpath_from_wea(wea, north, folder, name, log_file, start_date, start_time, end_date,
-        end_time, timestep, leap_year):
+        end_time, timestep, leap_year, reverse_vectors):
     """Generate a climate-based sunpath from a Wea file.
 
     This command also generates a mod file which includes all the modifiers in sunpath.
@@ -132,7 +138,8 @@ def sunpath_from_wea(wea, north, folder, name, log_file, start_date, start_time,
         wea = Wea.from_file(wea)
         sp = Sunpath(wea.location, north)
         hoys = get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year)
-        sp_files = sp.to_file(folder, name, hoys=hoys, leap_year=leap_year)
+        sp_files = sp.to_file(folder, name, hoys=hoys, leap_year=leap_year,
+            reverse_vectors=reverse_vectors)
 
         files = [
             {'path': os.path.relpath(path, folder), 'full_path': path }
@@ -171,8 +178,10 @@ def sunpath_from_wea(wea, north, folder, name, log_file, start_date, start_time,
 @click.option('--log-file', help='Optional log file to output the name of the newly'
     ' created modifier files. By default the list will be printed out to stdout',
     type=click.File('w'), default='-')
+@click.option('--reverse-vectors', is_flag=True,
+    help='Reverse sun vectors to go from ground to sky.')
 def sunpath_from_epw(epw, north, folder, name, log_file, start_date, start_time, end_date,
-        end_time, timestep, leap_year):
+        end_time, timestep, leap_year, reverse_vectors):
     """Generate a climate-based sunpath from an epw weather file.
 
     This command also generates a mod file which includes all the modifiers in sunpath.
@@ -187,7 +196,8 @@ def sunpath_from_epw(epw, north, folder, name, log_file, start_date, start_time,
         wea = Wea.from_epw_file(epw)
         sp = Sunpath(wea.location, north)
         hoys = get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year)
-        sp_files = sp.to_file(folder, name, wea=wea, hoys=hoys, leap_year=leap_year)
+        sp_files = sp.to_file(folder, name, wea=wea, hoys=hoys, leap_year=leap_year,
+            reverse_vectors=reverse_vectors)
 
         files = [
             {'path': os.path.relpath(path, folder), 'full_path': path }

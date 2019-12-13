@@ -37,3 +37,29 @@ def test_sunpath():
         '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli']
     )
     assert result.exit_code == 0
+
+
+def test_sunpath_climate_based_reversed():
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_epw,
+        [
+            './tests/assets/epw/denver.epw', '--folder', folder,
+            '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name',
+            'sunpath_cli_cb_r', '--reverse-vectors'
+        ]
+    )
+    assert result.exit_code == 0
+
+
+def test_sunpath_reversed():
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_location,
+        ['--lat', '39.76', '--lon', '-104.86', '--tz', '-7', '--folder', folder,
+        '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli_r',
+        '--reverse-vectors']
+    )
+    assert result.exit_code == 0
