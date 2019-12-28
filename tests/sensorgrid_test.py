@@ -74,3 +74,24 @@ def test_to_and_from_dict():
 
     sensor_from = SensorGrid.from_dict(sg_dict)
     assert sensor_from == sg
+
+
+def test_split_single_grid():
+    """Test splitting a sensor grid."""
+    sensor_grid = SensorGrid.from_file('./tests/assets/grid/sensor_grid_split.pts')
+    folder = './tests/assets/temp'
+    info = sensor_grid.to_files(folder, 1, 'single_grid')
+    assert len(info) == 1
+    assert info[0]['count'] == sensor_grid.count
+
+
+def test_split_grid():
+    """Test splitting a sensor grid."""
+    sensor_grid = SensorGrid.from_file('./tests/assets/grid/sensor_grid_split.pts')
+    folder = './tests/assets/temp'
+    info = sensor_grid.to_files(folder, 6, 'test_sensor_grid')
+    assert len(info) == 6
+    for i in range(6 - 1):
+        assert info[i]['count'] == 4
+    
+    assert info[-1]['count'] == 1
