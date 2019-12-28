@@ -174,6 +174,8 @@ class SensorGrid(object):
             Full path to newly created file.
         """
         name = file_name or self.name + '.pts'
+        if not name.endswith('.pts'):
+            name += '.pts'
         return futil.write_to_file_by_name(
             folder, name, self.to_radiance() + '\n', mkdir)
 
@@ -192,9 +194,17 @@ class SensorGrid(object):
             to the grid.
         """
         count = typing.int_in_range(count, 1, input_name='file count')
-        if count == 1 or self.count == 0:
-            return [self.to_file(folder, base_name, mkdir)]
         base_name = base_name or self.name
+        if count == 1 or self.count == 0:
+            full_path = self.to_file(folder, base_name, mkdir)
+            return [{
+                'name': base_name if not self.name.endswith('.pts') \
+                    else self.name.replace('.pts', ''),
+                'path': self.name + '.pts' if not self.name.endswith('.pts') \
+                    else self.name,
+                'full_path': full_path,
+                'count': self.count
+            }]
         # calculate sensor count in each file
         sc = int(round(self.count / count))
         sensors = iter(self._sensors)
@@ -218,8 +228,12 @@ class SensorGrid(object):
             grids_info.append({
                 'name': name,
                 'path': path,
-                'full_path': full_path
+                'full_path': full_path,
+                'count': sc
             })
+
+        # adjust the count for the last grid
+        grids_info[-1]['count'] = self.count - sc * (count - 1)
 
         return grids_info
 
