@@ -2,7 +2,7 @@
 
 Tube is identical to Cylinder except for the name. If Cylinder works cup will also work.
 """
-from honeybee_radiance.primitive.geometry import Tube
+from honeybee_radiance.geometry import Tube
 
 
 def test_cup():

@@ -1,4 +1,4 @@
-from honeybee_radiance.primitive.material import BSDF
+from honeybee_radiance.modifier.material import BSDF
 import os
 
 klems_bsdf_file = './tests/assets/klemsfull.xml'

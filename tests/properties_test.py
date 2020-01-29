@@ -1,6 +1,6 @@
 from honeybee.face import Face
 from honeybee_radiance.properties import FaceRadianceProperties
-from honeybee_radiance.lib.modifiers import generic_exterior_wall
+from honeybee_radiance.lib.modifiers import generic_wall
 
 
 face = Face.from_vertices(
@@ -9,7 +9,7 @@ face = Face.from_vertices(
 
 def test_defaults():
     rp = FaceRadianceProperties(face)
-    assert rp.modifier == generic_exterior_wall
+    assert rp.modifier == generic_wall
 
 
 def test_to_dict():

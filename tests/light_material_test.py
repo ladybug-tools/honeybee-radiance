@@ -1,4 +1,4 @@
-from honeybee_radiance.primitive.material import Light
+from honeybee_radiance.modifier.material import Light
 
 
 def test_light():

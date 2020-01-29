@@ -2,7 +2,7 @@
 u"""Create a Radiance view."""
 from __future__ import division
 import honeybee.typing as typing
-import honeybee_radiance.parser as parser
+import honeybee_radiance.reader as reader
 import math
 import os
 from copy import deepcopy
@@ -380,7 +380,7 @@ class View(object):
         }
 
         # parse the string here
-        options = parser.parse_radiance_options(view_string)
+        options = reader.parse_radiance_options(view_string)
 
         for opt, value in options.items():
             if opt in mapper:
