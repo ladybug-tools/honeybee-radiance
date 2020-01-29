@@ -1,4 +1,4 @@
-from honeybee_radiance.primitive.material import Glow
+from honeybee_radiance.modifier.material import Glow
 
 
 def test_glow():

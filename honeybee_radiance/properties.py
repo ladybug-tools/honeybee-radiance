@@ -1,5 +1,6 @@
 """Radiance Properties."""
-from honeybee_radiance.lib.modifierset import generic_modifier_set_visible
+from honeybee_radiance.lib.modifiersets import generic_modifier_set_visible
+from honeybee_radiance.primitive import Primitive
 
 
 class FaceRadianceProperties(object):
@@ -41,7 +42,7 @@ class FaceRadianceProperties(object):
 
     @modifier.setter
     def modifier(self, value):
-        if hasattr(value, 'can_be_modifier') and value.can_be_modifier:
+        if isinstance(value, Primitive) and value.is_modifier:
                 self._modifier = value
         else:
             raise TypeError(
@@ -61,7 +62,7 @@ class FaceRadianceProperties(object):
 
     @modifier_dir.setter
     def modifier_dir(self, value):
-        if hasattr(value, 'can_be_modifier') and value.can_be_modifier:
+        if isinstance(value, Primitive) and value.is_modifier:
                 self._modifier_dir = value
         else:
             raise TypeError(

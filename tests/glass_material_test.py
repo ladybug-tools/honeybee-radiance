@@ -1,6 +1,6 @@
 # TODO - add tests for dependencies
 
-from honeybee_radiance.primitive.material import Glass
+from honeybee_radiance.modifier.material import Glass
 import pytest
 
 
@@ -22,6 +22,31 @@ def test_assign_values():
     assert gl.refraction_index == 1.52
     assert gl.to_radiance(
         minimal=True) == 'void glass test_glass 0 0 4 0.6 0.7 0.8 1.52'
+
+
+def test_material_lockability():
+    """Test the lockability of Glass."""
+    gl = Glass('test_glass', 0.6, 0.7, 0.8, 1.52)
+    gl.r_transmissivity = 0.5
+    gl.lock()
+    with pytest.raises(AttributeError):
+        gl.r_transmissivity = 0.7
+    gl.unlock()
+    gl.r_transmissivity = 0.7
+
+
+def test_material_equivalency():
+    """Test the equality of a material to another Glass."""
+    gl_1 = Glass('test_glass', 0.6, 0.7, 0.8, 1.52)
+    gl_2 = gl_1.duplicate()
+    gl_3 = Glass('test_glass2', 0.8, 0.7, 0.8, 1.52)
+
+    assert gl_1 is gl_1
+    assert gl_1 is not gl_2
+    assert gl_1 == gl_2
+    assert gl_1 != gl_3
+    collection = [gl_1, gl_2, gl_3]
+    assert len(set(collection)) == 2
 
 
 def test_update_values():

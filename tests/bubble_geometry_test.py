@@ -2,7 +2,7 @@
 
 Bubble is identical to Sphere except for the name. If Sphere works Bubble will also work.
 """
-from honeybee_radiance.primitive.geometry import Bubble
+from honeybee_radiance.geometry import Bubble
 
 
 def test_cup():

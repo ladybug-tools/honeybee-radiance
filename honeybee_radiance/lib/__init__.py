@@ -1,1 +1,1 @@
-"""Library of materials, and other templates used in honeybee-radiance."""
+"""Library of modifiers and modifier sets used in honeybee-radiance."""

@@ -1,4 +1,4 @@
-from honeybee_radiance.primitive.material import Trans
+from honeybee_radiance.modifier.material import Trans
 
 
 def test_trans():

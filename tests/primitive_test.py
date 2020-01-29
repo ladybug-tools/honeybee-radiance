@@ -1,5 +1,5 @@
 """test primitive class."""
-from honeybee_radiance.primitive.primitivebase import Primitive
+from honeybee_radiance.primitive import Primitive
 from .rad_string_collection import frit
 
 

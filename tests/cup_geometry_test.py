@@ -2,7 +2,7 @@
 
 Cup is identical to Cone except for the name. If cone works cup will also work.
 """
-from honeybee_radiance.primitive.geometry import Cup
+from honeybee_radiance.geometry import Cup
 
 
 def test_cup():

@@ -11,8 +11,8 @@ non climate-based sunpath for solaraccess studies.
 
 """
 
-from ..primitive.material import Light
-from ..primitive.geometry import Source
+from ..modifier.material import Light
+from ..geometry import Source
 from ._gendaylit import gendaylit
 
 from ladybug.sunpath import Sunpath as LBSunpath

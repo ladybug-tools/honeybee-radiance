@@ -1,4 +1,6 @@
-from honeybee_radiance.primitive.material import Plastic
+from honeybee_radiance.modifier.material import Plastic
+
+import pytest
 
 
 def test_plastic():
@@ -21,6 +23,35 @@ def test_assign_values():
     assert pl.roughness == 0
     assert pl.to_radiance(
         minimal=True) == 'void plastic test_plastic 0 0 5 0.6 0.7 0.8 0.0 0.0'
+
+
+def test_material_lockability():
+    """Test the lockability of Plastic."""
+    pl = Plastic('test_plastic', 0.6, 0.7, 0.8, 0, 0)
+    pl.r_reflectance = 0.5
+    pl.lock()
+    with pytest.raises(AttributeError):
+        pl.r_reflectance = 0.7
+    pl.unlock()
+    pl.r_reflectance = 0.7
+
+
+def test_material_equivalency():
+    """Test the equality of a material to another."""
+    pl_1 = Plastic('test_plastic', 0.6, 0.7, 0.8, 0, 0)
+    pl_2 = pl_1.duplicate()
+    pl_3 = Plastic('test_plastic2', 0.8, 0.7, 0.8, 0, 0)
+
+    assert pl_1 is pl_1
+    assert pl_1 is not pl_2
+    assert pl_1 == pl_2
+    assert isinstance(pl_2, Plastic)
+    assert pl_1 != pl_3
+    collection = [pl_1, pl_2, pl_3]
+    assert len(set(collection)) == 2
+    
+    pl_2.r_reflectance = 0.7
+    assert pl_1 != pl_2
 
 
 def test_update_values():

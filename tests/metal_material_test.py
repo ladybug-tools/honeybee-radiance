@@ -1,5 +1,6 @@
-from honeybee_radiance.primitive.material import Metal
+from honeybee_radiance.modifier.material import Metal
 
+import pytest
 
 def test_metal():
     mt = Metal('test_metal')
@@ -21,6 +22,32 @@ def test_assign_values():
     assert mt.roughness == 0
     assert mt.to_radiance(
         minimal=True) == 'void metal test_metal 0 0 5 0.6 0.7 0.8 0.0 0.0'
+
+
+def test_material_lockability():
+    """Test the lockability of Metal."""
+    mt = Metal('test_metal', 0.6, 0.7, 0.8, 0, 0)
+    mt.r_reflectance = 0.5
+    mt.lock()
+    with pytest.raises(AttributeError):
+        mt.r_reflectance = 0.7
+    mt.unlock()
+    mt.r_reflectance = 0.7
+
+
+def test_material_equivalency():
+    """Test the equality of a material to another."""
+    mt_1 = Metal('test_metal', 0.6, 0.7, 0.8, 0, 0)
+    mt_2 = mt_1.duplicate()
+    mt_3 = Metal('test_metal2', 0.8, 0.7, 0.8, 0, 0)
+
+    assert mt_1 is mt_1
+    assert mt_1 is not mt_2
+    assert mt_1 == mt_2
+    assert isinstance(mt_2, Metal)
+    assert mt_1 != mt_3
+    collection = [mt_1, mt_2, mt_3]
+    assert len(set(collection)) == 2
 
 
 def test_update_values():
