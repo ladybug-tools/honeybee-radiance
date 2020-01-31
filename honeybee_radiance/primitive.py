@@ -378,7 +378,7 @@ class Primitive(object):
             except BaseException:
                 values = []  # line will be displayed as 0
             else:
-                count = len( primitive.values[line_count])
+                count = len(primitive.values[line_count])
                 line = '%d %s' % (count, ' '.join(values).rstrip()) if count else '0'
                 output.append(line)
 
@@ -424,7 +424,7 @@ class Primitive(object):
 
     @staticmethod
     def filter_dict_input(input_dict):
-        """Filter a dictionary of a Primitive to get modifier and dependency modules."""
+        """Filter a dictionary of a Primitive to get modifier and dependency objects."""
         try:  # ensure the putil module is imported, which imports all primitive modules
             putil
         except NameError:
@@ -434,13 +434,13 @@ class Primitive(object):
         if input_dict['modifier'] == 'void':
             modifier = 'void'
         else:
-            modifier = putil.dict_to_primitive(input_dict['modifier'])
+            modifier = putil.dict_to_modifier(input_dict['modifier'])
 
         if 'dependencies' not in input_dict: 
             dependencies = []
         else:
             dependencies = [
-                putil.dict_to_primitive(dep) for dep in input_dict['dependencies']
+                putil.dict_to_modifier(dep) for dep in input_dict['dependencies']
             ]
 
         return modifier, dependencies

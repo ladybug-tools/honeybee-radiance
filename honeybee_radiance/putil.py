@@ -7,20 +7,22 @@ import honeybee_radiance.geometry as geometry
 from honeybee_radiance.primitive import Primitive
 
 
-def primitive_class_from_type_string(type_string):
-    """Get the class of a primitive using its 'type' string.
+def modifier_class_from_type_string(type_string):
+    """Get the class of any modifier using its 'type' string.
+
+    This function is equivalent to the primitive_class_from_type_string function
+    but it is only for modifiers (not geometry) and is slightly faster when one
+    is sure that the type_string is a modifier.
 
     Note that this function returns the class itself and not a class instance.
 
     Args:
-        type_string: Text for the name of a primitive module/class. This should
+        type_string: Text for the name of a modifier module/class. This should
             usually be lowercase and should be the same as the 'type' key used
-            in the dictionary representation of the primitve.
+            in the dictionary representation of the modifier.
     """
     _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
-    if type_string in Primitive.GEOMETRYTYPES:
-        target_module = geometry
-    elif type_string in Primitive.MATERIALTYPES:
+    if type_string in Primitive.MATERIALTYPES:
         target_module = material
     elif type_string in Primitive.MIXTURETYPES:
         target_module = mixture
@@ -29,11 +31,51 @@ def primitive_class_from_type_string(type_string):
     elif type_string in Primitive.TEXTURETYPES:
         target_module = texture
     else:
-        raise NotImplementedError('Honeybee currently does not support %s' % type_string)
+        raise ValueError('%s is not a Radiance modifier.' % type_string)
 
     class_name = type_string.capitalize() if type_string not in _mapper \
         else _mapper[type_string]
     
+    return getattr(target_module, class_name)
+
+
+def dict_to_modifier(mdict):
+    """Convert a dictionary representation of any modifier to a class instance.
+
+    The returned object will have the correct class type and will not be the
+    generic Modifier base class. Note that this function is recursive and will
+    re-serialize modifiers of modifiers.
+    
+    Args:
+        mdict: A dictionary of any Radiance Modifier.
+    """
+    mod_class = modifier_class_from_type_string(mdict['type'])
+
+    if 'values' in mdict:
+        return mod_class.from_primitive_dict(mdict)
+    else:
+        return mod_class.from_dict(mdict)
+
+
+def primitive_class_from_type_string(type_string):
+    """Get the class of any primitive using its 'type' string.
+
+    Note that this function returns the class itself and not a class instance.
+
+    Args:
+        type_string: Text for the name of a primitive module/class. This should
+            usually be lowercase and should be the same as the 'type' key used
+            in the dictionary representation of the primitve.
+    """
+    if type_string in Primitive.GEOMETRYTYPES:
+        target_module = geometry
+    else:
+        try:
+            return modifier_class_from_type_string(type_string)
+        except ValueError:
+            raise NotImplementedError(
+                'Honeybee currently does not support %s' % type_string)
+    class_name = type_string.capitalize()
     return getattr(target_module, class_name)
 
 
@@ -53,4 +95,3 @@ def dict_to_primitive(pdict):
         return primitive_class.from_primitive_dict(pdict)
     else:
         return primitive_class.from_dict(pdict)
-
