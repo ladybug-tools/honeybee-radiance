@@ -1,7 +1,7 @@
 """Radiance modifier set."""
 from __future__ import division
 
-from honeybee_radiance.primitive import Primitive
+from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
     generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
     generic_exterior_shade, generic_interior_shade, air_wall
@@ -59,6 +59,7 @@ class ModifierSet(object):
         * aperture_set
         * door_set
         * shade_set
+        * air_wall_modifier
         * modifiers
         * modified_modifiers
         * modifiers_unique
@@ -66,10 +67,12 @@ class ModifierSet(object):
     """
 
     __slots__ = ('_name', '_wall_set', '_floor_set', '_roof_ceiling_set',
-                 '_aperture_set', '_door_set', '_shade_set', '_locked')
+                 '_aperture_set', '_door_set', '_shade_set', '_air_wall_modifier',
+                 '_locked')
 
     def __init__(self, name, wall_set=None, floor_set=None, roof_ceiling_set=None,
-                 aperture_set=None, door_set=None, shade_set=None):
+                 aperture_set=None, door_set=None, shade_set=None,
+                 air_wall_modifier=None):
         """Initialize radiance modifier set.
 
         Args:
@@ -86,6 +89,9 @@ class ModifierSet(object):
                 If None, it will be the honeybee generic default DoorSet.
             shade_set: An optional ShadeSet object for this ModifierSet.
                 If None, it will be the honeybee generic default ShadeSet.
+            air_wall_modifier: An optional Modifier to be used for all Faces with
+                an AirWall face type. If None, it will be the honyebee generic
+                air wall modifier.
         """
         self._locked = False  # unlocked by default
         self.name = name
@@ -95,6 +101,7 @@ class ModifierSet(object):
         self.aperture_set = aperture_set
         self.door_set = door_set
         self.shade_set = shade_set
+        self.air_wall_modifier = air_wall_modifier
 
     @property
     def name(self):
@@ -190,6 +197,21 @@ class ModifierSet(object):
             self._shade_set = ShadeSet()
 
     @property
+    def air_wall_modifier(self):
+        """Get or set a Modifier to be used for all Faces with an AirWall face type."""
+        if self._air_wall_modifier is None:
+            return air_wall
+        return self._air_wall_modifier
+
+    @air_wall_modifier.setter
+    def air_wall_modifier(self, value):
+        if value is not None:
+            assert isinstance(value, Modifier), \
+                'Expected Modifier. Got {}'.format(type(value))
+            value.lock()   # lock editing in case modifier has multiple references
+        self._air_wall_modifier = value
+
+    @property
     def modifiers(self):
         """List of all modifiers contained within the set."""
         return self.wall_set.modifiers + \
@@ -197,17 +219,21 @@ class ModifierSet(object):
             self.roof_ceiling_set.modifiers + \
             self.aperture_set.modifiers + \
             self.door_set.modifiers + \
-            self.shade_set.modifiers
+            self.shade_set.modifiers + \
+            [self.air_wall_modifier]
 
     @property
     def modified_modifiers(self):
         """List of all modifiers that are not defaulted within the set."""
-        return self.wall_set.modified_modifiers + \
+        modified_modifiers = self.wall_set.modified_modifiers + \
             self.floor_set.modified_modifiers + \
             self.roof_ceiling_set.modified_modifiers + \
             self.aperture_set.modified_modifiers + \
             self.door_set.modified_modifiers + \
             self.shade_set.modified_modifiers
+        if self._air_wall_modifier is not None:
+            modified_modifiers.append(self._air_wall_modifier)
+        return modified_modifiers
 
     @property
     def modifiers_unique(self):
@@ -235,7 +261,7 @@ class ModifierSet(object):
         elif face_type == 'RoofCeiling':
             return self._get_modifier_from_set(self.roof_ceiling_set, boundary_condition)
         elif face_type == 'AirWall':
-            return air_wall
+            return self.air_wall_modifier
         else:
             raise NotImplementedError(
                 'Face type {} is not recognized for ModifierSet'.format(face_type))
@@ -265,12 +291,13 @@ class ModifierSet(object):
                 'Boundary condition {} is not recognized for apertures in '
                 'ModifierSet'.format(boundary_condition))
 
-    def get_door_modifier(self, boundary_condition, parent_face_type):
+    def get_door_modifier(self, boundary_condition, is_glass, parent_face_type):
         """Get a modifier object that will be assigned to a given type of door.
 
         Args:
             boundary_condition: Text string for the boundary condition
-                (eg. 'Outdoors', 'Surface')
+                (eg. 'Outdoors', 'Surface').
+            is_glass: Boolean to note whether the door is glass (instead of opaque).
             parent_face_type: Text string for the type of face to which the door
                 is a child (eg. 'Wall', 'Floor', 'Roof').
         """
@@ -293,17 +320,17 @@ class ModifierSet(object):
                 'ModifierSet'.format(boundary_condition)
                 )
 
-    def get_shade_modifier(self, exterior=True):
+    def get_shade_modifier(self, is_indoor=False):
         """Get a modifier object that will be assigned to a shade.
 
         Args:
-            boundary_condition: A boolean to indicate if the shade is an exterior
-                or and interior shade. Default: True.
+            is_indoor: A boolean to indicate if the shade is on the indoors or
+                the outdoors of its parent. Default: False.
         """
-        if exterior:
-            return self.shade_set.exterior_modifier
-        else:
+        if is_indoor:
             return self.shade_set.interior_modifier
+        else:
+            return self.shade_set.exterior_modifier
 
     @classmethod
     def from_dict(cls, data):
@@ -326,14 +353,14 @@ class ModifierSet(object):
         # gather all modifier objects
         modifiers = {}
         for mod in data['modifiers']:
-            modifiers[mod['name']] = putil.dict_to_primitive(mod)
+            modifiers[mod['name']] = putil.dict_to_modifier(mod)
 
         # build each of the sub-sets
-        wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set = \
-            cls._get_subsets_from_abridged(data, modifiers)
+        wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set, \
+            air_wall_mod = cls._get_subsets_from_abridged(data, modifiers)
 
         return cls(data['name'], wall_set, floor_set, roof_ceiling_set,
-                   aperture_set, door_set, shade_set)
+                   aperture_set, door_set, shade_set, air_wall_mod)
 
     @classmethod
     def from_dict_abridged(cls, data, modifier_dict):
@@ -347,10 +374,10 @@ class ModifierSet(object):
         """
         assert data['type'] == 'ModifierSetAbridged', \
             'Expected ModifierSetAbridged. Got {}.'.format(data['type'])
-        wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set = \
-            cls._get_subsets_from_abridged(data, modifier_dict)
+        wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set, \
+            air_wall_mod = cls._get_subsets_from_abridged(data, modifier_dict)
         return cls(data['name'], wall_set, floor_set, roof_ceiling_set,
-                   aperture_set, door_set, shade_set)
+                   aperture_set, door_set, shade_set, air_wall_mod)
 
     def to_dict(self, abridged=False, none_for_defaults=True):
         """Get ModifierSet as a dictionary.
@@ -373,6 +400,11 @@ class ModifierSet(object):
         base['aperture_set'] = self.aperture_set._to_dict(none_for_defaults)
         base['door_set'] = self.door_set._to_dict(none_for_defaults)
         base['shade_set'] = self.shade_set._to_dict(none_for_defaults)
+        if none_for_defaults:
+            base['air_wall_modifier'] = self._air_wall_modifier.name if \
+                self._air_wall_modifier is not None else None
+        else:
+            base['air_wall_modifier'] = self.air_wall_modifier.name
 
         if not abridged:
             modifiers = self.modified_modifiers_unique if none_for_defaults \
@@ -426,8 +458,13 @@ class ModifierSet(object):
         aperture_set = ModifierSet._make_aperture_subset(
             data, ApertureSet(), modifiers)
         door_set = ModifierSet._make_door_subset(data, DoorSet(), modifiers)
+        if 'air_wall_modifier' in data and data['air_wall_modifier'] is not None:
+            air_wall_mod = modifiers[data['air_wall_modifier']]
+        else:
+            air_wall_mod = None
         
-        return wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set
+        return wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, \
+            shade_set, air_wall_mod
 
     @staticmethod
     def _make_modifier_subset(data, sub_set, sub_set_name, modifiers):
@@ -503,7 +540,8 @@ class ModifierSet(object):
             self.roof_ceiling_set.duplicate(),
             self.aperture_set.duplicate(),
             self.door_set.duplicate(),
-            self.shade_set.duplicate()
+            self.shade_set.duplicate(),
+            self._air_wall_modifier
         )
 
     def __key(self):
@@ -615,7 +653,7 @@ class _BaseSet(object):
     def _validate_modifier(self, value):
         """Check a modifier before assigning it."""
         if value is not None:
-            assert isinstance(value, Primitive) and value.is_modifier , \
+            assert isinstance(value, Modifier), \
                 'Expected modifier. Got {}'.format(type(value))
             value.lock()   # lock editing in case modifier has multiple references
         return value
