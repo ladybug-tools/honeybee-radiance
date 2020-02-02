@@ -48,3 +48,24 @@ generic_roof_exterior = \
 air_wall = Glass.from_single_transmissivity('air_wall', 1.0)
 black = Plastic.from_single_reflectance('black', 0.0)  # used in multiphase daylight
 white_glow = Glow('white_glow', 1.0, 1.0, 1.0, 0.0)  # used in multi-phase daylight
+
+# lock all of the modifiers for editing
+generic_floor.lock()
+generic_wall.lock()
+generic_ceiling.lock()
+generic_door.lock()
+generic_interior_shade.lock()
+generic_exterior_shade.lock()
+generic_context.lock()
+generic_interior_window.lock()
+generic_exterior_window.lock()
+generic_exterior_window_insect_screen.lock()
+generic_interior_window_solar.lock()
+generic_exterior_window_solar.lock()
+generic_exterior_window_insect_screen_solar.lock()
+generic_floor_exterior.lock()
+generic_wall_exterior.lock()
+generic_roof_exterior.lock()
+air_wall.lock()
+black.lock()
+white_glow.lock()
