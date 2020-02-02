@@ -344,8 +344,7 @@ class Primitive(object):
         if self._is_opaque:  # opaque modifier
             return self._is_opaque
         elif self.type in self.NONEOPAQUETYPES:  # non-opaque modifier
-            self._is_opaque = False
-            return self._is_opaque
+            return False
         else:  # it's a geometry or it has a void modifier; check the modifier
             return self.modifier.is_opaque
 

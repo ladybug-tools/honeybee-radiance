@@ -4,10 +4,15 @@
 #   ============== MODIFIERS ==============
 
 
-void plastic generic_exterior_shade_0.35
+void glass generic_interior_window_vis_0.88
 0
 0
-5 0.35 0.35 0.35 0.0 0.0
+3 0.9584154328610596 0.9584154328610596 0.9584154328610596
+
+void glass air_wall
+0
+0
+3 1.0 1.0 1.0
 
 void plastic generic_opaque_door_0.50
 0
@@ -19,30 +24,25 @@ void plastic generic_floor_0.20
 0
 5 0.2 0.2 0.2 0.0 0.0
 
-void plastic DarkFloor
-0
-0
-5 0.1 0.1 0.1 0.0 0.0
-
-void plastic generic_interior_shade_0.50
-0
-0
-5 0.5 0.5 0.5 0.0 0.0
-
-void plastic IndoorLightShelf
-0
-0
-5 0.7 0.7 0.7 0.0 0.0
-
 void plastic generic_wall_0.50
 0
 0
 5 0.5 0.5 0.5 0.0 0.0
 
-void glass generic_exterior_window_vis_0.64
+void plastic generic_exterior_shade_0.35
 0
 0
-3 0.6975761815384331 0.6975761815384331 0.6975761815384331
+5 0.35 0.35 0.35 0.0 0.0
+
+void plastic DarkFloor
+0
+0
+5 0.1 0.1 0.1 0.0 0.0
+
+void glass CustomTriplePane
+0
+0
+3 0.3272140103902576 0.3272140103902576 0.3272140103902576
 
 void plastic OutdoorLightShelf
 0
@@ -54,20 +54,20 @@ void plastic generic_ceiling_0.80
 0
 5 0.8 0.8 0.8 0.0 0.0
 
-void glass air_wall
+void glass generic_exterior_window_vis_0.64
 0
 0
-3 1.0 1.0 1.0
+3 0.6975761815384331 0.6975761815384331 0.6975761815384331
 
-void glass CustomTriplePane
+void plastic generic_interior_shade_0.50
 0
 0
-3 0.3272140103902576 0.3272140103902576 0.3272140103902576
+5 0.5 0.5 0.5 0.0 0.0
 
-void glass generic_interior_window_vis_0.88
+void plastic IndoorLightShelf
 0
 0
-3 0.9584154328610596 0.9584154328610596 0.9584154328610596
+5 0.7 0.7 0.7 0.0 0.0
 
 #   ================ ROOMS ================
 

@@ -3,7 +3,9 @@
 from honeybee.extensionutil import model_extension_dicts
 
 from ..lib.modifiersets import generic_modifier_set_visible
+from ..lib.modifiers import black
 from ..modifierset import ModifierSet
+from ..modifier.material import BSDF
 
 try:
     from itertools import izip as zip  # python 2
@@ -17,10 +19,11 @@ class ModelRadianceProperties(object):
     Properties:
         * host
         * modifiers
+        * blk_modifiers
         * room_modifiers
         * face_modifiers
         * shade_modifiers
-        * blk_modifiers
+        * bsdf_modifiers
         * modifier_sets
         * global_modifier_set
     """
@@ -43,12 +46,40 @@ class ModelRadianceProperties(object):
         """A list of all unique modifiers in the model.
 
         This includes modifiers across all Faces, Apertures, Doors, Shades,
-        Room ModifierSets, and the global_modifier_set. It also includes all
-        blk_modifiers.
+        Room ModifierSets, and the global_modifier_set.
+        
+        However, it excludes blk_modifiers and these can be obtained separately
+        from the blk_modifiers property.
         """
         all_mods = self.global_modifier_set.modifiers_unique + self.room_modifiers + \
-            self.face_modifiers + self.shade_modifiers + self.blk_modifiers
+            self.face_modifiers + self.shade_modifiers
         return list(set(all_mods))
+    
+    @property
+    def blk_modifiers(self):
+        """A list of all unique modifier_blk assigned to Faces, Apertures and Doors."""
+        modifiers = [black]
+        for room in self.host.rooms:
+            for face in room.faces:  # check all Room Face modifiers
+                self._check_and_add_face_modifier_blk(face, modifiers)
+        for face in self.host.orphaned_faces:  # check all orphaned Face modifiers
+            self._check_and_add_face_modifier_blk(face, modifiers)
+        for ap in self.host.orphaned_apertures:  # check all Aperture modifiers
+            self._check_and_add_obj_modifier_blk(ap, modifiers)
+        for dr in self.host.orphaned_doors:  # check all Door modifiers
+            self._check_and_add_obj_modifier_blk(dr, modifiers)
+        
+        for room in self.host.rooms:
+            self._check_and_add_room_modifier_shade_blk(room, modifiers)
+        for face in self.host.orphaned_faces:
+            self._check_and_add_face_modifier_shade_blk(face, modifiers)
+        for ap in self.host.orphaned_apertures:
+            self._check_and_add_obj_modifier_shade_blk(ap, modifiers)
+        for dr in self.host.orphaned_doors:
+            self._check_and_add_obj_modifier_shade_blk(dr, modifiers)
+        for shade in self.host.orphaned_shades:
+            self._check_and_add_obj_modifier_blk(shade, modifiers)
+        return list(set(modifiers))
     
     @property
     def room_modifiers(self):
@@ -99,30 +130,14 @@ class ModelRadianceProperties(object):
         return list(set(modifiers))
 
     @property
-    def blk_modifiers(self):
-        """A list of all unique modifier_blk assigned to Faces, Apertures and Doors."""
-        modifiers = []
-        for room in self.host.rooms:
-            for face in room.faces:  # check all Room Face modifiers
-                self._check_and_add_face_modifier_blk(face, modifiers)
-        for face in self.host.orphaned_faces:  # check all orphaned Face modifiers
-            self._check_and_add_face_modifier_blk(face, modifiers)
-        for ap in self.host.orphaned_apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier_blk(ap, modifiers)
-        for dr in self.host.orphaned_doors:  # check all Door modifiers
-            self._check_and_add_obj_modifier_blk(dr, modifiers)
-        
-        for room in self.host.rooms:
-            self._check_and_add_room_modifier_shade_blk(room, modifiers)
-        for face in self.host.orphaned_faces:
-            self._check_and_add_face_modifier_shade_blk(face, modifiers)
-        for ap in self.host.orphaned_apertures:
-            self._check_and_add_obj_modifier_shade_blk(ap, modifiers)
-        for dr in self.host.orphaned_doors:
-            self._check_and_add_obj_modifier_shade_blk(dr, modifiers)
-        for shade in self.host.orphaned_shades:
-            self._check_and_add_obj_modifier_blk(shade, modifiers)
-        return list(set(modifiers))
+    def bsdf_modifiers(self):
+        """A list of all unique BSDF modifiers in the model.
+
+        This includes any BSDF modifiers in both the Model.modifiers and the
+        Model.blk_modifiers.
+        """
+        all_mods = self.modifiers + self.blk_modifiers
+        return list(set(mod for mod in all_mods if isinstance(mod, BSDF)))
 
     @property
     def modifier_sets(self):

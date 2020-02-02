@@ -41,6 +41,7 @@ def test_radiance_properties():
     assert isinstance(model.properties.radiance, ModelRadianceProperties)
     assert isinstance(model.properties.host, Model)
     assert len(model.properties.radiance.modifiers) == 10
+    assert len(model.properties.radiance.blk_modifiers) == 1
     for mat in model.properties.radiance.modifiers:
         assert isinstance(mat, Modifier)
     assert len(model.properties.radiance.face_modifiers) == 0

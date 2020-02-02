@@ -6,6 +6,9 @@ from .geometry import Polygon
 def shade_to_rad(shade, blk=False, minimal=False):
     """Generate an RAD string representation of a Shade.
 
+    Note that the resulting string does not include modifier definitions. Nor
+    does it include any states for dynamic geometry.
+
     Args:
         shade: A honeyee Shade for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Shade should
@@ -23,8 +26,9 @@ def shade_to_rad(shade, blk=False, minimal=False):
 def door_to_rad(door, blk=False, minimal=False):
     """Generate an RAD string representation of a Door.
 
-    Note that the resulting string does not include full modifier definitions
-    but it does include any of the shades assigned to the Door.
+    Note that the resulting string does not include modifier definitions. Nor
+    does it include any states for dynamic geometry. However, it does include
+    any of the shades assigned to the Door.
 
     Args:
         door: A honeyee Door for which an RAD representation will be returned.
@@ -46,8 +50,9 @@ def door_to_rad(door, blk=False, minimal=False):
 def aperture_to_rad(aperture, blk=False, minimal=False):
     """Generate an RAD string representation of an Aperture.
 
-    Note that the resulting string does not include full modifier definitions
-    but it does include any of the shades assigned to the Aperture.
+    Note that the resulting string does not include modifier definitions. Nor
+    does it include any states for dynamic geometry. However, it does include
+    the shade geometry assigned to the Aperture.
 
     Args:
         aperture: A honeyee Aperture for which an RAD representation will be returned.
@@ -69,9 +74,10 @@ def aperture_to_rad(aperture, blk=False, minimal=False):
 def face_to_rad(face, blk=False, minimal=False):
     """Get Face as a Radiance string.
 
-    Note that the resulting string does not include full modifier definitions
-    but it does include any of the shades assigned to the Face along with the
-    Apertures and Doors in the Face.
+    Note that the resulting string does not include modifier definitions. Nor
+    does it include any states for dynamic geometry. However, it does include
+    any of the shades assigned to the Face along with the Apertures and Doors
+    in the Face.
     
     Args:
         face: A honeyee Face for which a RAD representation will be returned.
@@ -98,7 +104,9 @@ def room_to_rad(room, blk=False, minimal=False):
     """Generate an RAD string representation of a Room.
 
     This method will write all geometry associated with a Room including all
-    Faces, Apertures, Doors, and Shades.
+    Faces, Apertures, Doors, and Shades. However, it does not include modifiers
+    for this geometry. Nor does it include any states for dynamic geometry and
+    will only write the default state for each dynamic object.
 
     Args:
         room: A honeyee Room for which an RAD representation will be returned.
@@ -120,7 +128,9 @@ def model_to_rad(model, blk=False, minimal=False):
     r"""Generate an RAD string representation of a Model.
 
     The resulting string will include all geometry (Rooms, Faces, Shades, Apertures,
-    Doors), all fully-detailed modifiers.
+    Doors) and all modifiers. However, it does not include any states for dynamic
+    geometry and will only write the default state for each dynamic object. To
+    correctly account for dynamic objects, the model_to_rad_folder should be used.
 
     Args:
         model: A honeyee Model for which an RAD representation will be returned.

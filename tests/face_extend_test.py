@@ -3,7 +3,10 @@ from honeybee.face import Face
 from honeybee.boundarycondition import boundary_conditions
 
 from honeybee_radiance.properties.face import FaceRadianceProperties
-from honeybee_radiance.modifier.material import Plastic
+from honeybee_radiance.modifier.material import Plastic, Glass
+
+from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
+    generic_ceiling, black
 
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.face import Face3D
@@ -19,6 +22,15 @@ def test_radiance_properties():
     assert isinstance(face.properties.radiance, FaceRadianceProperties)
     assert not face.properties.radiance.is_modifier_set_on_object
 
+    assert face.properties.radiance.modifier == generic_wall
+    assert face.properties.radiance.modifier_blk == black
+    assert not face.properties.radiance.is_modifier_set_on_object
+
+    glass_brick = Glass.from_single_transmittance('GlassBrick', 0.2)
+    face.properties.radiance.modifier = glass_brick
+    assert face.properties.radiance.modifier_blk == glass_brick
+    assert face.properties.radiance.is_modifier_set_on_object
+
 
 def test_default_modifiers():
     """Test the auto-assigning of modifiers by face type and boundary condition."""
@@ -27,11 +39,11 @@ def test_default_modifiers():
     vertices_roof = [[10, 0, 3], [10, 10, 3], [0, 10, 3], [0, 0, 3]]
 
     wf = Face.from_vertices('wall', vertices_wall)
-    assert wf.properties.radiance.modifier.name == 'generic_wall_0.50'
+    assert wf.properties.radiance.modifier == generic_wall
     rf = Face.from_vertices('roof', vertices_roof)
-    assert rf.properties.radiance.modifier.name == 'generic_ceiling_0.80'
+    assert rf.properties.radiance.modifier == generic_ceiling
     ff = Face.from_vertices('floor', vertices_floor)
-    assert ff.properties.radiance.modifier.name == 'generic_floor_0.20'
+    assert ff.properties.radiance.modifier == generic_floor
 
 
 def test_set_modifier():
@@ -121,7 +133,7 @@ def test_writer_to_rad():
         assert ' '.join([str(float(x)) for x in pt]) in rad_string
 
 
-def test_writer_to_rad_aperture_door_sshade():
+def test_writer_to_rad_aperture_door_shade():
     pts = [[0, 0, 0], [10, 0, 0], [10, 0, 3], [0, 0, 3]]
     face = Face.from_vertices('wall_face', pts)
     face.apertures_by_ratio(0.4, 0.01)
