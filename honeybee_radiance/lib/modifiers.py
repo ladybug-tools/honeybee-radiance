@@ -45,7 +45,7 @@ generic_roof_exterior = \
     Plastic.from_single_reflectance('generic_ceiling_exterior_side_0.35', 0.35)
 
 # special types of modifiers used within various simulation processes
-air_wall = Glass.from_single_transmissivity('air_wall', 1.0)
+air_boundary = Glass.from_single_transmissivity('air_boundary', 1.0)
 black = Plastic.from_single_reflectance('black', 0.0)  # used in multiphase daylight
 white_glow = Glow('white_glow', 1.0, 1.0, 1.0, 0.0)  # used in multi-phase daylight
 
@@ -66,6 +66,6 @@ generic_exterior_window_insect_screen_solar.lock()
 generic_floor_exterior.lock()
 generic_wall_exterior.lock()
 generic_roof_exterior.lock()
-air_wall.lock()
+air_boundary.lock()
 black.lock()
 white_glow.lock()

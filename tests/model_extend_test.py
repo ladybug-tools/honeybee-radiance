@@ -15,7 +15,7 @@ from honeybee_radiance.modifier.material import Plastic, Glass
 
 from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
     generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
-    generic_exterior_shade, generic_interior_shade, air_wall
+    generic_exterior_shade, generic_interior_shade, air_boundary
 
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
