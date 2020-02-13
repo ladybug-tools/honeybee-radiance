@@ -3,8 +3,9 @@
 from honeybee.extensionutil import model_extension_dicts
 
 from ..lib.modifiersets import generic_modifier_set_visible
-from ..lib.modifiers import black
+from ..lib.modifiers import black, generic_context
 from ..modifierset import ModifierSet
+from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import BSDF
 
 try:
@@ -126,7 +127,7 @@ class ModelRadianceProperties(object):
         for dr in self.host.orphaned_doors:
             self._check_and_add_obj_modifier_shade(dr, modifiers)
         for shade in self.host.orphaned_shades:
-            self._check_and_add_obj_modifier(shade, modifiers)
+            self._check_and_add_orphaned_shade_modifier(shade, modifiers)
         return list(set(modifiers))
 
     @property
@@ -288,18 +289,13 @@ class ModelRadianceProperties(object):
             modifier_sets -- A dictionary with names of modifier sets as keys
                 and Python modifier set objects as values.
         """
-        try:  # ensure the putil module is imported, which imports all primitive modules
-            putil
-        except NameError:
-            import honeybee_radiance.putil as putil
-
         assert 'radiance' in data['properties'], \
             'Dictionary possesses no ModelRadianceProperties.'
 
         # process all modifiers in the ModelRadianceProperties dictionary
         modifiers = {}
         for mod in data['properties']['radiance']['modifiers']:
-            modifiers[mod['name']] = putil.dict_to_modifier(mod)
+            modifiers[mod['name']] = dict_to_modifier(mod)
 
         # process all modifier sets in the ModelRadianceProperties dictionary
         modifier_sets = {}
@@ -369,17 +365,27 @@ class ModelRadianceProperties(object):
 
     def _check_and_add_obj_modifier(self, obj, modifiers):
         """Check if a modifier is assigned to an object and add it to a list."""
-        constr = obj.properties.radiance._modifier
-        if constr is not None:
-            if not self._instance_in_array(constr, modifiers):
-                modifiers.append(constr)
+        mod = obj.properties.radiance._modifier
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
 
     def _check_and_add_obj_modifier_blk(self, obj, modifiers):
         """Check if a modifier_blk is assigned to an object and add it to a list."""
-        constr = obj.properties.radiance._modifier_blk
-        if constr is not None:
-            if not self._instance_in_array(constr, modifiers):
-                modifiers.append(constr)
+        mod = obj.properties.radiance._modifier_blk
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
+    
+    def _check_and_add_orphaned_shade_modifier(self, obj, modifiers):
+        """Check if a modifier is assigned to an object and add it to a list."""
+        mod = obj.properties.radiance._modifier
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
+        else:
+            if not self._instance_in_array(generic_context, modifiers):
+                modifiers.append(generic_context)
 
     @staticmethod
     def _instance_in_array(object_instance, object_array):

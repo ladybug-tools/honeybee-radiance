@@ -74,3 +74,10 @@ def test_to_dict():
     assert mdict['type'] == 'glow'
     assert mdict['modifier'] == 'void'
 
+
+def test_to_from_dict():
+    mt = Glow.from_single_value('mt_test', 100000)
+    mdict = mt.to_dict()
+    new_mt = Glow.from_dict(mdict)
+    assert mt == new_mt
+    assert new_mt.to_dict() == mdict

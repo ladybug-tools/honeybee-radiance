@@ -1,0 +1,162 @@
+{
+    "Generic_Interior_Visible_Modifier_Set": {
+        "type": "ModifierSetAbridged",
+        "name": "Generic_Interior_Visible_Modifier_Set",
+        "wall_set": {
+            "interior_modifier": "generic_wall_0.50",
+            "exterior_modifier": "generic_wall_0.50",
+            "type": "WallSetAbridged"
+        },
+        "floor_set": {
+            "interior_modifier": "generic_floor_0.20",
+            "exterior_modifier": "generic_floor_0.20",
+            "type": "FloorSetAbridged"
+        },
+        "roof_ceiling_set": {
+            "interior_modifier": "generic_ceiling_0.80",
+            "exterior_modifier": "generic_ceiling_0.80",
+            "type": "RoofCeilingSetAbridged"
+        },
+        "aperture_set": {
+            "interior_modifier": "generic_interior_window_vis_0.88",
+            "skylight_modifier": "generic_exterior_window_vis_0.64",
+            "operable_modifier": "generic_exterior_window_vis_0.64",
+            "type": "ApertureSetAbridged",
+            "window_modifier": "generic_exterior_window_vis_0.64"
+        },
+        "door_set": {
+            "exterior_modifier": "generic_opaque_door_0.50",
+            "interior_modifier": "generic_opaque_door_0.50",
+            "overhead_modifier": "generic_opaque_door_0.50",
+            "exterior_glass_modifier": "generic_exterior_window_vis_0.64",
+            "interior_glass_modifier": "generic_interior_window_vis_0.88",
+            "type": "DoorSetAbridged"
+        },
+        "shade_set": {
+            "interior_modifier": "generic_interior_shade_0.50",
+            "exterior_modifier": "generic_exterior_shade_0.35",
+            "type": "ShadeSetAbridged"
+        },
+        "air_boundary_modifier": "air_boundary"
+    },
+    "Generic_Interior_Solar_Modifier_Set": {
+        "type": "ModifierSetAbridged",
+        "name": "Generic_Interior_Solar_Modifier_Set",
+        "wall_set": {
+            "interior_modifier": "generic_wall_0.50",
+            "exterior_modifier": "generic_wall_0.50",
+            "type": "WallSetAbridged"
+        },
+        "floor_set": {
+            "interior_modifier": "generic_floor_0.20",
+            "exterior_modifier": "generic_floor_0.20",
+            "type": "FloorSetAbridged"
+        },
+        "roof_ceiling_set": {
+            "interior_modifier": "generic_ceiling_0.80",
+            "exterior_modifier": "generic_ceiling_0.80",
+            "type": "RoofCeilingSetAbridged"
+        },
+        "aperture_set": {
+            "interior_modifier": "generic_interior_window_sol_0.77",
+            "skylight_modifier": "generic_exterior_window_sol_0.37",
+            "operable_modifier": "generic_exterior_window_sol_0.37",
+            "type": "ApertureSetAbridged",
+            "window_modifier": "generic_exterior_window_sol_0.37"
+        },
+        "door_set": {
+            "exterior_modifier": "generic_opaque_door_0.50",
+            "interior_modifier": "generic_opaque_door_0.50",
+            "overhead_modifier": "generic_opaque_door_0.50",
+            "exterior_glass_modifier": "generic_exterior_window_vis_0.64",
+            "interior_glass_modifier": "generic_interior_window_vis_0.88",
+            "type": "DoorSetAbridged"
+        },
+        "shade_set": {
+            "interior_modifier": "generic_interior_shade_0.50",
+            "exterior_modifier": "generic_exterior_shade_0.35",
+            "type": "ShadeSetAbridged"
+        },
+        "air_boundary_modifier": "air_boundary"
+    },
+    "Generic_Exterior_Visible_Modifier_Set": {
+        "type": "ModifierSetAbridged",
+        "name": "Generic_Exterior_Visible_Modifier_Set",
+        "wall_set": {
+            "interior_modifier": "generic_wall_0.50",
+            "exterior_modifier": "generic_wall_exterior_side_0.35",
+            "type": "WallSetAbridged"
+        },
+        "floor_set": {
+            "interior_modifier": "generic_floor_0.20",
+            "exterior_modifier": "generic_floor_exterior_side_0.50",
+            "type": "FloorSetAbridged"
+        },
+        "roof_ceiling_set": {
+            "interior_modifier": "generic_ceiling_0.80",
+            "exterior_modifier": "generic_ceiling_exterior_side_0.35",
+            "type": "RoofCeilingSetAbridged"
+        },
+        "aperture_set": {
+            "interior_modifier": "generic_interior_window_vis_0.88",
+            "skylight_modifier": "generic_exterior_window_vis_0.64",
+            "operable_modifier": "generic_exterior_window_vis_0.64",
+            "type": "ApertureSetAbridged",
+            "window_modifier": "generic_exterior_window_vis_0.64"
+        },
+        "door_set": {
+            "exterior_modifier": "generic_opaque_door_0.50",
+            "interior_modifier": "generic_opaque_door_0.50",
+            "overhead_modifier": "generic_opaque_door_0.50",
+            "exterior_glass_modifier": "generic_exterior_window_vis_0.64",
+            "interior_glass_modifier": "generic_interior_window_vis_0.88",
+            "type": "DoorSetAbridged"
+        },
+        "shade_set": {
+            "interior_modifier": "generic_interior_shade_0.50",
+            "exterior_modifier": "generic_exterior_shade_0.35",
+            "type": "ShadeSetAbridged"
+        },
+        "air_boundary_modifier": "air_boundary"
+    },
+    "Generic_Exterior_Solar_Modifier_Set": {
+        "type": "ModifierSetAbridged",
+        "name": "Generic_Exterior_Solar_Modifier_Set",
+        "wall_set": {
+            "interior_modifier": "generic_wall_0.50",
+            "exterior_modifier": "generic_wall_exterior_side_0.35",
+            "type": "WallSetAbridged"
+        },
+        "floor_set": {
+            "interior_modifier": "generic_floor_0.20",
+            "exterior_modifier": "generic_floor_exterior_side_0.50",
+            "type": "FloorSetAbridged"
+        },
+        "roof_ceiling_set": {
+            "interior_modifier": "generic_ceiling_0.80",
+            "exterior_modifier": "generic_ceiling_exterior_side_0.35",
+            "type": "RoofCeilingSetAbridged"
+        },
+        "aperture_set": {
+            "interior_modifier": "generic_interior_window_sol_0.77",
+            "skylight_modifier": "generic_exterior_window_sol_0.37",
+            "operable_modifier": "generic_exterior_window_sol_0.37",
+            "type": "ApertureSetAbridged",
+            "window_modifier": "generic_exterior_window_sol_0.37"
+        },
+        "door_set": {
+            "exterior_modifier": "generic_opaque_door_0.50",
+            "interior_modifier": "generic_opaque_door_0.50",
+            "overhead_modifier": "generic_opaque_door_0.50",
+            "exterior_glass_modifier": "generic_exterior_window_vis_0.64",
+            "interior_glass_modifier": "generic_interior_window_vis_0.88",
+            "type": "DoorSetAbridged"
+        },
+        "shade_set": {
+            "interior_modifier": "generic_interior_shade_0.50",
+            "exterior_modifier": "generic_exterior_shade_0.35",
+            "type": "ShadeSetAbridged"
+        },
+        "air_boundary_modifier": "air_boundary"
+    }
+}

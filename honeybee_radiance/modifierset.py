@@ -2,6 +2,7 @@
 from __future__ import division
 
 from honeybee_radiance.modifier import Modifier
+from honeybee_radiance.mutil import dict_to_modifier  # imports all modifiers classes
 from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
     generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
     generic_exterior_shade, generic_interior_shade, air_boundary
@@ -345,15 +346,10 @@ class ModifierSet(object):
         assert data['type'] == 'ModifierSet', \
             'Expected ModifierSet. Got {}.'.format(data['type'])
         
-        try:  # ensure the putil module is imported, which imports all primitive modules
-            putil
-        except NameError:
-            import honeybee_radiance.putil as putil
-        
         # gather all modifier objects
         modifiers = {}
         for mod in data['modifiers']:
-            modifiers[mod['name']] = putil.dict_to_modifier(mod)
+            modifiers[mod['name']] = dict_to_modifier(mod)
 
         # build each of the sub-sets
         wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set, \
