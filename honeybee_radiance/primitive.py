@@ -424,22 +424,23 @@ class Primitive(object):
     @staticmethod
     def filter_dict_input(input_dict):
         """Filter a dictionary of a Primitive to get modifier and dependency objects."""
-        try:  # ensure the putil module is imported, which imports all primitive modules
-            putil
+        try:  # see if the mutil module has already been imported
+            mutil
         except NameError:
-            import honeybee_radiance.putil as putil
+            # import the module here (instead of at top) to avoid a circular import
+            import honeybee_radiance.mutil as mutil  # imports all modifiers classes
 
         # try to get modifier
         if input_dict['modifier'] == 'void':
             modifier = 'void'
         else:
-            modifier = putil.dict_to_modifier(input_dict['modifier'])
+            modifier = mutil.dict_to_modifier(input_dict['modifier'])
 
         if 'dependencies' not in input_dict: 
             dependencies = []
         else:
             dependencies = [
-                putil.dict_to_modifier(dep) for dep in input_dict['dependencies']
+                mutil.dict_to_modifier(dep) for dep in input_dict['dependencies']
             ]
 
         return modifier, dependencies

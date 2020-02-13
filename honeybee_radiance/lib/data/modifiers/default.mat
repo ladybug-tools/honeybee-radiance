@@ -1,0 +1,100 @@
+#   =========  DEFAULT HONEYBEE MODIFIERS =========
+# These modifiers are loaded into the honeybee_radiance library as defaults.
+# Editing these modifiers will edit the defaults used across all of
+# honeybee_radiance as long as the names of the modifiers are kept.
+
+
+void plastic generic_floor_0.20
+0
+0
+5 0.2 0.2 0.2 0.0 0.0
+
+void plastic generic_wall_0.50
+0
+0
+5 0.5 0.5 0.5 0.0 0.0
+
+void plastic generic_ceiling_0.80
+0
+0
+5 0.8 0.8 0.8 0.0 0.0
+
+void plastic generic_opaque_door_0.50
+0
+0
+5 0.5 0.5 0.5 0.0 0.0
+
+void plastic generic_interior_shade_0.50
+0
+0
+5 0.5 0.5 0.5 0.0 0.0
+
+void plastic generic_exterior_shade_0.35
+0
+0
+5 0.35 0.35 0.35 0.0 0.0
+
+void plastic generic_context_0.20
+0
+0
+5 0.2 0.2 0.2 0.0 0.0
+
+void glass generic_interior_window_vis_0.88
+0
+0
+3 0.9584154328610596 0.9584154328610596 0.9584154328610596
+
+void glass generic_exterior_window_vis_0.64
+0
+0
+3 0.6975761815384331 0.6975761815384331 0.6975761815384331
+
+void glass generic_exterior_screened_window_vis_0.32
+0
+0
+3 0.34901895091031854 0.34901895091031854 0.34901895091031854
+
+void glass generic_interior_window_sol_0.77
+0
+0
+3 0.8389405447251757 0.8389405447251757 0.8389405447251757
+
+void glass generic_exterior_window_sol_0.37
+0
+0
+3 0.4035231572885182 0.4035231572885182 0.4035231572885182
+
+void glass generic_exterior_screened_window_sol_0.19
+0
+0
+3 0.2072595906234098 0.2072595906234098 0.2072595906234098
+
+void plastic generic_floor_exterior_side_0.50
+0
+0
+5 0.5 0.5 0.5 0.0 0.0
+
+void plastic generic_wall_exterior_side_0.35
+0
+0
+5 0.35 0.35 0.35 0.0 0.0
+
+void plastic generic_ceiling_exterior_side_0.35
+0
+0
+5 0.35 0.35 0.35 0.0 0.0
+
+void glass air_boundary
+0
+0
+3 1.0 1.0 1.0
+
+void plastic black
+0
+0
+5 0.0 0.0 0.0 0.0 0.0
+
+void glow white_glow
+0
+0
+4 1.0 1.0 1.0 0.0

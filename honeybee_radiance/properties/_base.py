@@ -1,6 +1,7 @@
 # coding=utf-8
 """Base class of Radiance Properties for all planar geometry objects."""
 from ..modifier import Modifier
+from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..lib.modifiers import black
 from ..lib.modifiersets import generic_modifier_set_visible
 
@@ -150,15 +151,10 @@ class _GeometryRadianceProperties(object):
     @staticmethod
     def _restore_modifiers_from_dict(new_prop, data):
         """Restor modifiers from a data dictionary to a new properties object."""
-        try:  # ensure the putil module is imported, which imports all primitive modules
-            putil
-        except NameError:
-            import honeybee_radiance.putil as putil
-
         if 'modifier' in data and data['modifier'] is not None:
-            new_prop.modifier = putil.dict_to_modifier(data['modifier'])
+            new_prop.modifier = dict_to_modifier(data['modifier'])
         if 'modifier_blk' in data and data['modifier_blk'] is not None:
-            new_prop.modifier_blk = putil.dict_to_modifier(data['modifier_blk'])
+            new_prop.modifier_blk = dict_to_modifier(data['modifier_blk'])
         return new_prop
 
     def ToString(self):

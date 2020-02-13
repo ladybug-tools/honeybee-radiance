@@ -224,7 +224,7 @@ def test_to_dict_single_zone():
     assert 'modifier_sets' in model_dict['properties']['radiance']
     assert 'global_modifier_set' in model_dict['properties']['radiance']
 
-    assert len(model_dict['properties']['radiance']['modifiers']) == 13
+    assert len(model_dict['properties']['radiance']['modifiers']) == 14
     assert len(model_dict['properties']['radiance']['modifier_sets']) == 1
 
     assert model_dict['rooms'][0]['faces'][0]['properties']['radiance']['modifier'] == \
@@ -298,8 +298,8 @@ def test_writer_to_rad():
     south_face.apertures[0].overhang(0.5, indoor=False)
     south_face.apertures[0].overhang(0.5, indoor=True)
     south_face.move_shades(Vector3D(0, 0, -0.5))
-    light_shelf_out = Plastic.from_single_reflectance('OutdoorLightShelf', 0.5)
-    light_shelf_in = Plastic.from_single_reflectance('IndoorLightShelf', 0.7)
+    light_shelf_out = Plastic.from_single_reflectance('outdoor_light_shelf_0.5', 0.5)
+    light_shelf_in = Plastic.from_single_reflectance('indoor_light_shelf_0.70', 0.7)
     south_face.apertures[0].outdoor_shades[0].properties.radiance.modifier = light_shelf_out
     south_face.apertures[0].indoor_shades[0].properties.radiance.modifier = light_shelf_in
 
@@ -313,7 +313,7 @@ def test_writer_to_rad():
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
     aperture = Aperture('Front Aperture', Face3D(aperture_verts))
-    triple_pane = Glass.from_single_transmittance('CustomTriplePane', 0.3)
+    triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
     aperture.properties.radiance.modifier = triple_pane
     north_face.add_aperture(aperture)
 
@@ -330,6 +330,3 @@ def test_writer_to_rad():
 
     assert hasattr(model.to, 'rad')
     rad_string = model.to.rad(model)
-    model_file = './tests/assets/model/test_model.rad'
-    with open(model_file, 'w') as fp:
-        fp.write(rad_string)

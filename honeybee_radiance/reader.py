@@ -7,14 +7,14 @@ from honeybee_radiance_command.cutil import parse_radiance_options
 
 # TODO: Add support for comments [#] and commands [!]
 def parse_from_string(full_string):
-    """
-    separate a Radiance file string into multiple strings for each object.
+    """Separate a Radiance file string into multiple strings for each object.
 
     Args:
-        rad_fileString: Radiance data as a single string. The string can be multiline.
+        full_string: Radiance data as a single string. The string can be multiline.
 
     Returns:
-        A list of strings. Each string represents a different Radiance Object
+        A list of strings. Each string represents a different Radiance primitive
+        (geometry or modifier). Comments [#] and commands [!] are excluded.
     """
     raw_rad_objects = re.findall(
         r'^\s*([^0-9].*(\s*[\d.-]+.*)*)',
@@ -43,7 +43,7 @@ def parse_from_file(file_path):
         A list of strings. Each string represents a different Radiance object.
 
     Usage:
-        rad_objects = get_radiance_objects_from_file('some_file.rad')
+        rad_obj_strs = parse_from_file('some_file.rad')
     """
 
     assert os.path.isfile(file_path), "Can't find %s." % file_path
