@@ -9,30 +9,30 @@ from ..lib.modifiersets import generic_modifier_set_visible
 class DoorRadianceProperties(_GeometryRadianceProperties):
     """Radiance Properties for Honeybee Door.
 
+
+    Args:
+        host: A honeybee_core Door object that hosts these properties.
+        modifier: A Honeybee Radiance Modifier object for the door. If None,
+            it will be set by the parent Room ModifierSet or the Honeybee
+            default generic ModifierSet.
+        modifier_blk: A Honeybee Radiance Modifier object to be used for this
+            door in direct solar simulations and in isolation studies (assessing
+            the contribution of individual Apertures). If None, this will be
+            a completely black material.
+
     Properties:
         * host
         * modifier
         * modifier_blk
-        * is_opaque 
+        * is_opaque
         * is_modifier_set_on_object
-        * is_blk_overridden 
+        * is_blk_overridden
     """
 
     __slots__ = ()
 
     def __init__(self, host, modifier=None, modifier_blk=None):
-        """Initialize Door radiance properties.
-
-        Args:
-            host: A honeybee_core Door object that hosts these properties.
-            modifier: A Honeybee Radiance Modifier object for the door. If None,
-                it will be set by the parent Room ModifierSet or the Honeybee
-                default generic ModifierSet.
-            modifier_blk: A Honeybee Radiance Modifier object to be used for this
-                door in direct solar simulations and in isolation studies (assessing
-                the contribution of individual Apertures). If None, this will be
-                a completely black material.
-        """
+        """Initialize Door radiance properties."""
         _GeometryRadianceProperties.__init__(self, host, modifier, modifier_blk)
 
     @property
@@ -71,7 +71,7 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
     @property
     def modifier_blk(self):
         """Get or set a modifier to be used in direct solar and in isolation studies.
-        
+
         If None, this will be a completely black material if the Door's modifier
         is opaque and will be equal to the modifier if the Door's modifier is non-opaque.
         """

@@ -14,6 +14,8 @@ class Texfunc(Texture):
 
     A texfunc uses an auxiliary function file to specify a procedural texture:
 
+    .. code-block:: shell
+
         mod texfunc id
         4+ xpert ypert zpert funcfile transform
         0

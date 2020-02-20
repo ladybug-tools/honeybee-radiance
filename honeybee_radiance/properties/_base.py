@@ -11,29 +11,28 @@ class _GeometryRadianceProperties(object):
 
     This includes (Face, Aperture, Door, Shade).
 
+    Args:
+        host: A honeybee_core object that hosts these properties.
+        modifier: A Honeybee Radiance Modifier for the object. If None,
+            it will be set by the parent Room ModifierSet or the Honeybee
+            default generic ModifierSet.
+        modifier_blk: A Honeybee Radiance Modifier to be used for this object
+            in direct solar simulations and in isolation studies (assessing
+            the contribution of individual Apertures).
+
     Properties:
         * host
         * modifier
         * modifier_blk
-        * is_opaque 
+        * is_opaque
         * is_modifier_set_on_object
-        * is_blk_overridden 
+        * is_blk_overridden
     """
 
     __slots__ = ('_host', '_modifier', '_modifier_blk')
 
     def __init__(self, host, modifier=None, modifier_blk=None):
-        """Initialize GeometryRadianceProperties.
-
-        Args:
-            host: A honeybee_core object that hosts these properties.
-            modifier: A Honeybee Radiance Modifier for the object. If None,
-                it will be set by the parent Room ModifierSet or the Honeybee
-                default generic ModifierSet.
-            modifier_blk: A Honeybee Radiance Modifier to be used for this object
-                in direct solar simulations and in isolation studies (assessing
-                the contribution of individual Apertures).
-        """
+        """Initialize GeometryRadianceProperties."""
         self._host = host
         self.modifier = modifier
         self.modifier_blk = modifier_blk
@@ -59,7 +58,7 @@ class _GeometryRadianceProperties(object):
     @property
     def modifier_blk(self):
         """Get or set a modifier to be used in direct solar and in isolation studies.
-        
+
         If None, this will be a completely black material if the object's modifier is
         opaque and will be equal to the modifier if the object's modifier is non-opaque.
         """
@@ -78,11 +77,11 @@ class _GeometryRadianceProperties(object):
                 'Expected Radiance Modifier. Got {}'.format(type(value))
             value.lock()  # lock editing in case modifier has multiple references
         self._modifier_blk = value
-    
+
     @property
     def is_opaque(self):
         """Boolean noting whether this object has an opaque modifier.
-        
+
         This has repercussions for how this object is written into the Radiance
         folder structure.
         """
@@ -91,17 +90,17 @@ class _GeometryRadianceProperties(object):
     @property
     def is_modifier_set_on_object(self):
         """Boolean noting if modifier is assigned on the level of this object.
-        
+
         This is opposed to having the modifier assigned by a ModifierSet.
         """
         return self._modifier is not None
-    
+
     @property
     def is_blk_overridden(self):
         """Boolean noting if modifier_blk has been overridden from default on this object.
         """
         return self._modifier is not None
-    
+
     def reset_to_default(self):
         """Reset a Modifier assigned at the level of this Shade to the default.
 

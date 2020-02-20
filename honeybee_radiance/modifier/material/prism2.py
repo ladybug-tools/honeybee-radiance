@@ -12,11 +12,12 @@ class Prism2(Material):
     The material prism2 is identical to prism1 except that it provides for two ray
     redirections rather than one.
 
+    .. code-block:: shell
+
         mod prism2 id
         9+ coef1 dx1 dy1 dz1 coef2 dx2 dy2 dz2 funcfile transform
         0
         n A1 A2 .. An
-
     """
     __slots__ = ()
 

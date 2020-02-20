@@ -14,6 +14,8 @@ class Plasfunc(Material):
     to this material include the color and specularity, as well as the function defining
     the specular distribution and the auxiliary file where it may be found.
 
+    .. code-block:: shell
+
             mod plasfunc id
             2+ refl funcfile transform
             0
@@ -26,7 +28,7 @@ class Plasfunc(Material):
     arguments must be given, and these are made available along with any additional
     values to the reflectance function. Currently, only the contribution from direct
     light sources is considered in the specular calculation. As in most material types,
-    the surface normal is always altered to face the incoming ray. 
+    the surface normal is always altered to face the incoming ray.
     """
     __slots__ = ()
 

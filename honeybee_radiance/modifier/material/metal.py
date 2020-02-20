@@ -8,7 +8,42 @@ from .plastic import Plastic
 
 
 class Metal(Plastic):
-    """Radiance metal material."""
+    """Radiance metal material.
+
+    Args:
+        name: Material name as a string. Do not use white space or special
+            character.
+        r_reflectance: Reflectance for red. The value should be between 0 and 1
+            (Default: 0).
+        g_reflectance: Reflectance for green. The value should be between 0 and 1
+            (Default: 0).
+        b_reflectance: Reflectance for blue. The value should be between 0 and 1
+            (Default: 0).
+        specularity: Fraction of specularity. Specularity fractions greater than 0.1
+            are not realistic (Default: 0).
+        roughness: Roughness is specified as the rms slope of surface facets. A
+            value of 0 corresponds to a perfectly smooth surface, and a value of 1
+            would be a very rough surface. Roughness values greater than 0.2 are not
+            very realistic. (Default: 0).
+        modifier: Material modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_reflectance
+        * g_reflectance
+        * b_reflectance
+        * specularity
+        * roughness
+        * average_reflectance
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+    """
 
     __slots__ = ()
 

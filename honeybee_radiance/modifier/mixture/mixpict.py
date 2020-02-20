@@ -11,6 +11,8 @@ class Mixpict(Mixture):
 
     Mixpict combines two modifiers based on a picture:
 
+    .. code-block:: shell
+
         mod mixpict id
         7+
                 foreground background func pictfile

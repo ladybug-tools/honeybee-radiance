@@ -13,7 +13,20 @@ from ..primitive import Primitive
 
 
 class Modifier(Primitive):
-    """Base class for Radiance modifiers."""
+    """Base class for Radiance modifiers.
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+        * is_texture
+        * is_pattern
+        * is_mixture
+        * is_opaque
+    """
 
     __slots__ = ()
 

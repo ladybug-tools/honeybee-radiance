@@ -8,25 +8,36 @@ import honeybee.typing as typing
 
 
 class Light(Material):
-    """Radiance Light material."""
+    """Radiance Light material.
+
+    Args:
+        name: Material name as a string. The name should not have whitespaces or
+            special characters.
+        r_emittance: A positive value for the Red channel of the light (default: 0).
+        g_emittance: A positive value for the Green channel of the light (default: 0).
+        b_emittance: A positive value for the Blue channel of the light (default: 0).
+        modifier: Material modifier. The default value is void.
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_emittance
+        * g_emittance
+        * b_emittance
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+    """
 
     __slots__ = ('_r_emittance', '_g_emittance', '_b_emittance')
 
     def __init__(self, name, r_emittance=0, g_emittance=0, b_emittance=0, modifier='void',
                  dependencies=None):
-        """Radiance Light material.
-
-        Args:
-            name: Material name as a string. The name should not have whitespaces or
-                special characters.
-            r_emittance: A positive value for the Red channel of the light (default: 0).
-            g_emittance: A positive value for the Green channel of the light (default: 0).
-            b_emittance: A positive value for the Blue channel of the light (default: 0).
-            modifier: Material modifier. The default value is void.
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-        """
+        """Radiance Light material."""
         Material.__init__(self, name, modifier=modifier,
                           dependencies=dependencies)
         self.r_emittance = r_emittance
@@ -89,6 +100,9 @@ class Light(Material):
                 primitive is defined based on other primitives. (Default: [])
 
         Usage:
+
+        .. code-block:: python
+
             sample_light = Light.from_single_value("sample_light", 1)
             print(sample_light)
         """
@@ -102,14 +116,14 @@ class Light(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "light", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "light",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -142,16 +156,16 @@ class Light(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "name": "", // Material Name
-                "type": "light", // primitive type
-                "r_emittance": float, // A positive value for the Red channel of the glow
-                "g_emittance": float, // A positive value for the Green channel of the glow
-                "b_emittance": float, // A positive value for the Blue channel of the glow
-                "radius": float, // Maximum radius for shadow testing
-                "dependencies: []
+            "name": "",  # Material Name
+            "type": "light",  # primitive type
+            "r_emittance": float,  # A positive value for the Red channel of the glow
+            "g_emittance": float,  # A positive value for the Green channel of the glow
+            "b_emittance": float,  # A positive value for the Blue channel of the glow
+            "radius": float,  # Maximum radius for shadow testing
+            "dependencies: []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

@@ -21,7 +21,7 @@ from honeybee_radiance.reader import string_to_dicts
 
 class Void(object):
     """Void modifier.
-    
+
     Properties:
         * name
         * is_modifier
@@ -63,7 +63,23 @@ class Void(object):
 @lockable
 class Primitive(object):
     """Base class for Radiance Primitives.
-    
+
+    Args:
+        name: Primitive name as a string. Cannot contain white spaces or special
+            characters.
+        modifier: Modifier. It can be primitive, mixture, texture or pattern.
+            (Default: "void").
+        values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
+            refer to a line number in the radiance primitve definitions and the
+            values in each array correspond to values occurring within each line.
+            For example, [[], [], ['0.500', '0.500', '0.500', '0.000', '0.050']]
+            corresponds to values one would find for a Plastic material.
+            (Default: [[], [], []]).
+        is_opaque: A boolean to indicate whether this primitive is opaque.
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives that are
+            defined based on other primitives. (Default: []).
+
     Properties:
         * name
         * values
@@ -102,7 +118,7 @@ class Primitive(object):
 
     # All modifier types (everything except geometry)
     MODIFIERTYPES = set().union(MATERIALTYPES, MIXTURETYPES, TEXTURETYPES, PATTERNTYPES)
-    
+
     # All Radiance primitive types
     TYPES = set().union(GEOMETRYTYPES, MODIFIERTYPES)
 
@@ -116,25 +132,7 @@ class Primitive(object):
 
     def __init__(self, name, modifier=None, values=None, is_opaque=None,
                  dependencies=None):
-        """Create primitive base.
-
-        Args:
-            name: Primitive name as a string. Cannot contain white spaces or special
-                characters.
-            modifier: Modifier. It can be primitive, mixture, texture or pattern.
-                (Default: "void").
-            values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
-                refer to a line number in the radiance primitve definitions and the
-                values in each array correspond to values occurring within each line.
-                For example, [[], [], ['0.500', '0.500', '0.500', '0.000', '0.050']]
-                corresponds to values one would find for a Plastic material.
-                (Default: [[], [], []]).
-            is_opaque: A boolean to indicate whether this primitive is opaque.
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives that are
-                defined based on other primitives. (Default: []).
-
-        """
+        """Create primitive base."""
         self.name = name
         self.type = self.__class__.__name__.lower()
         self.modifier = modifier
@@ -168,16 +166,16 @@ class Primitive(object):
         to each subclass inheriting from the Radiance Primitive.
 
         Args:
-            data: A dictionary in the format below.
+            data: A dictionary in the format below
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "custom", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "custom",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
@@ -201,14 +199,14 @@ class Primitive(object):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "custom", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "custom",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         return cls.from_primitive_dict(data)
@@ -238,7 +236,7 @@ class Primitive(object):
                 "Try one of these primitives:\n%s" % str(self.TYPES)
 
         self._type = type_str
-    
+
     @property
     def name(self):
         """Get or set the primitive name."""
@@ -251,19 +249,19 @@ class Primitive(object):
     @property
     def values(self):
         """Get or set the values of the current primitive as a dictionary.
-        
+
         The keys of this dictionary should be integers between 0 and 2.
 
         Usage:
 
         .. code-block:: python
 
-        # This will erase all values except the first line, which has 9 custom items
-        primitive.values = [
-            [0.5, 0.5, 0.5, "/usr/oakfloor.pic", ".", "frac(U)", "frac(V)", "-s", 1.1667],
-            [],
-            []
-            ]
+            # This will erase all values except the first line, which has 9 custom items
+            primitive.values = [
+                [0.5, 0.5, 0.5, "/usr/oakfloor.pic", ".", "frac(U)", "frac(V)", "-s", 1.1667],
+                [],
+                []
+                ]
         """
         self._update_values()
         return self._values
@@ -296,7 +294,7 @@ class Primitive(object):
     @property
     def dependencies(self):
         """Get list of dependencies for this primitive.
-        
+
         Additional dependencies can be added with the add_dependent method.
         """
         return self._dependencies
@@ -386,7 +384,7 @@ class Primitive(object):
     def to_radiance(self, minimal=False, include_modifier=True,
                     include_dependencies=True):
         """Return full radiance definition.
-        
+
         Args:
             minimal: Boolean to note wehther the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
@@ -436,7 +434,7 @@ class Primitive(object):
         else:
             modifier = mutil.dict_to_modifier(input_dict['modifier'])
 
-        if 'dependencies' not in input_dict: 
+        if 'dependencies' not in input_dict:
             dependencies = []
         else:
             dependencies = [
@@ -465,7 +463,7 @@ class Primitive(object):
         mod, depend = self._dup_mod_and_depend()
         values_copy = [copy(line) for line in self._values]
         return self.__class__(self.name, mod, values_copy, self._is_opaque, depend)
-    
+
     def _dup_mod_and_depend(self):
         """Duplicate this object's modifer and its dependencies."""
         mod = None if isinstance(self._modifier, Void) else self._modifier.duplicate()

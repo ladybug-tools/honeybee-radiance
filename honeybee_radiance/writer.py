@@ -78,7 +78,7 @@ def face_to_rad(face, blk=False, minimal=False):
     does it include any states for dynamic geometry. However, it does include
     any of the shades assigned to the Face along with the Apertures and Doors
     in the Face.
-    
+
     Args:
         face: A honeyee Face for which a RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Face should
@@ -155,7 +155,7 @@ def model_to_rad(model, blk=False, minimal=False):
         model_str.append('#   ================ ROOMS ================\n')
         for room in rooms:
             model_str.append(room_to_rad(room, blk, minimal))
-    
+
     # write all orphaned Faces into the file
     faces = model.orphaned_faces
     if len(faces) != 0:

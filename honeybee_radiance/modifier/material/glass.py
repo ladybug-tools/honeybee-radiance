@@ -10,33 +10,48 @@ import honeybee.typing as typing
 
 
 class Glass(Material):
-    """Radiance glass material."""
+    """Radiance glass material.
+
+    Args:
+        name: Material name as a string. Do not use white space or special character
+        r_transmissivity: Transmissivity for red. The value should be between 0 and 1
+            (Default: 0).
+        g_transmissivity: Transmissivity for green. The value should be between 0
+            and 1 (Default: 0).
+        b_transmissivity: Transmissivity for blue. The value should be between 0 and
+            1 (Default: 0).
+        refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
+            (Default: 1.52).
+        modifier: Material modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_transmissivity
+        * g_transmissivity
+        * b_transmissivity
+        * refraction_index
+        * average_transmissivity
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+
+    Usage:
+
+    .. code-block:: python
+
+        glass_material = Glass("generic_glass", .65, .65, .65)
+        print(glass_material)
+    """
 
     def __init__(self, name, r_transmissivity=0.0, g_transmissivity=0.0,
                  b_transmissivity=0.0, refraction_index=None, modifier="void",
                  dependencies=None):
-        """Create glass material.
-
-        args:
-            name: Material name as a string. Do not use white space or special character
-            r_transmissivity: Transmissivity for red. The value should be between 0 and 1
-                (Default: 0).
-            g_transmissivity: Transmissivity for green. The value should be between 0
-                and 1 (Default: 0).
-            b_transmissivity: Transmissivity for blue. The value should be between 0 and
-                1 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
-                (Default: 1.52).
-            modifier: Material modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        Usage:
-
-            glass_material = Glass("generic_glass", .65, .65, .65)
-            print(glass_material)
-        """
+        """Create glass material."""
         Material.__init__(self, name, modifier=modifier,
                           dependencies=dependencies)
         self.r_transmissivity = r_transmissivity
@@ -142,6 +157,8 @@ class Glass(Material):
 
         Usage:
 
+        .. code-block:: python
+
             glass_material = Glass.from_transmittance("generic_glass", .60, .60, .60)
             print(glass_material)
         """
@@ -166,9 +183,12 @@ class Glass(Material):
             modifier: Material modifier (Default: "void").
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])            
+                primitive is defined based on other primitives. (Default: [])
 
         Usage:
+
+        .. code-block:: python
+
             glassMaterial = Glass.by_single_trans_value("generic glass", .65)
             print(glassMaterial)
         """
@@ -195,6 +215,9 @@ class Glass(Material):
                 primitive is defined based on other primitives. (Default: [])
 
         Usage:
+
+        .. code-block:: python
+
             glassMaterial = Glass.by_single_trans_value("generic glass", .65)
             print(glassMaterial)
         """
@@ -212,14 +235,14 @@ class Glass(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "glass", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "glass",  # primitive type
+            "name": "",  # primitive name
+            "values": [] , # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -251,17 +274,17 @@ class Glass(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "name": "", // Material Name
-                "type": "glass",
-                "r_transmissivity": float, // Transmissivity for red
-                "g_transmissivity": float, // Transmissivity for green
-                "b_transmissivity": float, // Transmissivity for blue
-                "refraction_index": float, // Index of refraction
-                "modifier": "", // material modifier (Default: "void")
-                "dependencies": []
+            "name": "",  # Material Name
+            "type": "glass",
+            "r_transmissivity": float,  # Transmissivity for red
+            "g_transmissivity": float,  # Transmissivity for green
+            "b_transmissivity": float,  # Transmissivity for blue
+            "refraction_index": float,  # Index of refraction
+            "modifier": "",  # material modifier (Default: "void")
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

@@ -13,31 +13,43 @@ class Source(Geometry):
     sources that are very distant. The direction to the center of the source and the
     number of degrees subtended by its disk are given as follows:
 
-    mod source id
-    0
-    0
-    4 xdir ydir zdir angle
+    .. code-block:: shell
+
+        mod source id
+        0
+        0
+        4 xdir ydir zdir angle
+
+    Args:
+        name: Geometry name as a string. Do not use white space or special
+            character.
+        direction: A vector to set source direction (x, y, z) (Default: (0, 0 ,-1)).
+        angle: Source solid angle (Default: 0.533).
+        modifier: Geometry modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * direction
+        * angle
+        * modifier
+        * dependencies
+        * values
+
+    Usage:
+
+    .. code-block:: python
+
+        source = Source("test_source", (0, 0, 10), 10)
+        print(source)
     """
     __slots__ = ('_direction', '_angle')
 
     def __init__(self, name, direction=None, angle=0.533, modifier=None,
                  dependencies=None):
-        """Radiance Source.
-
-        Args:
-            name: Geometry name as a string. Do not use white space or special
-                character.
-            direction: A vector to set source direction (x, y, z) (Default: (0, 0 ,-1)).
-            angle: Source solid angle (Default: 0.533).
-            modifier: Geometry modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        Usage:
-            source = Source("test_source", (0, 0, 10), 10)
-            print(source)
-        """
+        """Radiance Source."""
         Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
         self.direction = direction or (0, 0, -1)
         self.angle = angle if angle is not None else 0.533
@@ -51,9 +63,9 @@ class Source(Geometry):
 
     @property
     def direction(self):
-        """A vector to set source direction (x, y, z) (Default: (0, 0 ,-1))."""
+        """A vector to set source direction (x, y, z) (Default is (0, 0 ,-1))."""
         return self._direction
-    
+
     @direction.setter
     def direction(self, value):
         self._direction = tuple(float(v) for v in value)
@@ -62,9 +74,9 @@ class Source(Geometry):
 
     @property
     def angle(self):
-        """Source solid angle (Default: 0.533)."""
+        """Source solid angle. Default is 0.533."""
         return self._angle
-    
+
     @angle.setter
     def angle(self, value):
         self._angle = typing.float_positive(value)
@@ -76,14 +88,14 @@ class Source(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "source", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default is "void")
+            "type": "source",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -113,15 +125,15 @@ class Source(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "type": "source", // Geometry type
-                "modifier": {} or "void",
-                "name": "", // Geometry Name
-                "direction": {"x": float, "y": float, "z": float},
-                "angle": float,
-                "dependencies": []
+            "type": "source",  # Geometry type
+            "modifier": {} or "void",
+            "name": "",  # Geometry Name
+            "direction": {"x": float, "y": float, "z": float},
+            "angle": float,
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

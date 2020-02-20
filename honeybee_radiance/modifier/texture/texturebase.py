@@ -9,7 +9,16 @@ from ..modifierbase import Modifier
 
 
 class Texture(Modifier):
-    """Base class for Radiance texture (Texfunc, Texdata)."""
+    """Base class for Radiance texture (Texfunc, Texdata).
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_texture
+    """
     __slots__ = ()
 
     @property

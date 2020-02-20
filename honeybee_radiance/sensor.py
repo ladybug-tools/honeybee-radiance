@@ -4,17 +4,21 @@ import honeybee.typing as typing
 
 
 class Sensor(object):
-    """A radiance sensor."""
+    """A radiance sensor.
 
+    Args:
+        position: Position of sensor as (x, y, z) (Default: (0, 0, 0)).
+        direction: Direction of sensor as (x, y, z) (Default: (0, 0, 1)).
+
+    Properties:
+        * position
+        * direction
+
+    """
     __slots__ = ('_pos', '_dir')
 
     def __init__(self, position=None, direction=None):
-        """Create a sensor.
-        
-        Args:
-            position: Position of sensor as (x, y, z) (Default: (0, 0, 0)).
-            direction: Direction of sensor as (x, y, z) (Default: (0, 0, 1)).
-        """
+        """Create a sensor."""
         self._pos = typing.tuple_with_length(position) if position is not None \
             else (0, 0, 0)
         self._dir = typing.tuple_with_length(direction) if direction is not None \
@@ -23,9 +27,12 @@ class Sensor(object):
     @classmethod
     def from_dict(cls, sensor_dict):
         """Create a sensor from dictionary.
+
+        .. code-block:: python
+
             {
-                'x': float, 'y': float, 'z': float,
-                'dx': float, 'dx': float, 'dz': float
+            'x': float, 'y': float, 'z': float,
+            'dx': float, 'dx': float, 'dz': float
             }
         """
         return cls(
@@ -68,9 +75,12 @@ class Sensor(object):
 
     def to_dict(self):
         """Get the sensor as a dictionary.
+
+        .. code-block:: python
+
             {
-                'x': float, 'y': float, 'z': float,
-                'dx': float, 'dx': float, 'dz': float
+            'x': float, 'y': float, 'z': float,
+            'dx': float, 'dx': float, 'dz': float
             }
         """
         return {

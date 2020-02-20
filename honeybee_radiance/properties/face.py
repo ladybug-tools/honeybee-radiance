@@ -8,31 +8,30 @@ from ..lib.modifiersets import generic_modifier_set_visible
 class FaceRadianceProperties(_GeometryRadianceProperties):
     """Radiance Properties for Honeybee Face.
 
+    Args:
+        host: A honeybee_core Face object that hosts these properties.
+        modifier: A Honeybee Radiance Modifier object for the face. If None,
+            it will be set by the parent Room ModifierSet or the Honeybee
+            default generic ModifierSet.
+        modifier_blk: A Honeybee Radiance Modifier object to be used for this
+            face in direct solar simulations and in isolation studies (assessing
+            the contribution of individual Apertures). If None, this will be
+            a completely black material if the Face's modifier is opaque and
+            will be equal to the modifier if the Face's modifier is non-opaque.
+
     Properties:
         * host
         * modifier
         * modifier_blk
-        * is_opaque 
+        * is_opaque
         * is_modifier_set_on_object
-        * is_blk_overridden 
+        * is_blk_overridden
     """
 
     __slots__ = ()
 
     def __init__(self, host, modifier=None, modifier_blk=None):
-        """Initialize Face radiance properties.
-
-        Args:
-            host: A honeybee_core Face object that hosts these properties.
-            modifier: A Honeybee Radiance Modifier object for the face. If None,
-                it will be set by the parent Room ModifierSet or the Honeybee
-                default generic ModifierSet.
-            modifier_blk: A Honeybee Radiance Modifier object to be used for this
-                face in direct solar simulations and in isolation studies (assessing
-                the contribution of individual Apertures). If None, this will be
-                a completely black material if the Face's modifier is opaque and
-                will be equal to the modifier if the Face's modifier is non-opaque.
-        """
+        """Initialize Face radiance properties."""
         _GeometryRadianceProperties.__init__(self, host, modifier, modifier_blk)
 
     @property

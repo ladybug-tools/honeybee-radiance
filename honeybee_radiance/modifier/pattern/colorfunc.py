@@ -11,6 +11,8 @@ class Colorfunc(Pattern):
 
     A colorfunc is a procedurally defined color pattern. It is specified as follows:
 
+    .. code-block:: shell
+
         mod colorfunc id
         4+ red green blue funcfile transform
         0

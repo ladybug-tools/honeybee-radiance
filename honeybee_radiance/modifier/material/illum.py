@@ -15,6 +15,8 @@ class Illum(Material):
     becomes invisible (if no string argument is given, or the argument is "void").
     Secondary sources are useful when modeling windows or brightly illuminated surfaces.
 
+    .. code-block:: shell
+
         mod illum id
         1 material
         0

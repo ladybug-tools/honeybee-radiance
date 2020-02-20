@@ -13,6 +13,8 @@ class Plasdata(Material):
     interpolated data. The arguments to this material are the data file and coordinate
     index functions, as well as a function to optionally modify the data values.
 
+    .. code-block:: shell
+
         mod plasdata id
         3+n+
                 func datafile

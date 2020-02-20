@@ -14,7 +14,7 @@ class Plastic2(Material):
     of the anisotropy is determined by the unnormalized direction vector ux uy uz. These
     three expressions (separated by white space) are evaluated in the context of the
     function file funcfile. If no function file is required (i.e., no special variables
-    or functions are required), a period (`.') may be given in its place. (See the
+    or functions are required), a period (\'.\') may be given in its place. (See the
     discussion of Function Files in the Auxiliary Files section). The urough value
     defines the roughness along the u vector given projected onto the surface. The vrough
     value defines the roughness perpendicular to this vector. Note that the highlight
@@ -22,11 +22,12 @@ class Plastic2(Material):
     zero are not allowed for efficiency reasons since the behavior would be the same as
     regular plastic in that case.
 
+    .. code-block:: shell
+
         mod plastic2 id
         4+ ux uy uz funcfile transform
         0
         6 red green blue spec urough vrough
-
     """
     __slots__ = ()
 

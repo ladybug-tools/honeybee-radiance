@@ -11,6 +11,8 @@ class Cylinder(Geometry):
 
     A cylinder is like a cone, but its starting and ending radii are equal.
 
+    .. code-block:: shell
+
         mod cylinder id
         0
         0
@@ -18,25 +20,33 @@ class Cylinder(Geometry):
                 x0      y0      z0
                 x1      y1      z1
                 rad
+
+    Args:
+        name: Geometry name as a string. Do not use white spaces or special
+            characters.
+        center_pt_start: Cylinder start center point as (x, y, z)
+            (Default: (0, 0 ,0)).
+        center_pt_end: Cylinder end center point as (x, y, z) (Default: (0, 0 ,10)).
+        radius: Cylinder start radius as a number (Default: 10).
+        modifier: Geometry modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * center_pt_start
+        * center_pt_end
+        * radius
+        * values
+        * modifier
+        * dependencies
     """
     __slots__ = ('_center_pt_start', '_center_pt_end', '_radius')
 
     def __init__(self, name, center_pt_start=None, center_pt_end=None, radius=10,
                  modifier=None, dependencies=None):
-        """Radiance Cylinder.
-
-        Args:
-            name: Geometry name as a string. Do not use white spaces or special
-                characters.
-            center_pt_start: Cylinder start center point as (x, y, z)
-                (Default: (0, 0 ,0)).
-            center_pt_end: Cylinder end center point as (x, y, z) (Default: (0, 0 ,10)).
-            radius: Cylinder start radius as a number (Default: 10).
-            modifier: Geometry modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-        """
+        """Radiance Cylinder."""
         Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
         self.center_pt_start = center_pt_start or (0, 0, 0)
         self.center_pt_end = center_pt_end or (0, 0, 10)
@@ -52,9 +62,9 @@ class Cylinder(Geometry):
 
     @property
     def center_pt_start(self):
-        """Cone start center point as (x, y, z) (Default: (0, 0 ,0))."""
+        """Cone start center point as (x, y, z). Default is (0, 0 ,0)."""
         return self._center_pt_start
-    
+
     @center_pt_start.setter
     def center_pt_start(self, value):
         self._center_pt_start = tuple(float(v) for v in value)
@@ -63,18 +73,18 @@ class Cylinder(Geometry):
 
     @property
     def radius(self):
-        """Cone start radius as a number (Default: 10)."""
+        """Cone start radius as a number. Default is 10."""
         return self._radius
-    
+
     @radius.setter
     def radius(self, value):
         self._radius = typing.float_positive(value)
 
     @property
     def center_pt_end(self):
-        """Cone end center point as (x, y, z) (Default: (0, 0 ,10))."""
+        """Cone end center point as (x, y, z), Default is (0, 0 ,10)."""
         return self._center_pt_end
-    
+
     @center_pt_end.setter
     def center_pt_end(self, value):
         self._center_pt_end = tuple(float(v) for v in value)
@@ -88,14 +98,14 @@ class Cylinder(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "cylinder", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "cylinder",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -126,16 +136,16 @@ class Cylinder(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "type": "cylinder", // Geometry type
-                "modifier": {} or "void",
-                "name": "", // Geometry Name
-                "center_pt_start": (0, 0, 0),
-                "center_pt_end": (0, 0, 10),
-                "radius": float,
-                "dependencies": []
+            "type": "cylinder",  # Geometry type
+            "modifier": {} or "void",
+            "name": "",  # Geometry Name
+            "center_pt_start": (0, 0, 0),
+            "center_pt_end": (0, 0, 10),
+            "radius": float,
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

@@ -17,6 +17,9 @@ except ImportError:
 class ModelRadianceProperties(object):
     """Radiance Properties for Honeybee Model.
 
+    Args:
+        host: A honeybee_core Model object that hosts these properties.
+
     Properties:
         * host
         * modifiers
@@ -30,11 +33,7 @@ class ModelRadianceProperties(object):
     """
 
     def __init__(self, host):
-        """Initialize Model radiance properties.
-
-        Args:
-            host: A honeybee_core Model object that hosts these properties.
-        """
+        """Initialize Model radiance properties."""
         self._host = host
 
     @property
@@ -48,14 +47,14 @@ class ModelRadianceProperties(object):
 
         This includes modifiers across all Faces, Apertures, Doors, Shades,
         Room ModifierSets, and the global_modifier_set.
-        
+
         However, it excludes blk_modifiers and these can be obtained separately
         from the blk_modifiers property.
         """
         all_mods = self.global_modifier_set.modifiers_unique + self.room_modifiers + \
             self.face_modifiers + self.shade_modifiers
         return list(set(all_mods))
-    
+
     @property
     def blk_modifiers(self):
         """A list of all unique modifier_blk assigned to Faces, Apertures and Doors."""
@@ -69,7 +68,7 @@ class ModelRadianceProperties(object):
             self._check_and_add_obj_modifier_blk(ap, modifiers)
         for dr in self.host.orphaned_doors:  # check all Door modifiers
             self._check_and_add_obj_modifier_blk(dr, modifiers)
-        
+
         for room in self.host.rooms:
             self._check_and_add_room_modifier_shade_blk(room, modifiers)
         for face in self.host.orphaned_faces:
@@ -81,11 +80,11 @@ class ModelRadianceProperties(object):
         for shade in self.host.orphaned_shades:
             self._check_and_add_obj_modifier_blk(shade, modifiers)
         return list(set(modifiers))
-    
+
     @property
     def room_modifiers(self):
         """A list of all unique modifiers assigned to Room ModifierSets.
-        
+
         Note that this does not include modifiers in the global_modifier_set.
         For these, you can request global_modifier_set.modifiers_unique.
         """
@@ -97,7 +96,7 @@ class ModelRadianceProperties(object):
     @property
     def face_modifiers(self):
         """A list of all unique modifiers assigned to Faces, Apertures and Doors.
-        
+
         This includes both objects that are a part of Rooms as well as orphaned
         objects. It does not include the modfiers of any shades assigned to these
         objects. Nor does it include any blk modifiers.
@@ -282,11 +281,14 @@ class ModelRadianceProperties(object):
             data: A dictionary representation of an entire honeybee-core Model.
                 Note that this dictionary must have ModelRadianceProperties in order
                 for this method to successfully load the radiance properties.
-        
+
         Returns:
-            modifiers -- A dictionary with names of modifiers as keys and Python
+            A tuple with two elements
+
+            -   modifiers: A dictionary with names of modifiers as keys and Python
                 modifier objects as values.
-            modifier_sets -- A dictionary with names of modifier sets as keys
+
+            -   modifier_sets: A dictionary with names of modifier sets as keys
                 and Python modifier set objects as values.
         """
         assert 'radiance' in data['properties'], \
@@ -306,41 +308,41 @@ class ModelRadianceProperties(object):
                     ModifierSet.from_dict_abridged(m_set, modifiers)
 
         return modifiers, modifier_sets
-    
+
     def _check_and_add_room_modifier_shade(self, room, modifiers):
-        """Check if a modifier is assigned to a Room's shades and add it to a list.""" 
+        """Check if a modifier is assigned to a Room's shades and add it to a list."""
         self._check_and_add_obj_modifier_shade(room, modifiers)
         for face in room.faces:  # check all Face modifiers
             self._check_and_add_face_modifier_shade(face, modifiers)
 
     def _check_and_add_face_modifier_shade(self, face, modifiers):
-        """Check if a modifier is assigned to a Face's shades and add it to a list.""" 
+        """Check if a modifier is assigned to a Face's shades and add it to a list."""
         self._check_and_add_obj_modifier_shade(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
             self._check_and_add_obj_modifier_shade(ap, modifiers)
         for dr in face.doors:  # check all Door Shade modifiers
             self._check_and_add_obj_modifier_shade(dr, modifiers)
-    
+
     def _check_and_add_obj_modifier_shade(self, subf, modifiers):
         """Check if a modifier is assigned to an object's shades and add it to a list."""
         for shade in subf.shades:
             self._check_and_add_obj_modifier(shade, modifiers)
 
     def _check_and_add_room_modifier_shade_blk(self, room, modifiers):
-        """Check if a modifier_blk is assigned to a Room's shades and add it to a list.""" 
+        """Check if a modifier_blk is assigned to a Room's shades and add it to a list."""
         self._check_and_add_obj_modifier_shade_blk(room, modifiers)
         for face in room.faces:  # check all Face modifiers
             self._check_and_add_face_modifier_shade_blk(face, modifiers)
 
     def _check_and_add_face_modifier_shade_blk(self, face, modifiers):
         """Check if a modifier_blk is assigned to a Face's shades and add it to a list.
-        """ 
+        """
         self._check_and_add_obj_modifier_shade_blk(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
             self._check_and_add_obj_modifier_shade_blk(ap, modifiers)
         for dr in face.doors:  # check all Door Shade modifiers
             self._check_and_add_obj_modifier_shade_blk(dr, modifiers)
-    
+
     def _check_and_add_obj_modifier_shade_blk(self, subf, modifiers):
         """Check if a modifier_blk is assigned to an object's shades and add it to list.
         """
@@ -348,15 +350,15 @@ class ModelRadianceProperties(object):
             self._check_and_add_obj_modifier_blk(shade, modifiers)
 
     def _check_and_add_face_modifier(self, face, modifiers):
-        """Check if a modifier is assigned to a face and add it to a list.""" 
+        """Check if a modifier is assigned to a face and add it to a list."""
         self._check_and_add_obj_modifier(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
             self._check_and_add_obj_modifier(ap, modifiers)
         for dr in face.doors:  # check all Door modifiers
             self._check_and_add_obj_modifier(dr, modifiers)
-    
+
     def _check_and_add_face_modifier_blk(self, face, modifiers):
-        """Check if a modifier_blk is assigned to a face and add it to a list.""" 
+        """Check if a modifier_blk is assigned to a face and add it to a list."""
         self._check_and_add_obj_modifier_blk(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
             self._check_and_add_obj_modifier_blk(ap, modifiers)
@@ -376,7 +378,7 @@ class ModelRadianceProperties(object):
         if mod is not None:
             if not self._instance_in_array(mod, modifiers):
                 modifiers.append(mod)
-    
+
     def _check_and_add_orphaned_shade_modifier(self, obj, modifiers):
         """Check if a modifier is assigned to an object and add it to a list."""
         mod = obj.properties.radiance._modifier

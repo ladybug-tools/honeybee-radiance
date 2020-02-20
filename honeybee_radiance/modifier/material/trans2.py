@@ -13,11 +13,12 @@ class Trans2(Material):
     plastic2, and the real arguments are the same as for trans but with an additional
     roughness value.
 
+    .. code-block:: shell
+
         mod trans2 id
         4+ ux uy uz funcfile transform
         0
         8 red green blue spec urough vrough trans tspec
-
     """
     __slots__ = ()
 

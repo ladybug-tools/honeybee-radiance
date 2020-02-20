@@ -5,13 +5,12 @@ import os
 
 
 class Hemisphere(object):
-    """Radiance sky hemisphere."""
+    """Radiance sky hemisphere.
 
-    def __init__(self):
-        """Create sky hemisphere.
+    Sky hemisphere relies on skyfunc and must be used with one of the
+    Radiance sky commands.
 
-        Sky hemisphere relies on skyfunc and must be used with one of the
-        Radiance sky commands.
+    .. code-block:: shell
 
         skyfunc glow sky_glow
         0
@@ -22,20 +21,27 @@ class Hemisphere(object):
         0
         4 0 0 1 180
 
-        Note:
-        For more information see Chapter `6.3.2  Example: CIE Overcast Sky` in
-        Rendering with Radiance. The chapter is also accessible online at the
-        link below.
-        https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/Mardaljevic/rwr_ch6.pdf
+    Note:
+    For more information see Chapter `6.3.2  Example: CIE Overcast Sky` in
+    Rendering with Radiance. The chapter is also accessible online at the
+    link below.
+    https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/\
+Mardaljevic/rwr_ch6.pdf
 
-        """
+    Properties:
+        * r_emittance
+        * g_emittance
+        * b_emittance
+"""
+    def __init__(self):
+        """Create sky hemisphere."""
         self._r_emittance = 1.0
         self._g_emittance = 1.0
         self._b_emittance = 1.0
 
     @property
     def r_emittance(self):
-        """Sky hemisphere emittance values for red channel (Default: 1.0)."""
+        """Sky hemisphere emittance values for red channel (Default is 1.0)."""
         return self._r_emittance
 
     @r_emittance.setter
@@ -44,7 +50,7 @@ class Hemisphere(object):
 
     @property
     def g_emittance(self):
-        """Sky hemisphere emittance values for green channel (Default: 1.0)."""
+        """Sky hemisphere emittance values for green channel (Default is 1.0)."""
         return self._g_emittance
 
     @g_emittance.setter
@@ -53,7 +59,7 @@ class Hemisphere(object):
 
     @property
     def b_emittance(self):
-        """Sky hemisphere emittance values for blue channel (Default: 1.0)."""
+        """Sky hemisphere emittance values for blue channel (Default is 1.0)."""
         return self._b_emittance
 
     @b_emittance.setter
@@ -63,14 +69,17 @@ class Hemisphere(object):
     @classmethod
     def from_dict(cls, input_dict):
         """Create sky_hemisphere from_dict.
-        
+
         Args:
-            input_dict:
+            input_dict: A python dictionary in the following format
+
+        .. code-block:: python
+
                 {
-                    'type': 'SkyHemisphere',
-                    'r_emittance': r_emittance,
-                    'g_emittance': g_emittance,
-                    'b_emittance': b_emittance
+                'type': 'SkyHemisphere',
+                'r_emittance': r_emittance,
+                'g_emittance': g_emittance,
+                'b_emittance': b_emittance
                 }
         """
         assert 'type' in input_dict, \

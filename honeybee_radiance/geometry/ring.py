@@ -12,6 +12,8 @@ class Ring(Geometry):
     A ring is a circular disk given by its center, surface normal, and inner and outer
     radii:
 
+    .. code-block:: shell
+
         mod ring id
         0
         0
@@ -20,25 +22,33 @@ class Ring(Geometry):
                 xdir    ydir    zdir
                 r0      r1
 
+    Args:
+        name: Geometry name as a string. Do not use white space or special
+            character.
+        center_pt: Ring start center point as (x, y, z) (Default: (0, 0 ,0)).
+        normal_vector: Surface normal as (x, y, z) (Default: (0, 0 ,1)).
+        radius_inner: Ring inner radius as a number (Default: 5).
+        radius_outer: Ring outer radius as a number (Default: 10).
+        modifier: Geometry modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * center_pt
+        * normal_vector
+        * radius_inner
+        * radius_outer
+        * modifier
+        * dependencies
+        * values
     """
     __slots__ = ('_center_pt', '_normal_vector', '_radius_inner', '_radius_outer')
 
     def __init__(self, name, center_pt=None, normal_vector=None, radius_inner=5,
                  radius_outer=10, modifier=None, dependencies=None):
-        """Radiance Ring.
-
-        Args:
-            name: Geometry name as a string. Do not use white space or special
-                character.
-            center_pt: Ring start center point as (x, y, z) (Default: (0, 0 ,0)).
-            normal_vector: Surface normal as (x, y, z) (Default: (0, 0 ,1)).
-            radius_inner: Ring inner radius as a number (Default: 5).
-            radius_outer: Ring outer radius as a number (Default: 10).
-            modifier: Geometry modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-        """
+        """Radiance Ring."""
         Geometry.__init__(self, name, modifier=modifier)
         self.center_pt = center_pt or (0, 0, 0)
         self.normal_vector = normal_vector or (0, 0, 1)
@@ -56,7 +66,7 @@ class Ring(Geometry):
 
     @property
     def center_pt(self):
-        """Ring start center point as (x, y, z) (Default: (0, 0 ,0))."""
+        """Ring start center point as (x, y, z). Default is (0, 0 ,0)."""
         return self._center_pt
 
     @center_pt.setter
@@ -67,7 +77,7 @@ class Ring(Geometry):
 
     @property
     def radius_inner(self):
-        """Ring inner radius as a number (Default: 5)."""
+        """Ring inner radius as a number (Default is 5)."""
         return self._radius_inner
 
     @radius_inner.setter
@@ -76,7 +86,7 @@ class Ring(Geometry):
 
     @property
     def normal_vector(self):
-        """Surface normal as (x, y, z) (Default: (0, 0 ,1))."""
+        """Surface normal as (x, y, z) (Default is (0, 0 ,1))."""
         return self._normal_vector
 
     @normal_vector.setter
@@ -87,7 +97,7 @@ class Ring(Geometry):
 
     @property
     def radius_outer(self):
-        """Ring outer radius as a number (Default: 10)."""
+        """Ring outer radius as a number (Default is 10)."""
         return self._radius_outer
 
     @radius_outer.setter
@@ -101,14 +111,14 @@ class Ring(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "ring", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default is "void")
+            "type": "ring",  # primitive type
+            "name": "",  # primitive name
+            "values": []  # values,
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -140,17 +150,17 @@ class Ring(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "type": "ring", // Geometry type
-                "modifier": {} or "void",
-                "name": "", // Geometry Name
-                "center_pt": (0, 0, 0),
-                "normal_vector": (0, 0, 1),
-                "radius_inner": float,
-                "radius_outer": float,
-                "dependencies": []
+            "type": "ring",  # Geometry type
+            "modifier": {} or "void",
+            "name": "",  # Geometry Name
+            "center_pt": (0, 0, 0),
+            "normal_vector": (0, 0, 1),
+            "radius_inner": float,
+            "radius_outer": float,
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

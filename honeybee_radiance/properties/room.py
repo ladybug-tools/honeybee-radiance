@@ -7,6 +7,13 @@ from ..lib.modifiersets import generic_modifier_set_visible
 class RoomRadianceProperties(object):
     """Radiance Properties for Honeybee Room.
 
+    Args:
+        host: A honeybee_core Room object that hosts these properties.
+        modifier_set: A honeybee ModifierSet object to specify all default
+            modifiers for the Faces of the Room. If None, the Room will use
+            the honeybee default modifier set, which is only representitive
+            of typical indoor conditions in the visible spectrum. Default: None.
+
     Properties:
         * host
         * modifier_set
@@ -15,15 +22,7 @@ class RoomRadianceProperties(object):
     __slots__ = ('_host', '_modifier_set')
 
     def __init__(self, host, modifier_set=None):
-        """Initialize Room radiance properties.
-
-        Args:
-            host: A honeybee_core Room object that hosts these properties.
-            modifier_set: A honeybee ModifierSet object to specify all default
-                modifiers for the Faces of the Room. If None, the Room will use
-                the honeybee default modifier set, which is only representitive
-                of typical indoor conditions in the visible spectrum. Default: None.
-        """
+        """Initialize Room radiance properties."""
         # set the main properties of the Room
         self._host = host
         self.modifier_set = modifier_set
@@ -105,8 +104,9 @@ class RoomRadianceProperties(object):
     def duplicate(self, new_host=None):
         """Get a copy of this object.
 
-        new_host: A new Room object that hosts these properties.
-            If None, the properties will be duplicated with the same host.
+        Args:
+            new_host: A new Room object that hosts these properties.
+                If None, the properties will be duplicated with the same host.
         """
         _host = new_host or self._host
         new_room = RoomRadianceProperties(_host, self._modifier_set)

@@ -11,6 +11,8 @@ class Mixtext(Mixture):
 
     Mixtext uses one modifier for the text foreground, and one for the background:
 
+    .. code-block:: shell
+
         mod mixtext id
         4 foreground background fontfile textfile
         0
@@ -21,6 +23,8 @@ class Mixtext(Mixture):
                 [spacing]
 
     or:
+
+    .. code-block:: shell
 
         mod mixtext id
         4+N

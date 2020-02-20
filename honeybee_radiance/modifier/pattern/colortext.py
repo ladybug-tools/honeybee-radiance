@@ -16,6 +16,8 @@ class Colortext(Pattern):
     origin for the text block as well as the foreground and background colors must also
     be given.
 
+    .. code-block:: shell
+
         mod colortext id
         2 fontfile textfile
         0
@@ -27,7 +29,9 @@ class Colortext(Pattern):
                 rback gback bback
                 [spacing]
 
-or:
+    or:
+
+    .. code-block:: shell
 
         mod colortext id
         2+N fontfile . This is a line with N words ...
@@ -39,7 +43,6 @@ or:
                 rfore gfore bfore
                 rback gback bback
                 [spacing]
-
     """
     __slots__ = ()
 

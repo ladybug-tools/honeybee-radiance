@@ -10,14 +10,15 @@ import ladybug.futil as futil
 class CertainIrradiance(Sky):
     """sky with certain irradiance.
 
-    The output of CertainIrradiance sky is similar to using command below:
-    `gensky -c -B desired_irradiance `
+    The output of CertainIrradiance sky is similar to using command below::
 
-    You can also generate the sky with certain illuminance using `from_illuminance`
+        gensky -c -B desired_irradiance
+
+    You can also generate the sky with certain illuminance using ``from_illuminance``
     classmethod. The method converts the illuminance value to irradiance by dividing it
-    by 179.0.
+    by 179.0::
 
-    `gensky -c -B [desired_illuminance / 179.0]`
+        gensky -c -B [desired_illuminance / 179.0]
 
     It also includes ground glow source. Ground reflectance is set to %20 by default
     which is gensky's default value. Use `ground_reflectance` property to adjust this
@@ -31,8 +32,26 @@ class CertainIrradiance(Sky):
     type of sky or light considered.
 
     For more information see links below on the Radiance forum:
-    - https://discourse.radiance-online.org/t/coefficient-179/547
-    - https://discourse.radiance-online.org/t/luminous-efficacy/1400
+
+    * https://discourse.radiance-online.org/t/coefficient-179/547
+    * https://discourse.radiance-online.org/t/luminous-efficacy/1400
+
+    Default value is set to 558.659 which corresponds to a sky with 100,000 lux
+    horizontal illuminance.
+
+    Args:
+        irradiance: Desired horizontal diffuse irradiance value in watts/meter2
+            (Default: 558.659).
+        ground_reflectance: Average ground reflectance (Default: 0.2).
+
+    Properties:
+        * irradiance
+        * illuminance
+        * ground_hemisphere
+        * sky_hemisphere
+        * ground_reflectance
+        * is_point_in_time
+        * is_climate_based
     """
     __slots__ = (
         '_irradiance', '_ground', '_ground_reflectance',
@@ -40,16 +59,7 @@ class CertainIrradiance(Sky):
     )
 
     def __init__(self, irradiance=558.659, ground_reflectance=0.2):
-        """Create sky with certain irradiance.
-
-        Default value is set to 558.659 which corresponds to a sky with 100,000 lux
-        horizontal illuminance.
-
-        Args:
-            irradiance: Desired horizontal diffuse irradiance value in watts/meter2
-                (Default: 558.659).
-            ground_reflectance: Average ground reflectance (Default: 0.2).
-        """
+        """Create sky with certain irradiance."""
         Sky.__init__(self)
         self.irradiance = irradiance
         self.ground_reflectance = ground_reflectance
@@ -116,14 +126,17 @@ class CertainIrradiance(Sky):
     @classmethod
     def from_dict(cls, input_dict):
         """Create the sky from a dictionary.
-        
+
         Args:
-            input_dict:
+            input_dict: A python dictionary in the following format
+
+        .. code-block:: python
+
                 {
-                    'irradiance': irradiance,
-                    'ground_reflectance': ground_reflectance,
-                    'ground_hemisphere': see ground.Ground class [optional],
-                    'sky_hemisphere': see hemisphere.Hemisphere class [optional]
+                'irradiance': 558.659,
+                'ground_reflectance': 0.2,
+                'ground_hemisphere': {},  # see ground.Ground class [optional],
+                'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
                 }
         """
         sky = cls(

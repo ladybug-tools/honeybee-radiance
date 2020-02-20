@@ -15,6 +15,8 @@ class Colorpict(Pattern):
     other is the ratio between the larger and the smaller. For example, a 500x338
     picture would have coordinates (u,v) in the rectangle between (0,0) and (1.48,1).
 
+    .. code-block:: shell
+
         mod colorpict id
         7+
                 rfunc gfunc bfunc pictfile

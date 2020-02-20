@@ -11,13 +11,14 @@ class Mixdata(Mixture):
 
     Mixdata combines two modifiers using an auxiliary data file:
 
+    .. code-block:: shell
+
         mod mixdata id
         5+n+
                 foreground background func datafile
                 funcfile x1 x2 .. xn transform
         0
         m A1 A2 .. Am
-
     """
     __slots__ = ()
 
