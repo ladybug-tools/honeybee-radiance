@@ -9,11 +9,21 @@ from ..lib.modifiersets import generic_modifier_set_visible
 class ApertureRadianceProperties(_GeometryRadianceProperties):
     """Radiance Properties for Honeybee Aperture.
 
+    Args:
+        host: A honeybee_core Aperture object that hosts these properties.
+        modifier: A Honeybee Radiance Modifier object for the aperture. If None,
+            it will be set by the parent Room ModifierSet or the Honeybee
+            default generic ModifierSet.
+        modifier_blk: A Honeybee Radiance Modifier object to be used for this
+            aperture in direct solar simulations and in isolation studies (assessing
+            the contribution of individual Apertures). If None, this will be
+            a completely black material.
+
     Properties:
         * host
         * modifier
         * modifier_blk
-        * is_opaque 
+        * is_opaque
         * is_modifier_set_on_object
         * is_blk_overridden 
     """
@@ -21,18 +31,7 @@ class ApertureRadianceProperties(_GeometryRadianceProperties):
     __slots__ = ()
 
     def __init__(self, host, modifier=None, modifier_blk=None):
-        """Initialize Aperture radiance properties.
-
-        Args:
-            host: A honeybee_core Aperture object that hosts these properties.
-            modifier: A Honeybee Radiance Modifier object for the aperture. If None,
-                it will be set by the parent Room ModifierSet or the Honeybee
-                default generic ModifierSet.
-            modifier_blk: A Honeybee Radiance Modifier object to be used for this
-                aperture in direct solar simulations and in isolation studies (assessing
-                the contribution of individual Apertures). If None, this will be
-                a completely black material.
-        """
+        """Initialize Aperture radiance properties."""
         _GeometryRadianceProperties.__init__(self, host, modifier, modifier_blk)
 
     @property
@@ -71,7 +70,7 @@ class ApertureRadianceProperties(_GeometryRadianceProperties):
     @property
     def modifier_blk(self):
         """Get or set a modifier to be used in direct solar and in isolation studies.
-        
+
         If None, this will be a completely black material if the Aperture's modifier
         is opaque and will be equal to the modifier if the Aperture's modifier is non-opaque.
         """

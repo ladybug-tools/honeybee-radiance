@@ -9,8 +9,10 @@ from .materialbase import Material
 class Antimatter(Material):
     """Radiance Antimatter Material.
 
-    Antimatter is a material that can "subtract" volumes from other volumes. A ray
+    Antimatter is a material that can \'subtract\' volumes from other volumes. A ray
     passing into an antimatter object becomes blind to all the specified modifiers:
+
+    .. code-block:: shell
 
         mod antimatter id
         N mod1 mod2 .. modN

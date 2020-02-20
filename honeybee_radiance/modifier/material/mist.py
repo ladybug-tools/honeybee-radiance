@@ -14,7 +14,7 @@ class Mist(Material):
     scattering albedo and scattering eccentricity parameter. The light sources named by
     the string argument list will be tested for scattering within the volume. Sources are
     identified by name, and virtual light sources may be indicated by giving the relaying
-    object followed by '>' followed by the source, i.e:
+    object followed by '>' followed by the source, i.e::
 
            3  source1  mirror1>source10  mirror2>mirror1>source3
 
@@ -28,7 +28,7 @@ class Mist(Material):
     medium (no absorption). The scattering eccentricity parameter will likewise override
     the global setting if it is present. Scattering eccentricity indicates how much
     scattered light favors the forward direction, as fit by the Henyey-Greenstein
-    function:
+    function::
 
         P(theta) = (1 - g*g) / (1 + g*g - 2*g*cos(theta))^1.5
 
@@ -36,7 +36,7 @@ class Mist(Material):
     directional material has a g parameter close to 1. Fits to the g parameter may be
     found along with typical extinction coefficients and scattering albedos for various
     atmospheres and cloud types in USGS meteorological tables. (A pattern will be applied
-    to the extinction values.)
+    to the extinction values.)::
 
         mod mist id
         N src1 src2 .. srcN

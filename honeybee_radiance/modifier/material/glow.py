@@ -9,31 +9,43 @@ import honeybee.typing as typing
 
 
 class Glow(Material):
-    """Create glow material."""
+    """Create glow material.
+
+    Args:
+        name: Material name as a string. The name should not have whitespaces or
+            special characters.
+        r_emittance: A positive value for the Red channel of the glow (default: 0).
+        g_emittance: A positive value for the Green channel of the glow (default: 0).
+        b_emittance: A positive value for the Blue channel of the glow (default: 0).
+        max_radius: Maximum radius for shadow testing (default: 0). If maxrad is
+            zero, then the surface will never be tested for shadow, although it may
+            participate in an interreflection calculation. If maxrad is negative,
+            then the surface will never contribute to scene illumination. Glow
+            sources will never illuminate objects on the other side of an illum
+            surface. This provides a convenient way to illuminate local light fixture
+            geometry without overlighting nearby objects.
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_emittance
+        * g_emittance
+        * b_emittance
+        * max_radius
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+    """
 
     __slots__ = ('_r_emittance', '_g_emittance', '_b_emittance', '_max_radius')
 
     def __init__(self, name, r_emittance=0.0, g_emittance=0.0, b_emittance=0.0,
                  max_radius=0.0, modifier='void', dependencies=None):
-        """Init Glow material.
-
-        args:
-            name: Material name as a string. The name should not have whitespaces or
-                special characters.
-            r_emittance: A positive value for the Red channel of the glow (default: 0).
-            g_emittance: A positive value for the Green channel of the glow (default: 0).
-            b_emittance: A positive value for the Blue channel of the glow (default: 0).
-            max_radius: Maximum radius for shadow testing (default: 0). If maxrad is
-                zero, then the surface will never be tested for shadow, although it may
-                participate in an interreflection calculation. If maxrad is negative,
-                then the surface will never contribute to scene illumination. Glow
-                sources will never illuminate objects on the other side of an illum
-                surface. This provides a convenient way to illuminate local light fixture
-                geometry without overlighting nearby objects.
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-        """
+        """Init Glow material."""
         Material.__init__(self, name, modifier=modifier,
                           dependencies=dependencies)
         self.r_emittance = r_emittance
@@ -86,7 +98,7 @@ class Glow(Material):
 
     @property
     def max_radius(self):
-        """Maximum radius for shadow testing (default: 0).
+        """Maximum radius for shadow testing (default is 0).
 
         If maxrad is zero, then the surface will never be tested for shadow, although
         it may participate in an interreflection calculation. If maxrad is negative, then
@@ -124,6 +136,9 @@ class Glow(Material):
                 primitive is defined based on other primitives. (Default: [])
 
         Usage:
+
+        .. code-block:: python
+
             sample_glow = Glow.from_single_value("sample_glow", 100)
             print(sample_glow)
         """
@@ -137,14 +152,14 @@ class Glow(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "glow", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "glow",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -178,16 +193,16 @@ class Glow(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "name": "", // Material Name
-                "type": "glow", // primitive type
-                "r_emittance": float, // A positive value for the Red channel of the glow
-                "g_emittance": float, // A positive value for the Green channel of the glow
-                "b_emittance": float, // A positive value for the Blue channel of the glow
-                "max_radius": float, // Maximum radius for shadow testing
-                "dependencies: []
+            "name": "",  # Material Name
+            "type": "glow",  # primitive type
+            "r_emittance": float,  # A positive value for the Red channel of the glow
+            "g_emittance": float,  # A positive value for the Green channel of the glow
+            "b_emittance": float,  # A positive value for the Blue channel of the glow
+            "max_radius": float,  # Maximum radius for shadow testing
+            "dependencies: []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

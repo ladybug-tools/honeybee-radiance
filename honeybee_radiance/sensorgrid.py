@@ -14,22 +14,21 @@ except:
 class SensorGrid(object):
     """A grid of sensors.
 
-    Attributes:
-        name
-        sensors
-        positions
-        directions
+    Args:
+        name: A unique name for this SensorGrid.
+        sensors: A collection of Sensors.
+
+    Properties:
+        * name
+        * sensors
+        * positions
+        * directions
     """
 
     __slots__ = ('_sensors', '_name')
 
     def __init__(self, name, sensors):
-        """Initialize a SensorGrid.
-
-        Args:
-            name: A unique name for this SensorGrid.
-            sensors: A collection of Sensors.
-        """
+        """Initialize a SensorGrid."""
         self.name = typing.valid_string(name)
         self._sensors = tuple(sensors)
         for sen in self._sensors:
@@ -92,7 +91,7 @@ class SensorGrid(object):
         if not os.path.isfile(file_path):
             raise IOError("Can't find {}.".format(file_path))
         name = name or os.path.split(os.path.splitext(file_path)[0])[-1]
-        
+
         start_line = int(start_line) if start_line is not None else 0
         try:
             end_line = int(end_line)
@@ -156,12 +155,12 @@ class SensorGrid(object):
 
     def to_file(self, folder, file_name=None, mkdir=False):
         """Write this sensor grid to a Radiance sensors file.
-        
+
         Args:
             folder: Target folder.
             file_name: Optional file name without extension (Default: self.name).
             mkdir: A boolean to indicate if the folder should be created in case it
-                doesn't exist already (Default: False). 
+                doesn't exist already (Default: False).
 
         Returns:
             Full path to newly created file.
@@ -195,7 +194,7 @@ class SensorGrid(object):
             name = '%s_%04d.pts' % (base_name, fc)
             content = '\n'.join((next(sensors).to_radiance() for _ in range(sc)))
             futil.write_to_file_by_name(folder, name, content + '\n', mkdir)
-        
+
         # write whatever is left to the last file
         name = '%s_%04d.pts' % (base_name, count - 1)
         content = '\n'.join((sensor.to_radiance() for sensor in sensors))

@@ -2,7 +2,12 @@ from abc import ABCMeta, abstractproperty, abstractmethod
 
 
 class Sky(object):
-    """Base class for Honeybee Skies."""
+    """Base class for Honeybee Skies.
+
+    Properties:
+        * is_point_in_time
+        * is_climate_based
+    """
     __metaclass__ = ABCMeta
     __slots__ = ()
 

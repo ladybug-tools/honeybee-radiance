@@ -38,6 +38,10 @@ class Sunpath(object):
         location: A Ladybug location.
         wea: A ladybug annual wea for generating climate-based sunpath. The location of
             the wea object will be ignored.
+
+    Properties:
+        * location
+        * north
     """
     __slots__ = ('_location', '_north')
 
@@ -60,7 +64,7 @@ class Sunpath(object):
     def north(self):
         """Sunpath north angle."""
         return self._north
-    
+
     @north.setter
     def north(self, n):
         assert isinstance(n, (int, float)), 'north must be a numerical value.'
@@ -143,11 +147,11 @@ class Sunpath(object):
                 useful for radiation studies (default: False).
             split_mod_files: A boolean to split the modifer file into multiple files to
                 ensure none of them includes more than 10,000 modifiers.
-        
+
         Returns:
-            dict: A dictionary with with two keys for sunpath and suns. sunpath returns
-                the path to the sunpath file and suns returns a list of path to modifier
-                files.
+            dict -- A dictionary with with two keys for sunpath and suns. sunpath returns
+            the path to the sunpath file and suns returns a list of path to modifier
+            files.
         """
         sun_vectors, sun_up_hours, radiance_values = \
             self._solar_calc(hoys, wea, output_type, leap_year, reverse_vectors)

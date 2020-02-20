@@ -13,6 +13,8 @@ class Instance(Geometry):
     An instance is a compound surface, given by the contents of an octree file (created
     by oconv).
 
+    .. code-block:: shell
+
         mod instance id
         1+ octree transform
         0
@@ -31,7 +33,7 @@ class Instance(Geometry):
     incorporated correctly in the calculation, and they are not recommended. Finally,
     there is no advantage (other than convenience) to using a single instance of an
     octree, or an octree containing only a few surfaces. An xform command on the
-    subordinate description is preferred in such cases. 
+    subordinate description is preferred in such cases.
     """
     __slots__ = ()
 

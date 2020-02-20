@@ -11,7 +11,6 @@ class Metal2(Material):
 
     Metal2 is the same as plastic2, except that the highlights are modified by the
     material color.
-
     """
     __slots__ = ()
 

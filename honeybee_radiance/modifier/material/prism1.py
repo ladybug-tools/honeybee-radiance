@@ -17,6 +17,8 @@ class Prism1(Material):
     virtual light sources. The arguments give the coefficient for the redirected light
     and its direction.
 
+    .. code-block:: shell
+
         mod prism1 id
         5+ coef dx dy dz funcfile transform
         0

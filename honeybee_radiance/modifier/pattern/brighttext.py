@@ -11,6 +11,8 @@ class Brighttext(Pattern):
 
     Brighttext is like colortext, but the writing is monochromatic.
 
+    .. code-block:: shell
+
         mod brighttext id
         2 fontfile textfile
         0
@@ -22,6 +24,8 @@ class Brighttext(Pattern):
                 [spacing]
 
     or:
+
+    .. code-block:: shell
 
         mod brighttext id
         2+N fontfile . This is a line with N words ...

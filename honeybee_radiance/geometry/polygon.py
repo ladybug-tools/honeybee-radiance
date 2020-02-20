@@ -13,39 +13,47 @@ class Polygon(Geometry):
     vertex is automatically connected to the first. Holes are represented in polygons as
     interior vertices connected to the outer perimeter by coincident edges (seams).
 
-    mod polygon id
-    0
-    0
-    3n
-            x1      y1      z1
-            x2      y2      z2
-            ...
-            xn      yn      zn
+    .. code-block:: shell
+
+        mod polygon id
+        0
+        0
+        3n
+                x1      y1      z1
+                x2      y2      z2
+                ...
+                xn      yn      zn
+
+    Args:
+        name: Geometry name as a string. Do not use white space or special
+            character.
+        vertices: Minimum of three arrays, each with 3 (x, y, z) values for
+            vertices that make up the polygon. Vertices musct be ordered
+            counter-clockwise as viewed from the front side. The last vertex is
+            assumed to be connected to the first.
+        modifier: Geometry modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * vertices
+        * modifier
+        * dependencies
+        * values
+
+    Usage:
+
+    .. code-block:: python
+
+        polygon = Polygon("test_polygon", [(0, 0, 10), (10, 0, 10), (10, 0, 0)])
+        print(polygon)
     """
     __slots__ = ('_vertices',)
 
     def __init__(self, name, vertices, modifier=None, dependencies=None):
-        """Radiance Polygon.
-
-        Attributes:
-            name: Geometry name as a string. Do not use white space or special
-                character.
-            vertices: Minimum of three arrays, each with 3 (x, y, z) values for
-                vertices that make up the polygon. Vertices musct be ordered
-                counter-clockwise as viewed from the front side. The last vertex is
-                assumed to be connected to the first.
-            modifier: Geometry modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        Usage:
-
-            .. code-block:: python
-
-            polygon = Polygon("test_polygon", [(0, 0, 10), (10, 0, 10), (10, 0, 0)])
-            print(polygon)
-        """
+        """Radiance Polygon."""
         Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
         self.vertices = vertices
         self._update_values()
@@ -58,7 +66,7 @@ class Polygon(Geometry):
     def vertices(self):
         """List of Polygon vertices."""
         return self._vertices
-    
+
     @vertices.setter
     def vertices(self, vertices):
         self._vertices = tuple(tuple(float(v) for v in pt) for pt in vertices)
@@ -73,14 +81,14 @@ class Polygon(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "polygon", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "polygon",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -112,14 +120,14 @@ class Polygon(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "type": "polygon", // Geometry type
-                "modifier": {} or "void",
-                "name": "", // Geometry Name
-                "vertices": [(0, 0, 10), (10, 0, 10), (10, 0, 0)],
-                "dependencies": []
+            "type": "polygon",  # Geometry type
+            "modifier": {} or "void",
+            "name": "",  # Geometry Name
+            "vertices": [(0, 0, 10), (10, 0, 10), (10, 0, 0)],
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

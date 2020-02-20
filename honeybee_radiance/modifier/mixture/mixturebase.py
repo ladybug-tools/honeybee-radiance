@@ -10,7 +10,15 @@ from ..modifierbase import Modifier
 
 
 class Mixture(Modifier):
-    """Base class for Radiance mixtures."""
+    """Base class for Radiance mixtures.
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_mixture
+    """
     __slots__ = ()
 
     @property

@@ -17,11 +17,12 @@ class Dielectric(Material):
     changes as a function of wavelength. It is usually zero. (A pattern modifies only the
     refracted value.)
 
+    .. code-block:: shell
+
         mod dielectric id
         0
         0
         5 rtn gtn btn n hc
-
     """
     __slots__ = ()
 

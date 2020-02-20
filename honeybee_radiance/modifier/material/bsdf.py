@@ -24,17 +24,60 @@ except ImportError:
 class BSDF(Material):
     """Radiance BSDF material.
 
-    mod BSDF id
-    6+ thick BSDFfile ux uy uz funcfile transform
-    0
-    0|3|6|9
-        rfdif gfdif bfdif
-        rbdif gbdif bbdif
-        rtdif gtdif btdif
+    .. code-block:: shell
+
+        mod BSDF id
+        6+ thick BSDFfile ux uy uz funcfile transform
+        0
+        0|3|6|9
+            rfdif gfdif bfdif
+            rbdif gbdif bbdif
+            rtdif gtdif btdif
 
     The __init__ method sets additional diffuse reflectance for front and  back as well
     as addition diffuse transmittance to 0. You can set-up these values by using their
     respective property.
+
+    Args:
+        bsdf_file: Path to an xml file. Data will NOT be cached in memory.
+        up_orientation: (x, y ,z) vector that sets the hemisphere that the
+            BSDF material faces.  For materials that are symmetrical about
+            the face plane (like non-angled venetian blinds), this can be
+            any vector that is not perfectly normal to the face. For
+            asymmetrical materials like angled venetian blinds, this variable
+            should be coordinated with the direction the face are facing.
+            The default is set to (0.01, 0.01, 1.00), which should hopefully
+            not be perpendicular to any typical face.
+        thickness: Optional number to set the thickness of the BSDF material.
+            (default: 0).
+        modifier: Material modifier (Default: 'void').
+        function_file: Optional input for function file (Default: .).
+        transform: Optional transform input to to scale the thickness and reorient
+            the up vector (default: None).
+        angle_basis: BSDF file angle basis. If not provided by user honeybee tries to
+            find it by parsing BSDF file itself.
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+
+    Properties:
+        * name
+        * bsdf_file
+        * up_orientation
+        * thickness
+        * function_file
+        * transform
+        * angle_basis
+        * front_diffuse_reflectance
+        * back_diffuse_reflectance
+        * diffuse_transmittance
+        * dependencies
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
     """
     __slots__ = ('_bsdf_file', '_up_orientation', '_thickness', '_function_file',
                  '_transform', '_angle_basis', '_front_diffuse_reflectance',
@@ -44,31 +87,7 @@ class BSDF(Material):
     def __init__(self, bsdf_file, name=None, up_orientation=None, thickness=0,
                  modifier='void', function_file='.', transform=None, angle_basis=None,
                  dependencies=None):
-        """Create BSDF material.
-
-        Args:
-            bsdf_file: Path to an xml file. Data will NOT be cached in memory.
-            up_orientation: (x, y ,z) vector that sets the hemisphere that the
-                BSDF material faces.  For materials that are symmetrical about
-                the face plane (like non-angled venetian blinds), this can be
-                any vector that is not perfectly normal to the face. For
-                asymmetrical materials like angled venetian blinds, this variable
-                should be coordinated with the direction the face are facing.
-                The default is set to (0.01, 0.01, 1.00), which should hopefully
-                not be perpendicular to any typical face.
-            thickness: Optional number to set the thickness of the BSDF material.
-                (default: 0).
-            modifier: Material modifier (Default: 'void').
-            function_file: Optional input for function file (Default: .).
-            transform: Optional transform input to to scale the thickness and reorient
-                the up vector (default: None).
-            angle_basis: BSDF file angle basis. If not provided by user honeybee tries to
-                find it by parsing BSDF file itself.
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        """
+        """Create BSDF material."""
         name = name or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
 
         Material.__init__(self, name, modifier=modifier,
@@ -104,7 +123,7 @@ class BSDF(Material):
             if self.back_diffuse_reflectance is not None:
                 for v in self.back_diffuse_reflectance:
                     self._values[2].append(v)
-            
+
             if self.diffuse_transmittance is not None:
                 for v in self.diffuse_transmittance:
                     self._values[2].append(v)
@@ -260,14 +279,14 @@ class BSDF(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "BSDF", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "BSDF",  # primitive type
+            "name": "",  # primitive name
+            "values": []  # values,
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -294,10 +313,10 @@ class BSDF(Material):
 
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
-        
+
         if not extra_values:
             return cls_
-        
+
         values_length = len(extra_values)
         assert values_length in (3, 6, 9), \
             'Length of real values should be 3, 6 or 9 not %d.' % values_length
@@ -322,20 +341,20 @@ class BSDF(Material):
             data: A dictionary in the format below.
             folder: Path to a destination folder to save the bsdf file.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // material modifier (Default: "void")
-                "type": "BSDF", // Material type
-                "name": string, // Material Name
-                "up_orientation": [number, number, number],
-                "thickness": number, // default: 0
-                "function_file": string, // default: '.'
-                "transform": string, // default: None
-                "bsdf_data": bytes, // bsdf file data as bytes
-                "front_diffuse_reflectance": [number, number, number],  // optional
-                "back_diffuse_reflectance": [number, number, number],  // optional
-                "diffuse_transmittance": [number, number, number],  // optional
+            "modifier": "",  # material modifier (Default: "void")
+            "type": "BSDF",  # Material type
+            "name": string,  # Material Name
+            "up_orientation": [number, number, number],
+            "thickness": number,  # default: 0
+            "function_file": string,  # default: '.'
+            "transform": string,  # default: None
+            "bsdf_data": bytes,  # bsdf file data as bytes
+            "front_diffuse_reflectance": [number, number, number],  # optional
+            "back_diffuse_reflectance": [number, number, number],  # optional
+            "diffuse_transmittance": [number, number, number]  # optional
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'
@@ -351,7 +370,7 @@ class BSDF(Material):
         fp = os.path.join(folder, '%s.xml' % data['name'])
         # write bytes to xml file
         cls.decompress_bytes_to_file(data['bsdf_data'], fp)
-        
+
         uo_dict = data['up_orientation']
         cls_ = cls(
             bsdf_file=fp,

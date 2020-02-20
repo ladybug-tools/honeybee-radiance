@@ -13,7 +13,21 @@ from ..primitive import Primitive
 
 
 class Geometry(Primitive):
-    """Base class for Radiance geometries."""
+    """Base class for Radiance geometries.
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_geometry
+        * is_modifier
+        * is_material
+        * is_texture
+        * is_pattern
+        * is_mixture
+        * is_opaque
+"""
     __slots__ = ()
 
     @property

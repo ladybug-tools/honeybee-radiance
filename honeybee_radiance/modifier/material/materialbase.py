@@ -8,7 +8,17 @@ from ..modifierbase import Modifier
 
 
 class Material(Modifier):
-    """Base class for Radiance materials."""
+    """Base class for Radiance materials.
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+
+    """
 
     __slots__ = ()
 

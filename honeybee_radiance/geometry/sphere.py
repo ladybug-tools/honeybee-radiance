@@ -9,34 +9,43 @@ import honeybee.typing as typing
 class Sphere(Geometry):
     """Radiance Sphere.
 
-    mod sphere id
-    0
-    0
-    4 xcent ycent zcent radius
+    .. code-block:: shell
+
+        mod sphere id
+        0
+        0
+        4 xcent ycent zcent radius
+
+    Args:
+        name: Geometry name as a string. Do not use white space or special
+            character.
+        center_pt: Sphere center point as (x, y, z) (Default: (0, 0 ,0)).
+        radius: Sphere radius as a number (Default: 10).
+        modifier: Geometry modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * center_pt
+        * radius
+        * modifier
+        * dependencies
+        * values
+
+    Usage:
+
+    .. code-block:: python
+
+        sphere = Sphere("test_sphere", (0, 0, 10), 10)
+        print(sphere)
     """
     __slots__ = ('_center_pt', '_radius')
 
     def __init__(self, name, center_pt=None, radius=10, modifier=None,
                  dependencies=None):
-        """Radiance Sphere.
-
-        Attributes:
-            name: Geometry name as a string. Do not use white space or special
-                character.
-            center_pt: Sphere center point as (x, y, z) (Default: (0, 0 ,0)).
-            radius: Sphere radius as a number (Default: 10).
-            modifier: Geometry modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        Usage:
-
-            .. code-block:: python
-
-            sphere = Sphere("test_sphere", (0, 0, 10), 10)
-            print(sphere)
-        """
+        """Radiance Sphere."""
         Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
         self.center_pt = center_pt or (0, 0, 0)
         self.radius = radius if radius is not None else 10
@@ -50,9 +59,9 @@ class Sphere(Geometry):
 
     @property
     def center_pt(self):
-        """Sphere center point as (x, y, z) (Default: (0, 0 ,0))."""
+        """Sphere center point as (x, y, z). Default is (0, 0 ,0)."""
         return self._center_pt
-    
+
     @center_pt.setter
     def center_pt(self, value):
         self._center_pt = tuple(float(v) for v in value)
@@ -61,9 +70,9 @@ class Sphere(Geometry):
 
     @property
     def radius(self):
-        """Sphere radius as a number (Default: 10)."""
+        """Sphere radius as a number. Default is 10."""
         return self._radius
-    
+
     @radius.setter
     def radius(self, value):
         self._radius = typing.float_positive(value)
@@ -75,14 +84,14 @@ class Sphere(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "sphere", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "sphere",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -112,15 +121,15 @@ class Sphere(Geometry):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "type": "sphere", // Geometry type
-                "modifier": {} or "void",
-                "name": "", // Geometry Name
-                "center_pt": {"x": float, "y": float, "z": float},
-                "radius": float,
-                "dependencies": []
+            "type": "sphere",  # Geometry type
+            "modifier": {} or "void",
+            "name": "",  # Geometry Name
+            "center_pt": {"x": float, "y": float, "z": float},
+            "radius": float,
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

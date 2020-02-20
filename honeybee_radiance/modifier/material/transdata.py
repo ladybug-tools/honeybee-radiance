@@ -12,13 +12,14 @@ class Transdata(Material):
     Transdata is like plasdata but the specification includes transmittance as well as
     reflectance. The parameters are as follows.
 
+    .. code-block:: shell
+
         mod transdata id
         3+n+
                 func datafile
                 funcfile x1 x2 .. xn transform
         0
         6+ red green blue rspec trans tspec A7 ..
-
     """
     __slots__ = ()
 

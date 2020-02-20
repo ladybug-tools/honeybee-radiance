@@ -14,6 +14,8 @@ class Mesh(Geometry):
     to accelerate ray intersection. It is typically converted from a Wavefront .OBJ file
     using the obj2mesh program.
 
+    .. code-block:: shell
+
         mod mesh id
         1+ meshfile transform
         0

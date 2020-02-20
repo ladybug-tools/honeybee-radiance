@@ -10,39 +10,54 @@ import honeybee.typing as typing
 
 
 class Trans(Material):
-    """Radiance translucent material."""
+    """Radiance translucent material.
+
+    Args:
+        name: Material name as a string. Do not use white space or special
+            character.
+        r_reflectance: Reflectance for red. The value should be between 0 and 1
+            (Default: 0).
+        g_reflectance: Reflectance for green. The value should be between 0 and 1
+            (Default: 0).
+        b_reflectance: Reflectance for blue. The value should be between 0 and 1
+            (Default: 0).
+        specularity: Fraction of specularity. Specularity fractions greater than 0.1
+            are not realistic (Default: 0).
+        roughness: Roughness is specified as the rms slope of surface facets. A
+            value of 0 corresponds to a perfectly smooth surface, and a value of 1
+            would be a very rough surface. Roughness values greater than 0.2 are not
+            very realistic. (Default: 0).
+        transmitted_diff: The transmitted diffuse component is the fraction of
+            transmitted light that is transmitted diffusely in as scattering fashion.
+        transmitted_spec: The transmitted specular component is the fraction of
+            transmitted light that is not diffusely scattered.
+        modifier: Material modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_reflectance
+        * g_reflectance
+        * b_reflectance
+        * specularity
+        * roughness
+        * transmitted_diff
+        * transmitted_spec
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+    """
     __slots__ = ('_r_reflectance', '_g_reflectance', '_b_reflectance',
                  '_specularity', '_roughness', '_transmitted_diff', '_transmitted_spec')
 
     def __init__(self, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
                  specularity=0.0, roughness=0.0, transmitted_diff=0.0,
                  transmitted_spec=0.0, modifier="void", dependencies=None):
-        """Create trans material.
-
-        args:
-            name: Material name as a string. Do not use white space or special
-                character.
-            r_reflectance: Reflectance for red. The value should be between 0 and 1
-                (Default: 0).
-            g_reflectance: Reflectance for green. The value should be between 0 and 1
-                (Default: 0).
-            b_reflectance: Reflectance for blue. The value should be between 0 and 1
-                (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1
-                are not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A
-                value of 0 corresponds to a perfectly smooth surface, and a value of 1
-                would be a very rough surface. Roughness values greater than 0.2 are not
-                very realistic. (Default: 0).
-            transmitted_diff: The transmitted diffuse component is the fraction of
-                transmitted light that is transmitted diffusely in as scattering fashion.
-            transmitted_spec: The transmitted specular component is the fraction of
-                transmitted light that is not diffusely scattered.
-            modifier: Material modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-        """
+        """Create trans material."""
         Material.__init__(self, name, modifier=modifier,
                           dependencies=dependencies)
         self.r_reflectance = r_reflectance
@@ -280,14 +295,14 @@ class Trans(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "trans", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "trans",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -324,20 +339,20 @@ class Trans(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": {} or void, // Material modifier
-                "type": "trans", // Material type
-                "name": "", // Material Name
-                "r_reflectance": float, // Reflectance for red
-                "g_reflectance": float, // Reflectance for green
-                "b_reflectance": float, // Reflectance for blue
-                "specularity": float, // Material specularity
-                "roughness": float, // Material roughness
-                "transmitted_diff": float,
-                "transmitted_spec": float,
-                "dependencies": []
+            "modifier": {} or void,  # Material modifier
+            "type": "trans",  # Material type
+            "name": "", // Material Name
+            "r_reflectance": float,  # Reflectance for red
+            "g_reflectance": float,  # Reflectance for green
+            "b_reflectance": float,  # Reflectance for blue
+            "specularity": float,  # Material specularity
+            "roughness": float,  # Material roughness
+            "transmitted_diff": float,
+            "transmitted_spec": float,
+            "dependencies": []
             }
         """
         assert 'type' in input_dict, 'Input dictionary is missing "type".'

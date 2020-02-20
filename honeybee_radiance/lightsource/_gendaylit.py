@@ -32,7 +32,7 @@ def gendaylit(altitude, hoy, directirradiance, diffuseirradiance,
         output_type: An integer between 0-2. 0=output in W/m^2/sr visible,
             1=output in W/m^2/sr solar, 2=output in candela/m^2 (default: 0).
     Returns:
-        solarradiance: solar irradiance.
+        solarradiance -- solar irradiance.
     """
     #
     coeff_perez = [

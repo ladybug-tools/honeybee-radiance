@@ -13,6 +13,8 @@ class Transfunc(Material):
     distribution as well as a reflectance distribution. Both reflectance and
     transmittance are specified with the same function.
 
+    .. code-block:: shell
+
         mod transfunc id
         2+ brtd funcfile transform
         0

@@ -15,10 +15,37 @@ class Ashik2(Material):
     power is used, which has no physical meaning other than larger numbers are equivalent
     to a smoother surface.
 
+    .. code-block:: shell
+
         mod ashik2 id
         4+ ux uy uz funcfile transform
         0
         8 dred dgrn dblu sred sgrn sblu u-power v-power
+
+    Args:
+        name: Primitive name as a string. Cannot contain white spaces or special
+            characters.
+        modifier: Modifier. It can be primitive, mixture, texture or pattern.
+            (Default: "void").
+        values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
+            refer to a line number in the radiance primitve definitions and the
+            values in each array correspond to values occurring within each line.
+            For example, [[], [], ['0.500', '0.500', '0.500', '0.000', '0.050']]
+            corresponds to values one would find for a Plastic material.
+            (Default: [[], [], []]).
+        is_opaque: A boolean to indicate whether this primitive is opaque.
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives that are
+            defined based on other primitives. (Default: []).
+
+    Properties:
+        * name
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+        * is_opaque
     """
     __slots__ = ()
 

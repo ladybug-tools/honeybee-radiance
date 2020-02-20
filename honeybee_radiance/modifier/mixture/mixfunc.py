@@ -11,6 +11,8 @@ class Mixfunc(Mixture):
 
     A mixfunc mixes two modifiers procedurally. It is specified as follows:
 
+    .. code-block:: shell
+
         mod mixfunc id
         4+ foreground background vname funcfile transform
         0

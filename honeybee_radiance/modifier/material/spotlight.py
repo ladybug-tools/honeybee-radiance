@@ -14,11 +14,12 @@ class Spotlight(Material):
     are given. The length of the orientation vector is the distance of the effective
     focus behind the source center (i.e., the focal length).
 
+    .. code-block:: shell
+
         mod spotlight id
         0
         0
         7 red green blue angle xdir ydir zdir
-
     """
     __slots__ = ()
 

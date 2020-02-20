@@ -52,6 +52,25 @@ class ModifierSet(object):
     ModifierSets can be used to establish templates that are applied broadly
     across a Model, like a color scheme used consistently throughout a building.
 
+
+    Args:
+        name: Text string for modifier set name.
+        wall_set: An optional WallSet object for this ModifierSet.
+            If None, it will be the honeybee generic default WallSet.
+        floor_set: An optional FloorSet object for this ModifierSet.
+            If None, it will be the honeybee generic default FloorSet.
+        roof_ceiling_set: An optional RoofCeilingSet object for this ModifierSet.
+            If None, it will be the honeybee generic default RoofCeilingSet.
+        aperture_set: An optional ApertureSet object for this ModifierSet.
+            If None, it will be the honeybee generic default ApertureSet.
+        door_set: An optional DoorSet object for this ModifierSet.
+            If None, it will be the honeybee generic default DoorSet.
+        shade_set: An optional ShadeSet object for this ModifierSet.
+            If None, it will be the honeybee generic default ShadeSet.
+        air_boundary_modifier: An optional Modifier to be used for all Faces with
+            an AirBoundary face type. If None, it will be the honyebee generic
+            air wall modifier.
+
     Properties:
         * name
         * wall_set
@@ -74,26 +93,7 @@ class ModifierSet(object):
     def __init__(self, name, wall_set=None, floor_set=None, roof_ceiling_set=None,
                  aperture_set=None, door_set=None, shade_set=None,
                  air_boundary_modifier=None):
-        """Initialize radiance modifier set.
-
-        Args:
-            name: Text string for modifier set name.
-            wall_set: An optional WallSet object for this ModifierSet.
-                If None, it will be the honeybee generic default WallSet.
-            floor_set: An optional FloorSet object for this ModifierSet.
-                If None, it will be the honeybee generic default FloorSet.
-            roof_ceiling_set: An optional RoofCeilingSet object for this ModifierSet.
-                If None, it will be the honeybee generic default RoofCeilingSet.
-            aperture_set: An optional ApertureSet object for this ModifierSet.
-                If None, it will be the honeybee generic default ApertureSet.
-            door_set: An optional DoorSet object for this ModifierSet.
-                If None, it will be the honeybee generic default DoorSet.
-            shade_set: An optional ShadeSet object for this ModifierSet.
-                If None, it will be the honeybee generic default ShadeSet.
-            air_boundary_modifier: An optional Modifier to be used for all Faces with
-                an AirBoundary face type. If None, it will be the honyebee generic
-                air wall modifier.
-        """
+        """Initialize radiance modifier set."""
         self._locked = False  # unlocked by default
         self.name = name
         self.wall_set = wall_set
@@ -345,7 +345,7 @@ class ModifierSet(object):
         """
         assert data['type'] == 'ModifierSet', \
             'Expected ModifierSet. Got {}.'.format(data['type'])
-        
+
         # gather all modifier objects
         modifiers = {}
         for mod in data['modifiers']:
@@ -439,7 +439,7 @@ class ModifierSet(object):
             return face_type_set.exterior_modifier
         else:
             return face_type_set.interior_modifier
-    
+
     @staticmethod
     def _get_subsets_from_abridged(data, modifiers):
         """Get subset objects from and abirdged dictionary."""
@@ -458,7 +458,7 @@ class ModifierSet(object):
             air_boundary_mod = modifiers[data['air_boundary_modifier']]
         else:
             air_boundary_mod = None
-        
+
         return wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, \
             shade_set, air_boundary_mod
 
@@ -559,19 +559,19 @@ class ModifierSet(object):
 
 @lockable
 class _BaseSet(object):
-    """Base class for the sets assigned to Faces (WallSet, FloorSet, RoofCeilingSet)."""
+    """Base class for the sets assigned to Faces (WallSet, FloorSet, RoofCeilingSet).
+
+    Args:
+        exterior_modifier: A radiance modifier object for faces with an
+            Outdoors boundary condition.
+        interior_modifier: A radiance modifier object for faces with a boundary
+            condition other than Outdoors.
+    """
 
     __slots__ = ('_exterior_modifier', '_interior_modifier', '_locked')
 
     def __init__(self, exterior_modifier=None, interior_modifier=None):
-        """Initialize set.
-
-        Args:
-            exterior_modifier: A radiance modifier object for faces with an
-                Outdoors boundary condition.
-            interior_modifier: A radiance modifier object for faces with a boundary
-                condition other than Outdoors.
-        """
+        """Initialize set."""
         self._locked = False  # unlocked by default
         self.exterior_modifier = exterior_modifier
         self.interior_modifier = interior_modifier
@@ -638,7 +638,7 @@ class _BaseSet(object):
                 attr[1:]:getattr(self, attr[1:]).name
                 for attr in attributes
             }
-        
+
         base['type'] = self.__class__.__name__ + 'Abridged'
         return base
 
@@ -746,6 +746,17 @@ class ShadeSet(_BaseSet):
 class ApertureSet(_BaseSet):
     """Set containing all radiance modifiers needed to for a radiance model's Apertures.
 
+    Args:
+        window_modifier: A modifier object for apertures with an Outdoors
+            boundary condition, False is_operable property, and Wall parent Face.
+        interior_modifier: A modifier object for apertures with a Surface
+            boundary condition.
+        skylight_modifier: : A modifier object for apertures with an Outdoors
+            boundary condition, False is_operable property, and a RoofCeiling
+            or Floor face type for their parent face.
+        operable_modifier: A modifier object for apertures with an Outdoors
+            boundary condition and a True is_operable property.
+
     Properties:
         * window_modifier
         * interior_modifier
@@ -759,19 +770,7 @@ class ApertureSet(_BaseSet):
 
     def __init__(self, window_modifier=None, interior_modifier=None,
                  skylight_modifier=None, operable_modifier=None):
-        """Initialize aperture set.
-
-        Args:
-            window_modifier: A modifier object for apertures with an Outdoors
-                boundary condition, False is_operable property, and Wall parent Face.
-            interior_modifier: A modifier object for apertures with a Surface
-                boundary condition.
-            skylight_modifier: : A modifier object for apertures with an Outdoors
-                boundary condition, False is_operable property, and a RoofCeiling
-                or Floor face type for their parent face.
-            operable_modifier: A modifier object for apertures with an Outdoors
-                boundary condition and a True is_operable property.
-        """
+        """Initialize aperture set."""
         _BaseSet.__init__(self, window_modifier, interior_modifier)
         self.skylight_modifier = skylight_modifier
         self.operable_modifier = operable_modifier
@@ -808,7 +807,7 @@ class ApertureSet(_BaseSet):
     @skylight_modifier.setter
     def skylight_modifier(self, value):
         self._skylight_modifier = self._validate_modifier(value)
-    
+
     def _to_dict(self, none_for_defaults=True):
         """Get the ModifierSet as a dictionary.
 
@@ -848,6 +847,17 @@ class ApertureSet(_BaseSet):
 class DoorSet(_BaseSet):
     """Set containing all radiance modifiers needed to for an radiance model's Doors.
 
+    Args:
+        exterior_modifier: A window modifier object for apertures
+            with an Outdoors boundary condition.
+        interior_modifier: A window modifier object for apertures
+            with a Surface boundary condition.
+        exterior_glass_modifier:
+        interior_glass_modifier:
+        overhead_modifier: : A window modifier object for doors with an
+            Outdoors boundary condition and a RoofCeiling or Floor face type for
+            their parent face.
+
     Properties:
         * exterior_modifier
         * interior_modifier
@@ -864,19 +874,7 @@ class DoorSet(_BaseSet):
     def __init__(self, exterior_modifier=None, interior_modifier=None,
                  exterior_glass_modifier=None, interior_glass_modifier=None,
                  overhead_modifier=None):
-        """Initialize door set.
-
-        Args:
-            exterior_modifier: A window modifier object for apertures
-                with an Outdoors boundary condition.
-            interior_modifier: A window modifier object for apertures
-                with a Surface boundary condition.
-            exterior_glass_modifier:
-            interior_glass_modifier:
-            overhead_modifier: : A window modifier object for doors with an
-                Outdoors boundary condition and a RoofCeiling or Floor face type for
-                their parent face.
-        """
+        """Initialize door set."""
         _BaseSet.__init__(self, exterior_modifier, interior_modifier)
         self.exterior_glass_modifier = exterior_glass_modifier
         self.interior_glass_modifier = interior_glass_modifier
@@ -930,9 +928,9 @@ class DoorSet(_BaseSet):
     def __repr__(self):
         return 'Door Modifier Set:\n Exterior: {}\n Interior: {}' \
             '\n Exterior Glass: {}\n Interior Glass: {}\n Overhead: {}'.format(
-            self.exterior_modifier.name,
-            self.interior_modifier.name,
-            self.exterior_glass_modifier.name,
-            self.interior_glass_modifier.name,
-            self.overhead_modifier.name
-        )
+                self.exterior_modifier.name,
+                self.interior_modifier.name,
+                self.exterior_glass_modifier.name,
+                self.interior_glass_modifier.name,
+                self.overhead_modifier.name
+                )

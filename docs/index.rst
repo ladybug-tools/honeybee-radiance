@@ -1,6 +1,6 @@
 
 Welcome to Honeybee Radiance's documentation!
-===================================
+=============================================
 
 .. image:: http://www.ladybug.tools/assets/img/honeybee.png
 

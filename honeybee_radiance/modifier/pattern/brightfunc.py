@@ -11,6 +11,8 @@ class Brightfunc(Pattern):
 
     A brightfunc is the same as a colorfunc, except it is monochromatic.
 
+    .. code-block:: shell
+
         mod brightfunc id
         2+ refl funcfile transform
         0

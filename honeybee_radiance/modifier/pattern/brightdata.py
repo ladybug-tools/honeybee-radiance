@@ -11,6 +11,8 @@ class Brightdata(Pattern):
 
     Brightdata is like colordata, except monochromatic.
 
+    .. code-block:: shell
+
         mod brightdata id
         3+n+
                 func datafile

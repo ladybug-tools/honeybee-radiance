@@ -18,6 +18,8 @@ class Colordata(Pattern):
     variables, then they are passed the original red, green, and blue values as
     parameters.
 
+    .. code-block:: shell
+
         mod colordata id
         7+n+
                 rfunc gfunc bfunc rdatafile gdatafile bdatafile

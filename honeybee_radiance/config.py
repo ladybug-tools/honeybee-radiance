@@ -43,18 +43,18 @@ class Folders(object):
         # set the mute value
         self.mute = bool(mute)
 
-        # load paths from the config JSON file 
-        self.config_file  = config_file
+        # load paths from the config JSON file
+        self.config_file = config_file
 
     @property
     def radiance_path(self):
         """Get or set the path to Radiance installation folder.
-        
+
         This is the top level folder that contains both the "bin" and the "lib"
         directories.
         """
         return self._radiance_path
-    
+
     @radiance_path.setter
     def radiance_path(self, r_path):
         exe_name = 'rad.exe' if os.name == 'nt' else 'rad'
@@ -84,7 +84,7 @@ class Folders(object):
     @property
     def radbin_path(self):
         """Get the path to Radiance bin folder.
-        
+
         This is the "bin" directory for Radiance installation (the one that
         contains the executable files).
         """
@@ -98,18 +98,19 @@ class Folders(object):
     @property
     def standards_data_folder(self):
         """Get or set the path to the folder standards loaded to honeybee_radiance.lib.
-        
+
         This folder must have the following sub-folders in order to be valid:
-            * modifiers - folder with RAD files for modifiers.
-            * modifiersets - folder with JSON files of abridged ModifierSets.
+
+        * modifiers - folder with RAD files for modifiers.
+        * modifiersets - folder with JSON files of abridged ModifierSets.
         """
         return self._standards_data_folder
-    
+
     @standards_data_folder.setter
     def standards_data_folder(self, path):
         if not path:  # check the default locations of the template library
             path = self._find_standards_data_folder()
-        
+
         # gather all of the sub folders underneath the master folder
         self._modifier_lib = os.path.join(path, 'modifiers') if path else None
         self._modifierset_lib = os.path.join(path, 'modifiersets') if path else None
@@ -125,22 +126,22 @@ class Folders(object):
         self._standards_data_folder = path
         if path and not self.mute:
             print('Path to the standards_data_folder is set to: '
-                    '{}'.format(self._standards_data_folder))
+                  '{}'.format(self._standards_data_folder))
 
     @property
     def modifier_lib(self):
         """Get the path to the modifier library in the standards_data_folder."""
         return self._modifier_lib
-    
+
     @property
     def modifierset_lib(self):
         """Get the path to the modifierset library in the standards_data_folder."""
         return self._modifierset_lib
 
-    @property 
+    @property
     def config_file(self):
         """Get or set the path to the config.json file from which folders are loaded.
-        
+
         Setting this to None will result in using the config.json module included
         in this package.
         """
@@ -155,7 +156,7 @@ class Folders(object):
 
     def _load_from_file(self, file_path):
         """Set all of the the properties of this object from a config JSON file.
-        
+
         Args:
             file_path: Path to a JSON file containing the file paths. A sample of this
                 JSON is the config.json file within this package.
@@ -188,7 +189,7 @@ class Folders(object):
 
     def _find_radiance_folder(self):
         """Find the Radiance installation in its default location.
-        
+
         This method will first attempt to return the path of a standalone Radiance
         installation and, if none are found, it will search for one that is
         installed with OpenStudio.
@@ -256,17 +257,17 @@ class Folders(object):
                               os.path.isdir('/usr/local/{}'.format(f)))]
         else:  # unknown operating system
             os_folders = None
-        
+
         if not os_folders:  # No Openstudio installations were found
             return None
-        
+
         # get the most recent version of OpenStudio that was found
         return sorted(os_folders, key=getversion, reverse=True)[0]
 
     @staticmethod
     def _find_standards_data_folder():
         """Find the the user template library in its default location.
-        
+
         The HOME/honeybee/honeybee_standards/data folder will be checked first,
         which can conatain libraries that are not overwritten with the update of the
         honeybee_energy package. If no such folder is found, this method defaults to

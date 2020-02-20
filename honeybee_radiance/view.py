@@ -16,7 +16,47 @@ from honeybee_radiance_command.options import BoolOption, TupleOption, \
 class View(object):
     u"""A Radiance view.
 
+    Args:
+        position: Set the view position (-vp) to (x, y, z). This is the focal
+            point of a perspective view or the center of a parallel projection.
+            Default: (0, 0, 0)
+        direction: Set the view direction (-vd) vector to (x, y, z). The
+            length of this vector indicates the focal distance as needed by
+            the pixel depth of field (-pd) in rpict. Default: (0, 0, 1)
+        up_vector: Set the view up (-vu) vector (vertical direction) to
+            (x, y, z) default: (0, 1, 0).
+        type: Set view type (-vt) to one of the choices below.
+
+            * 0 - Perspective (v)
+            * 1 - Hemispherical fisheye (h)
+            * 2 - Parallel (l)
+            * 3 - Cylindrical panoroma (c)
+            * 4 - Angular fisheye (a)
+            * 5 - Planisphere [stereographic] projection (s)
+
+            For more detailed description about view types check rpict manual
+            page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
+        h_size: Set the view horizontal size (-vh). For a perspective
+            projection (including fisheye views), val is the horizontal field
+            of view (in degrees). For a parallel projection, val is the view
+            width in world coordinates.
+        v_size: Set the view vertical size (-vv). For a perspective
+            projection (including fisheye views), val is the horizontal field
+            of view (in degrees). For a parallel projection, val is the view
+            width in world coordinates.
+        shift: Set the view shift (-vs). This is the amount the actual
+            image will be shifted to the right of the specified view. This
+            option is useful for generating skewed perspectives or rendering
+            an image a piece at a time. A value of 1 means that the rendered
+            image starts just to the right of the normal view. A value of -1
+            would be to the left. Larger or fractional values are permitted
+            as well.
+        lift: Set the view lift (-vl) to a value. This is the amount the
+            actual image will be lifted up from the specified view.
+
     Usage:
+
+    .. code-block:: python
 
         v = View()
         # add a fore clip
@@ -46,44 +86,7 @@ class View(object):
 
     def __init__(self, name, position=None, direction=None, up_vector=None, type='v',
                  h_size=60, v_size=60, shift=None, lift=None):
-        u"""Create a view.
-
-        Arg:
-            position: Set the view position (-vp) to (x, y, z). This is the focal
-                point of a perspective view or the center of a parallel projection.
-                Default: (0, 0, 0)
-            direction: Set the view direction (-vd) vector to (x, y, z). The
-                length of this vector indicates the focal distance as needed by
-                the pixel depth of field (-pd) in rpict. Default: (0, 0, 1)
-            up_vector: Set the view up (-vu) vector (vertical direction) to
-                (x, y, z) default: (0, 1, 0).
-            type: Set view type (-vt) to one of the choices below.
-                    0 - Perspective (v)
-                    1 - Hemispherical fisheye (h)
-                    2 - Parallel (l)
-                    3 - Cylindrical panoroma (c)
-                    4 - Angular fisheye (a)
-                    5 - Planisphere [stereographic] projection (s)
-                For more detailed description about view types check rpict manual
-                page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
-            h_size: Set the view horizontal size (-vh). For a perspective
-                projection (including fisheye views), val is the horizontal field
-                of view (in degrees). For a parallel projection, val is the view
-                width in world coordinates.
-            v_size: Set the view vertical size (-vv). For a perspective
-                projection (including fisheye views), val is the horizontal field
-                of view (in degrees). For a parallel projection, val is the view
-                width in world coordinates.
-            shift: Set the view shift (-vs). This is the amount the actual
-                image will be shifted to the right of the specified view. This
-                option is useful for generating skewed perspectives or rendering
-                an image a piece at a time. A value of 1 means that the rendered
-                image starts just to the right of the normal view. A value of -1
-                would be to the left. Larger or fractional values are permitted
-                as well.
-            lift: Set the view lift (-vl) to a value. This is the amount the
-                actual image will be lifted up from the specified view.
-        """
+        u"""Create a view."""
         self.name = name
         self._position = TupleOption(
             'vp', 'view position', position if position is not None else (0, 0, 0)
@@ -123,10 +126,12 @@ class View(object):
     def type(self):
         """Set and get view type (-vt) to one of the choices below.
 
-        v - Perspective (v), h - Hemispherical fisheye (h),
-        l - Parallel (l),    c - Cylindrical panorma (c),
-        a - Angular fisheye (a),
-        s - Planisphere [stereographic] projection (s)
+            * v - Perspective (v)
+            * h - Hemispherical fisheye (h)
+            * l - Parallel (l)
+            * c - Cylindrical panorma (c)
+            * a - Angular fisheye (a)
+            * s - Planisphere [stereographic] projection (s)
         """
         return self._type
 
@@ -297,7 +302,7 @@ class View(object):
         exterior view point) or for incremental rendering. A value of zero implies
         no foreground clipping. A negative value produces some interesting effects,
         since it creates an inverted image for objects behind the viewpoint.
-        """        
+        """
         return self._fore_clip
 
     @property
@@ -355,7 +360,7 @@ class View(object):
     @classmethod
     def from_string(cls, name, view_string):
         """Create a view object from a string.
-        
+
         This method is similar to from_string method for radiance parameters with the
         difference that all the parameters that are not related to view will be ignored.
         """
@@ -369,7 +374,7 @@ class View(object):
             'name': name,
             'position': None,
             'direction': None,
-            'up_vector': None, 
+            'up_vector': None,
             'h_size': None,
             'v_size': None,
             'shift': None,
@@ -399,7 +404,7 @@ class View(object):
         Args:
             file_path: Full path to view file.
             name: Optional name for this view. View name will be set to file name if not
-            provided.
+                provided.
         """
 
         if not os.path.isfile(file_path):
@@ -428,7 +433,7 @@ class View(object):
 
     def dimension_x_y(self, x_res=None, y_res=None):
         """Get dimensions for this view as x, y.
-        
+
         Default values for x_res and y_res are set to match Radiance defaults.
         """
         # radiance default is 512
@@ -560,12 +565,12 @@ class View(object):
             'name': self.name,
             'position': self.position.value,
             'direction': self.direction.value,
-            'up_vector': self.up_vector.value, 
+            'up_vector': self.up_vector.value,
             'h_size': self.h_size.value,
-            'v_size': self.v_size.value, 
+            'v_size': self.v_size.value,
             'shift': self.shift.value,
             'lift': self.lift.value,
-            'type': self.type.value, 
+            'type': self.type.value,
             'fore_clip': self.fore_clip.value,
             'aft_clip': self.aft_clip.value
         }
@@ -577,7 +582,7 @@ class View(object):
             folder: Target folder.
             file_name: Optional file name without extension (Default: self.name).
             mkdir: A boolean to indicate if the folder should be created in case it
-                doesn't exist already (Default: False). 
+                doesn't exist already (Default: False).
 
         Returns:
             Full path to newly created file.
@@ -607,7 +612,7 @@ class View(object):
         view_plane = plane.Plane(n=view_up_vector, o=view_position, x=view_direction)
         axis = pv.Vector3D(*axis) or view_up_vector
         position = pv.Point3D(*position) or view_position
-        
+
         rotated_plane = view_plane.rotate(axis, angle, position)
 
         self.position = rotated_plane.o

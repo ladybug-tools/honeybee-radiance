@@ -9,39 +9,56 @@ import honeybee.typing as typing
 
 
 class Plastic(Material):
-    """Radiance plastic material."""
+    """Radiance plastic material.
+
+    Args:
+        name: Material name as a string. Do not use white space or special
+            character.
+        r_reflectance: Reflectance for red. The value should be between 0 and 1
+            (Default: 0).
+        g_reflectance: Reflectance for green. The value should be between 0 and 1
+            (Default: 0).
+        b_reflectance: Reflectance for blue. The value should be between 0 and 1
+            (Default: 0).
+        specularity: Fraction of specularity. Specularity fractions greater than 0.1
+            are not realistic (Default: 0).
+        roughness: Roughness is specified as the rms slope of surface facets. A
+            value of 0 corresponds to a perfectly smooth surface, and a value of 1
+            would be a very rough surface. Roughness values greater than 0.2 are not
+            very realistic. (Default: 0).
+        modifier: Material modifier (Default: "void").
+        dependencies: A list of primitives that this primitive depends on. This
+            argument is only useful for defining advanced primitives where the
+            primitive is defined based on other primitives. (Default: [])
+
+    Properties:
+        * name
+        * r_reflectance
+        * g_reflectance
+        * b_reflectance
+        * specularity
+        * roughness
+        * average_reflectance
+        * values
+        * modifier
+        * dependencies
+        * is_modifier
+        * is_material
+
+    Usage:
+
+    .. code-block:: python
+
+        wall_material = Plastic("generic_wall", .55, .65, .75)
+        print(wall_material)
+    """
 
     __slots__ = ('_r_reflectance', '_g_reflectance', '_b_reflectance',
                  '_specularity', '_roughness')
 
     def __init__(self, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
                  specularity=0.0, roughness=0.0, modifier="void", dependencies=None):
-        """Create plastic material.
-
-        args:
-            name: Material name as a string. Do not use white space or special
-                character.
-            r_reflectance: Reflectance for red. The value should be between 0 and 1
-                (Default: 0).
-            g_reflectance: Reflectance for green. The value should be between 0 and 1
-                (Default: 0).
-            b_reflectance: Reflectance for blue. The value should be between 0 and 1
-                (Default: 0).
-            specularity: Fraction of specularity. Specularity fractions greater than 0.1
-                are not realistic (Default: 0).
-            roughness: Roughness is specified as the rms slope of surface facets. A
-                value of 0 corresponds to a perfectly smooth surface, and a value of 1
-                would be a very rough surface. Roughness values greater than 0.2 are not
-                very realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
-            dependencies: A list of primitives that this primitive depends on. This
-                argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
-
-        Usage:
-            wall_material = Plastic("generic_wall", .55, .65, .75)
-            print(wall_material)
-        """
+        """Create plastic material."""
         Material.__init__(self, name, modifier=modifier, dependencies=dependencies)
         self.r_reflectance = r_reflectance
         self.g_reflectance = g_reflectance
@@ -157,6 +174,9 @@ class Plastic(Material):
                 primitive is defined based on other primitives. (Default: [])
 
         Usage:
+
+        .. code-block:: python
+
             wall_material = Plastic.by_single_reflect_value("generic_wall", .55)
             print(wall_material)
         """
@@ -171,14 +191,14 @@ class Plastic(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": "", // primitive modifier (Default: "void")
-                "type": "plastic", // primitive type
-                "name": "", // primitive name
-                "values": [] // values,
-                "dependencies": []
+            "modifier": "",  # primitive modifier (Default: "void")
+            "type": "plastic",  # primitive type
+            "name": "",  # primitive name
+            "values": [],  # values
+            "dependencies": []
             }
         """
         assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
@@ -211,18 +231,18 @@ class Plastic(Material):
         Args:
             data: A dictionary in the format below.
 
-            .. code-block:: python
+        .. code-block:: python
 
             {
-                "modifier": {} or void, // Material modifier
-                "type": "plastic", // Material type
-                "name": "", // Material Name
-                "r_reflectance": float, // Reflectance for red
-                "g_reflectance": float, // Reflectance for green
-                "b_reflectance": float, // Reflectance for blue
-                "specularity": float, // Material specularity
-                "roughness": float, // Material roughness
-                "dependencies": []
+            "modifier": {} or void,  # Material modifier
+            "type": "plastic",  # Material type
+            "name": "",  # Material Name
+            "r_reflectance": float,  # Reflectance for red
+            "g_reflectance": float,  # Reflectance for green
+            "b_reflectance": float,  # Reflectance for blue
+            "specularity": float,  # Material specularity
+            "roughness": float,  # Material roughness
+            "dependencies": []
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

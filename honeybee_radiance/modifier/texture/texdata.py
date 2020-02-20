@@ -16,6 +16,8 @@ class Texdata(Texture):
     variables xfunc, yfunc and zfunc take three arguments each from the interpolated
     values in xdfname, ydfname and zdfname.
 
+    .. code-block:: shell
+
         mod texdata id
         8+ xfunc yfunc zfunc xdfname ydfname zdfname vfname x0 x1 .. xf
         0

@@ -43,6 +43,9 @@ def parse_from_file(file_path):
         A list of strings. Each string represents a different Radiance object.
 
     Usage:
+
+    .. code-block:: python
+
         rad_obj_strs = parse_from_file('some_file.rad')
     """
 
@@ -162,10 +165,10 @@ def parse_header(filepath):
 
     This method returns all the lines between `#?RADIANCE` and `FORMAT=*` and number of
     header lines including the white line after last header line.
-    
+
     Args:
         filepath: Full path to Radiance file.
-    
+
     Returns:
         line_count, header as a single multiline string
     """
