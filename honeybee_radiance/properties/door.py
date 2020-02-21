@@ -95,8 +95,17 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
         classmethod to work.
 
         Args:
-            data: A dictionary representation of DoorRadianceProperties.
+            data: A dictionary representation of DoorRadianceProperties with the
+                format below.
             host: A Door object that hosts these properties.
+
+        .. code-block:: python
+
+            {
+            'type': 'DoorRadianceProperties',
+            'modifier': {},  # A Honeybee Radiance Modifier dictionary
+            'modifier_blk': {}  # A Honeybee Radiance Modifier dictionary
+            }
         """
         assert data['type'] == 'DoorRadianceProperties', \
             'Expected DoorRadianceProperties. Got {}.'.format(data['type'])
@@ -108,9 +117,17 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
 
         Args:
             abridged_data: A DoorRadiancePropertiesAbridged dictionary (typically
-                coming from a Model).
+                coming from a Model) with the format below.
             modifiers: A dictionary of modifiers with modifier names as keys,
                 which will be used to re-assign modifiers.
+
+        .. code-block:: python
+
+            {
+            'type': 'DoorRadiancePropertiesAbridged',
+            'modifier': str,  # A Honeybee Radiance Modifier name
+            'modifier_blk': str  # A Honeybee Radiance Modifier name
+            }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
 

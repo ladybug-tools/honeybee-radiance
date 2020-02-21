@@ -59,8 +59,16 @@ class RoomRadianceProperties(object):
         classmethod to work.
 
         Args:
-            data: A dictionary representation of RoomRadianceProperties.
+            data: A dictionary representation of RoomRadianceProperties with the
+                format below.
             host: A Room object that hosts these properties.
+
+        .. code-block:: python
+
+            {
+            'type': 'RoomRadianceProperties',
+            'modifier_set': {},  # ModifierSet dictionary
+            }
         """
         assert data['type'] == 'RoomRadianceProperties', \
             'Expected RoomRadianceProperties. Got {}.'.format(data['type'])
@@ -75,9 +83,16 @@ class RoomRadianceProperties(object):
 
         Args:
             abridged_data: A RoomRadiancePropertiesAbridged dictionary (typically
-                coming from a Model).
+                coming from a Model) with the format below.
             modifier_sets: A dictionary of ModifierSets with names of the sets
                 as keys, which will be used to re-assign modifier_sets.
+
+        .. code-block:: python
+
+            {
+            'type': 'RoomRadiancePropertiesAbridged',
+            'modifier_set': str,  # ModifierSet name
+            }
         """
         if 'modifier_set' in abridged_data and abridged_data['modifier_set'] is not None:
             self.modifier_set = modifier_sets[abridged_data['modifier_set']]

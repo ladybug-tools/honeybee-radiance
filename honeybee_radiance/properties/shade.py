@@ -71,8 +71,17 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
         classmethod to work.
 
         Args:
-            data: A dictionary representation of ShadeRadianceProperties.
+            data: A dictionary representation of ShadeRadianceProperties with the
+                format below.
             host: A Shade object that hosts these properties.
+
+        .. code-block:: python
+
+            {
+            'type': 'ShadeRadianceProperties',
+            'modifier': {},  # A Honeybee Radiance Modifier dictionary
+            'modifier_blk': {}  # A Honeybee Radiance Modifier dictionary
+            }
         """
         assert data['type'] == 'ShadeRadianceProperties', \
             'Expected ShadeRadianceProperties. Got {}.'.format(data['type'])
@@ -84,9 +93,17 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
 
         Args:
             abridged_data: A ShadeRadiancePropertiesAbridged dictionary (typically
-                coming from a Model).
+                coming from a Model) with the format below.
             modifiers: A dictionary of modifiers with modifier names as keys,
                 which will be used to re-assign modifiers.
+
+        .. code-block:: python
+
+            {
+            'type': 'ShadeRadiancePropertiesAbridged',
+            'modifier': str,  # A Honeybee Radiance Modifier name
+            'modifier_blk': str  # A Honeybee Radiance Modifier name
+            }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
 
