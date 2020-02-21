@@ -25,7 +25,7 @@ class ApertureRadianceProperties(_GeometryRadianceProperties):
         * modifier_blk
         * is_opaque
         * is_modifier_set_on_object
-        * is_blk_overridden 
+        * is_blk_overridden
     """
 
     __slots__ = ()
@@ -94,8 +94,17 @@ class ApertureRadianceProperties(_GeometryRadianceProperties):
         classmethod to work.
 
         Args:
-            data: A dictionary representation of ApertureRadianceProperties.
+            data: A dictionary representation of ApertureRadianceProperties with the
+                format below.
             host: A Aperture object that hosts these properties.
+
+        .. code-block:: python
+
+            {
+            'type': 'ApertureRadianceProperties',
+            'modifier': {},  # A Honeybee Radiance Modifier dictionary
+            'modifier_blk': {}  # A Honeybee Radiance Modifier dictionary
+            }
         """
         assert data['type'] == 'ApertureRadianceProperties', \
             'Expected ApertureRadianceProperties. Got {}.'.format(data['type'])
@@ -107,9 +116,17 @@ class ApertureRadianceProperties(_GeometryRadianceProperties):
 
         Args:
             abridged_data: A ApertureRadiancePropertiesAbridged dictionary (typically
-                coming from a Model).
+                coming from a Model) with the format below.
             modifiers: A dictionary of modifiers with modifier names as keys,
                 which will be used to re-assign modifiers.
+
+        .. code-block:: python
+
+            {
+            'type': 'ApertureRadiancePropertiesAbridged',
+            'modifier': str,  # A Honeybee Radiance Modifier name
+            'modifier_blk': str  # A Honeybee Radiance Modifier name
+            }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
 

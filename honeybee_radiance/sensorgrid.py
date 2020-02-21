@@ -39,7 +39,15 @@ class SensorGrid(object):
 
     @classmethod
     def from_dict(cls, ag_dict):
-        """Create a sensor grid from a dictionary."""
+        """Create a sensor grid from a dictionary in the following format.
+
+        .. code-block:: python
+
+            {
+            "name": str,  # SensorGrid name
+            "sensors": []  # list of Sensor dictionaries
+            }
+        """
         sensors = (Sensor.from_dict(sensor) for sensor in ag_dict['sensors'])
         return cls(name=ag_dict["name"], sensors=sensors)
 

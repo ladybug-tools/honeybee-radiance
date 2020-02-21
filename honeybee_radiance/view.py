@@ -339,7 +339,24 @@ class View(object):
 
     @classmethod
     def from_dict(cls, view_dict):
-        """Create a view from a dictionary."""
+        """Create a view from a dictionary in the following format.
+
+        .. code-block:: python
+
+            {
+            'name': str,
+            'position': [],  # list with position value
+            'direction': [],  # list with direction value
+            'up_vector': [],  # list with up_vector value
+            'h_size': number,  # h_size.value
+            'v_size': number,  # v_size value
+            'shift': number,  # shift value
+            'lift': number,  # lift value
+            'type': number,  # type value
+            'fore_clip': number,  # fore_clip value
+            'aft_clip': number  # aft_clip value
+            }
+        """
 
         view = cls(
             name=view_dict['name'],

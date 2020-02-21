@@ -70,8 +70,17 @@ class FaceRadianceProperties(_GeometryRadianceProperties):
         classmethod to work.
 
         Args:
-            data: A dictionary representation of FaceRadianceProperties.
+            data: A dictionary representation of FaceRadianceProperties with the
+                format below.
             host: A Face object that hosts these properties.
+
+        .. code-block:: python
+
+            {
+            'type': 'FaceRadianceProperties',
+            'modifier': {},  # A Honeybee Radiance Modifier dictionary
+            'modifier_blk': {}  # A Honeybee Radiance Modifier dictionary
+            }
         """
         assert data['type'] == 'FaceRadianceProperties', \
             'Expected FaceRadianceProperties. Got {}.'.format(data['type'])
@@ -83,9 +92,17 @@ class FaceRadianceProperties(_GeometryRadianceProperties):
 
         Args:
             abridged_data: A FaceRadiancePropertiesAbridged dictionary (typically
-                coming from a Model).
+                coming from a Model) with the format below.
             modifiers: A dictionary of modifiers with modifier names as keys,
                 which will be used to re-assign modifiers.
+
+        .. code-block:: python
+
+            {
+            'type': 'FaceRadiancePropertiesAbridged',
+            'modifier': str,  # A Honeybee Radiance Modifier name
+            'modifier_blk': str  # A Honeybee Radiance Modifier name
+            }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
 

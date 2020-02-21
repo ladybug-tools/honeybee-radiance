@@ -210,7 +210,16 @@ class Sunpath(object):
     def to_dict(self):
         """Convert this sunpath to a dictionary.
 
-        Dictionary keys are type, location and north.
+        Args:
+            input_dict: A python dictionary in the following format
+
+        .. code-block:: python
+
+            {
+            'type': 'Sunpath',
+            'location': {}  # Location dictionary,
+            'north': 0,
+            }
         """
         return {
             'type': 'Sunpath',

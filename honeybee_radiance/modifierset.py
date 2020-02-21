@@ -341,7 +341,22 @@ class ModifierSet(object):
         classmethod to work.
 
         Args:
-            data: Dictionary describing the ModifierSet.
+            data: Dictionary describing the ModifierSet in the following format.
+
+        .. code-block:: python
+
+            {
+            'type': 'ModifierSet',
+            'name': str,  # ModifierSet name
+            'wall_set': {},  # WallSet dictionary
+            'floor_set': {},  # FloorlSet dictionary
+            'roof_ceiling_set': {},  # RoofCeilingSet dictionary
+            'aperture_set': {},  # ApertureSet dictionary
+            'door_set': {},  # DoorSet dictionary
+            'shade_set': {},  # ShadeSet dictionary
+            'air_boundary_modifier': {},  # AirBoundarySet dictionary
+            'modifiers': []  # A list of Honeybee Radiance Modifier dictionaries
+            }
         """
         assert data['type'] == 'ModifierSet', \
             'Expected ModifierSet. Got {}.'.format(data['type'])
@@ -363,10 +378,24 @@ class ModifierSet(object):
         """Create a ModifierSet from an abridged dictionary.
 
         Args:
-            data: A ModifierSetAbridged dictionary.
+            data: A ModifierSetAbridged dictionary with the fotmat below.
             modifier_dict: A dictionary with modifier names as keys and
                 honeybee modifier objects as values. These will be used to
-                assign the modifiers to the ModifierSet object.
+                assign the 4 to the ModifierSet object.
+
+        .. code-block:: python
+
+            {
+            'type': 'ModifierSetAbridged',
+            'name': str,  # ModifierSet name
+            'wall_set': {},  # WallSet dictionary
+            'floor_set': {},  # FloorlSet dictionary
+            'roof_ceiling_set': {},  # RoofCeilingSet dictionary
+            'aperture_set': {},  # ApertureSet dictionary
+            'door_set': {},  # DoorSet dictionary
+            'shade_set': {},  # ShadeSet dictionary
+            'air_boundary_modifier': {},  # AirBoundarySet dictionary
+            }
         """
         assert data['type'] == 'ModifierSetAbridged', \
             'Expected ModifierSetAbridged. Got {}.'.format(data['type'])
