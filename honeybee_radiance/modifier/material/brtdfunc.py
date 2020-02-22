@@ -60,9 +60,6 @@ class BRTDfunc(Material):
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
             refer to a line number in the radiance primitve definitions and the
             values in each array correspond to values occurring within each line.
-            For example, [[], [], ['0.500', '0.500', '0.500', '0.000', '0.050']]
-            corresponds to values one would find for a Plastic material.
-            (Default: [[], [], []]).
         is_opaque: A boolean to indicate whether this primitive is opaque.
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives that are
