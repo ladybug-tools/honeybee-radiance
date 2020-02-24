@@ -36,8 +36,7 @@ class Sunpath(object):
 
     Args:
         location: A Ladybug location.
-        wea: A ladybug annual wea for generating climate-based sunpath. The location of
-            the wea object will be ignored.
+        north: Sunpath north angle.
 
     Properties:
         * location
