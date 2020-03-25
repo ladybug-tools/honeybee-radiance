@@ -1,5 +1,6 @@
 """Test SensorGrid class."""
 from honeybee_radiance.lightsource.sunpath import Sunpath
+from ladybug.sunpath import Sunpath as LBSunpath
 from ladybug.wea import Wea
 from ladybug.location import Location
 from ladybug.analysisperiod import AnalysisPeriod
@@ -45,6 +46,7 @@ def test_invalid_input():
 
 def test_write_to_fie():
     sp = Sunpath(location)
+    lb_sp = LBSunpath.from_location(location)
     folder = './tests/assets/temp'
     filename = 'sunpath_annual'
     sp.to_file(folder, filename)
@@ -55,11 +57,12 @@ def test_write_to_fie():
     with open(sp_mod_file) as inf:
         for count, _ in enumerate(inf):
             pass
-    assert count == 4427  # number of suns - 1
+    lb_tot = [i for i in range(8760) if lb_sp.calculate_sun_from_hoy(i).is_during_day]
+    assert count == len(lb_tot) - 1  # number of suns - 1
     with open(sp_file) as inf:
         for count, _ in enumerate(inf):
             pass
-    assert count == 4427  # number of suns - 1
+    assert count == len(lb_tot) - 1  # number of suns - 1
 
     # check line info
     with open(sp_file) as inf:
@@ -139,6 +142,7 @@ def test_write_to_file_wea():
 def test_split_modifiers():
     ap = AnalysisPeriod(timestep=4)
     sp = Sunpath(location)
+    lb_sp = LBSunpath.from_location(location)
     folder = './tests/assets/temp'
     filename = 'sunpath_timestep_4'
     sp.to_file(folder, filename, hoys=ap.hoys)
@@ -147,7 +151,9 @@ def test_split_modifiers():
         os.path.join(folder, '%s_%d.mod' % (filename, count)) for count in range(2)
     ]
     assert os.path.isfile(sp_file)
-    sun_count = [8851, 8852]
+
+    lb_tot = [i for i in ap.hoys if lb_sp.calculate_sun_from_hoy(i).is_during_day]
+    sun_count = [int(len(lb_tot) / 2) - 1, int(len(lb_tot) / 2)]
     for sp_count, sp_mod_file in enumerate(sp_mod_files):
         assert os.path.isfile(sp_mod_file)
         with open(sp_mod_file) as inf:
