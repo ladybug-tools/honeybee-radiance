@@ -22,7 +22,7 @@ setuptools.setup(
     include_package_data=True,
     install_requires=requirements,
     extras_require={
-        'cli': ['click>=5.1']
+        'cli': ['click>=5.1', 'honeybee-core[cli]>=1.10.0']
     },
     entry_points={
         "console_scripts": ["honeybee-radiance = honeybee_radiance.cli:radiance"]
