@@ -9,7 +9,7 @@ def test_bsdf():
     mt = BSDF(klems_bsdf_file)
     assert mt.bsdf_file == os.path.normpath(klems_bsdf_file)
     assert list(mt.up_orientation) == [0.01, 0.01, 1.0]
-    assert mt.name == 'klemsfull'
+    assert mt.identifier == 'klemsfull'
     assert str(mt.modifier) == 'void'
     assert mt.function_file == '.'
     assert mt.angle_basis == 'Klems Full'
@@ -18,11 +18,11 @@ def test_bsdf():
 
 def test_assign_values():
     mt = BSDF(
-        klems_bsdf_file, name='klemsklems', up_orientation=(0, 0, 10),
+        klems_bsdf_file, identifier='klemsklems', up_orientation=(0, 0, 10),
         thickness=10)
     assert mt.bsdf_file == os.path.normpath(klems_bsdf_file)
     assert list(mt.up_orientation) == [0, 0, 10]
-    assert mt.name == 'klemsklems'
+    assert mt.identifier == 'klemsklems'
     assert mt.thickness == 10
 
 
@@ -43,7 +43,7 @@ def test_from_string():
     mt = BSDF.from_string(bsdf_str)
     assert mt.bsdf_file == os.path.normpath(klems_bsdf_file)
     assert list(mt.up_orientation) == [0.01, 0.01, 1.0]
-    assert mt.name == 'klemsfull'
+    assert mt.identifier == 'klemsfull'
     assert str(mt.modifier) == 'void'
     assert mt.function_file == '.'
     assert mt.angle_basis == 'Klems Full'

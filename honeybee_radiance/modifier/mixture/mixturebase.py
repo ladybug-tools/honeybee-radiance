@@ -13,7 +13,8 @@ class Mixture(Modifier):
     """Base class for Radiance mixtures.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

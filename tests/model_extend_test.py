@@ -26,7 +26,7 @@ import pytest
 
 def test_radiance_properties():
     """Test the existence of the Model radiance properties."""
-    room = Room.from_box('Tiny House Room', 5, 10, 3)
+    room = Room.from_box('TinyHouseRoom', 5, 10, 3)
     south_face = room[3]
     south_face.apertures_by_ratio(0.4, 0.01)
     south_face.apertures[0].overhang(0.5, indoor=False)
@@ -35,7 +35,7 @@ def test_radiance_properties():
     fritted_glass_trans = Glass.from_single_transmittance('FrittedGlass', 0.35)
     south_face.apertures[0].outdoor_shades[0].properties.radiance.modifier = \
         fritted_glass_trans
-    model = Model('Tiny House', [room])
+    model = Model('TinyHouse', [room])
 
     assert hasattr(model.properties, 'radiance')
     assert isinstance(model.properties.radiance, ModelRadianceProperties)
@@ -49,10 +49,10 @@ def test_radiance_properties():
     assert isinstance(model.properties.radiance.global_modifier_set, ModifierSet)
 
 
-def test_check_duplicate_modifier_set_names():
-    """Test the check_duplicate_modifier_set_names method."""
-    first_floor = Room.from_box('First Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
-    second_floor = Room.from_box('Second Floor', 10, 10, 3, origin=Point3D(0, 0, 3))
+def test_check_duplicate_modifier_set_identifiers():
+    """Test the check_duplicate_modifier_set_identifiers method."""
+    first_floor = Room.from_box('FirstFloor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('SecondFloor', 10, 10, 3, origin=Point3D(0, 0, 3))
     for face in first_floor[1:5]:
         face.apertures_by_ratio(0.2, 0.01)
     for face in second_floor[1:5]:
@@ -63,11 +63,11 @@ def test_check_duplicate_modifier_set_names():
     pts_3 = [Point3D(10, 0, 6), Point3D(10, 10, 6), Point3D(5, 10, 9), Point3D(5, 0, 9)]
     pts_4 = [Point3D(0, 0, 6), Point3D(10, 0, 6), Point3D(5, 0, 9)]
     pts_5 = [Point3D(10, 10, 6), Point3D(0, 10, 6), Point3D(5, 10, 9)]
-    face_1 = Face('Attic Face 1', Face3D(pts_1))
-    face_2 = Face('Attic Face 2', Face3D(pts_2))
-    face_3 = Face('Attic Face 3', Face3D(pts_3))
-    face_4 = Face('Attic Face 4', Face3D(pts_4))
-    face_5 = Face('Attic Face 5', Face3D(pts_5))
+    face_1 = Face('AtticFace1', Face3D(pts_1))
+    face_2 = Face('AtticFace2', Face3D(pts_2))
+    face_3 = Face('AtticFace3', Face3D(pts_3))
+    face_4 = Face('AtticFace4', Face3D(pts_4))
+    face_5 = Face('AtticFace5', Face3D(pts_5))
     attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
 
     mod_set = ModifierSet('Attic_Construction_Set')
@@ -77,20 +77,20 @@ def test_check_duplicate_modifier_set_names():
 
     Room.solve_adjacency([first_floor, second_floor, attic], 0.01)
 
-    model = Model('Multi Zone Single Family House', [first_floor, second_floor, attic])
+    model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor, attic])
 
-    assert model.properties.radiance.check_duplicate_modifier_set_names(False)
+    assert model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
     mod_set.unlock()
-    mod_set.name = 'Generic_Interior_Visible_Modifier_Set'
+    mod_set.identifier = 'Generic_Interior_Visible_Modifier_Set'
     mod_set.lock()
-    assert not model.properties.radiance.check_duplicate_modifier_set_names(False)
+    assert not model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
     with pytest.raises(ValueError):
-        model.properties.radiance.check_duplicate_modifier_set_names(True)
+        model.properties.radiance.check_duplicate_modifier_set_identifiers(True)
 
 
-def test_check_duplicate_modifier_names():
-    """Test the check_duplicate_modifier_names method."""
-    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+def test_check_duplicate_modifier_identifiers():
+    """Test the check_duplicate_modifier_identifiers method."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
 
     high_ref_ceil = Plastic.from_single_reflectance('CustomModifier', 0.9)
     room[-1].properties.radiance.modifier = high_ref_ceil
@@ -98,26 +98,26 @@ def test_check_duplicate_modifier_names():
     north_face = room[1]
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
     aperture.is_operable = True
     triple_pane = Glass.from_single_transmittance('CustomTriplePane', 0.3)
     aperture.properties.radiance.modifier = triple_pane
     north_face.add_aperture(aperture)
 
-    model = Model('Tiny House', [room])
+    model = Model('Tiny_House', [room])
 
-    assert model.properties.radiance.check_duplicate_modifier_names(False)
+    assert model.properties.radiance.check_duplicate_modifier_identifiers(False)
     triple_pane.unlock()
-    triple_pane.name = 'CustomModifier'
+    triple_pane.identifier = 'CustomModifier'
     triple_pane.lock()
-    assert not model.properties.radiance.check_duplicate_modifier_names(False)
+    assert not model.properties.radiance.check_duplicate_modifier_identifiers(False)
     with pytest.raises(ValueError):
-        model.properties.radiance.check_duplicate_modifier_names(True)
+        model.properties.radiance.check_duplicate_modifier_identifiers(True)
 
 
 def test_to_from_dict():
     """Test the Model to_dict and from_dict method with a single zone model."""
-    room = Room.from_box('Tiny House Room', 5, 10, 3)
+    room = Room.from_box('Tiny_House_Room', 5, 10, 3)
 
     dark_floor = Plastic.from_single_reflectance('DarkFloor', 0.1)
     room[0].properties.radiance.modifier = dark_floor
@@ -135,12 +135,12 @@ def test_to_from_dict():
     north_face = room[1]
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('FrontDoor', Face3D(door_verts))
     north_face.add_door(door)
 
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('FrontAperture', Face3D(aperture_verts))
     aperture.is_operable = True
     triple_pane = Glass.from_single_transmittance('CustomTriplePane', 0.3)
     aperture.properties.radiance.modifier = triple_pane
@@ -148,11 +148,11 @@ def test_to_from_dict():
 
     tree_canopy_geo = Face3D.from_regular_polygon(
         6, 2, Plane(Vector3D(0, 0, 1), Point3D(5, -3, 4)))
-    tree_canopy = Shade('Tree Canopy', tree_canopy_geo)
+    tree_canopy = Shade('TreeCanopy', tree_canopy_geo)
     tree_trans = Glass.from_single_transmittance('TreeTransmittance', 0.75)
     tree_canopy.properties.radiance.modifier = tree_trans
 
-    model = Model('Tiny House', [room], orphaned_shades=[tree_canopy])
+    model = Model('TinyHouse', [room], orphaned_shades=[tree_canopy])
     model.north_angle = 15
     model_dict = model.to_dict(included_prop=['radiance'])
     new_model = Model.from_dict(model_dict)
@@ -177,7 +177,7 @@ def test_to_from_dict():
 
 def test_to_dict_single_zone():
     """Test the Model to_dict method with a single zone model."""
-    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
 
     dark_floor = Plastic.from_single_reflectance('DarkFloor', 0.1)
     room[0].properties.radiance.modifier = dark_floor
@@ -196,25 +196,25 @@ def test_to_dict_single_zone():
     north_face.overhang(0.25, indoor=False)
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('Front_Door', Face3D(door_verts))
     north_face.add_door(door)
 
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
     triple_pane = Glass.from_single_transmittance('CustomTriplePane', 0.3)
     aperture.properties.radiance.modifier = triple_pane
     north_face.add_aperture(aperture)
 
     tree_canopy_geo = Face3D.from_regular_polygon(
         6, 2, Plane(Vector3D(0, 0, 1), Point3D(5, -3, 4)))
-    tree_canopy = Shade('Tree Canopy', tree_canopy_geo)
+    tree_canopy = Shade('Tree_Canopy', tree_canopy_geo)
 
     table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
     table = Shade('Table', table_geo)
     room.add_indoor_shade(table)
 
-    model = Model('Tiny House', [room], orphaned_shades=[tree_canopy])
+    model = Model('Tiny_House', [room], orphaned_shades=[tree_canopy])
     model.north_angle = 15
 
     model_dict = model.to_dict()
@@ -228,20 +228,20 @@ def test_to_dict_single_zone():
     assert len(model_dict['properties']['radiance']['modifier_sets']) == 1
 
     assert model_dict['rooms'][0]['faces'][0]['properties']['radiance']['modifier'] == \
-        dark_floor.name
+        dark_floor.identifier
     south_ap_dict = model_dict['rooms'][0]['faces'][3]['apertures'][0]
     assert south_ap_dict['outdoor_shades'][0]['properties']['radiance']['modifier'] == \
-        light_shelf_out.name
+        light_shelf_out.identifier
     assert south_ap_dict['indoor_shades'][0]['properties']['radiance']['modifier'] == \
-        light_shelf_in.name
+        light_shelf_in.identifier
     assert model_dict['rooms'][0]['faces'][1]['apertures'][0]['properties']['radiance']['modifier'] == \
-        triple_pane.name
+        triple_pane.identifier
 
 
 def test_to_dict_multizone_house():
     """Test the Model to_dict method with a multi-zone house."""
-    first_floor = Room.from_box('First Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
-    second_floor = Room.from_box('Second Floor', 10, 10, 3, origin=Point3D(0, 0, 3))
+    first_floor = Room.from_box('First_Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('Second_Floor', 10, 10, 3, origin=Point3D(0, 0, 3))
     for face in first_floor[1:5]:
         face.apertures_by_ratio(0.2, 0.01)
     for face in second_floor[1:5]:
@@ -252,11 +252,11 @@ def test_to_dict_multizone_house():
     pts_3 = [Point3D(10, 0, 6), Point3D(10, 10, 6), Point3D(5, 10, 9), Point3D(5, 0, 9)]
     pts_4 = [Point3D(0, 0, 6), Point3D(10, 0, 6), Point3D(5, 0, 9)]
     pts_5 = [Point3D(10, 10, 6), Point3D(0, 10, 6), Point3D(5, 10, 9)]
-    face_1 = Face('Attic Face 1', Face3D(pts_1))
-    face_2 = Face('Attic Face 2', Face3D(pts_2))
-    face_3 = Face('Attic Face 3', Face3D(pts_3))
-    face_4 = Face('Attic Face 4', Face3D(pts_4))
-    face_5 = Face('Attic Face 5', Face3D(pts_5))
+    face_1 = Face('AtticFace1', Face3D(pts_1))
+    face_2 = Face('AtticFace2', Face3D(pts_2))
+    face_3 = Face('AtticFace3', Face3D(pts_3))
+    face_4 = Face('AtticFace4', Face3D(pts_4))
+    face_5 = Face('AtticFace5', Face3D(pts_5))
     attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
 
     mod_set = ModifierSet('Attic_Construction_Set')
@@ -266,7 +266,7 @@ def test_to_dict_multizone_house():
 
     Room.solve_adjacency([first_floor, second_floor, attic], 0.01)
 
-    model = Model('Multi Zone Single Family House', [first_floor, second_floor, attic])
+    model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor, attic])
     model_dict = model.to_dict()
 
     assert 'radiance' in model_dict['properties']
@@ -283,12 +283,12 @@ def test_to_dict_multizone_house():
     assert model_dict['rooms'][2]['faces'][0]['boundary_condition']['type'] == 'Surface'
 
     assert model_dict['rooms'][2]['properties']['radiance']['modifier_set'] == \
-        mod_set.name
+        mod_set.identifier
 
 
 def test_writer_to_rad():
     """Test the Model to.rad method."""
-    room = Room.from_box('Tiny House Zone', 5, 10, 3)
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
 
     dark_floor = Plastic.from_single_reflectance('DarkFloor', 0.1)
     room[0].properties.radiance.modifier = dark_floor
@@ -307,25 +307,25 @@ def test_writer_to_rad():
     north_face.overhang(0.25, indoor=False)
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
                   Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
-    door = Door('Front Door', Face3D(door_verts))
+    door = Door('Front_Door', Face3D(door_verts))
     north_face.add_door(door)
 
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
                       Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
-    aperture = Aperture('Front Aperture', Face3D(aperture_verts))
+    aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
     triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
     aperture.properties.radiance.modifier = triple_pane
     north_face.add_aperture(aperture)
 
     tree_canopy_geo = Face3D.from_regular_polygon(
         6, 2, Plane(Vector3D(0, 0, 1), Point3D(5, -3, 4)))
-    tree_canopy = Shade('Tree Canopy', tree_canopy_geo)
+    tree_canopy = Shade('Tree_Canopy', tree_canopy_geo)
 
     table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
     table = Shade('Table', table_geo)
     room.add_indoor_shade(table)
 
-    model = Model('Tiny House', [room], orphaned_shades=[tree_canopy])
+    model = Model('Tiny_House', [room], orphaned_shades=[tree_canopy])
     model.north_angle = 15
 
     assert hasattr(model.to, 'rad')

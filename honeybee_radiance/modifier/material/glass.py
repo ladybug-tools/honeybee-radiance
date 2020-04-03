@@ -13,7 +13,9 @@ class Glass(Material):
     """Radiance glass material.
 
     Args:
-        name: Material name as a string. Do not use white space or special character
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         r_transmissivity: Transmissivity for red. The value should be between 0 and 1
             (Default: 0).
         g_transmissivity: Transmissivity for green. The value should be between 0
@@ -28,7 +30,8 @@ class Glass(Material):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * r_transmissivity
         * g_transmissivity
         * b_transmissivity
@@ -47,12 +50,14 @@ class Glass(Material):
         glass_material = Glass("generic_glass", .65, .65, .65)
         print(glass_material)
     """
+    __slots__ = ('_r_transmissivity', '_g_transmissivity', '_b_transmissivity',
+                 '_refraction_index')
 
-    def __init__(self, name, r_transmissivity=0.0, g_transmissivity=0.0,
+    def __init__(self, identifier, r_transmissivity=0.0, g_transmissivity=0.0,
                  b_transmissivity=0.0, refraction_index=None, modifier="void",
                  dependencies=None):
         """Create glass material."""
-        Material.__init__(self, name, modifier=modifier,
+        Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
         self.r_transmissivity = r_transmissivity
         self.g_transmissivity = g_transmissivity
@@ -131,7 +136,7 @@ class Glass(Material):
             0.670 * self.g_transmissivity + 0.065 * self.b_transmissivity
 
     @classmethod
-    def from_transmittance(cls, name, r_transmittance=0.0, g_transmittance=0.0,
+    def from_transmittance(cls, identifier, r_transmittance=0.0, g_transmittance=0.0,
                            b_transmittance=0.0, refraction_index=None, modifier="void",
                            dependencies=None):
         """Create glass material from transmittance values.
@@ -140,8 +145,10 @@ class Glass(Material):
         for transmittance. This method does the conversion from transmittance to
         transmissivity.
 
-        args:
-            name: Material name as a string. Do not use white space or special character
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             r_transmittance: Transmittance for red. The value should be between 0 and 1
                 (Default: 0).
             g_transmittance: Transmittance for green. The value should be between 0 and 1
@@ -165,17 +172,19 @@ class Glass(Material):
         rt = cls.get_transmissivity(r_transmittance)
         gt = cls.get_transmissivity(g_transmittance)
         bt = cls.get_transmissivity(b_transmittance)
-        return cls(name, rt, gt, bt, refraction_index, modifier, dependencies=dependencies)
+        return cls(identifier, rt, gt, bt, refraction_index, modifier,
+                   dependencies=dependencies)
 
     @classmethod
-    def from_single_transmissivity(cls, name, rgb_transmissivity=0,
+    def from_single_transmissivity(cls, identifier, rgb_transmissivity=0,
                                    refraction_index=None, modifier="void",
                                    dependencies=None):
         """Create glass material with single transmissivity value.
 
-        Attributes:
-            name: Material name as a string. Do not use white space or special
-                character.
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             rgb_transmissivity: Transmissivity for red, green and blue. The value should
                 be between 0 and 1 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
@@ -193,18 +202,20 @@ class Glass(Material):
             print(glassMaterial)
         """
         return cls(
-            name, r_transmissivity=rgb_transmissivity, g_transmissivity=rgb_transmissivity,
-            b_transmissivity=rgb_transmissivity, refraction_index=refraction_index,
+            identifier, r_transmissivity=rgb_transmissivity,
+            g_transmissivity=rgb_transmissivity, b_transmissivity=rgb_transmissivity,
+            refraction_index=refraction_index,
             modifier=modifier, dependencies=dependencies)
 
     @classmethod
-    def from_single_transmittance(cls, name, rgb_transmittance=0,
+    def from_single_transmittance(cls, identifier, rgb_transmittance=0,
                                   refraction_index=None, modifier="void", dependencies=None):
         """Create glass material with single transmittance value.
 
-        Attributes:
-            name: Material name as a string. Do not use white space or special
-                character.
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             rgb_transmissivity: Transmissivity for red, green and blue. The value should
                 be between 0 and 1 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
@@ -223,7 +234,7 @@ class Glass(Material):
         """
         rgb_transmissivity = cls.get_transmissivity(rgb_transmittance)
         return cls(
-            name,
+            identifier,
             r_transmissivity=rgb_transmissivity, g_transmissivity=rgb_transmissivity,
             b_transmissivity=rgb_transmissivity, refraction_index=refraction_index,
             modifier=modifier, dependencies=dependencies)
@@ -240,7 +251,8 @@ class Glass(Material):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "glass",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [] , # values
             "dependencies": []
             }
@@ -253,13 +265,16 @@ class Glass(Material):
         values = primitive_dict['values'][2]
         refraction_index = values[3] if len(values) == 4 else None
         cls_ = cls(
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             r_transmissivity=values[0],
             g_transmissivity=values[1],
             b_transmissivity=values[2],
             refraction_index=refraction_index,
             modifier=modifier,
             dependencies=dependencies)
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
+
         # update the values from values dictionary.
         # this might look redundant but it is to ensure any strange input like inputs in
         # strings line are updated and will be the same as input in cases that user uses
@@ -277,8 +292,9 @@ class Glass(Material):
         .. code-block:: python
 
             {
-            "name": "",  # Material Name
             "type": "glass",
+            "identifier": "",  # Material identifier
+            "display_name": string  # Material display name
             "r_transmissivity": float,  # Transmissivity for red
             "g_transmissivity": float,  # Transmissivity for green
             "b_transmissivity": float,  # Transmissivity for blue
@@ -293,26 +309,32 @@ class Glass(Material):
 
         modifier, dependencies = Material.filter_dict_input(data)
 
-        return cls(name=data["name"],
-                   r_transmissivity=data["r_transmissivity"],
-                   g_transmissivity=data["g_transmissivity"],
-                   b_transmissivity=data["b_transmissivity"],
-                   refraction_index=data["refraction_index"],
-                   modifier=modifier,
-                   dependencies=dependencies)
+        new_obj = cls(identifier=data["identifier"],
+                      r_transmissivity=data["r_transmissivity"],
+                      g_transmissivity=data["g_transmissivity"],
+                      b_transmissivity=data["b_transmissivity"],
+                      refraction_index=data["refraction_index"],
+                      modifier=modifier,
+                      dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             "modifier": self.modifier.to_dict(),
             "type": "glass",
-            "name": self.name,
+            "identifier": self.identifier,
             "r_transmissivity": self.r_transmissivity,
             "g_transmissivity": self.g_transmissivity,
             "b_transmissivity": self.b_transmissivity,
             "refraction_index": self.refraction_index,
             "dependencies": [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     @staticmethod
     def get_transmissivity(transmittance):
@@ -330,5 +352,8 @@ class Glass(Material):
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(self.name, self.r_transmissivity, self.g_transmissivity,
-                              self.b_transmissivity, self.refraction_index, mod, depend)
+        new_obj = self.__class__(
+            self.identifier, self.r_transmissivity, self.g_transmissivity,
+            self.b_transmissivity, self.refraction_index, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

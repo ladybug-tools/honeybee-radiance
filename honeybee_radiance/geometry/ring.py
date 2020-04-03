@@ -23,8 +23,9 @@ class Ring(Geometry):
                 r0      r1
 
     Args:
-        name: Geometry name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         center_pt: Ring start center point as (x, y, z) (Default: (0, 0 ,0)).
         normal_vector: Surface normal as (x, y, z) (Default: (0, 0 ,1)).
         radius_inner: Ring inner radius as a number (Default: 5).
@@ -35,7 +36,8 @@ class Ring(Geometry):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * center_pt
         * normal_vector
         * radius_inner
@@ -46,10 +48,10 @@ class Ring(Geometry):
     """
     __slots__ = ('_center_pt', '_normal_vector', '_radius_inner', '_radius_outer')
 
-    def __init__(self, name, center_pt=None, normal_vector=None, radius_inner=5,
+    def __init__(self, identifier, center_pt=None, normal_vector=None, radius_inner=5,
                  radius_outer=10, modifier=None, dependencies=None):
         """Radiance Ring."""
-        Geometry.__init__(self, name, modifier=modifier)
+        Geometry.__init__(self, identifier, modifier=modifier)
         self.center_pt = center_pt or (0, 0, 0)
         self.normal_vector = normal_vector or (0, 0, 1)
         self.radius_inner = radius_inner if radius_inner is not None else 5
@@ -116,7 +118,8 @@ class Ring(Geometry):
             {
             "modifier": "",  # primitive modifier (Default is "void")
             "type": "ring",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": []  # values,
             "dependencies": []
             }
@@ -131,7 +134,7 @@ class Ring(Geometry):
         values = primitive_dict['values'][2]
 
         cls_ = cls(
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             center_pt=values[0:3],
             normal_vector=values[3:6],
             radius_inner=values[6],
@@ -139,6 +142,9 @@ class Ring(Geometry):
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
+
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
         return cls_
@@ -155,7 +161,8 @@ class Ring(Geometry):
             {
             "type": "ring",  # Geometry type
             "modifier": {} or "void",
-            "name": "",  # Geometry Name
+            "identifier": "",  # Geometry identifier
+            "display_name": "",  # Geometry display name
             "center_pt": (0, 0, 0),
             "normal_vector": (0, 0, 1),
             "radius_inner": float,
@@ -171,29 +178,37 @@ class Ring(Geometry):
             )
         modifier, dependencies = cls.filter_dict_input(data)
 
-        return cls(name=data["name"],
-                   center_pt=(data["center_pt"]),
-                   radius_inner=data["radius_inner"],
-                   normal_vector=(data["normal_vector"]),
-                   radius_outer=data["radius_outer"],
-                   modifier=modifier,
-                   dependencies=dependencies)
+        new_obj = cls(identifier=data["identifier"],
+                      center_pt=(data["center_pt"]),
+                      radius_inner=data["radius_inner"],
+                      normal_vector=(data["normal_vector"]),
+                      radius_outer=data["radius_outer"],
+                      modifier=modifier,
+                      dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             "modifier": self.modifier.to_dict(),
             "type": self.__class__.__name__.lower(),
-            "name": self.name,
+            "identifier": self.identifier,
             "center_pt": self.center_pt,
             "normal_vector": self.normal_vector,
             "radius_inner": self.radius_inner,
             "radius_outer": self.radius_outer,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(
-            self.name, self.center_pt, self.normal_vector, self.radius_inner,
+        new_obj = self.__class__(
+            self.identifier, self.center_pt, self.normal_vector, self.radius_inner,
             self.radius_outer, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

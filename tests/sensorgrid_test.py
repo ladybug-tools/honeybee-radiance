@@ -9,7 +9,7 @@ sensors = [Sensor((0, 0, 0), (0, 0, 1)), Sensor((0, 0, 10), (0, 0, 1))]
 
 def test_creation():
     sg = SensorGrid('sg_1', sensors)
-    assert sg.name == 'sg_1'
+    assert sg.identifier == 'sg_1'
     assert len(sg) == 2
     assert sg[0] == sensors[0]
     assert sg[1] == sensors[1]
@@ -47,7 +47,7 @@ def test_from_loc_dir():
 
 def test_from_file():
     sensor_grid = SensorGrid.from_file('./tests/assets/test_points.pts')
-    assert sensor_grid.name == 'test_points'
+    assert sensor_grid.identifier == 'test_points'
     assert sensor_grid[0].position == (0, 0, 0)
     assert sensor_grid[0].direction == (0, 0, 1)
     assert len(sensor_grid) == 3
@@ -65,7 +65,7 @@ def test_to_and_from_dict():
     sg = SensorGrid('sg', sensors)
     sg_dict = sg.to_dict()
     assert sg_dict == {
-        'name': 'sg',
+        'identifier': 'sg',
         'sensors': [
             {'x': 0, 'y': 0, 'z': 0, 'dx': 0, 'dy': 0, 'dz': 1},
             {'x': 0, 'y': 0, 'z': 10, 'dx': 0, 'dy': 0, 'dz': 1}

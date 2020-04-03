@@ -1,7 +1,7 @@
 {
     "Generic_Interior_Visible_Modifier_Set": {
         "type": "ModifierSetAbridged",
-        "name": "Generic_Interior_Visible_Modifier_Set",
+        "identifier": "Generic_Interior_Visible_Modifier_Set",
         "wall_set": {
             "interior_modifier": "generic_wall_0.50",
             "exterior_modifier": "generic_wall_0.50",
@@ -41,7 +41,7 @@
     },
     "Generic_Interior_Solar_Modifier_Set": {
         "type": "ModifierSetAbridged",
-        "name": "Generic_Interior_Solar_Modifier_Set",
+        "identifier": "Generic_Interior_Solar_Modifier_Set",
         "wall_set": {
             "interior_modifier": "generic_wall_0.50",
             "exterior_modifier": "generic_wall_0.50",
@@ -81,7 +81,7 @@
     },
     "Generic_Exterior_Visible_Modifier_Set": {
         "type": "ModifierSetAbridged",
-        "name": "Generic_Exterior_Visible_Modifier_Set",
+        "identifier": "Generic_Exterior_Visible_Modifier_Set",
         "wall_set": {
             "interior_modifier": "generic_wall_0.50",
             "exterior_modifier": "generic_wall_exterior_side_0.35",
@@ -121,7 +121,7 @@
     },
     "Generic_Exterior_Solar_Modifier_Set": {
         "type": "ModifierSetAbridged",
-        "name": "Generic_Exterior_Solar_Modifier_Set",
+        "identifier": "Generic_Exterior_Solar_Modifier_Set",
         "wall_set": {
             "interior_modifier": "generic_wall_0.50",
             "exterior_modifier": "generic_wall_exterior_side_0.35",

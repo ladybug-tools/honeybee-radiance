@@ -14,7 +14,8 @@ class Pattern(Modifier):
     Patterns are used to modify the reflectance of materials.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

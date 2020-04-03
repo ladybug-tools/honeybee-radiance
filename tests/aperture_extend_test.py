@@ -38,22 +38,22 @@ def test_default_modifiers():
     vertices_floor = [[0, 0, 0], [0, 10, 0], [10, 10, 0], [10, 0, 0]]
     vertices_roof = [[10, 0, 3], [10, 10, 3], [0, 10, 3], [0, 0, 3]]
 
-    wf = Face.from_vertices('wall face', vertices_parent_wall)
-    wa = Aperture.from_vertices('wall window', vertices_wall)
+    wf = Face.from_vertices('wall_face', vertices_parent_wall)
+    wa = Aperture.from_vertices('wall_window', vertices_wall)
     wf.add_aperture(wa)
-    Room('Test Room 1', [wf])
+    Room('TestRoom1', [wf])
     assert wa.properties.radiance.modifier == generic_exterior_window
 
-    wf2 = Face.from_vertices('wall face2', vertices_parent_wall_2)
-    wa2 = Aperture.from_vertices('wall window2', vertices_wall_2)
+    wf2 = Face.from_vertices('wall_face2', vertices_parent_wall_2)
+    wa2 = Aperture.from_vertices('wall_window2', vertices_wall_2)
     wf2.add_aperture(wa2)
-    Room('Test Room 2', [wf2])
+    Room('TestRoom2', [wf2])
     wa.set_adjacency(wa2)
     assert wa.properties.radiance.modifier == generic_interior_window
 
-    ra = Aperture.from_vertices('roof window', vertices_roof)
+    ra = Aperture.from_vertices('roof_window', vertices_roof)
     assert ra.properties.radiance.modifier == generic_exterior_window
-    fa = Aperture.from_vertices('floor window', vertices_floor)
+    fa = Aperture.from_vertices('floor_window', vertices_floor)
     assert fa.properties.radiance.modifier == generic_exterior_window
 
 
@@ -113,7 +113,7 @@ def test_to_dict():
     ad = aperture.to_dict()
     assert 'modifier' in ad['properties']['radiance']
     assert ad['properties']['radiance']['modifier'] is not None
-    assert ad['properties']['radiance']['modifier']['name'] == 'TriplePane'
+    assert ad['properties']['radiance']['modifier']['identifier'] == 'TriplePane'
 
 
 def test_from_dict():

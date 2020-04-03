@@ -102,7 +102,7 @@ def test_to_dict():
     fd = face.to_dict()
     assert 'modifier' in fd['properties']['radiance']
     assert fd['properties']['radiance']['modifier'] is not None
-    assert fd['properties']['radiance']['modifier']['name'] == '035Concrete'
+    assert fd['properties']['radiance']['modifier']['identifier'] == '035Concrete'
 
 
 def test_from_dict():

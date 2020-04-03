@@ -84,14 +84,14 @@ class RoomRadianceProperties(object):
         Args:
             abridged_data: A RoomRadiancePropertiesAbridged dictionary (typically
                 coming from a Model) with the format below.
-            modifier_sets: A dictionary of ModifierSets with names of the sets
+            modifier_sets: A dictionary of ModifierSets with identifiers of the sets
                 as keys, which will be used to re-assign modifier_sets.
 
         .. code-block:: python
 
             {
             'type': 'RoomRadiancePropertiesAbridged',
-            'modifier_set': str,  # ModifierSet name
+            'modifier_set': str,  # ModifierSet identifier
             }
         """
         if 'modifier_set' in abridged_data and abridged_data['modifier_set'] is not None:
@@ -102,7 +102,7 @@ class RoomRadianceProperties(object):
 
         Args:
             abridged: Boolean for whether the full dictionary of the Room should
-                be written (False) or just the name of the the individual
+                be written (False) or just the identifier of the the individual
                 properties (True). Default: False.
         """
         base = {'radiance': {}}
@@ -112,7 +112,8 @@ class RoomRadianceProperties(object):
         # write the ModifierSet into the dictionary
         if self._modifier_set is not None:
             base['radiance']['modifier_set'] = \
-                self._modifier_set.name if abridged else self._modifier_set.to_dict()
+                self._modifier_set.identifier if abridged else \
+                self._modifier_set.to_dict()
 
         return base
 
@@ -131,4 +132,4 @@ class RoomRadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Room Radiance Properties:\n host: {}'.format(self.host.name)
+        return 'Room Radiance Properties:\n host: {}'.format(self.host.identifier)

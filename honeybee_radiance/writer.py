@@ -19,7 +19,7 @@ def shade_to_rad(shade, blk=False, minimal=False):
     """
     rad_prop = shade.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
-    rad_poly = Polygon(shade.name, shade.vertices, modifier)
+    rad_poly = Polygon(shade.identifier, shade.vertices, modifier)
     return rad_poly.to_radiance(minimal, False, False)
 
 
@@ -40,7 +40,7 @@ def door_to_rad(door, blk=False, minimal=False):
     """
     rad_prop = door.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
-    rad_poly = Polygon(door.name, door.vertices, modifier)
+    rad_poly = Polygon(door.identifier, door.vertices, modifier)
     door_strs = [rad_poly.to_radiance(minimal, False, False)]
     for shd in door.shades:
         door_strs.append(shade_to_rad(shd, blk, minimal))
@@ -64,7 +64,7 @@ def aperture_to_rad(aperture, blk=False, minimal=False):
     """
     rad_prop = aperture.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
-    rad_poly = Polygon(aperture.name, aperture.vertices, modifier)
+    rad_poly = Polygon(aperture.identifier, aperture.vertices, modifier)
     ap_strs = [rad_poly.to_radiance(minimal, False, False)]
     for shd in aperture.shades:
         ap_strs.append(shade_to_rad(shd, blk, minimal))
@@ -89,7 +89,7 @@ def face_to_rad(face, blk=False, minimal=False):
     """
     rad_prop = face.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
-    rad_poly = Polygon(face.name, face.punched_vertices, modifier)
+    rad_poly = Polygon(face.identifier, face.punched_vertices, modifier)
     face_strs = [rad_poly.to_radiance(minimal, False, False)]
     for shd in face.shades:
         face_strs.append(shade_to_rad(shd, blk, minimal))

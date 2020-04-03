@@ -22,22 +22,22 @@ for f in os.listdir(folders.modifier_lib):
                     for mod_dict in rad_dicts:
                         mod = dict_to_modifier(mod_dict)
                         mod.lock()
-                        _rad_modifiers[mod.name] = mod
+                        _rad_modifiers[mod.identifier] = mod
                 except ValueError:
                     pass  # empty rad file with no modifiers in them
         if f_path.endswith('.json'):
             with open(f_path) as json_file:
                 data = json.load(json_file)
-            for mod_name in data:
+            for mod_identifier in data:
                 try:
-                    mod_dict = data[mod_name]
+                    mod_dict = data[mod_identifier]
                     m_class = modifier_class_from_type_string(mod_dict['type'].lower())
                     mod = m_class.from_dict(mod_dict)
                     mod.lock()
-                    _rad_modifiers[mod_name] = mod
+                    _rad_modifiers[mod_identifier] = mod
                 except Exception:
                     raise ValueError(
                         'Honeybee JSON file {} is not formatted correctly for inclusion '
                         'in the honeybee_radiance modifier library.\nJSONs must be '
-                        'formatted with modifier names as keys and modifier dictionaries'
-                        ' as values'.format(f_path))
+                        'formatted with modifier identifiers as keys and modifier '
+                        'dictionaries as values'.format(f_path))

@@ -39,9 +39,9 @@ def test_default_properties():
     out_shade = Shade.from_vertices(
         'overhang', [[0, 0, 3], [1, 0, 3], [1, 1, 3], [0, 1, 3]])
     in_shade = Shade.from_vertices(
-        'light shelf', [[0, 0, 3], [-1, 0, 3], [-1, -1, 3], [0, -1, 3]])
+        'light_shelf', [[0, 0, 3], [-1, 0, 3], [-1, -1, 3], [0, -1, 3]])
     aperture = Aperture.from_vertices(
-        'parent aperture', [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]])
+        'parent_aperture', [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]])
 
     assert out_shade.properties.radiance.modifier == generic_context
     assert in_shade.properties.radiance.modifier == generic_context
@@ -109,7 +109,7 @@ def test_to_dict():
     shdd = shade.to_dict()
     assert 'modifier' in shdd['properties']['radiance']
     assert shdd['properties']['radiance']['modifier'] is not None
-    assert shdd['properties']['radiance']['modifier']['name'] == 'Foliage'
+    assert shdd['properties']['radiance']['modifier']['identifier'] == 'Foliage'
 
 
 def test_from_dict():

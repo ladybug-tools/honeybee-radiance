@@ -5,7 +5,7 @@ from .rad_string_collection import metal_ring
 
 def test_ring():
     geo = Ring('test_ring')
-    assert geo.name == 'test_ring'
+    assert geo.identifier == 'test_ring'
     assert geo.center_pt == (0, 0, 0)
     assert geo.normal_vector == (0, 0, 1)
     assert geo.radius_inner == 5
@@ -16,7 +16,7 @@ def test_ring():
 
 def test_assign_values():
     geo = Ring('test_ring', (0.6, 0.7, 0.8), (0, 0, 20), 50, 100)
-    assert geo.name == 'test_ring'
+    assert geo.identifier == 'test_ring'
     assert geo.center_pt == (0.6, 0.7, 0.8)
     assert geo.normal_vector == (0, 0, 20)
     assert geo.radius_inner == 50
@@ -27,12 +27,12 @@ def test_assign_values():
 
 def test_update_values():
     geo = Ring('test_ring', (0.6, 0.7, 0.8), (0, 0, 20), 50, 100)
-    geo.name = 'new_ring'
+    geo.identifier = 'new_ring'
     geo.center_pt = (10, 10, 10)
     geo.normal_vector = (0, 0, 10)
     geo.radius_inner = 0
     geo.radius_outer = 20
-    assert geo.name == 'new_ring'
+    assert geo.identifier == 'new_ring'
     assert geo.center_pt == (10, 10, 10)
     assert geo.normal_vector == (0, 0, 10)
     assert geo.radius_inner == 0
@@ -44,7 +44,7 @@ def test_update_values():
 def test_from_string():
     geometry_str = metal_ring
     geo = Ring.from_string(geometry_str)
-    assert geo.name == 'ring_one'
+    assert geo.identifier == 'ring_one'
     assert geo.center_pt == (0, 0, 0)
     assert geo.normal_vector == (0, 0, 1)
     assert geo.radius_inner == 10
@@ -59,7 +59,7 @@ def test_from_and_to_dict():
     ring_dict = ring.to_dict()
 
     # check values in dictionary
-    assert ring_dict['name'] == 'default_ring'
+    assert ring_dict['identifier'] == 'default_ring'
     assert ring_dict['modifier'] == modifier.to_dict()
     assert ring_dict['center_pt'] == (0, 0, 0)
     assert ring_dict['normal_vector'] == (0, 0, 1)

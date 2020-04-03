@@ -25,8 +25,9 @@ class Cup(Cone):
                 r0      r1
 
     Args:
-        name: Geometry name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         center_pt_start: Cup start center point as (x, y, z) (Default: (0, 0 ,0)).
         radius_start: Cup start radius as a number (Default: 10).
         center_pt_end: Cup end center point as (x, y, z) (Default: (0, 0 ,10)).
@@ -38,7 +39,8 @@ class Cup(Cone):
 
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * center_pt_start
         * radius_start
         * center_pt_end

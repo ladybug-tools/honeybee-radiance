@@ -48,7 +48,7 @@ def test_from_string():
             
     """
     mt = Glow.from_string(glow_str)
-    assert mt.name == 'glow_alt_mat'
+    assert mt.identifier == 'glow_alt_mat'
     assert mt.r_emittance == 100
     assert mt.g_emittance == 200
     assert mt.b_emittance == 10000

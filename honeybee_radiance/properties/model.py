@@ -161,37 +161,37 @@ class ModelRadianceProperties(object):
         """
         return generic_modifier_set_visible
 
-    def check_duplicate_modifier_names(self, raise_exception=True):
-        """Check that there are no duplicate Modifier names in the model."""
-        mod_names = set()
-        duplicate_names = set()
+    def check_duplicate_modifier_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate Modifier identifiers in the model."""
+        mod_identifiers = set()
+        duplicate_identifiers = set()
         for mod in self.modifiers:
-            if mod.name not in mod_names:
-                mod_names.add(mod.name)
+            if mod.identifier not in mod_identifiers:
+                mod_identifiers.add(mod.identifier)
             else:
-                duplicate_names.add(mod.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(mod.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError(
                     'The model has the following duplicated modifier '
-                    'names:\n{}'.format('\n'.join(duplicate_names)))
+                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
-    def check_duplicate_modifier_set_names(self, raise_exception=True):
-        """Check that there are no duplicate ModifierSet names in the model."""
-        mod_set_names = set()
-        duplicate_names = set()
+    def check_duplicate_modifier_set_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate ModifierSet identifiers in the model."""
+        mod_set_identifiers = set()
+        duplicate_identifiers = set()
         for mod_set in self.modifier_sets + [self.global_modifier_set]:
-            if mod_set.name not in mod_set_names:
-                mod_set_names.add(mod_set.name)
+            if mod_set.identifier not in mod_set_identifiers:
+                mod_set_identifiers.add(mod_set.identifier)
             else:
-                duplicate_names.add(mod_set.name)
-        if len(duplicate_names) != 0:
+                duplicate_identifiers.add(mod_set.identifier)
+        if len(duplicate_identifiers) != 0:
             if raise_exception:
                 raise ValueError(
                     'The model has the following duplicated ModifierSet '
-                    'names:\n{}'.format('\n'.join(duplicate_names)))
+                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
             return False
         return True
 
@@ -237,7 +237,7 @@ class ModelRadianceProperties(object):
         # add all ModifierSets to the dictionary
         base['radiance']['modifier_sets'] = []
         if include_global_modifier_set:
-            base['radiance']['global_modifier_set'] = self.global_modifier_set.name
+            base['radiance']['global_modifier_set'] = self.global_modifier_set.identifier
             base['radiance']['modifier_sets'].append(
                 self.global_modifier_set.to_dict(abridged=True, none_for_defaults=False))
         modifier_sets = self.modifier_sets
@@ -285,10 +285,10 @@ class ModelRadianceProperties(object):
         Returns:
             A tuple with two elements
 
-            -   modifiers: A dictionary with names of modifiers as keys and Python
+            -   modifiers: A dictionary with identifiers of modifiers as keys and Python
                 modifier objects as values.
 
-            -   modifier_sets: A dictionary with names of modifier sets as keys
+            -   modifier_sets: A dictionary with identifiers of modifier sets as keys
                 and Python modifier set objects as values.
         """
         assert 'radiance' in data['properties'], \
@@ -297,14 +297,14 @@ class ModelRadianceProperties(object):
         # process all modifiers in the ModelRadianceProperties dictionary
         modifiers = {}
         for mod in data['properties']['radiance']['modifiers']:
-            modifiers[mod['name']] = dict_to_modifier(mod)
+            modifiers[mod['identifier']] = dict_to_modifier(mod)
 
         # process all modifier sets in the ModelRadianceProperties dictionary
         modifier_sets = {}
         if 'modifier_sets' in data['properties']['radiance'] and \
                 data['properties']['radiance']['modifier_sets'] is not None:
             for m_set in data['properties']['radiance']['modifier_sets']:
-                modifier_sets[m_set['name']] = \
+                modifier_sets[m_set['identifier']] = \
                     ModifierSet.from_dict_abridged(m_set, modifiers)
 
         return modifiers, modifier_sets
@@ -407,4 +407,4 @@ class ModelRadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Model Radiance Properties:\n host: {}'.format(self.host.name)
+        return 'Model Radiance Properties:\n host: {}'.format(self.host.identifier)

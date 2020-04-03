@@ -113,7 +113,7 @@ def test_from_string():
 
 def test_from_file():
     vw = View.from_file('./tests/assets/view.vf')
-    assert vw.name == 'view'
+    assert vw.identifier == 'view'
     assert list(vw.position) == [0, 0, 0]
     assert list(vw.direction) == [0, 0, 1]
     assert list(vw.up_vector) == [0, 1, 0]

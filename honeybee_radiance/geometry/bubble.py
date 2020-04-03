@@ -18,8 +18,9 @@ class Bubble(Sphere):
         4 xcent ycent zcent radius
 
     Args:
-        name: Geometry name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         center_pt: Sphere center point as (x, y, z) (Default: (0, 0 ,0)).
         radius: Bubble radius as a number (Default: 10).
         modifier: Geometry modifier (Default: "void").
@@ -28,7 +29,8 @@ class Bubble(Sphere):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * center_pt
         * radius
         * modifier

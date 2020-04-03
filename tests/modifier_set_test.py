@@ -8,11 +8,11 @@ import pytest
 
 def test_modifierset_init():
     """Test the initialization of ModifierSet and basic properties."""
-    default_set = ModifierSet('Default Set')
+    default_set = ModifierSet('Default_Set')
 
     str(default_set)  # test the string representation of the modifier
 
-    assert default_set.name == 'DefaultSet'
+    assert default_set.identifier == 'Default_Set'
     assert len(default_set.modifiers) == 18
     assert len(default_set.modifiers_unique) == 9
     assert len(default_set.modified_modifiers_unique) == 0
@@ -27,7 +27,7 @@ def test_modifierset_init():
 
 def test_modifierset_defaults():
     """Test the ModifierSet defaults."""
-    default_set = ModifierSet('Default Set')
+    default_set = ModifierSet('Default_Set')
 
     assert len(default_set.wall_set) == 2
     assert len(default_set.floor_set) == 2
@@ -64,7 +64,7 @@ def test_modifierset_defaults():
 
 def test_setting_modifier():
     """Test the setting of modifiers on the ModifierSet."""
-    default_set = ModifierSet('Thermal Mass Construction Set')
+    default_set = ModifierSet('Thermal_Mass_Construction_Set')
     opaque_material_1 = Plastic.from_single_reflectance('test_opaque', 0.5)
     opaque_material_2 = Plastic.from_single_reflectance('test_opaque', 0.45)
     opaque_material_3 = Plastic.from_single_reflectance('test_opaque', 0.55)
@@ -95,7 +95,7 @@ def test_setting_modifier():
 
 def test_setting_aperture_modifier():
     """Test the setting of aperture modifiers on the ModifierSet."""
-    default_set = ModifierSet('Tinted Window Set')
+    default_set = ModifierSet('Tinted_Window_Set')
     glass_material = Glass.from_single_transmittance('test_glass', 0.6)
     glass_material_dark = Glass.from_single_transmittance('test_glass_dark', 0.3)
 
@@ -117,14 +117,14 @@ def test_setting_aperture_modifier():
 
 def test_modifierset_equality():
     """Test the equality of ModifierSets to one another."""
-    default_set = ModifierSet('Default Set')
+    default_set = ModifierSet('Default_Set')
     new_default_set = default_set.duplicate()
 
     assert default_set is default_set
     assert new_default_set is not default_set
     assert new_default_set == default_set
 
-    new_default_set.name = 'New Construction Set'
+    new_default_set.identifier = 'New_Construction_Set'
     assert new_default_set != default_set
 
     new_default_set = default_set.duplicate()
@@ -135,7 +135,7 @@ def test_modifierset_equality():
 
 def test_modifierset_to_dict_full():
     """Test the to_dict method writing out all modifiers."""
-    default_set = ModifierSet('Default Set')
+    default_set = ModifierSet('Default_Set')
 
     modifier_dict = default_set.to_dict(none_for_defaults=False)
 
@@ -160,8 +160,8 @@ def test_modifierset_to_dict_full():
 
 def test_modifierset_dict_methods():
     """Test the to/from dict methods."""
-    insulated_set = ModifierSet('Insulated Set')
-    triple_clear = Glass.from_single_transmittance('Triple Clear Window', 0.4)
+    insulated_set = ModifierSet('Insulated_Set')
+    triple_clear = Glass.from_single_transmittance('Triple_Clear_Window', 0.4)
 
     insulated_set.aperture_set.window_modifier = triple_clear
     mod_dict = insulated_set.to_dict()
