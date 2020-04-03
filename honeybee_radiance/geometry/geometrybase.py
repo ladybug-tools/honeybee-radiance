@@ -16,7 +16,8 @@ class Geometry(Primitive):
     """Base class for Radiance geometries.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

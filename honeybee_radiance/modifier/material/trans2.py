@@ -21,8 +21,9 @@ class Trans2(Material):
         8 red green blue spec urough vrough trans tspec
 
     Args:
-        name: Primitive name as a string. Cannot contain white spaces or special
-            characters.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
             (Default: "void").
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
@@ -34,7 +35,8 @@ class Trans2(Material):
             defined based on other primitives. (Default: []).
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

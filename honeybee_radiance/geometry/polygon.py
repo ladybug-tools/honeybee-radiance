@@ -25,8 +25,9 @@ class Polygon(Geometry):
                 xn      yn      zn
 
     Args:
-        name: Geometry name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         vertices: Minimum of three arrays, each with 3 (x, y, z) values for
             vertices that make up the polygon. Vertices musct be ordered
             counter-clockwise as viewed from the front side. The last vertex is
@@ -37,7 +38,8 @@ class Polygon(Geometry):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * vertices
         * modifier
         * dependencies
@@ -52,9 +54,9 @@ class Polygon(Geometry):
     """
     __slots__ = ('_vertices',)
 
-    def __init__(self, name, vertices, modifier=None, dependencies=None):
+    def __init__(self, identifier, vertices, modifier=None, dependencies=None):
         """Radiance Polygon."""
-        Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
+        Geometry.__init__(self, identifier, modifier=modifier, dependencies=dependencies)
         self.vertices = vertices
         self._update_values()
 
@@ -86,7 +88,8 @@ class Polygon(Geometry):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "polygon",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -104,11 +107,14 @@ class Polygon(Geometry):
             ' Invalid length: [%d].' % len(vertices_xyz)
 
         cls_ = cls(
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             vertices=(vertices_xyz[i:i + 3] for i in range(0, len(vertices_xyz), 3)),
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
+
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
         return cls_
@@ -125,7 +131,8 @@ class Polygon(Geometry):
             {
             "type": "polygon",  # Geometry type
             "modifier": {} or "void",
-            "name": "",  # Geometry Name
+            "identifier": "",  # Geometry identifer
+            "display_name": "",  # Geometry display name
             "vertices": [(0, 0, 10), (10, 0, 10), (10, 0, 0)],
             "dependencies": []
             }
@@ -139,23 +146,31 @@ class Polygon(Geometry):
         modifier, dependencies = cls.filter_dict_input(data)
 
         vertices = data["vertices"]
-        return cls(
-            name=data["name"],
+        new_obj = cls(
+            identifier=data["identifier"],
             vertices=data["vertices"],
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             "modifier": self.modifier.to_dict(),
             "type": self.__class__.__name__.lower(),
-            "name": self.name,
+            "identifier": self.identifier,
             "vertices": self.vertices,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(self.name, self.vertices, mod, depend)
+        new_obj = self.__class__(self.identifier, self.vertices, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

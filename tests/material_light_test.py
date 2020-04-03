@@ -43,7 +43,7 @@ def test_from_string():
             
     """
     mt = Light.from_string(light_str)
-    assert mt.name == 'light_alt_mat'
+    assert mt.identifier == 'light_alt_mat'
     assert mt.r_emittance == 100
     assert mt.g_emittance == 200
     assert mt.b_emittance == 10000
@@ -52,7 +52,7 @@ def test_from_string():
 
 def test_from_dict_w_modifier():
     glass_mod = {
-        "name": "test_glass_mod",
+        "identifier": "test_glass_mod",
         "type": "glass",
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
@@ -63,7 +63,7 @@ def test_from_dict_w_modifier():
     }
 
     light_dict = {
-        "name": "test_light",
+        "identifier": "test_light",
         "type": "light",
         "r_emittance": 0.1,
         "g_emittance": 0.2,

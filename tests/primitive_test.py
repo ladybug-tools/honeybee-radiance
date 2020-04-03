@@ -6,23 +6,25 @@ from honeybee_radiance.geometry import Polygon, Sphere
 from honeybee_radiance.modifier.material import Plastic, Glass
 from .rad_string_collection import frit
 
+import pytest
 
-def test_illegal_name():
-    p = Primitive('$$%name  of material')
-    assert p.name == 'nameofmaterial'
+
+def test_illegal_identifier():
+    with pytest.raises(Exception):
+        p = Primitive('$$%name  of material')
 
 
 def test_from_string():
     """from_string uses from_dict under the hood."""
     p = Primitive.from_string(frit)
-    assert p.name == 'glass_mat'
+    assert p.identifier == 'glass_mat'
     assert len(p.values[0]) == 1
     assert p.values[0][0] == 'glass_alt_mat'
     assert p.values[1] == []
     assert p.values[2] == ['1', '1', '1']
     assert len(p.dependencies) == 1
     # check modifier
-    assert p.modifier.name == 'glass_angular_effect'
+    assert p.modifier.identifier == 'glass_angular_effect'
     assert p.modifier.type == 'brightfunc'
 
 

@@ -60,7 +60,7 @@ def test_from_string():
             
     """
     tr = Trans.from_string(trans_str)
-    assert tr.name == 'test'
+    assert tr.identifier == 'test'
     assert tr.r_reflectance == 0.7
     assert tr.g_reflectance == 0.7
     assert tr.b_reflectance == 0.7

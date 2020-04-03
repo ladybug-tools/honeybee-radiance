@@ -17,8 +17,9 @@ class Sphere(Geometry):
         4 xcent ycent zcent radius
 
     Args:
-        name: Geometry name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         center_pt: Sphere center point as (x, y, z) (Default: (0, 0 ,0)).
         radius: Sphere radius as a number (Default: 10).
         modifier: Geometry modifier (Default: "void").
@@ -27,7 +28,8 @@ class Sphere(Geometry):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * center_pt
         * radius
         * modifier
@@ -43,10 +45,10 @@ class Sphere(Geometry):
     """
     __slots__ = ('_center_pt', '_radius')
 
-    def __init__(self, name, center_pt=None, radius=10, modifier=None,
+    def __init__(self, identifier, center_pt=None, radius=10, modifier=None,
                  dependencies=None):
         """Radiance Sphere."""
-        Geometry.__init__(self, name, modifier=modifier, dependencies=dependencies)
+        Geometry.__init__(self, identifier, modifier=modifier, dependencies=dependencies)
         self.center_pt = center_pt or (0, 0, 0)
         self.radius = radius if radius is not None else 10
 
@@ -89,7 +91,8 @@ class Sphere(Geometry):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "sphere",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -104,12 +107,15 @@ class Sphere(Geometry):
         values = primitive_dict['values'][2]
 
         cls_ = cls(
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             center_pt=values[0:3],
             radius=values[3],
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
+
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
         return cls_
@@ -126,7 +132,8 @@ class Sphere(Geometry):
             {
             "type": "sphere",  # Geometry type
             "modifier": {} or "void",
-            "name": "",  # Geometry Name
+            "identifier": "",  # Geometry identifier
+            "display_name": "",  # Geometry display name
             "center_pt": {"x": float, "y": float, "z": float},
             "radius": float,
             "dependencies": []
@@ -140,19 +147,32 @@ class Sphere(Geometry):
             )
         modifier, dependencies = cls.filter_dict_input(data)
 
-        return cls(name=data["name"],
-                   center_pt=(data["center_pt"]),
-                   radius=data["radius"],
-                   modifier=modifier,
-                   dependencies=dependencies)
+        new_obj = cls(identifier=data["identifier"],
+                      center_pt=(data["center_pt"]),
+                      radius=data["radius"],
+                      modifier=modifier,
+                      dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             "modifier": self.modifier.to_dict(),
             "type": self.__class__.__name__.lower(),
-            "name": self.name,
+            "identifier": self.identifier,
             "center_pt": self.center_pt,
             "radius": self.radius,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
+
+    def __copy__(self):
+        mod, depend = self._dup_mod_and_depend()
+        new_obj = self.__class__(
+            self.identifier, self.center_pt, self.radius, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

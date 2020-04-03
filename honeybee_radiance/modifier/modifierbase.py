@@ -16,7 +16,8 @@ class Modifier(Primitive):
     """Base class for Radiance modifiers.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

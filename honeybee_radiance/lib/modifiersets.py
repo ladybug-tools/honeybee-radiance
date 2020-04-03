@@ -57,7 +57,8 @@ try:  # create the generic exterior solar set
         _json_modifier_sets['Generic_Exterior_Solar_Modifier_Set']
 except KeyError:
     generic_modifier_set_solar_exterior = generic_modifier_set_solar.duplicate()
-    generic_modifier_set_solar_exterior.name = 'Generic_Exterior_Solar_Modifier_Set'
+    generic_modifier_set_solar_exterior.identifier = \
+        'Generic_Exterior_Solar_Modifier_Set'
     generic_modifier_set_solar_exterior.wall_set.exterior_modifier = \
         modifiers.generic_wall_exterior
     generic_modifier_set_solar_exterior.floor_set.exterior_modifier = \
@@ -73,14 +74,14 @@ except KeyError:
 MODIFIER_SETS = tuple(_json_modifier_sets.keys())
 
 
-def modifier_set_by_name(modifier_set_name):
-    """Get a modifier_set from the library given its name.
+def modifier_set_by_identifier(modifier_set_identifier):
+    """Get a modifier_set from the library given its identifier.
 
     Args:
-        modifier_set_name: A text string for the name of the ConstructionSet.
+        modifier_set_identifier: A text string for the identifier of the ConstructionSet.
     """
     try:
-        return _json_modifier_sets[modifier_set_name]
+        return _json_modifier_sets[modifier_set_identifier]
     except KeyError:
         raise ValueError('"{}" was not found in the modifier set library.'.format(
-            modifier_set_name))
+            modifier_set_identifier))

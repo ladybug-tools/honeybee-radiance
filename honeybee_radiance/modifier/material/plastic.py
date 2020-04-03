@@ -12,8 +12,9 @@ class Plastic(Material):
     """Radiance plastic material.
 
     Args:
-        name: Material name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         r_reflectance: Reflectance for red. The value should be between 0 and 1
             (Default: 0).
         g_reflectance: Reflectance for green. The value should be between 0 and 1
@@ -32,7 +33,8 @@ class Plastic(Material):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * r_reflectance
         * g_reflectance
         * b_reflectance
@@ -56,10 +58,10 @@ class Plastic(Material):
     __slots__ = ('_r_reflectance', '_g_reflectance', '_b_reflectance',
                  '_specularity', '_roughness')
 
-    def __init__(self, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+    def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
                  specularity=0.0, roughness=0.0, modifier="void", dependencies=None):
         """Create plastic material."""
-        Material.__init__(self, name, modifier=modifier, dependencies=dependencies)
+        Material.__init__(self, identifier, modifier=modifier, dependencies=dependencies)
         self.r_reflectance = r_reflectance
         self.g_reflectance = g_reflectance
         self.b_reflectance = b_reflectance
@@ -154,12 +156,14 @@ class Plastic(Material):
 
     @classmethod
     def from_single_reflectance(
-        cls, name, rgb_reflectance=0.0, specularity=0.0, roughness=0.0, modifier="void",
-            dependencies=None):
+        cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
+        modifier="void", dependencies=None):
         """Create plastic material with single reflectance value.
 
-        args:
-            name: Material name as a string. Do not use white space or special character
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
@@ -180,9 +184,10 @@ class Plastic(Material):
             wall_material = Plastic.by_single_reflect_value("generic_wall", .55)
             print(wall_material)
         """
-        return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
-                   b_reflectance=rgb_reflectance, specularity=specularity,
-                   roughness=roughness, modifier=modifier, dependencies=dependencies)
+        return cls(identifier, r_reflectance=rgb_reflectance,
+                   g_reflectance=rgb_reflectance, b_reflectance=rgb_reflectance,
+                   specularity=specularity, roughness=roughness,
+                   modifier=modifier, dependencies=dependencies)
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
@@ -196,7 +201,8 @@ class Plastic(Material):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "plastic",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -210,7 +216,7 @@ class Plastic(Material):
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
         values = primitive_dict['values'][2]
         cls_ = cls(
-            name=primitive_dict["name"],
+            identifier=primitive_dict["identifier"],
             r_reflectance=values[0],
             g_reflectance=values[1],
             b_reflectance=values[2],
@@ -219,6 +225,8 @@ class Plastic(Material):
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
@@ -234,14 +242,15 @@ class Plastic(Material):
         .. code-block:: python
 
             {
-            "modifier": {} or void,  # Material modifier
             "type": "plastic",  # Material type
-            "name": "",  # Material Name
+            "identifier": "",  # Material identifier
+            "display_name": string  # Material display name
             "r_reflectance": float,  # Reflectance for red
             "g_reflectance": float,  # Reflectance for green
             "b_reflectance": float,  # Reflectance for blue
             "specularity": float,  # Material specularity
             "roughness": float,  # Material roughness
+            "modifier": {} or void,  # Material modifier
             "dependencies": []
             }
         """
@@ -253,21 +262,24 @@ class Plastic(Material):
             )
         modifier, dependencies = Material.filter_dict_input(data)
 
-        return cls(name=data["name"],
-                   r_reflectance=data["r_reflectance"],
-                   g_reflectance=data["g_reflectance"],
-                   b_reflectance=data["b_reflectance"],
-                   specularity=data["specularity"],
-                   roughness=data["roughness"],
-                   modifier=modifier,
-                   dependencies=dependencies)
+        new_obj = cls(identifier=data["identifier"],
+                      r_reflectance=data["r_reflectance"],
+                      g_reflectance=data["g_reflectance"],
+                      b_reflectance=data["b_reflectance"],
+                      specularity=data["specularity"],
+                      roughness=data["roughness"],
+                      modifier=modifier,
+                      dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             'modifier': self.modifier.to_dict(),
             'type': self.__class__.__name__.lower(),
-            'name': self.name,
+            'identifier': self.identifier,
             'r_reflectance': self.r_reflectance,
             'g_reflectance': self.g_reflectance,
             'b_reflectance': self.b_reflectance,
@@ -275,9 +287,14 @@ class Plastic(Material):
             'roughness': self.roughness,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(
-            self.name, self.r_reflectance, self.g_reflectance, self.b_reflectance,
+        new_obj = self.__class__(
+            self.identifier, self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

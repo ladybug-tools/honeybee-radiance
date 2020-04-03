@@ -173,18 +173,19 @@ except KeyError:
     _rad_modifiers['white_glow'] = white_glow
 
 
-# make lists of modifier names to look up items in the library
+# make lists of modifier identifiers to look up items in the library
 MODIFIERS = tuple(_rad_modifiers.keys())
 
 
-def modifier_by_name(modifier_name):
-    """Get a modifier from the library given the modifier name.
+def modifier_by_identifier(modifier_identifier):
+    """Get a modifier from the library given the modifier identifier.
 
     Args:
-        modifier_name: A text string for the name of the modifier.
+        modifier_identifier: A text string for the identifier of the modifier.
     """
     try:
-        return _rad_modifiers[modifier_name]
+        return _rad_modifiers[modifier_identifier]
     except KeyError:
         raise ValueError(
-            '"{}" was not found in the radiancemodifier library.'.format(modifier_name))
+            '"{}" was not found in the radiancemodifier library.'.format(
+                modifier_identifier))

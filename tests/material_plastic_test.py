@@ -80,7 +80,7 @@ def test_from_string():
             
     """
     pl = Plastic.from_string(plastic_str)
-    assert pl.name == 'plastic_alt_mat'
+    assert pl.identifier == 'plastic_alt_mat'
     assert pl.r_reflectance == 0.91
     assert pl.g_reflectance == 0.92
     assert pl.b_reflectance == 0.93
@@ -89,7 +89,7 @@ def test_from_string():
 
 def test_from_dict_w_modifier():
     glass_mod = {
-        "name": "test_glass_mod",
+        "identifier": "test_glass_mod",
         "type": "glass",
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
@@ -100,7 +100,7 @@ def test_from_dict_w_modifier():
     }
 
     plastic_dict = {
-        "name": "test_plastic",
+        "identifier": "test_plastic",
         "type": "plastic",
         "r_reflectance": 0.1,
         "g_reflectance": 0.2,

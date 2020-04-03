@@ -11,7 +11,8 @@ class Material(Modifier):
     """Base class for Radiance materials.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies

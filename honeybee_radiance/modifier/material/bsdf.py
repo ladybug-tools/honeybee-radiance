@@ -13,11 +13,9 @@ import gzip
 try:
     from io import BytesIO as StringIO
 except ImportError:
-    try:
-        # python 2
+    try:  # python 2
         from cStringIO import StringIO
-    except ImportError:
-        # IronPython
+    except ImportError:  # IronPython
         from StringIO import StringIO
 
 
@@ -40,6 +38,10 @@ class BSDF(Material):
 
     Args:
         bsdf_file: Path to an xml file. Data will NOT be cached in memory.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files. If None, the identifier
+            will be derived from the bsdf_file name. (Default: None)
         up_orientation: (x, y ,z) vector that sets the hemisphere that the
             BSDF material faces.  For materials that are symmetrical about
             the face plane (like non-angled venetian blinds), this can be
@@ -62,7 +64,8 @@ class BSDF(Material):
 
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * bsdf_file
         * up_orientation
         * thickness
@@ -84,13 +87,13 @@ class BSDF(Material):
                  '_back_diffuse_reflectance', '_diffuse_transmittance')
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
-    def __init__(self, bsdf_file, name=None, up_orientation=None, thickness=0,
+    def __init__(self, bsdf_file, identifier=None, up_orientation=None, thickness=0,
                  modifier='void', function_file='.', transform=None, angle_basis=None,
                  dependencies=None):
         """Create BSDF material."""
-        name = name or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
+        identifier = identifier or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
 
-        Material.__init__(self, name, modifier=modifier,
+        Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
 
         self.bsdf_file = bsdf_file
@@ -284,7 +287,8 @@ class BSDF(Material):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "BSDF",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": []  # values,
             "dependencies": []
             }
@@ -302,7 +306,7 @@ class BSDF(Material):
         cls_ = cls(
             thickness=values[0],
             bsdf_file=values[1],
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             up_orientation=values[2:5],
             modifier=modifier,
             function_file=values[5],
@@ -310,6 +314,8 @@ class BSDF(Material):
             angle_basis=None,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
@@ -346,7 +352,8 @@ class BSDF(Material):
             {
             "modifier": "",  # material modifier (Default: "void")
             "type": "BSDF",  # Material type
-            "name": string,  # Material Name
+            "identifier": string,  # Material identifer
+            "display_name": string  # Material display name
             "up_orientation": [number, number, number],
             "thickness": number,  # default: 0
             "function_file": string,  # default: '.'
@@ -367,19 +374,21 @@ class BSDF(Material):
         if not os.path.isdir(folder):
             os.makedirs(folder)
 
-        fp = os.path.join(folder, '%s.xml' % data['name'])
+        fp = os.path.join(folder, '%s.xml' % data['identifier'])
         # write bytes to xml file
         cls.decompress_bytes_to_file(data['bsdf_data'], fp)
 
         uo_dict = data['up_orientation']
         cls_ = cls(
             bsdf_file=fp,
-            name=data['name'],
+            identifier=data['identifier'],
             up_orientation=[uo_dict['x'], uo_dict['y'], uo_dict['z']],
             thickness=data['thickness'],
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in data and data['display_name'] is not None:
+            cls_.display_name = data['display_name']
 
         if 'front_diffuse_reflectance' in data:
             cls_.front_diffuse_reflectance = data['front_diffuse_reflectance']
@@ -397,7 +406,7 @@ class BSDF(Material):
         bsdf_dict = {
             'modifier': self.modifier.to_dict(),
             'type': 'BSDF',
-            'name': self.name,
+            'identifier': self.identifier,
             'up_orientation': self.up_orientation.to_dict(),
             'thickness': self.thickness,
             'function_file': self.function_file,
@@ -405,6 +414,8 @@ class BSDF(Material):
             'bsdf_data': bsdf_data,
             'dependencies': [dep.to_dict() for dep in self.dependencies]
         }
+        if self._display_name is not None:
+            bsdf_dict['display_name'] = self.display_name
 
         if self.front_diffuse_reflectance:
             bsdf_dict['front_diffuse_reflectance'] = self.front_diffuse_reflectance
@@ -483,9 +494,10 @@ class BSDF(Material):
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
         new_bsdf = self.__class__(
-            self.bsdf_file, self.name, self.up_orientation, self.thickness, mod,
+            self.bsdf_file, self.identifier, self.up_orientation, self.thickness, mod,
             self.function_file, self.transform, self.angle_basis, depend)
         new_bsdf._front_diffuse_reflectance = self._front_diffuse_reflectance
         new_bsdf._back_diffuse_reflectance = self._back_diffuse_reflectance
         new_bsdf._diffuse_transmittance = self._diffuse_transmittance
+        new_bsdf._display_name = self._display_name
         return new_bsdf

@@ -52,9 +52,10 @@ class ModifierSet(object):
     ModifierSets can be used to establish templates that are applied broadly
     across a Model, like a color scheme used consistently throughout a building.
 
-
     Args:
-        name: Text string for modifier set name.
+        identifier: Text string for a unique ModifierSet ID. Must not contain
+            spaces or special characters. This will be used to identify the
+            object across a model and in the exported Radiance files.
         wall_set: An optional WallSet object for this ModifierSet.
             If None, it will be the honeybee generic default WallSet.
         floor_set: An optional FloorSet object for this ModifierSet.
@@ -72,7 +73,8 @@ class ModifierSet(object):
             air wall modifier.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * wall_set
         * floor_set
         * roof_ceiling_set
@@ -86,16 +88,17 @@ class ModifierSet(object):
         * modified_modifiers_unique
     """
 
-    __slots__ = ('_name', '_wall_set', '_floor_set', '_roof_ceiling_set',
-                 '_aperture_set', '_door_set', '_shade_set', '_air_boundary_modifier',
-                 '_locked')
+    __slots__ = ('_identifier', '_display_name', '_wall_set', '_floor_set',
+                 '_roof_ceiling_set', '_aperture_set', '_door_set', '_shade_set',
+                 '_air_boundary_modifier', '_locked')
 
-    def __init__(self, name, wall_set=None, floor_set=None, roof_ceiling_set=None,
+    def __init__(self, identifier, wall_set=None, floor_set=None, roof_ceiling_set=None,
                  aperture_set=None, door_set=None, shade_set=None,
                  air_boundary_modifier=None):
         """Initialize radiance modifier set."""
         self._locked = False  # unlocked by default
-        self.name = name
+        self.identifier = identifier
+        self._display_name = None
         self.wall_set = wall_set
         self.floor_set = floor_set
         self.roof_ceiling_set = roof_ceiling_set
@@ -105,13 +108,30 @@ class ModifierSet(object):
         self.air_boundary_modifier = air_boundary_modifier
 
     @property
-    def name(self):
-        """Get or set a text string for modifier set name."""
-        return self._name
+    def identifier(self):
+        """Get or set a text string for the unique modifier set identifier."""
+        return self._identifier
 
-    @name.setter
-    def name(self, name):
-        self._name = valid_rad_string(name, 'ModifierSet name')
+    @identifier.setter
+    def identifier(self, identifier):
+        self._identifier = valid_rad_string(identifier, 'ModifierSet identifier')
+
+    @property
+    def display_name(self):
+        """Get or set a string for the object name without any character restrictions.
+
+        If not set, this will be equal to the identifier.
+        """
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def wall_set(self):
@@ -347,7 +367,8 @@ class ModifierSet(object):
 
             {
             'type': 'ModifierSet',
-            'name': str,  # ModifierSet name
+            'identifier': str,  # ModifierSet identifier
+            "display_name": str,  # ModifierSet display name
             'wall_set': {},  # WallSet dictionary
             'floor_set': {},  # FloorlSet dictionary
             'roof_ceiling_set': {},  # RoofCeilingSet dictionary
@@ -364,14 +385,17 @@ class ModifierSet(object):
         # gather all modifier objects
         modifiers = {}
         for mod in data['modifiers']:
-            modifiers[mod['name']] = dict_to_modifier(mod)
+            modifiers[mod['identifier']] = dict_to_modifier(mod)
 
         # build each of the sub-sets
         wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set, \
             air_boundary_mod = cls._get_subsets_from_abridged(data, modifiers)
 
-        return cls(data['name'], wall_set, floor_set, roof_ceiling_set,
-                   aperture_set, door_set, shade_set, air_boundary_mod)
+        new_obj = cls(data['identifier'], wall_set, floor_set, roof_ceiling_set,
+                      aperture_set, door_set, shade_set, air_boundary_mod)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     @classmethod
     def from_dict_abridged(cls, data, modifier_dict):
@@ -379,7 +403,7 @@ class ModifierSet(object):
 
         Args:
             data: A ModifierSetAbridged dictionary with the fotmat below.
-            modifier_dict: A dictionary with modifier names as keys and
+            modifier_dict: A dictionary with modifier identifiers as keys and
                 honeybee modifier objects as values. These will be used to
                 assign the 4 to the ModifierSet object.
 
@@ -387,7 +411,8 @@ class ModifierSet(object):
 
             {
             'type': 'ModifierSetAbridged',
-            'name': str,  # ModifierSet name
+            'identifier': str,  # ModifierSet identifier
+            "display_name": str,  # ModifierSet display name
             'wall_set': {},  # WallSet dictionary
             'floor_set': {},  # FloorlSet dictionary
             'roof_ceiling_set': {},  # RoofCeilingSet dictionary
@@ -401,8 +426,11 @@ class ModifierSet(object):
             'Expected ModifierSetAbridged. Got {}.'.format(data['type'])
         wall_set, floor_set, roof_ceiling_set, aperture_set, door_set, shade_set, \
             air_boundary_mod = cls._get_subsets_from_abridged(data, modifier_dict)
-        return cls(data['name'], wall_set, floor_set, roof_ceiling_set,
-                   aperture_set, door_set, shade_set, air_boundary_mod)
+        new_obj = cls(data['identifier'], wall_set, floor_set, roof_ceiling_set,
+                      aperture_set, door_set, shade_set, air_boundary_mod)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self, abridged=False, none_for_defaults=True):
         """Get ModifierSet as a dictionary.
@@ -418,7 +446,7 @@ class ModifierSet(object):
         base = {'type': 'ModifierSet'} if not abridged \
             else {'type': 'ModifierSetAbridged'}
 
-        base['name'] = self.name
+        base['identifier'] = self.identifier
         base['wall_set'] = self.wall_set._to_dict(none_for_defaults)
         base['floor_set'] = self.floor_set._to_dict(none_for_defaults)
         base['roof_ceiling_set'] = self.roof_ceiling_set._to_dict(none_for_defaults)
@@ -426,16 +454,18 @@ class ModifierSet(object):
         base['door_set'] = self.door_set._to_dict(none_for_defaults)
         base['shade_set'] = self.shade_set._to_dict(none_for_defaults)
         if none_for_defaults:
-            base['air_boundary_modifier'] = self._air_boundary_modifier.name if \
+            base['air_boundary_modifier'] = self._air_boundary_modifier.identifier if \
                 self._air_boundary_modifier is not None else None
         else:
-            base['air_boundary_modifier'] = self.air_boundary_modifier.name
+            base['air_boundary_modifier'] = self.air_boundary_modifier.identifier
 
         if not abridged:
             modifiers = self.modified_modifiers_unique if none_for_defaults \
                 else self.modifiers_unique
             base['modifiers'] = [modifier.to_dict() for modifier in modifiers]
 
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
         return base
 
     def duplicate(self):
@@ -558,8 +588,8 @@ class ModifierSet(object):
         return self.__repr__()
 
     def __copy__(self):
-        return ModifierSet(
-            self.name,
+        new_obj = ModifierSet(
+            self.identifier,
             self.wall_set.duplicate(),
             self.floor_set.duplicate(),
             self.roof_ceiling_set.duplicate(),
@@ -568,10 +598,12 @@ class ModifierSet(object):
             self.shade_set.duplicate(),
             self._air_boundary_modifier
         )
+        new_obj._display_name = self._display_name
+        return new_obj
 
     def __key(self):
         """A tuple based on the object properties, useful for hashing."""
-        return (self.name,) + tuple(hash(mod) for mod in self.modifiers)
+        return (self.identifier,) + tuple(hash(mod) for mod in self.modifiers)
 
     def __hash__(self):
         return hash(self.__key())
@@ -583,7 +615,7 @@ class ModifierSet(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return 'Radiance Modifier Set: {}'.format(self.name)
+        return 'Radiance Modifier Set: {}'.format(self.identifier)
 
 
 @lockable
@@ -658,13 +690,13 @@ class _BaseSet(object):
         attributes = self._slots
         if none_for_defaults:
             base = {
-                attr[1:]:getattr(self, attr[1:]).name
+                attr[1:]:getattr(self, attr[1:]).identifier
                 if getattr(self, attr) is not None else None
                 for attr in attributes
                 }
         else:
             base = {
-                attr[1:]:getattr(self, attr[1:]).name
+                attr[1:]:getattr(self, attr[1:]).identifier
                 for attr in attributes
             }
 
@@ -711,7 +743,7 @@ class _BaseSet(object):
     def __repr__(self):
         name = self.__class__.__name__.split('Set')[0]
         return '{} Modifier Set:\n Exterior: {}\n Interior: {}'.format(
-            name, self.exterior_modifier.name, self.interior_modifier.name
+            name, self.exterior_modifier.identifier, self.interior_modifier.identifier
         )
 
 
@@ -865,10 +897,10 @@ class ApertureSet(_BaseSet):
     def __repr__(self):
         return 'Aperture Modifier Set:\n Exterior: {}\n Interior: {}' \
             '\n Skylight: {}\n Operable: {}'.format(
-            self.window_modifier.name,
-            self.interior_modifier.name,
-            self.skylight_modifier.name,
-            self.operable_modifier.name
+            self.window_modifier.identifier,
+            self.interior_modifier.identifier,
+            self.skylight_modifier.identifier,
+            self.operable_modifier.identifier
         )
 
 
@@ -957,9 +989,9 @@ class DoorSet(_BaseSet):
     def __repr__(self):
         return 'Door Modifier Set:\n Exterior: {}\n Interior: {}' \
             '\n Exterior Glass: {}\n Interior Glass: {}\n Overhead: {}'.format(
-                self.exterior_modifier.name,
-                self.interior_modifier.name,
-                self.exterior_glass_modifier.name,
-                self.interior_glass_modifier.name,
-                self.overhead_modifier.name
+                self.exterior_modifier.identifier,
+                self.interior_modifier.identifier,
+                self.exterior_glass_modifier.identifier,
+                self.interior_glass_modifier.identifier,
+                self.overhead_modifier.identifier
                 )

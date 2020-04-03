@@ -7,6 +7,6 @@ from honeybee_radiance.geometry import Bubble
 
 def test_cup():
     geo = Bubble('test_bubble')
-    assert geo.name == 'test_bubble'
+    assert geo.identifier == 'test_bubble'
     assert geo.to_radiance(
         minimal=True) == 'void bubble test_bubble 0 0 4 0.0 0.0 0.0 10.0'

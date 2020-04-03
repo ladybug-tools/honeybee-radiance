@@ -11,8 +11,9 @@ class Metal(Plastic):
     """Radiance metal material.
 
     Args:
-        name: Material name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         r_reflectance: Reflectance for red. The value should be between 0 and 1
             (Default: 0).
         g_reflectance: Reflectance for green. The value should be between 0 and 1
@@ -31,7 +32,8 @@ class Metal(Plastic):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * r_reflectance
         * g_reflectance
         * b_reflectance

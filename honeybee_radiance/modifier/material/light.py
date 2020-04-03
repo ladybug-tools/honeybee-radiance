@@ -11,8 +11,9 @@ class Light(Material):
     """Radiance Light material.
 
     Args:
-        name: Material name as a string. The name should not have whitespaces or
-            special characters.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         r_emittance: A positive value for the Red channel of the light (default: 0).
         g_emittance: A positive value for the Green channel of the light (default: 0).
         b_emittance: A positive value for the Blue channel of the light (default: 0).
@@ -22,7 +23,8 @@ class Light(Material):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * r_emittance
         * g_emittance
         * b_emittance
@@ -35,10 +37,10 @@ class Light(Material):
 
     __slots__ = ('_r_emittance', '_g_emittance', '_b_emittance')
 
-    def __init__(self, name, r_emittance=0, g_emittance=0, b_emittance=0, modifier='void',
-                 dependencies=None):
+    def __init__(self, identifier, r_emittance=0, g_emittance=0, b_emittance=0,
+                 modifier='void', dependencies=None):
         """Radiance Light material."""
-        Material.__init__(self, name, modifier=modifier,
+        Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
         self.r_emittance = r_emittance
         self.g_emittance = g_emittance
@@ -86,12 +88,13 @@ class Light(Material):
         self._b_emittance = typing.float_positive(value)
 
     @classmethod
-    def from_single_value(cls, name, rgb=0, modifier="void", dependencies=None):
+    def from_single_value(cls, identifier, rgb=0, modifier="void", dependencies=None):
         """Create light material with single value.
 
-        args:
-            name: Material name as a string. Do not use white space or special
-                character.
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             rgb: Input for r_emittance, g_emittance and b_emittance. The value should be
                 between 0 and 1 (Default: 0).
             modifier: Material modifier (Default: "void").
@@ -106,7 +109,7 @@ class Light(Material):
             sample_light = Light.from_single_value("sample_light", 1)
             print(sample_light)
         """
-        return cls(name, r_emittance=rgb, g_emittance=rgb, b_emittance=rgb,
+        return cls(identifier, r_emittance=rgb, g_emittance=rgb, b_emittance=rgb,
                    modifier=modifier, dependencies=dependencies)
 
     @classmethod
@@ -121,7 +124,8 @@ class Light(Material):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "light",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -137,13 +141,15 @@ class Light(Material):
         values = primitive_dict['values'][2]
 
         cls_ = cls(
-            name=primitive_dict["name"],
+            identifier=primitive_dict["identifier"],
             r_emittance=values[0],
             g_emittance=values[1],
             b_emittance=values[2],
             modifier=modifier,
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
 
         # this might look r_emittanceundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
@@ -159,8 +165,9 @@ class Light(Material):
         .. code-block:: python
 
             {
-            "name": "",  # Material Name
             "type": "light",  # primitive type
+            "identifier": "",  # Material identifier
+            "display_name": string  # Material display name
             "r_emittance": float,  # A positive value for the Red channel of the glow
             "g_emittance": float,  # A positive value for the Green channel of the glow
             "b_emittance": float,  # A positive value for the Blue channel of the glow
@@ -176,26 +183,34 @@ class Light(Material):
             )
         modifier, dependencies = Material.filter_dict_input(data)
 
-        return cls(name=data["name"],
-                   r_emittance=data["r_emittance"],
-                   g_emittance=data["g_emittance"],
-                   b_emittance=data["b_emittance"],
-                   modifier=modifier,
-                   dependencies=dependencies)
+        new_obj = cls(identifier=data["identifier"],
+                      r_emittance=data["r_emittance"],
+                      g_emittance=data["g_emittance"],
+                      b_emittance=data["b_emittance"],
+                      modifier=modifier,
+                      dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             'modifier': self.modifier.to_dict(),
             'type': self.__class__.__name__.lower(),
-            'name': self.name,
+            'identifier': self.identifier,
             'r_emittance': self.r_emittance,
             'g_emittance': self.g_emittance,
             'b_emittance': self.b_emittance,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(self.name, self.r_emittance, self.g_emittance,
-                              self.b_emittance, mod, depend)
+        new_obj = self.__class__(self.identifier, self.r_emittance, self.g_emittance,
+                                 self.b_emittance, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj

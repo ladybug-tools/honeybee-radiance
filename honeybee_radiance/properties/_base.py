@@ -122,7 +122,7 @@ class _GeometryRadianceProperties(object):
 
         Args:
             abridged_data: An Abridged dictionary (typically coming from a Model).
-            modifiers: A dictionary of modifiers with modifier names as keys,
+            modifiers: A dictionary of modifiers with modifier identifiers as keys,
                 which will be used to re-assign modifiers.
         """
         if 'modifier' in abridged_data and abridged_data['modifier'] is not None:
@@ -140,11 +140,11 @@ class _GeometryRadianceProperties(object):
                 Default: False.
         """
         if self._modifier is not None:
-            base['radiance']['modifier'] = \
-                self._modifier.name if abridged else self._modifier.to_dict()
+            base['radiance']['modifier'] = self._modifier.identifier if \
+                abridged else self._modifier.to_dict()
         if self._modifier_blk is not None:
-            base['radiance']['modifier_blk'] = \
-                self._modifier_blk.name if abridged else self._modifier_blk.to_dict()
+            base['radiance']['modifier_blk'] =  self._modifier_blk.identifier if \
+                abridged else self._modifier_blk.to_dict()
         return base
 
     @staticmethod
@@ -160,4 +160,4 @@ class _GeometryRadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Base Radiance Properties:\n host: {}'.format(self.host.name)
+        return 'Base Radiance Properties:\n host: {}'.format(self.host.identifier)

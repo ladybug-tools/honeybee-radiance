@@ -72,7 +72,7 @@ def test_from_string():
             
     """
     gl = Glass.from_string(glass_str)
-    assert gl.name == 'glass_alt_mat'
+    assert gl.identifier == 'glass_alt_mat'
     assert gl.r_transmissivity == 0.91
     assert gl.g_transmissivity == 0.92
     assert gl.b_transmissivity == 0.93
@@ -81,7 +81,7 @@ def test_from_string():
 
 def test_from_dict_w_modifier():
     glass_mod = {
-        "name": "test_glass_mod",
+        "identifier": "test_glass_mod",
         "type": "glass",
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
@@ -92,7 +92,7 @@ def test_from_dict_w_modifier():
     }
 
     glass_dict = {
-        "name": "test_glass",
+        "identifier": "test_glass",
         "type": "glass",
         "r_transmissivity": 0.1,
         "g_transmissivity": 0.2,

@@ -23,14 +23,20 @@ class Void(object):
     """Void modifier.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * is_modifier
         * is_opaque
     """
     __slots__ = ()
 
     @property
-    def name(self):
+    def identifier(self):
+        """Void."""
+        return 'void'
+
+    @property
+    def display_name(self):
         """Void."""
         return 'void'
 
@@ -65,8 +71,9 @@ class Primitive(object):
     """Base class for Radiance Primitives.
 
     Args:
-        name: Primitive name as a string. Cannot contain white spaces or special
-            characters.
+        identifier: Text string for a unique Primitive ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
             (Default: "void").
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
@@ -81,7 +88,8 @@ class Primitive(object):
             defined based on other primitives. (Default: []).
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * values
         * modifier
         * dependencies
@@ -93,8 +101,8 @@ class Primitive(object):
         * is_mixture
         * is_opaque
     """
-    __slots__ = ('_name', '_modifier', '_values', '_is_opaque', '_dependencies',
-                 '_type', '_locked')
+    __slots__ = ('_identifier', '_display_name', '_modifier', '_values',
+                 '_is_opaque', '_dependencies', '_type', '_locked')
 
     # All Radiance geometry types
     GEOMETRYTYPES = set(('source', 'sphere', 'bubble', 'polygon', 'cone', 'cup',
@@ -130,10 +138,11 @@ class Primitive(object):
 
     VOID = Void()
 
-    def __init__(self, name, modifier=None, values=None, is_opaque=None,
+    def __init__(self, identifier, modifier=None, values=None, is_opaque=None,
                  dependencies=None):
         """Create primitive base."""
-        self.name = name
+        self.identifier = identifier
+        self._display_name = None
         self.type = self.__class__.__name__.lower()
         self.modifier = modifier
         self.values = values or [[], [], []]
@@ -173,7 +182,8 @@ class Primitive(object):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "custom",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -181,11 +191,13 @@ class Primitive(object):
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
 
         cls_ = cls(
-            name=primitive_dict['name'],
+            identifier=primitive_dict['identifier'],
             modifier=modifier,
             values=primitive_dict['values'],
             dependencies=dependencies
         )
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
 
         if cls_.type == 'primitive':
             cls_.type = primitive_dict['type']
@@ -204,7 +216,8 @@ class Primitive(object):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "custom",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -238,13 +251,30 @@ class Primitive(object):
         self._type = type_str
 
     @property
-    def name(self):
-        """Get or set the primitive name."""
-        return self._name
+    def identifier(self):
+        """Get or set a text string for the unique primitive identifier."""
+        return self._identifier
 
-    @name.setter
-    def name(self, name):
-        self._name = valid_rad_string(name)
+    @identifier.setter
+    def identifier(self, identifier):
+        self._identifier = valid_rad_string(identifier)
+
+    @property
+    def display_name(self):
+        """Get or set a string for the object name without any character restrictions.
+
+        If not set, this will be equal to the identifier.
+        """
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def values(self):
@@ -366,8 +396,8 @@ class Primitive(object):
     @staticmethod
     def _to_radiance(primitive, minimal=False):
         """Return Radiance representation of primitive."""
-        header = "%s %s %s" % (primitive.modifier.name,
-                               primitive.type, primitive.name)
+        header = "%s %s %s" % (primitive.modifier.identifier,
+                               primitive.type, primitive.identifier)
         output = [header]
         for line_count in range(3):
             try:
@@ -399,7 +429,7 @@ class Primitive(object):
             for dep in self.dependencies:
                 output.append(self._to_radiance(dep, minimal))
 
-        if include_modifier and self.modifier.name != 'void':
+        if include_modifier and self.modifier.identifier != 'void':
             output.append(self._to_radiance(self.modifier, minimal))
         output.append(self._to_radiance(self, minimal))
 
@@ -407,13 +437,16 @@ class Primitive(object):
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             "modifier": self.modifier.to_dict(),
             "type": self.type,
-            "name": self.name,
+            "identifier": self.identifier,
             "values": self.values,
             "dependencies": [dep.to_dict() for dep in self._dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def duplicate(self):
         """Get a copy of this object."""
@@ -445,7 +478,7 @@ class Primitive(object):
 
     def __key(self):
         """A tuple based on the object properties, useful for hashing."""
-        return (hash(self.modifier), self.type, self.name) + \
+        return (hash(self.modifier), self.type, self.identifier) + \
             tuple(hash(tuple(vals)) for vals in self.values) + \
             tuple(hash(dep) for dep in self._dependencies)
 
@@ -461,8 +494,11 @@ class Primitive(object):
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        values_copy = [copy(line) for line in self._values]
-        return self.__class__(self.name, mod, values_copy, self._is_opaque, depend)
+        values_copy = [line[:] for line in self._values]  # copy each line
+        new_obj = self.__class__(
+            self.identifier, mod, values_copy, self._is_opaque, depend)
+        new_obj._display_name = self._display_name
+        return new_obj
 
     def _dup_mod_and_depend(self):
         """Duplicate this object's modifer and its dependencies."""

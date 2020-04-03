@@ -71,7 +71,7 @@ def string_to_dicts(string):
     """
     def find_object(target, index):
         for o_count, other_obj in enumerate(objects[:-(index + 1)]):
-            if other_obj['name'] == target:
+            if other_obj['identifier'] == target:
                 return o_count, other_obj
 
     input_objects = parse_from_string(string)
@@ -97,7 +97,7 @@ def string_to_dicts(string):
                 # didn't find any
                 raise ValueError(
                     'Failed to find "{}" modifier for "{}" in input string'.format(
-                        obj['modifier'], obj['name']
+                        obj['modifier'], obj['identifier']
                     )
                 )
             else:
@@ -138,7 +138,7 @@ def string_to_dict(string):
         for d in re.split(split_pattern_one, str(dt))
     ]
 
-    modifier, primitive_type, name = data[:3]
+    modifier, primitive_type, identifier = data[:3]
     base_data = data[3:]
 
     count_1 = int(base_data[0])
@@ -154,7 +154,7 @@ def string_to_dict(string):
     return {
         'modifier': modifier,
         'type': primitive_type,
-        'name': name,
+        'identifier': identifier,
         'values': [l1, l2, l3],
         'dependencies': []
     }

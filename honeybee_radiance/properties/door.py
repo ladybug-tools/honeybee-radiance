@@ -118,15 +118,15 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
         Args:
             abridged_data: A DoorRadiancePropertiesAbridged dictionary (typically
                 coming from a Model) with the format below.
-            modifiers: A dictionary of modifiers with modifier names as keys,
+            modifiers: A dictionary of modifiers with modifier identifiers as keys,
                 which will be used to re-assign modifiers.
 
         .. code-block:: python
 
             {
             'type': 'DoorRadiancePropertiesAbridged',
-            'modifier': str,  # A Honeybee Radiance Modifier name
-            'modifier_blk': str  # A Honeybee Radiance Modifier name
+            'modifier': str,  # A Honeybee Radiance Modifier identifier
+            'modifier_blk': str  # A Honeybee Radiance Modifier identifier
             }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
@@ -145,4 +145,4 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
         return self._add_modifiers_to_dict(base, abridged)
 
     def __repr__(self):
-        return 'Door Radiance Properties:\n host: {}'.format(self.host.name)
+        return 'Door Radiance Properties:\n host: {}'.format(self.host.identifier)

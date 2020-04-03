@@ -15,21 +15,25 @@ class SensorGrid(object):
     """A grid of sensors.
 
     Args:
-        name: A unique name for this SensorGrid.
+        identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+            or special characters. This will be used to identify the object in the
+            exported Radiance files.
         sensors: A collection of Sensors.
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * sensors
         * positions
         * directions
     """
 
-    __slots__ = ('_sensors', '_name')
+    __slots__ = ('_identifier', '_display_name', '_sensors')
 
-    def __init__(self, name, sensors):
+    def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
-        self.name = typing.valid_string(name)
+        self.identifier = typing.valid_rad_string(identifier)
+        self._display_name = None
         self._sensors = tuple(sensors)
         for sen in self._sensors:
             if not isinstance(sen, Sensor):
@@ -44,40 +48,50 @@ class SensorGrid(object):
         .. code-block:: python
 
             {
-            "name": str,  # SensorGrid name
+            "identifier": str,  # SensorGrid identifier
+            "display_name": str,  # SensorGrid display name
             "sensors": []  # list of Sensor dictionaries
             }
         """
         sensors = (Sensor.from_dict(sensor) for sensor in ag_dict['sensors'])
-        return cls(name=ag_dict["name"], sensors=sensors)
+        new_obj = cls(identifier=ag_dict["identifier"], sensors=sensors)
+        if 'display_name' in ag_dict and ag_dict['display_name'] is not None:
+            new_obj.display_name = ag_dict['display_name']
+        return new_obj
 
     @classmethod
-    def from_planar_grid(cls, name, positions, plane_normal):
+    def from_planar_grid(cls, identifier, positions, plane_normal):
         """Create a sensor grid from a collection of positions with the same direction.
 
         Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             positions: A list of (x, y ,z) for position of sensors.
             plane_normal: (x, y, z) for direction of sensors.
         """
         sg = (Sensor(l, plane_normal) for l in positions)
-        return cls(name, sg)
+        return cls(identifier, sg)
 
     @classmethod
-    def from_position_and_direction(cls, name, positions, directions):
+    def from_position_and_direction(cls, identifier, positions, directions):
         """Create a sensor grid from a collection of positions and directions.
 
         The length of positions and directions should be the same. In case the lists have
         different lengths the shorter list will be used as the reference.
 
         Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             positions: A list of (x, y ,z) for position of sensors.
             directions: A list of (x, y, z) for direction of sensors.
         """
         sg = tuple(Sensor(l, v) for l, v in zip(positions, directions))
-        return cls(name, sg)
+        return cls(identifier, sg)
 
     @classmethod
-    def from_file(cls, file_path, start_line=None, end_line=None, name=None):
+    def from_file(cls, file_path, start_line=None, end_line=None, identifier=None):
         """Create a sensor grid from a sensors file.
 
         The sensors must be structured as
@@ -94,11 +108,14 @@ class SensorGrid(object):
             start_line: Start line including the comments (default: 0).
             end_line: End line as an integer including the comments
                 (default: last line in file).
-            name: An optional name for SensorGrid otherwise the file name will be used.
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files. If None, the file name
+                will be used. (Default: None)
         """
         if not os.path.isfile(file_path):
             raise IOError("Can't find {}.".format(file_path))
-        name = name or os.path.split(os.path.splitext(file_path)[0])[-1]
+        identifier = identifier or os.path.split(os.path.splitext(file_path)[0])[-1]
 
         start_line = int(start_line) if start_line is not None else 0
         try:
@@ -122,16 +139,33 @@ class SensorGrid(object):
                     continue
                 sensors.append(Sensor.from_raw_values(*l.split()))
 
-        return cls(name, sensors)
+        return cls(identifier, sensors)
 
     @property
-    def name(self):
-        """SensorGrid name."""
-        return self._name
+    def identifier(self):
+        """Get or set text for a unique SensorGrid identifier."""
+        return self._identifier
 
-    @name.setter
-    def name(self, n):
-        self._name = typing.valid_string(n)
+    @identifier.setter
+    def identifier(self, n):
+        self._identifier = typing.valid_rad_string(n)
+
+    @property
+    def display_name(self):
+        """Get or set a string for the object name without any character restrictions.
+
+        If not set, this will be equal to the identifier.
+        """
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def positions(self):
@@ -155,7 +189,7 @@ class SensorGrid(object):
 
     def duplicate(self):
         """Duplicate SensorGrid."""
-        return SensorGrid(self.name, (sen.duplicate() for sen in self.sensors))
+        return SensorGrid(self.identifier, (sen.duplicate() for sen in self.sensors))
 
     def to_radiance(self):
         """Return sensors grid as a Radiance string."""
@@ -166,18 +200,18 @@ class SensorGrid(object):
 
         Args:
             folder: Target folder.
-            file_name: Optional file name without extension (Default: self.name).
+            file_name: Optional file name without extension. (Default: self.identifier)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
         Returns:
             Full path to newly created file.
         """
-        name = file_name or self.name + '.pts'
-        if not name.endswith('.pts'):
-            name += '.pts'
+        identifier = file_name or self.identifier + '.pts'
+        if not identifier.endswith('.pts'):
+            identifier += '.pts'
         return futil.write_to_file_by_name(
-            folder, name, self.to_radiance() + '\n', mkdir)
+            folder, identifier, self.to_radiance() + '\n', mkdir)
 
     def to_files(self, folder, count, base_name=None, mkdir=False):
         """Split this sensor grid and write them to several files.
@@ -185,7 +219,8 @@ class SensorGrid(object):
         Args:
             folder: Target folder.
             count: Number of files.
-            base_name: Optional name for base_name for sensor files (Default: self.name).
+            base_name: Optional text for a unique base_name for sensor files.
+                (Default: self.identifier)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
@@ -194,14 +229,14 @@ class SensorGrid(object):
             to the grid.
         """
         count = typing.int_in_range(count, 1, input_name='file count')
-        base_name = base_name or self.name
+        base_name = base_name or self.identifier
         if count == 1 or self.count == 0:
             full_path = self.to_file(folder, base_name, mkdir)
             return [{
-                'name': base_name if not self.name.endswith('.pts') \
-                    else self.name.replace('.pts', ''),
-                'path': self.name + '.pts' if not self.name.endswith('.pts') \
-                    else self.name,
+                'name': base_name if not self.identifier.endswith('.pts') \
+                    else self.identifier.replace('.pts', ''),
+                'path': self.identifier + '.pts' if not self.identifier.endswith('.pts') \
+                    else self.identifier,
                 'full_path': full_path,
                 'count': self.count
             }]
@@ -243,10 +278,17 @@ class SensorGrid(object):
 
     def to_dict(self):
         """Convert SensorGrid to a dictionary."""
-        return {
-            "name": self.name,
+        base = {
+            "identifier": self.identifier,
             "sensors": [sen.to_dict() for sen in self.sensors]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
+
+    def duplicate(self):
+        """Get a copy of this object."""
+        return self.__copy__()
 
     def __len__(self):
         """Number of sensors in this grid."""
@@ -256,10 +298,15 @@ class SensorGrid(object):
         """Get a sensor for an index."""
         return self.sensors[index]
 
+    def __copy__(self):
+        new_obj = SensorGrid(self.identifier, self.sensors)
+        new_obj._display_name = self._display_name
+        return new_obj
+
     def __eq__(self, value):
         if not isinstance(value, SensorGrid) or len(value) != len(self):
             return False
-        if self.name != value.name:
+        if self.identifier != value.identifier:
             return False
         if self.sensors != value.sensors:
             return False
@@ -278,4 +325,4 @@ class SensorGrid(object):
 
     def __repr__(self):
         """Return sensors and directions."""
-        return 'SensorGrid::{}::#{}'.format(self._name, len(self.sensors))
+        return 'SensorGrid::{}::#{}'.format(self._identifier, len(self.sensors))

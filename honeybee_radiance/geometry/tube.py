@@ -21,8 +21,9 @@ class Tube(Cylinder):
                 rad
 
     Args:
-        name: Geometry name as a string. Do not use white spaces or special
-            characters.
+        identifier: Text string for a unique Geometry ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         center_pt_start: Tube start center point as (x, y, z)
             (Default: (0, 0 ,0)).
         center_pt_end: Tube end center point as (x, y, z) (Default: (0, 0 ,10)).
@@ -33,7 +34,8 @@ class Tube(Cylinder):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * center_pt_start
         * center_pt_end
         * radius

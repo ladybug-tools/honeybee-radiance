@@ -17,6 +17,9 @@ class View(object):
     u"""A Radiance view.
 
     Args:
+        identifier: Text string for a unique View ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         position: Set the view position (-vp) to (x, y, z). This is the focal
             point of a perspective view or the center of a parallel projection.
             Default: (0, 0, 0)
@@ -54,6 +57,18 @@ class View(object):
         lift: Set the view lift (-vl) to a value. This is the amount the
             actual image will be lifted up from the specified view.
 
+    Properties:
+        * identifier
+        * display_name
+        * position
+        * direction
+        * up_vector
+        * type
+        * h_size
+        * v_size
+        * shift
+        * lift
+
     Usage:
 
     .. code-block:: python
@@ -84,10 +99,10 @@ class View(object):
           0.000 -vh 29.341 -vv 32.204 -vs 0.500 -vl 0.500 -vo 100.000
     """
 
-    def __init__(self, name, position=None, direction=None, up_vector=None, type='v',
+    def __init__(self, identifier, position=None, direction=None, up_vector=None, type='v',
                  h_size=60, v_size=60, shift=None, lift=None):
         u"""Create a view."""
-        self.name = name
+        self.identifier = identifier
         self._position = TupleOption(
             'vp', 'view position', position if position is not None else (0, 0, 0)
         )
@@ -109,13 +124,30 @@ class View(object):
         self._aft_clip = NumericOption('va', 'view aft clip')
 
     @property
-    def name(self):
-        """AnalysisGrid name."""
-        return self._name
+    def identifier(self):
+        """Get or set a text string for a uniqu View identifier."""
+        return self._identifier
 
-    @name.setter
-    def name(self, n):
-        self._name = typing.valid_string(n)
+    @identifier.setter
+    def identifier(self, n):
+        self._identifier = typing.valid_rad_string(n)
+
+    @property
+    def display_name(self):
+        """Get or set a string for the object name without any character restrictions.
+
+        If not set, this will be equal to the identifier.
+        """
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def is_fisheye(self):
@@ -344,7 +376,8 @@ class View(object):
         .. code-block:: python
 
             {
-            'name': str,
+            'identifier': str,  # View identifier
+            "display_name": str,  # View display name
             'position': [],  # list with position value
             'direction': [],  # list with direction value
             'up_vector': [],  # list with up_vector value
@@ -359,7 +392,7 @@ class View(object):
         """
 
         view = cls(
-            name=view_dict['name'],
+            identifier=view_dict['identifier'],
             position=view_dict['position'],
             direction=view_dict['direction'],
             up_vector=view_dict['up_vector'],
@@ -372,23 +405,25 @@ class View(object):
         view.fore_clip = view_dict['fore_clip']
         view.aft_clip = view_dict['aft_clip']
 
+        if 'display_name' in view_dict and view_dict['display_name'] is not None:
+            view.display_name = view_dict['display_name']
         return view
 
     @classmethod
-    def from_string(cls, name, view_string):
+    def from_string(cls, identifier, view_string):
         """Create a view object from a string.
 
         This method is similar to from_string method for radiance parameters with the
         difference that all the parameters that are not related to view will be ignored.
         """
         mapper = {
-            'name': name, 'vp': 'position', 'vd': 'direction', 'vu': 'up_vector',
-            'vh': 'h_size', 'vv': 'v_size', 'vs': 'shift', 'vl': 'lift',
-            'vo': 'fore_clip', 'va': 'aft_clip'
+            'identifier': identifier, 'vp': 'position', 'vd': 'direction',
+            'vu': 'up_vector', 'vh': 'h_size', 'vv': 'v_size', 'vs': 'shift',
+            'vl': 'lift', 'vo': 'fore_clip', 'va': 'aft_clip'
         }
 
         base = {
-            'name': name,
+            'identifier': identifier,
             'position': None,
             'direction': None,
             'up_vector': None,
@@ -415,25 +450,27 @@ class View(object):
         return cls.from_dict(base)
 
     @classmethod
-    def from_file(self, file_path, name=None):
+    def from_file(cls, file_path, identifier=None):
         """Create view from a view file.
 
         Args:
             file_path: Full path to view file.
-            name: Optional name for this view. View name will be set to file name if not
-                provided.
+            identifier: Optional ext string for a unique View ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files. If None, this will be set
+                to file name. (Default: None)
         """
 
         if not os.path.isfile(file_path):
             raise IOError("Can't find {}.".format(file_path))
-        name = name or os.path.split(os.path.splitext(file_path)[0])[-1]
+        identifier = identifier or os.path.split(os.path.splitext(file_path)[0])[-1]
 
         with open(file_path, 'r') as input_data:
             view_string = str(input_data.read()).rstrip()
 
         assert view_string[:3] == 'rvu', \
             'View file must start with rvu not %s' % view_string[:3]
-        return self.from_string(name, view_string)
+        return cls.from_string(identifier, view_string)
 
     def dimension(self, x_res=None, y_res=None):
         """Get dimensions for this view as '-x %d -y %d [-ld-]'.
@@ -552,7 +589,7 @@ class View(object):
                     * (y_div_count - 1)
 
             # create a copy from the current copy
-            _n_view = View('%s_%d' % (self.name, view_count))
+            _n_view = View('%s_%d' % (self.identifier, view_count))
 
             # update parameters
             _n_view.h_size = _vh
@@ -578,8 +615,8 @@ class View(object):
 
     def to_dict(self):
         """Translate view to a dictionary."""
-        return {
-            'name': self.name,
+        base = {
+            'identifier': self.identifier,
             'position': self.position.value,
             'direction': self.direction.value,
             'up_vector': self.up_vector.value,
@@ -591,13 +628,16 @@ class View(object):
             'fore_clip': self.fore_clip.value,
             'aft_clip': self.aft_clip.value
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def to_file(self, folder, file_name=None, mkdir=False):
         """Save view to a file.
 
         Args:
             folder: Target folder.
-            file_name: Optional file name without extension (Default: self.name).
+            file_name: Optional file name without extension (Default: self.identifier).
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
@@ -605,10 +645,10 @@ class View(object):
             Full path to newly created file.
         """
 
-        name = file_name or self.name + '.vf'
+        identifier = file_name or self.identifier + '.vf'
         # add rvu before the view itself
         content = 'rvu ' + self.to_radiance()
-        return futil.write_to_file_by_name(folder, name, content, mkdir)
+        return futil.write_to_file_by_name(folder, identifier, content, mkdir)
 
     def move(self, vector):
         """Move view."""
@@ -636,9 +676,21 @@ class View(object):
         self.direction = rotated_plane.x
         self.up_vector = rotated_plane.n
 
+    def duplicate(self):
+        """Get a copy of this object."""
+        return self.__copy__()
+
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
+
+    def __copy__(self):
+        new_obj = View(
+            self.identifier, position=self.position, direction=self.direction,
+            up_vector=self.up_vector, type=self.type, h_size=self.h_size,
+            v_size=self.v_size, shift=self.shift, lift=self.lift)
+        new_obj._display_name = self._display_name
+        return new_obj
 
     def __repr__(self):
         """View representation."""

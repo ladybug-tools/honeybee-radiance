@@ -18,15 +18,15 @@ for f in os.listdir(folders.modifierset_lib):
     if os.path.isfile(f_path) and f_path.endswith('.json'):
         with open(f_path, 'r') as json_file:
             mod_set_dict = json.load(json_file)
-        for mod_set_name in mod_set_dict:
+        for mod_set_id in mod_set_dict:
             try:
                 modifierset = ModifierSet.from_dict_abridged(
-                    mod_set_dict[mod_set_name], _rad_modifiers)
+                    mod_set_dict[mod_set_id], _rad_modifiers)
                 modifierset.lock()
-                _json_modifier_sets[mod_set_name] = modifierset
+                _json_modifier_sets[mod_set_id] = modifierset
             except Exception:
                 raise ValueError(
                         'Honeybee JSON file {} is not formatted correctly for inclusion '
                         'in the honeybee_radiance modifier set library.\nJSONs must be '
-                        'formatted with ModifierSet names as keys and abridged '
+                        'formatted with ModifierSet identifiers as keys and abridged '
                         'ModifierSet dictionaries as values'.format(f_path))

@@ -36,22 +36,22 @@ def test_default_modifiers():
     vertices_wall = [[0, 1, 0], [0, 2, 0], [0, 2, 2], [0, 0, 2]]
     vertices_wall_2 = list(reversed(vertices_wall))
 
-    wf = Face.from_vertices('wall face', vertices_parent_wall)
-    wdr = Door.from_vertices('wall door', vertices_wall)
+    wf = Face.from_vertices('wall_face', vertices_parent_wall)
+    wdr = Door.from_vertices('wall_door', vertices_wall)
     wf.add_door(wdr)
-    Room('Test Room 1', [wf])
+    Room('TestRoom1', [wf])
     assert wdr.properties.radiance.modifier == generic_door
 
-    wf2 = Face.from_vertices('wall face2', vertices_parent_wall_2)
-    wdr2 = Door.from_vertices('wall door2', vertices_wall_2)
+    wf2 = Face.from_vertices('wall_face2', vertices_parent_wall_2)
+    wdr2 = Door.from_vertices('wall_door2', vertices_wall_2)
     wdr.is_glass = True
     wdr2.is_glass = True
     wf2.add_door(wdr2)
-    Room('Test Room 2', [wf2])
+    Room('TestRoom2', [wf2])
     wdr.set_adjacency(wdr2)
     assert wdr.properties.radiance.modifier == generic_interior_window
 
-    ra = Door.from_vertices('wall door', vertices_parent_wall)
+    ra = Door.from_vertices('wall_door', vertices_parent_wall)
     ra.is_glass = True
     assert ra.properties.radiance.modifier == generic_exterior_window
 
@@ -99,7 +99,7 @@ def test_duplicate():
 def test_to_dict():
     """Test the Door to_dict method with radiance properties."""
     door = Door.from_vertices(
-        'front door', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
+        'front_door', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
     painted_door = Plastic.from_single_reflectance('PaintedDoor', 0.75)
 
     drd = door.to_dict()
@@ -112,7 +112,7 @@ def test_to_dict():
     drd = door.to_dict()
     assert 'modifier' in drd['properties']['radiance']
     assert drd['properties']['radiance']['modifier'] is not None
-    assert drd['properties']['radiance']['modifier']['name'] == 'PaintedDoor'
+    assert drd['properties']['radiance']['modifier']['identifier'] == 'PaintedDoor'
 
 
 def test_from_dict():

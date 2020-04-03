@@ -13,8 +13,9 @@ class Trans(Material):
     """Radiance translucent material.
 
     Args:
-        name: Material name as a string. Do not use white space or special
-            character.
+        identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
         r_reflectance: Reflectance for red. The value should be between 0 and 1
             (Default: 0).
         g_reflectance: Reflectance for green. The value should be between 0 and 1
@@ -37,7 +38,8 @@ class Trans(Material):
             primitive is defined based on other primitives. (Default: [])
 
     Properties:
-        * name
+        * identifier
+        * display_name
         * r_reflectance
         * g_reflectance
         * b_reflectance
@@ -54,11 +56,11 @@ class Trans(Material):
     __slots__ = ('_r_reflectance', '_g_reflectance', '_b_reflectance',
                  '_specularity', '_roughness', '_transmitted_diff', '_transmitted_spec')
 
-    def __init__(self, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+    def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
                  specularity=0.0, roughness=0.0, transmitted_diff=0.0,
                  transmitted_spec=0.0, modifier="void", dependencies=None):
         """Create trans material."""
-        Material.__init__(self, name, modifier=modifier,
+        Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
         self.r_reflectance = r_reflectance
         self.g_reflectance = g_reflectance
@@ -186,7 +188,7 @@ class Trans(Material):
 
     @classmethod
     def from_reflected_specularity(
-            cls, name, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+            cls, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
             reflected_specularity=0.0, roughness=0.0, transmitted_diff=0.0,
             transmitted_spec=0.0, modifier="void", dependencies=None):
         """Create trans material from reflected specularity.
@@ -194,9 +196,10 @@ class Trans(Material):
         Note:
         https://radiance-online.org//community/workshops/2010-freiburg/PDF/DavidMead.pdf
 
-        args:
-            name: Material name as a string. Do not use white space or special
-                character.
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+            or special characters. This will be used to identify the object across
+            a model and in the exported Radiance files.
             r_reflectance: Reflectance for red. The value should be between 0 and 1
                 (Default: 0).
             g_reflectance: Reflectance for green. The value should be between 0 and 1
@@ -254,17 +257,20 @@ class Trans(Material):
                 'This material is physically impossible to create!\n'
                 'You need to adjust the inputs for diffuse reflectance values.')
 
-        return cls(name, a1, a2, a3, a4, a5, a6, a7, modifier, dependencies=dependencies)
+        return cls(identifier, a1, a2, a3, a4, a5, a6, a7, modifier,
+                   dependencies=dependencies)
 
     @classmethod
     def from_single_reflectance(
-        cls, name, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
+        cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
         transmitted_diff=0.0, transmitted_spec=0.0, modifier="void",
             dependencies=None):
         """Create trans material with single reflectance value.
 
-        args:
-            name: Material name as a string. Do not use white space or special character
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
@@ -282,7 +288,7 @@ class Trans(Material):
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
         """
-        return cls(name, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
+        return cls(identifier, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
                    b_reflectance=rgb_reflectance, specularity=specularity,
                    roughness=roughness, transmitted_diff=transmitted_diff,
                    transmitted_spec=transmitted_spec, modifier=modifier,
@@ -300,7 +306,8 @@ class Trans(Material):
             {
             "modifier": "",  # primitive modifier (Default: "void")
             "type": "trans",  # primitive type
-            "name": "",  # primitive name
+            "identifier": "",  # primitive identifier
+            "display_name": "",  # primitive display name
             "values": [],  # values
             "dependencies": []
             }
@@ -317,7 +324,7 @@ class Trans(Material):
         values = primitive_dict['values'][2]
 
         cls_ = cls(
-            name=primitive_dict["name"],
+            identifier=primitive_dict["identifier"],
             r_reflectance=values[0],
             g_reflectance=values[1],
             b_reflectance=values[2],
@@ -327,13 +334,15 @@ class Trans(Material):
             transmitted_spec=values[6],
             modifier=modifier,
             dependencies=dependencies)
+        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+            cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
         return cls_
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, data):
         """Initialize Trans from a dictionary.
 
         Args:
@@ -342,9 +351,9 @@ class Trans(Material):
         .. code-block:: python
 
             {
-            "modifier": {} or void,  # Material modifier
             "type": "trans",  # Material type
-            "name": "", // Material Name
+            "identifier": "", // Material identifier
+            "display_name": string  # Material display name
             "r_reflectance": float,  # Reflectance for red
             "g_reflectance": float,  # Reflectance for green
             "b_reflectance": float,  # Reflectance for blue
@@ -353,34 +362,38 @@ class Trans(Material):
             "transmitted_diff": float,
             "transmitted_spec": float,
             "dependencies": []
+            "modifier": {} or void,  # Material modifier
             }
         """
-        assert 'type' in input_dict, 'Input dictionary is missing "type".'
-        if input_dict['type'] != cls.__name__.lower():
+        assert 'type' in data, 'Input dictionary is missing "type".'
+        if data['type'] != cls.__name__.lower():
             raise ValueError(
                 'Type must be %s not %s.' % (cls.__name__.lower(),
-                                             input_dict['type'])
+                                             data['type'])
             )
-        modifier, dependencies = Material.filter_dict_input(input_dict)
+        modifier, dependencies = Material.filter_dict_input(data)
 
-        return cls(
-            name=input_dict["name"],
-            r_reflectance=input_dict["r_reflectance"],
-            g_reflectance=input_dict["g_reflectance"],
-            b_reflectance=input_dict["b_reflectance"],
-            specularity=input_dict["specularity"],
-            roughness=input_dict["roughness"],
-            transmitted_diff=input_dict["transmitted_diff"],
-            transmitted_spec=input_dict["transmitted_spec"],
+        new_obj = cls(
+            identifier=data["identifier"],
+            r_reflectance=data["r_reflectance"],
+            g_reflectance=data["g_reflectance"],
+            b_reflectance=data["b_reflectance"],
+            specularity=data["specularity"],
+            roughness=data["roughness"],
+            transmitted_diff=data["transmitted_diff"],
+            transmitted_spec=data["transmitted_spec"],
             modifier=modifier,
             dependencies=dependencies)
+        if 'display_name' in data and data['display_name'] is not None:
+            new_obj.display_name = data['display_name']
+        return new_obj
 
     def to_dict(self):
         """Translate this object to a dictionary."""
-        return {
+        base = {
             'modifier': self.modifier.to_dict(),
             'type': self.__class__.__name__.lower(),
-            'name': self.name,
+            'identifier': self.identifier,
             'r_reflectance': self.r_reflectance,
             'g_reflectance': self.g_reflectance,
             'b_reflectance': self.b_reflectance,
@@ -390,10 +403,15 @@ class Trans(Material):
             'transmitted_spec': self.transmitted_spec,
             'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
+        if self._display_name is not None:
+            base['display_name'] = self.display_name
+        return base
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        return self.__class__(
-            self.name, self.r_reflectance, self.g_reflectance, self.b_reflectance,
+        new_obj = self.__class__(
+            self.identifier, self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness, self.transmitted_diff,
             self.transmitted_spec, mod, depend)
+        new_obj._display_name = self._display_name
+        return new_obj
