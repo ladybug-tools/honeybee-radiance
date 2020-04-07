@@ -56,7 +56,7 @@ class Void(object):
 
     def to_dict(self):
         """Return void."""
-        return self.to_radiance()
+        return {'type': 'void'}
 
     def ToString(self):
         """Overwrite .NET ToString."""
