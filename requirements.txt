@@ -1,2 +1,2 @@
-honeybee-core>=1.10.0
-honeybee-radiance-command>=1.0.0
+honeybee-core==1.26.1
+honeybee-radiance-command==1.0.0

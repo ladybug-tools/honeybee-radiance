@@ -23,7 +23,7 @@ jobs:
     before_install:
     - npm i -g npm@6.6.0
     python:
-    - "3.6"
+    - "3.7"
     install:
     - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 10
     - pip install -r dev-requirements.txt
