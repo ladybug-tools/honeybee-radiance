@@ -56,7 +56,12 @@ class Void(object):
 
     def to_dict(self):
         """Return void."""
+        #return 'void'
         return {'type': 'void'}
+
+    @classmethod
+    def from_dict(cls, d):
+        return cls()
 
     def ToString(self):
         """Overwrite .NET ToString."""
@@ -461,9 +466,11 @@ class Primitive(object):
             # import the module here (instead of at top) to avoid a circular import
             import honeybee_radiance.mutil as mutil  # imports all modifiers classes
 
+        # TODO: I think we can get rid of the first if condition, since
+        # Void now returns dict for from_dict.
         # try to get modifier
         if input_dict['modifier'] == 'void':
-            modifier = 'void'
+            modifier = Void
         else:
             modifier = mutil.dict_to_modifier(input_dict['modifier'])
 

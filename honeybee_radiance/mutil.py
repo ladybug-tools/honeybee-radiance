@@ -3,8 +3,7 @@ import honeybee_radiance.modifier.material as material
 import honeybee_radiance.modifier.mixture as mixture
 import honeybee_radiance.modifier.pattern as pattern
 import honeybee_radiance.modifier.texture as texture
-from honeybee_radiance.primitive import Primitive
-
+from honeybee_radiance.primitive import Primitive, Void
 
 def modifier_class_from_type_string(type_string):
     """Get the class of any modifier using its 'type' string.
@@ -21,6 +20,8 @@ def modifier_class_from_type_string(type_string):
             in the dictionary representation of the modifier.
     """
     _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+    if type_string == 'void':
+        return Void
     if type_string in Primitive.MATERIALTYPES:
         target_module = material
     elif type_string in Primitive.MIXTURETYPES:
@@ -34,7 +35,7 @@ def modifier_class_from_type_string(type_string):
 
     class_name = type_string.capitalize() if type_string not in _mapper \
         else _mapper[type_string]
-    
+
     return getattr(target_module, class_name)
 
 
@@ -44,12 +45,11 @@ def dict_to_modifier(mdict):
     The returned object will have the correct class type and will not be the
     generic Modifier base class. Note that this function is recursive and will
     re-serialize modifiers of modifiers.
-    
+
     Args:
         mdict: A dictionary of any Radiance Modifier.
     """
     mod_class = modifier_class_from_type_string(mdict['type'])
-
     if 'values' in mdict:
         return mod_class.from_primitive_dict(mdict)
     else:
