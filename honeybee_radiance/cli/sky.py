@@ -1,4 +1,4 @@
-"""honeybee radiance sky commands.""" 
+"""honeybee radiance sky commands."""
 
 try:
     import click
@@ -12,6 +12,7 @@ import honeybee_radiance.lightsource.sky as hbsky
 import logging
 
 _logger = logging.getLogger(__name__)
+
 
 @click.group(help='Commands to generate Radiance skies.')
 def sky():

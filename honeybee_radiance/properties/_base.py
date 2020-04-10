@@ -3,7 +3,6 @@
 from ..modifier import Modifier
 from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..lib.modifiers import black
-from ..lib.modifiersets import generic_modifier_set_visible
 
 
 class _GeometryRadianceProperties(object):

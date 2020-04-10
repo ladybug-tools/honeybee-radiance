@@ -1,8 +1,6 @@
 """A collection of auxiliary functions for working with radiance files and objects."""
 import re
 import os
-import collections
-from honeybee_radiance_command.cutil import parse_radiance_options
 
 
 # TODO: Add support for comments [#] and commands [!]
@@ -56,7 +54,7 @@ def parse_from_file(file_path):
 
 
 def string_to_dicts(string):
-    """Convert a radiance string to a list of primtive dictionaries.
+    """Convert a radiance string to a list of primitive dictionaries.
 
     These primitive dictionaries can be seralized to honeybee-radiance Python
     objects using the from_primitive_dict methods on all primitive classes.
@@ -64,7 +62,7 @@ def string_to_dicts(string):
     If the primitive modifier is not void or the primitive has other dependencies,
     the dependency must also be part of the input string and this method will
     ensure that the dependent output dictionaries are correctly nested so that
-    they can be correctly serilaized.
+    they can be correctly serialized.
 
     Returns:
         A list of dictionaries.
@@ -175,7 +173,7 @@ def parse_header(filepath):
     try:
         inf = open(filepath, 'r', encoding='utf-8')
     except:
-        #python 2
+        # python 2
         inf = open(filepath, 'r')
     try:
         first_line = next(inf)
@@ -184,7 +182,7 @@ def parse_header(filepath):
                 'File with Radiance header must start with #?RADIANCE '
                 'not {}.'.format(first_line)
                 )
-        header_lines =[first_line]
+        header_lines = [first_line]
         for line in inf:
             header_lines.append(line)
             if line[:7] == 'FORMAT=':

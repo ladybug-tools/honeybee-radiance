@@ -11,7 +11,6 @@ Usage:
     folders.radiance_path = "C:/Radiance/bin"
 """
 import ladybug.config as lb_config
-import honeybee.config as hb_config
 
 import os
 import platform
@@ -42,7 +41,7 @@ class Folders(object):
 
     def __init__(self, config_file=None, mute=True):
         self.mute = bool(mute)  # set the mute value
-        self.config_file = config_file  # load paths from the config JSON file 
+        self.config_file = config_file  # load paths from the config JSON file
 
     @property
     def radiance_path(self):
@@ -236,7 +235,7 @@ class Folders(object):
         """Find the the user template library in its default location.
 
         The ladybug_tools/resources/standards/honeybee_standards folder will be
-        checked first, which can conatain libraries that are not overwritten with
+        checked first, which can contain libraries that are not overwritten with
         the update of the honeybee_radiance package. If no such folder is found,
         this method defaults to the lib/library/ folder within this package.
         """

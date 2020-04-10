@@ -26,7 +26,7 @@ def get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year):
         end_time = datetime.strptime(end_time, '%H:%M')
     except ValueError as e:
         raise ValueError('Wrong input for end time:\n\t{}'.format(e))
-    
+
     org_end_time = copy.copy(end_time)
     if end_time.minute != 0:
         if end_time.hour != 23:
@@ -53,7 +53,7 @@ def get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year):
         for start_index, h in enumerate(hoys):
             if round(60 * h) % 60 >= start_time.minute:
                 break
-    
+
     if org_end_time.minute != 0:
         for end_index, h in enumerate(reversed(hoys)):
             if (60 * h) % 60 <= org_end_time.minute:

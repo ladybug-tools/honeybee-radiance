@@ -3,7 +3,7 @@
 The term "Primitive" can refer to either a geometry object or a modifer that can
 be applied to geometry in order to change its reflectance, transmittance, etc.
 All primitives share a similar format for how they are represented within .rad
-files and the Primitive class provides common code used to serialize/de-serrialize
+files and the Primitive class provides common code used to serialize/de-serialize
 such objects from .rad strings among other functionalities.
 
 Because the Primitive class is so abstract, you most likely want to use one of
@@ -221,7 +221,8 @@ class Primitive(object):
             values=primitive_dict['values'],
             dependencies=dependencies
         )
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict and \
+                primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         if cls_.type == 'primitive':
@@ -313,7 +314,8 @@ class Primitive(object):
 
             # This will erase all values except the first line, which has 9 custom items
             primitive.values = [
-                [0.5, 0.5, 0.5, "/usr/oakfloor.pic", ".", "frac(U)", "frac(V)", "-s", 1.1667],
+                [0.5, 0.5, 0.5, "/usr/oakfloor.pic", ".", "frac(U)", "frac(V)",
+                 "-s", 1.1667],
                 [],
                 []
                 ]
@@ -337,7 +339,8 @@ class Primitive(object):
         else:
             try:
                 assert modifier.is_modifier, \
-                    'A {} cannot be a modifier. Modifiers must be materials, mixtures, ' \
+                    'A {} cannot be a modifier. ' \
+                    'Modifiers must be materials, mixtures, ' \
                     'textures or patterns'.format(type(modifier))
             except AttributeError:
                 raise TypeError('Invalid modifier: %s' % modifier)

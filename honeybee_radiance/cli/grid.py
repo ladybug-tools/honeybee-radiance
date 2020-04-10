@@ -38,13 +38,13 @@ def split_grid(grid_file, count, folder, log_file):
         count: Maximum number of sensors in new files. The number will be rounded to
             closest round number for each file. For example if the input file has 21
             sensors and input count is set to 5 this command will generate 4 files where
-            the first three files will have 5 sensors and the last file will have 6. 
+            the first three files will have 5 sensors and the last file will have 6.
     """
     try:
         grid = sensorgrid.SensorGrid.from_file(grid_file)
         file_count = int(round(grid.count / count))
         files = grid.to_files(folder, file_count, mkdir=True)
-        
+
         log_file.write(json.dumps(files))
     except Exception:
         _logger.exception('Failed to split grid file.')
