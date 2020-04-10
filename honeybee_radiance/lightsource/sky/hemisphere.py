@@ -1,7 +1,6 @@
 """Radiance sky hemisphere."""
 import honeybee.typing as typing
 import ladybug.futil as futil
-import os
 
 
 class Hemisphere(object):

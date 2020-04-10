@@ -11,6 +11,7 @@ except:
     # python 3
     pass
 
+
 class SensorGrid(object):
     """A grid of sensors.
 
@@ -125,11 +126,10 @@ class SensorGrid(object):
 
         line_count = end_line - start_line + 1
 
-
         sensors = []
         with open(file_path, 'r') as inf:
             for _ in range(start_line):
-                line = next(inf)
+                next(inf)
 
             for count, l in enumerate(inf):
                 if not count < line_count:
@@ -187,10 +187,6 @@ class SensorGrid(object):
         """Number of sensors."""
         return len(self._sensors)
 
-    def duplicate(self):
-        """Duplicate SensorGrid."""
-        return SensorGrid(self.identifier, (sen.duplicate() for sen in self.sensors))
-
     def to_radiance(self):
         """Return sensors grid as a Radiance string."""
         return "\n".join((ap.to_radiance() for ap in self._sensors))
@@ -232,14 +228,14 @@ class SensorGrid(object):
         base_name = base_name or self.identifier
         if count == 1 or self.count == 0:
             full_path = self.to_file(folder, base_name, mkdir)
-            return [{
-                'name': base_name if not self.identifier.endswith('.pts') \
+            return [
+                {'name': base_name if not self.identifier.endswith('.pts')
                     else self.identifier.replace('.pts', ''),
-                'path': self.identifier + '.pts' if not self.identifier.endswith('.pts') \
-                    else self.identifier,
-                'full_path': full_path,
-                'count': self.count
-            }]
+                 'path': self.identifier + '.pts'
+                    if not self.identifier.endswith('.pts') else self.identifier,
+                 'full_path': full_path,
+                 'count': self.count}
+            ]
         # calculate sensor count in each file
         sc = int(round(self.count / count))
         sensors = iter(self._sensors)
@@ -299,7 +295,7 @@ class SensorGrid(object):
         return self.sensors[index]
 
     def __copy__(self):
-        new_obj = SensorGrid(self.identifier, self.sensors)
+        new_obj = SensorGrid(self.identifier, (sen.duplicate() for sen in self.sensors))
         new_obj._display_name = self._display_name
         return new_obj
 

@@ -98,7 +98,7 @@ class ModelRadianceProperties(object):
         """A list of all unique modifiers assigned to Faces, Apertures and Doors.
 
         This includes both objects that are a part of Rooms as well as orphaned
-        objects. It does not include the modfiers of any shades assigned to these
+        objects. It does not include the modifiers of any shades assigned to these
         objects. Nor does it include any blk modifiers.
         """
         modifiers = []
@@ -329,7 +329,10 @@ class ModelRadianceProperties(object):
             self._check_and_add_obj_modifier(shade, modifiers)
 
     def _check_and_add_room_modifier_shade_blk(self, room, modifiers):
-        """Check if a modifier_blk is assigned to a Room's shades and add it to a list."""
+        """Check if a modifier_blk is assigned to a Room's shades.
+
+        This method adds the modifier_blk to a list if assigned.
+        """
         self._check_and_add_obj_modifier_shade_blk(room, modifiers)
         for face in room.faces:  # check all Face modifiers
             self._check_and_add_face_modifier_shade_blk(face, modifiers)
@@ -393,7 +396,7 @@ class ModelRadianceProperties(object):
     def _instance_in_array(object_instance, object_array):
         """Check if a specific object instance is already in an array.
 
-        This can be much faster than  `if object_instance in object_arrary`
+        This can be much faster than  `if object_instance in object_array`
         when you expect to be testing a lot of the same instance of an object for
         inclusion in an array since the builtin method uses an == operator to
         test inclusion.

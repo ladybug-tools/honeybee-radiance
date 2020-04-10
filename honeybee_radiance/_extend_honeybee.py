@@ -17,9 +17,6 @@ from .properties.door import DoorRadianceProperties
 from .writer import model_to_rad, room_to_rad, face_to_rad, shade_to_rad, \
     aperture_to_rad, door_to_rad
 
-import honeybee.writer.face as face_writer
-from .writer import face_to_rad
-
 
 # set a hidden radiance attribute on each core geometry Property class to None
 # define methods to produce radiance property instances on each Property instance

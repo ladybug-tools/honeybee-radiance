@@ -11,7 +11,7 @@ class RoomRadianceProperties(object):
         host: A honeybee_core Room object that hosts these properties.
         modifier_set: A honeybee ModifierSet object to specify all default
             modifiers for the Faces of the Room. If None, the Room will use
-            the honeybee default modifier set, which is only representitive
+            the honeybee default modifier set, which is only representative
             of typical indoor conditions in the visible spectrum. Default: None.
 
     Properties:

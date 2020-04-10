@@ -66,7 +66,6 @@ class CertainIrradiance(Sky):
         self._ground_hemisphere = Ground()
         self._sky_hemisphere = Hemisphere()
 
-
     @classmethod
     def from_illuminance(cls, illuminance=100000, ground_reflectance=0.2):
         """Create sky with certain illuminance.

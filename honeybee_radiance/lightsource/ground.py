@@ -4,7 +4,6 @@ Ground is usually used as part of the sky definition.
 """
 import honeybee.typing as typing
 import ladybug.futil as futil
-import os
 
 
 class Ground(object):

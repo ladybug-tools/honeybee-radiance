@@ -12,7 +12,7 @@ def primitive_class_from_type_string(type_string):
     Args:
         type_string: Text for the name of a primitive module/class. This should
             usually be lowercase and should be the same as the 'type' key used
-            in the dictionary representation of the primitve.
+            in the dictionary representation of the primitive.
     """
     if type_string in Primitive.GEOMETRYTYPES:
         target_module = geometry
@@ -32,7 +32,7 @@ def dict_to_primitive(pdict):
     The returned object will have the correct class type and will not be the
     generic Primitive base class. Note that this function is recursive and will
     re-serialize modifiers of modifiers.
-    
+
     Args:
         pdict: A dictionary of any Radiance Primitive (Geometry or Modifier).
     """

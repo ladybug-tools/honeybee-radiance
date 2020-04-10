@@ -2,14 +2,13 @@
 u"""Create a Radiance view."""
 from __future__ import division
 import honeybee.typing as typing
-import honeybee_radiance.reader as reader
+from honeybee_radiance_command.cutil import parse_radiance_options
 import math
 import os
-from copy import deepcopy
 import ladybug_geometry.geometry3d.pointvector as pv
 import ladybug_geometry.geometry3d.plane as plane
 import ladybug.futil as futil
-from honeybee_radiance_command.options import BoolOption, TupleOption, \
+from honeybee_radiance_command.options import TupleOption, \
     StringOptionJoined, NumericOption
 
 
@@ -99,8 +98,8 @@ class View(object):
           0.000 -vh 29.341 -vv 32.204 -vs 0.500 -vl 0.500 -vo 100.000
     """
 
-    def __init__(self, identifier, position=None, direction=None, up_vector=None, type='v',
-                 h_size=60, v_size=60, shift=None, lift=None):
+    def __init__(self, identifier, position=None, direction=None, up_vector=None,
+                 type='v', h_size=60, v_size=60, shift=None, lift=None):
         u"""Create a view."""
         self.identifier = identifier
         self._position = TupleOption(
@@ -115,7 +114,7 @@ class View(object):
         self._h_size = NumericOption('vh', 'view horizontal size', h_size, min_value=0)
         self._v_size = NumericOption('vv', 'view vertical size', v_size, min_value=0)
         self._shift = NumericOption('vs', 'view shift', shift)
-        self._lift =  NumericOption('vl', 'view lift', lift)
+        self._lift = NumericOption('vl', 'view lift', lift)
         self._type = StringOptionJoined(
             'vt', 'view type', type, valid_values=['v', 'h', 'l', 'c', 'a', 's']
         )
@@ -125,7 +124,7 @@ class View(object):
 
     @property
     def identifier(self):
-        """Get or set a text string for a uniqu View identifier."""
+        """Get or set a text string for a unique View identifier."""
         return self._identifier
 
     @identifier.setter
@@ -437,7 +436,7 @@ class View(object):
         }
 
         # parse the string here
-        options = reader.parse_radiance_options(view_string)
+        options = parse_radiance_options(view_string)
 
         for opt, value in options.items():
             if opt in mapper:

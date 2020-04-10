@@ -18,7 +18,6 @@ from ._gendaylit import gendaylit
 from ladybug.sunpath import Sunpath as LBSunpath
 from ladybug.location import Location
 from ladybug.wea import Wea
-from ladybug.dt import DateTime
 
 import os
 import warnings
@@ -70,7 +69,7 @@ class Sunpath(object):
         self._north = n
 
     def _solar_calc(self, hoys, wea, output_type, leap_year=False,
-            reverse_vectors=False):
+                    reverse_vectors=False):
         """Calculate ."""
         solar_calc = LBSunpath.from_location(self.location, self.north)
         solar_calc.is_leap_year = leap_year
@@ -112,8 +111,8 @@ class Sunpath(object):
         return sun_vectors, sun_up_hours, radiance_values
 
     def to_file(self, folder='.', file_name='sunpath', hoys=None, wea=None,
-            output_type=0, leap_year=False, reverse_vectors=False,
-            split_mod_files=True):
+                output_type=0, leap_year=False, reverse_vectors=False,
+                split_mod_files=True):
         r"""Write sunpath to file.
 
         This method will generate a sunpath file and one or several files for sun
@@ -127,7 +126,8 @@ class Sunpath(object):
         This method also generate a mod file which includes all the modifiers in sunpath.
         mod file is usually used with rcontrib command to indicate the list of modifiers.
         Since rcontrib command has a hard limit of 10,000 modifiers in a single run you
-        can use split_mod_files to split the modifier files not to exceed 10,000 modifiers.
+        can use split_mod_files to split the modifier files not to exceed 10,000
+        modifiers.
 
         Args:
             folder: Target folder to write the sunpath files (default: '.')
@@ -204,7 +204,6 @@ class Sunpath(object):
                 f.close()
 
         return {'sunpath': fp, 'suns': sun_files}
-
 
     def to_dict(self):
         """Convert this sunpath to a dictionary.

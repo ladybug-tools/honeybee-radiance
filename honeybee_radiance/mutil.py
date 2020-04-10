@@ -36,7 +36,7 @@ def modifier_class_from_type_string(type_string):
 
     class_name = type_string.capitalize() if type_string not in _mapper \
         else _mapper[type_string]
-    
+
     return getattr(target_module, class_name)
 
 
@@ -46,7 +46,7 @@ def dict_to_modifier(mdict):
     The returned object will have the correct class type and will not be the
     generic Modifier base class. Note that this function is recursive and will
     re-serialize modifiers of modifiers.
-    
+
     Args:
         mdict: A dictionary of any Radiance Modifier.
     """

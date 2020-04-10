@@ -10,7 +10,7 @@ def shade_to_rad(shade, blk=False, minimal=False):
     does it include any states for dynamic geometry.
 
     Args:
-        shade: A honeyee Shade for which an RAD representation will be returned.
+        shade: A honeybee Shade for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Shade should
             be output, which is useful for direct studies and isolation studies
             to understand the contribution of individual apertures.
@@ -31,7 +31,7 @@ def door_to_rad(door, blk=False, minimal=False):
     any of the shades assigned to the Door.
 
     Args:
-        door: A honeyee Door for which an RAD representation will be returned.
+        door: A honeybee Door for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Door should
             be output, which is useful for direct studies and isolation studies
             to understand the contribution of individual apertures.
@@ -55,7 +55,7 @@ def aperture_to_rad(aperture, blk=False, minimal=False):
     the shade geometry assigned to the Aperture.
 
     Args:
-        aperture: A honeyee Aperture for which an RAD representation will be returned.
+        aperture: A honeybee Aperture for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Aperture should
             be output, which is useful for direct studies and isolation studies
             to understand the contribution of individual apertures.
@@ -80,7 +80,7 @@ def face_to_rad(face, blk=False, minimal=False):
     in the Face.
 
     Args:
-        face: A honeyee Face for which a RAD representation will be returned.
+        face: A honeybee Face for which a RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the Face should
             be output, which is useful for direct studies and isolation studies
             to understand the contribution of individual apertures.
@@ -109,7 +109,7 @@ def room_to_rad(room, blk=False, minimal=False):
     will only write the default state for each dynamic object.
 
     Args:
-        room: A honeyee Room for which an RAD representation will be returned.
+        room: A honeybee Room for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the geometry
             should be output, which is useful for direct studies and isolation
             studies to understand the contribution of individual apertures.
@@ -133,7 +133,7 @@ def model_to_rad(model, blk=False, minimal=False):
     correctly account for dynamic objects, the model_to_rad_folder should be used.
 
     Args:
-        model: A honeyee Model for which an RAD representation will be returned.
+        model: A honeybee Model for which an RAD representation will be returned.
         blk: Boolean to note whether the "blacked out" version of the geometry
             should be output, which is useful for direct studies and isolation
             studies to understand the contribution of individual apertures.
