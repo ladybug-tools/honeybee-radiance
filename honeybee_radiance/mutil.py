@@ -3,7 +3,7 @@ import honeybee_radiance.modifier.material as material
 import honeybee_radiance.modifier.mixture as mixture
 import honeybee_radiance.modifier.pattern as pattern
 import honeybee_radiance.modifier.texture as texture
-from honeybee_radiance.primitive import Primitive
+from honeybee_radiance.primitive import Primitive, Void
 
 
 def modifier_class_from_type_string(type_string):
@@ -21,6 +21,8 @@ def modifier_class_from_type_string(type_string):
             in the dictionary representation of the modifier.
     """
     _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+    if type_string == 'void':
+        return Void
     if type_string in Primitive.MATERIALTYPES:
         target_module = material
     elif type_string in Primitive.MIXTURETYPES:
