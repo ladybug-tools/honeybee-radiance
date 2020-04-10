@@ -1,5 +1,5 @@
-from honeybee_radiance.modifierset import ModifierSet, WallSet, FloorSet, \
-    RoofCeilingSet, ApertureSet, DoorSet, ShadeSet
+from honeybee_radiance.modifierset import ModifierSet, WallModifierSet, FloorModifierSet, \
+    RoofCeilingModifierSet, ApertureModifierSet, DoorModifierSet, ShadeModifierSet
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass
 
@@ -17,12 +17,12 @@ def test_modifierset_init():
     assert len(default_set.modifiers_unique) == 9
     assert len(default_set.modified_modifiers_unique) == 0
 
-    assert isinstance(default_set.wall_set, WallSet)
-    assert isinstance(default_set.floor_set, FloorSet)
-    assert isinstance(default_set.roof_ceiling_set, RoofCeilingSet)
-    assert isinstance(default_set.aperture_set, ApertureSet)
-    assert isinstance(default_set.door_set, DoorSet)
-    assert isinstance(default_set.shade_set, ShadeSet)
+    assert isinstance(default_set.wall_set, WallModifierSet)
+    assert isinstance(default_set.floor_set, FloorModifierSet)
+    assert isinstance(default_set.roof_ceiling_set, RoofCeilingModifierSet)
+    assert isinstance(default_set.aperture_set, ApertureModifierSet)
+    assert isinstance(default_set.door_set, DoorModifierSet)
+    assert isinstance(default_set.shade_set, ShadeModifierSet)
 
 
 def test_modifierset_defaults():
