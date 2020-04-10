@@ -48,6 +48,11 @@ class Void(object):
     @property
     def is_opaque(self):
         """False for a void."""
+        return False
+
+    @property
+    def is_void(self):
+        """True for a void."""
         return True
 
     def to_radiance(self):
@@ -56,7 +61,25 @@ class Void(object):
 
     def to_dict(self):
         """Return void."""
-        return self.to_radiance()
+        return {'type': 'void'}
+
+    @classmethod
+    def from_dict(cls, value):
+        return cls()
+
+    def __key(self):
+        """A tuple based on the object properties, useful for hashing."""
+        return (self.identifier,)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and \
+            self.__key() == other.__key()
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def ToString(self):
         """Overwrite .NET ToString."""
@@ -64,6 +87,9 @@ class Void(object):
 
     def __repr__(self):
         return self.to_radiance()
+
+
+VOID = Void()
 
 
 @lockable
@@ -77,7 +103,7 @@ class Primitive(object):
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
             (Default: "void").
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
-            refer to a line number in the radiance primitve definitions and the
+            refer to a line number in the radiance primitive definitions and the
             values in each array correspond to values occurring within each line.
             For example, [[], [], ['0.500', '0.500', '0.500', '0.000', '0.050']]
             corresponds to values one would find for a Plastic material.
@@ -100,6 +126,7 @@ class Primitive(object):
         * is_pattern
         * is_mixture
         * is_opaque
+        * is_void
     """
     __slots__ = ('_identifier', '_display_name', '_modifier', '_values',
                  '_is_opaque', '_dependencies', '_type', '_locked')
@@ -112,7 +139,7 @@ class Primitive(object):
     MATERIALTYPES = \
         set(('plastic', 'glass', 'trans', 'metal', 'mirror', 'illum',
              'mixedfunc', 'dielectric', 'transdata', 'light', 'glow', 'BSDF',
-             'void', 'spotlight', 'prism1', 'prism2', 'mist', 'plastic2',
+             'spotlight', 'prism1', 'prism2', 'mist', 'plastic2',
              'metal2', 'trans2', 'ashik2', 'dielectric', 'interface',
              'plasfunc', 'metfunc', 'transfunc', 'BRTDfunc',
              'plasdata', 'metdata', 'transdata', 'antimatter'))
@@ -135,8 +162,6 @@ class Primitive(object):
     NONEOPAQUETYPES = set(('glass', 'trans', 'trans2', 'transdata', 'transfunc',
                            'dielectric', 'BSDF', 'mixfunc', 'BRTDfunc', 'mist',
                            'prism1', 'prism2'))
-
-    VOID = Void()
 
     def __init__(self, identifier, modifier=None, values=None, is_opaque=None,
                  dependencies=None):
@@ -298,7 +323,7 @@ class Primitive(object):
 
     @values.setter
     def values(self, new_values):
-        self._values  = list_with_length(new_values, 3, list, 'radiance primitive values')
+        self._values = list_with_length(new_values, 3, list, 'radiance primitive values')
 
     @property
     def modifier(self):
@@ -308,7 +333,7 @@ class Primitive(object):
     @modifier.setter
     def modifier(self, modifier):
         if not modifier or modifier == 'void':
-            self._modifier = self.VOID
+            self._modifier = VOID
         else:
             try:
                 assert modifier.is_modifier, \
@@ -374,11 +399,16 @@ class Primitive(object):
         elif self.type in self.NONEOPAQUETYPES:  # non-opaque modifier
             return False
         else:  # it's a geometry or it has a void modifier; check the modifier
-            return self.modifier.is_opaque
+            return self.modifier.is_void or self.modifier.is_opaque
 
     @is_opaque.setter
     def is_opaque(self, is_opaque):
         self._is_opaque = bool(is_opaque)
+
+    @property
+    def is_void(self):
+        """Only true for a void."""
+        return False
 
     def _update_values(self):
         """update value dictionaries.
@@ -401,7 +431,7 @@ class Primitive(object):
         output = [header]
         for line_count in range(3):
             try:
-                values = (str(v) for v in  primitive.values[line_count])
+                values = (str(v) for v in primitive.values[line_count])
             except BaseException:
                 values = []  # line will be displayed as 0
             else:
@@ -416,7 +446,7 @@ class Primitive(object):
         """Return full radiance definition.
 
         Args:
-            minimal: Boolean to note wehther the radiance string should be written
+            minimal: Boolean to note whether the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
             include_modifier: Boolean to note whether the modifier of this primitive
                 should be included in the string. Default: True.
@@ -463,7 +493,7 @@ class Primitive(object):
 
         # try to get modifier
         if input_dict['modifier'] == 'void':
-            modifier = 'void'
+            modifier = VOID
         else:
             modifier = mutil.dict_to_modifier(input_dict['modifier'])
 

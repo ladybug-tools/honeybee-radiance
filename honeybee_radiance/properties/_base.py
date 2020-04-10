@@ -65,7 +65,9 @@ class _GeometryRadianceProperties(object):
         if self._modifier_blk:  # set by user
             return self._modifier_blk
         mod = self.modifier  # assign a default based on whether the modifier is opaque
-        if mod.is_opaque:
+        if mod.is_void:
+            return black
+        elif mod.is_opaque:
             return black
         else:
             return mod
@@ -85,7 +87,7 @@ class _GeometryRadianceProperties(object):
         This has repercussions for how this object is written into the Radiance
         folder structure.
         """
-        return self.modifier.is_opaque
+        return True if self.modifier.is_void else self.modifier.is_opaque
 
     @property
     def is_modifier_set_on_object(self):
@@ -143,7 +145,7 @@ class _GeometryRadianceProperties(object):
             base['radiance']['modifier'] = self._modifier.identifier if \
                 abridged else self._modifier.to_dict()
         if self._modifier_blk is not None:
-            base['radiance']['modifier_blk'] =  self._modifier_blk.identifier if \
+            base['radiance']['modifier_blk'] = self._modifier_blk.identifier if \
                 abridged else self._modifier_blk.to_dict()
         return base
 
