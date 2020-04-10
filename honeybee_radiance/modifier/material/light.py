@@ -168,10 +168,9 @@ class Light(Material):
             "type": "light",  # primitive type
             "identifier": "",  # Material identifier
             "display_name": string  # Material display name
-            "r_emittance": float,  # A positive value for the Red channel of the glow
-            "g_emittance": float,  # A positive value for the Green channel of the glow
-            "b_emittance": float,  # A positive value for the Blue channel of the glow
-            "radius": float,  # Maximum radius for shadow testing
+            "r_emittance": float,  # A positive value for the Red channel of the light
+            "g_emittance": float,  # A positive value for the Green channel of the light
+            "b_emittance": float,  # A positive value for the Blue channel of the light
             "dependencies: []
             }
         """
