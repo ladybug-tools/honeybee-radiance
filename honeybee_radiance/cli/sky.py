@@ -29,7 +29,7 @@ def sky_with_certain_illum(illum, folder, name):
     illum: Desired illuminance value in lux. [default: 100000].
     """
     try:
-        c_sky =hbsky.CertainIrradiance.from_illuminance(illum)
+        c_sky = hbsky.CertainIrradiance.from_illuminance(illum)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
