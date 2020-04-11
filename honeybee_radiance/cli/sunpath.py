@@ -4,14 +4,13 @@ try:
     import click
 except ImportError:
     raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
+        'click is not installed. Try `pip install -U .[cli]` command.'
     )
 
 import sys
 from honeybee_radiance.lightsource.sunpath import Sunpath
 from ladybug.location import Location
 from ladybug.wea import Wea
-from ladybug.epw import EPW
 import logging
 import json
 import os
@@ -29,7 +28,7 @@ def sunpath():
 @sunpath.command('location')
 @click.option('--lat', default=0, type=float, show_default=True,
     help='The latitude of the location in degrees. Values must be between -90 and 90.'
-    ' Default is set to the equator.')
+         'Default is set to the equator.')
 @click.option('--lon', default=0, type=float, show_default=True,
     help='The longitude of the location in degrees')
 @click.option('--tz', default=0, type=float, show_default=True,
@@ -101,19 +100,6 @@ def sunpath_from_location(lat, lon, tz, north, folder, name, log_file,
 @click.option('--north', default=0, type=float, show_default=True,
     help='Angle to north (0-360). 90 is west and 270 is east'
     )
-@click.option('--start-date', default='JAN-01', show_default=True,
-    help='Start date as MMM-DD (e.g JUL-21). Start date itself will also be included.'
-    )
-@click.option('--start-time', default='00:00', show_default=True,
-    help='Start time as HH:MM (e.g 14:10). Start time itself will also be included.')
-@click.option('--end-date', default='DEC-31', show_default=True,
-    help='End date as MMM-DD (e.g JUL-21). End date itself will also be included.')
-@click.option('--end-time', default='23:00', show_default=True,
-    help='End time as HH:MM (e.g 18:30). End time itself will also be included.')
-@click.option('--timestep', default=1, type=int, show_default=True,
-    help='An optional integer to set the number of time steps per hour. Default is 1'
-    ' for one value per hour.'
-    )
 @click.option('--leap-year', is_flag=True, help='dates are for a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
@@ -122,8 +108,7 @@ def sunpath_from_location(lat, lon, tz, north, folder, name, log_file,
     type=click.File('w'), default='-')
 @click.option('--reverse-vectors', is_flag=True,
     help='Reverse sun vectors to go from ground to sky.')
-def sunpath_from_wea(wea, north, folder, name, log_file, start_date, start_time, end_date,
-        end_time, timestep, leap_year, reverse_vectors):
+def sunpath_from_wea(wea, north, folder, name, log_file, leap_year, reverse_vectors):
     """Generate a climate-based sunpath from a Wea file.
 
     This command also generates a mod file which includes all the modifiers in sunpath.
@@ -137,12 +122,14 @@ def sunpath_from_wea(wea, north, folder, name, log_file, start_date, start_time,
     try:
         wea = Wea.from_file(wea)
         sp = Sunpath(wea.location, north)
-        hoys = get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year)
-        sp_files = sp.to_file(folder, name, hoys=hoys, leap_year=leap_year,
-            reverse_vectors=reverse_vectors)
+        hoys = wea.hoys
+        sp_files = sp.to_file(
+            folder, name, wea=wea, hoys=hoys, leap_year=leap_year,
+            reverse_vectors=reverse_vectors
+        )
 
         files = [
-            {'path': os.path.relpath(path, folder), 'full_path': path }
+            {'path': os.path.relpath(path, folder), 'full_path': path}
             for path in sp_files['suns']
         ]
 
@@ -200,7 +187,7 @@ def sunpath_from_epw(epw, north, folder, name, log_file, start_date, start_time,
             reverse_vectors=reverse_vectors)
 
         files = [
-            {'path': os.path.relpath(path, folder), 'full_path': path }
+            {'path': os.path.relpath(path, folder), 'full_path': path}
             for path in sp_files['suns']
         ]
 
