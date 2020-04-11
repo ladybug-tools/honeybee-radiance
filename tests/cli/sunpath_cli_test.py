@@ -4,8 +4,6 @@ from click.testing import CliRunner
 from honeybee_radiance.cli.sunpath import sunpath_from_location, \
     sunpath_from_epw
 from honeybee_radiance.cli.util import get_hoys
-import uuid
-import os
 
 
 def test_get_hoys():
@@ -34,7 +32,7 @@ def test_sunpath():
     result = runner.invoke(
         sunpath_from_location,
         ['--lat', '39.76', '--lon', '-104.86', '--tz', '-7', '--folder', folder,
-        '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli']
+         '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli']
     )
     assert result.exit_code == 0
 
@@ -59,7 +57,7 @@ def test_sunpath_reversed():
     result = runner.invoke(
         sunpath_from_location,
         ['--lat', '39.76', '--lon', '-104.86', '--tz', '-7', '--folder', folder,
-        '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli_r',
-        '--reverse-vectors']
+         '--start-date', 'JAN-01', '--end-date', 'JAN-01', '--name', 'sunpath_cli_r',
+         '--reverse-vectors']
     )
     assert result.exit_code == 0
