@@ -17,7 +17,7 @@ class Metdata(Material):
             or special characters. This will be used to identify the object across
             a model and in the exported Radiance files.
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
-            (Default: "void").
+            (Default: None).
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
             refer to a line number in the radiance primitve definitions and the
             values in each array correspond to values occurring within each line.

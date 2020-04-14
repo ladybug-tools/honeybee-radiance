@@ -26,7 +26,7 @@ class Source(Geometry):
             a model and in the exported Radiance files.
         direction: A vector to set source direction (x, y, z) (Default: (0, 0 ,-1)).
         angle: Source solid angle (Default: 0.533).
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -93,7 +93,7 @@ class Source(Geometry):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default is "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "source",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -135,7 +135,7 @@ class Source(Geometry):
 
             {
             "type": "source",  # Geometry type
-            "modifier": {} or "void",
+            "modifier": {} ,
             "identifier": "",  # Geometry identifier
             "display_name": "",  # Geometry display name
             "direction": {"x": float, "y": float, "z": float},

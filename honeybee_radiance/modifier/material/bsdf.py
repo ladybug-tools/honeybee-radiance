@@ -52,7 +52,7 @@ class BSDF(Material):
             not be perpendicular to any typical face.
         thickness: Optional number to set the thickness of the BSDF material.
             (default: 0).
-        modifier: Material modifier (Default: 'void').
+        modifier: Material modifier (Default: None).
         function_file: Optional input for function file (Default: .).
         transform: Optional transform input to to scale the thickness and reorient
             the up vector (default: None).
@@ -88,7 +88,7 @@ class BSDF(Material):
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
     def __init__(self, bsdf_file, identifier=None, up_orientation=None, thickness=0,
-                 modifier='void', function_file='.', transform=None, angle_basis=None,
+                 modifier=None, function_file='.', transform=None, angle_basis=None,
                  dependencies=None):
         """Create BSDF material."""
         identifier = identifier or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
@@ -285,7 +285,7 @@ class BSDF(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "BSDF",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -350,7 +350,7 @@ class BSDF(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # material modifier (Default: "void")
+            "modifier": {},  # material modifier (Default: None)
             "type": "BSDF",  # Material type
             "identifier": string,  # Material identifer
             "display_name": string  # Material display name

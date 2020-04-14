@@ -30,7 +30,7 @@ class Ring(Geometry):
         normal_vector: Surface normal as (x, y, z) (Default: (0, 0 ,1)).
         radius_inner: Ring inner radius as a number (Default: 5).
         radius_outer: Ring outer radius as a number (Default: 10).
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -116,7 +116,7 @@ class Ring(Geometry):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default is "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "ring",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -160,7 +160,7 @@ class Ring(Geometry):
 
             {
             "type": "ring",  # Geometry type
-            "modifier": {} or "void",
+            "modifier": {} ,
             "identifier": "",  # Geometry identifier
             "display_name": "",  # Geometry display name
             "center_pt": (0, 0, 0),

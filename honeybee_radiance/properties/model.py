@@ -1,6 +1,7 @@
 # coding=utf-8
 """Model Radiance Properties."""
 from honeybee.extensionutil import model_extension_dicts
+from honeybee.boundarycondition import Surface
 
 from ..lib.modifiersets import generic_modifier_set_visible
 from ..lib.modifiers import black, generic_context
@@ -161,6 +162,132 @@ class ModelRadianceProperties(object):
         """
         return generic_modifier_set_visible
 
+    def faces_by_opaque(self):
+        """Get all Faces in the model separated into opaque and nonopaque lists.
+
+        This method will also ensure that any faces with Surface boundary condition
+        only have one of such objects in the output lists.
+
+        Returns:
+            A tuple with 4 lists:
+
+            -   opaque_faces: A list of all opaque faces without a unique
+                modifier_blk (just using the default black).
+
+            -   opaque_faces_blk: A list of all opaque faces that have a
+                unique modifier_blk.
+
+            -   nonopaque_faces: A list of all nonopaque faces without a
+                unique modifier_blk (just using their own modifier in blk studies).
+
+            -   nonopaque_faces_blk: A list of all non opaque faces that
+                have a unique modifier_blk.
+        """
+        opaque_faces = []
+        opaque_faces_blk = []
+        nonopaque_faces = []
+        nonopaque_faces_blk = []
+        interior_faces = set()
+        for face in self.host.faces:
+            if isinstance(face.boundary_condition, Surface):
+                if face.identifier in interior_faces:
+                    continue
+                interior_faces.add(face.boundary_condition.boundary_condition_object)
+            if face.properties.radiance.is_opaque:
+                if face.properties.radiance._modifier_blk:
+                    opaque_faces_blk.append(face)
+                else:
+                    opaque_faces.append(face)
+            else:
+                if face.properties.radiance._modifier_blk:
+                    nonopaque_faces_blk.append(face)
+                else:
+                    nonopaque_faces.append(face)
+        return opaque_faces, opaque_faces_blk, nonopaque_faces, nonopaque_faces_blk
+    
+    def subfaces_by_interior_exterior(self):
+        """Get model sub-faces (Apertures, Doors) separated into interior/exterior lists.
+
+        This method will also ensure that any interior sub-faces (with Surface
+        boundary condition) only have one of such objects in the output lists.
+
+        Returns:
+            A tuple with 4 lists:
+
+            -   exterior_subfaces: A list of all exterior sub-faces without a unique
+                modifier_blk (just using the default black).
+
+            -   exterior_subfaces_blk: A list of all exterior sub-faces that have a
+                unique modifier_blk.
+
+            -   interior_subfaces: A list of all interior sub-faces without a
+                unique modifier_blk (just using the default black).
+
+            -   interior_subfaces_blk: A list of all interior sub-faces that
+                have a unique modifier_blk.
+        """
+        exterior_subfaces = []
+        exterior_subfaces_blk = []
+        interior_subfaces = []
+        interior_subfaces_blk = []
+        interior_ids = set()
+        for ap in self.host.apertures:
+            if isinstance(ap.boundary_condition, Surface):
+                if ap.identifier in interior_ids:
+                    continue
+                interior_ids.add(ap.boundary_condition.boundary_condition_object)
+                if ap.properties.radiance._modifier_blk:
+                    interior_subfaces_blk.append(ap)
+                else:
+                    interior_subfaces.append(ap)
+            else:
+                if ap.properties.radiance._modifier_blk:
+                    exterior_subfaces_blk.append(ap)
+                else:
+                    exterior_subfaces.append(ap)
+        return exterior_subfaces, exterior_subfaces_blk, \
+            interior_subfaces, interior_subfaces_blk
+
+    def indoor_shades_by_opaque(self):
+        """Get all indoor Shades in the model separated into opaque and nonopaque lists.
+
+        Returns:
+            A tuple with 4 lists:
+
+            -   opaque_shades: A list of all opaque shades without a unique
+                modifier_blk (just using the default black).
+
+            -   opaque_shades_blk: A list of all opaque shades that have a
+                unique modifier_blk.
+
+            -   nonopaque_shades: A list of all nonopaque shades without a
+                unique modifier_blk (just using their own modifier in blk studies).
+
+            -   nonopaque_shades_blk: A list of all non opaque shades that
+                have a unique modifier_blk.
+        """
+        return self._separate_shades_by_opaque(self._indoor_shades())
+
+    def outdoor_shades_by_opaque(self):
+        """Get all outdoor Shades in the model separated into opaque and nonopaque lists.
+
+        Returns:
+            A tuple with 4 lists:
+
+            -   opaque_shades: A list of all opaque shades without a unique
+                modifier_blk (just using the default black).
+
+            -   opaque_shades_blk: A list of all opaque shades that have a
+                unique modifier_blk.
+
+            -   nonopaque_shades: A list of all nonopaque shades without a
+                unique modifier_blk (just using their own modifier in blk studies).
+
+            -   nonopaque_shades_blk: A list of all non opaque shades that
+                have a unique modifier_blk.
+        """
+        return self._separate_shades_by_opaque(self._outoor_shades())
+
     def check_duplicate_modifier_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Modifier identifiers in the model."""
         mod_identifiers = set()
@@ -304,10 +431,61 @@ class ModelRadianceProperties(object):
         if 'modifier_sets' in data['properties']['radiance'] and \
                 data['properties']['radiance']['modifier_sets'] is not None:
             for m_set in data['properties']['radiance']['modifier_sets']:
-                modifier_sets[m_set['identifier']] = \
-                    ModifierSet.from_dict_abridged(m_set, modifiers)
+                if m_set['type'] == 'ModifierSet':
+                    modifier_sets[m_set['identifier']] = ModifierSet.from_dict(m_set)
+                else:
+                    modifier_sets[m_set['identifier']] = \
+                        ModifierSet.from_dict_abridged(m_set, modifiers)
 
         return modifiers, modifier_sets
+
+    def _indoor_shades(self):
+        """Get a list of all indoor Shade objects in the model."""
+        host = self.host
+        child_shades = []
+        for room in host._rooms:
+            child_shades.extend(room._indoor_shades)
+            for face in room.faces:
+                child_shades.extend(face._indoor_shades)
+                for ap in face._apertures:
+                    child_shades.extend(ap._indoor_shades)
+                for dr in face._doors:
+                    child_shades.extend(dr._indoor_shades)
+        for face in host._orphaned_faces:
+            child_shades.extend(face._indoor_shades)
+            for ap in face._apertures:
+                child_shades.extend(ap._indoor_shades)
+            for dr in face._doors:
+                child_shades.extend(dr._indoor_shades)
+        for ap in host._orphaned_apertures:
+            child_shades.extend(ap._indoor_shades)
+        for dr in host._orphaned_doors:
+            child_shades.extend(dr._indoor_shades)
+        return child_shades
+    
+    def _outoor_shades(self):
+        """Get a list of all outdoor Shade objects in the model."""
+        host = self.host
+        child_shades = []
+        for room in host._rooms:
+            child_shades.extend(room._outdoor_shades)
+            for face in room.faces:
+                child_shades.extend(face._outdoor_shades)
+                for ap in face._apertures:
+                    child_shades.extend(ap._outdoor_shades)
+                for dr in face._doors:
+                    child_shades.extend(dr._outdoor_shades)
+        for face in host._orphaned_faces:
+            child_shades.extend(face._outdoor_shades)
+            for ap in face._apertures:
+                child_shades.extend(ap._outdoor_shades)
+            for dr in face._doors:
+                child_shades.extend(dr._outdoor_shades)
+        for ap in host._orphaned_apertures:
+            child_shades.extend(ap._outdoor_shades)
+        for dr in host._orphaned_doors:
+            child_shades.extend(dr._outdoor_shades)
+        return child_shades + host._orphaned_shades
 
     def _check_and_add_room_modifier_shade(self, room, modifiers):
         """Check if a modifier is assigned to a Room's shades and add it to a list."""
@@ -391,6 +569,29 @@ class ModelRadianceProperties(object):
         else:
             if not self._instance_in_array(generic_context, modifiers):
                 modifiers.append(generic_context)
+
+    @staticmethod
+    def _separate_shades_by_opaque(shades):
+        """Sort a list of shade objects into 4 lists.
+        
+        These are: opaque, opaque_blk, nonopaque, nonopaque_blk
+        """
+        opaque = []
+        opaque_blk = []
+        nonopaque = []
+        nonopaque_blk = []
+        for shade in shades:
+            if shade.properties.radiance.is_opaque:
+                if shade.properties.radiance._modifier_blk:
+                    opaque_blk.append(shade)
+                else:
+                    opaque.append(shade)
+            else:
+                if shade.properties.radiance._modifier_blk:
+                    nonopaque_blk.append(shade)
+                else:
+                    nonopaque.append(shade)
+        return opaque, opaque_blk, nonopaque, nonopaque_blk
 
     @staticmethod
     def _instance_in_array(object_instance, object_array):

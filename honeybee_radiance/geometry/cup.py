@@ -32,7 +32,7 @@ class Cup(Cone):
         radius_start: Cup start radius as a number (Default: 10).
         center_pt_end: Cup end center point as (x, y, z) (Default: (0, 0 ,10)).
         radius_end: Cup end radius as a number (Default: 0).
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])

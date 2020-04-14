@@ -61,7 +61,7 @@ class Void(object):
 
     def to_dict(self):
         """Return void."""
-        return {'type': 'void'}
+        return None
 
     @classmethod
     def from_dict(cls, value):
@@ -101,7 +101,7 @@ class Primitive(object):
             or special characters. This will be used to identify the object across
             a model and in the exported Radiance files.
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
-            (Default: "void").
+            (Default: None).
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
             refer to a line number in the radiance primitive definitions and the
             values in each array correspond to values occurring within each line.
@@ -205,7 +205,7 @@ class Primitive(object):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "custom",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -240,7 +240,7 @@ class Primitive(object):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "custom",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -462,7 +462,7 @@ class Primitive(object):
             for dep in self.dependencies:
                 output.append(self._to_radiance(dep, minimal))
 
-        if include_modifier and self.modifier.identifier != 'void':
+        if include_modifier and not self.modifier.is_void:
             output.append(self._to_radiance(self.modifier, minimal))
         output.append(self._to_radiance(self, minimal))
 
@@ -495,7 +495,8 @@ class Primitive(object):
             import honeybee_radiance.mutil as mutil  # imports all modifiers classes
 
         # try to get modifier
-        if input_dict['modifier'] == 'void':
+        if 'modifier' not in input_dict or input_dict['modifier'] is None or \
+                input_dict['modifier'] == 'void':
             modifier = VOID
         else:
             modifier = mutil.dict_to_modifier(input_dict['modifier'])

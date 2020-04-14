@@ -32,7 +32,7 @@ class Polygon(Geometry):
             vertices that make up the polygon. Vertices musct be ordered
             counter-clockwise as viewed from the front side. The last vertex is
             assumed to be connected to the first.
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -86,7 +86,7 @@ class Polygon(Geometry):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "polygon",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -130,7 +130,7 @@ class Polygon(Geometry):
 
             {
             "type": "polygon",  # Geometry type
-            "modifier": {} or "void",
+            "modifier": {} ,
             "identifier": "",  # Geometry identifer
             "display_name": "",  # Geometry display name
             "vertices": [(0, 0, 10), (10, 0, 10), (10, 0, 0)],

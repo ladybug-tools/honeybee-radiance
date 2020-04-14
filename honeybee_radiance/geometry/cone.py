@@ -31,7 +31,7 @@ class Cone(Geometry):
         radius_start: Cone start radius as a number (Default: 10).
         center_pt_end: Cone end center point as (x, y, z) (Default: (0, 0 ,10)).
         radius_end: Cone end radius as a number (Default: 0).
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -117,7 +117,7 @@ class Cone(Geometry):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "cone",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -161,7 +161,7 @@ class Cone(Geometry):
 
             {
             "type": "cone",  # Geometry type
-            "modifier": {} or "void",
+            "modifier": {} ,
             "identifier": "",  # Geometry identifer
             "display_name": "",  # Geometry display name
             "center_pt_start": (0, 0, 0),

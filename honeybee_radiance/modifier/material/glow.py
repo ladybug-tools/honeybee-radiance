@@ -25,6 +25,7 @@ class Glow(Material):
             sources will never illuminate objects on the other side of an illum
             surface. This provides a convenient way to illuminate local light fixture
             geometry without overlighting nearby objects.
+        modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -46,7 +47,7 @@ class Glow(Material):
     __slots__ = ('_r_emittance', '_g_emittance', '_b_emittance', '_max_radius')
 
     def __init__(self, identifier, r_emittance=0.0, g_emittance=0.0, b_emittance=0.0,
-                 max_radius=0.0, modifier='void', dependencies=None):
+                 max_radius=0.0, modifier=None, dependencies=None):
         """Init Glow material."""
         Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
@@ -116,7 +117,7 @@ class Glow(Material):
         self._max_radius = float(value)
 
     @classmethod
-    def from_single_value(cls, identifier, rgb=0, max_radius=0, modifier='void',
+    def from_single_value(cls, identifier, rgb=0, max_radius=0, modifier=None,
                           dependencies=None):
         """Create glow material with single value.
 
@@ -126,7 +127,7 @@ class Glow(Material):
             a model and in the exported Radiance files.
             rgb: Input for r_emittance, g_emittance and b_emittance. The value should be
                 between 0 and 1 (Default: 0).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             max_radius: Maximum radius for shadow testing (default: 0). If maxrad is zero,
                 then the surface will never be tested for shadow, although it may
                 participate in an interreflection calculation. If maxrad is negative, then
@@ -158,7 +159,7 @@ class Glow(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {}  # primitive modifier (Default: None)
             "type": "glow",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -209,6 +210,7 @@ class Glow(Material):
             "g_emittance": float,  # A positive value for the Green channel of the glow
             "b_emittance": float,  # A positive value for the Blue channel of the glow
             "max_radius": float,  # Maximum radius for shadow testing
+            "modifier": {}  # primitive modifier (Default: None)
             "dependencies: []
             }
         """

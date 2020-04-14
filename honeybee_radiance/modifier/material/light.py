@@ -14,10 +14,10 @@ class Light(Material):
         identifier: Text string for a unique Material ID. Must not contain spaces
             or special characters. This will be used to identify the object across
             a model and in the exported Radiance files.
-        r_emittance: A positive value for the Red channel of the light (default: 0).
-        g_emittance: A positive value for the Green channel of the light (default: 0).
-        b_emittance: A positive value for the Blue channel of the light (default: 0).
-        modifier: Material modifier. The default value is void.
+        r_emittance: A positive value for the Red channel of the light (Default: 0).
+        g_emittance: A positive value for the Green channel of the light (Default: 0).
+        b_emittance: A positive value for the Blue channel of the light (Default: 0).
+        modifier: Material modifier. (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -38,7 +38,7 @@ class Light(Material):
     __slots__ = ('_r_emittance', '_g_emittance', '_b_emittance')
 
     def __init__(self, identifier, r_emittance=0, g_emittance=0, b_emittance=0,
-                 modifier='void', dependencies=None):
+                 modifier=None, dependencies=None):
         """Radiance Light material."""
         Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
@@ -88,7 +88,7 @@ class Light(Material):
         self._b_emittance = typing.float_positive(value)
 
     @classmethod
-    def from_single_value(cls, identifier, rgb=0, modifier="void", dependencies=None):
+    def from_single_value(cls, identifier, rgb=0, modifier=None, dependencies=None):
         """Create light material with single value.
 
         Args:
@@ -97,7 +97,7 @@ class Light(Material):
                 a model and in the exported Radiance files.
             rgb: Input for r_emittance, g_emittance and b_emittance. The value should be
                 between 0 and 1 (Default: 0).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -122,7 +122,7 @@ class Light(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {}  # primitive modifier (Default: None)
             "type": "light",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name

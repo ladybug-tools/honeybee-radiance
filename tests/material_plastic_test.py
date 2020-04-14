@@ -95,7 +95,7 @@ def test_from_dict_w_modifier():
         "g_transmissivity": 0.5,
         "b_transmissivity": 0.6,
         "refraction_index": None,
-        "modifier": "void",
+        "modifier": None,
         "dependencies": []
     }
 

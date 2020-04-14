@@ -58,7 +58,7 @@ def test_from_dict_w_modifier():
         "g_transmissivity": 0.5,
         "b_transmissivity": 0.6,
         "refraction_index": None,
-        "modifier": "void",
+        "modifier": None,
         "dependencies": []
     }
 
@@ -93,5 +93,5 @@ def test_to_dict():
     assert mdict['b_emittance'] == 100000
     assert mdict['g_emittance'] == 100000
     assert mdict['type'] == 'light'
-    assert mdict['modifier'] == {'type': 'void'}
+    assert 'modifier' not in mdict or mdict['modifier'] is None
 
