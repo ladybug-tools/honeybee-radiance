@@ -14,6 +14,7 @@ from .metal import Metal
 from .metal2 import Metal2
 from .metdata import Metdata
 from .metfunc import Metfunc
+from .mirror import Mirror
 from .mist import Mist
 from .plasdata import Plasdata
 from .plasfunc import Plasfunc
@@ -26,4 +27,3 @@ from .trans import Trans
 from .trans2 import Trans2
 from .transdata import Transdata
 from .transfunc import Transfunc
-

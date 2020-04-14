@@ -157,7 +157,7 @@ class Primitive(object):
     # All Radiance primitive types
     TYPES = set().union(GEOMETRYTYPES, MODIFIERTYPES)
 
-    # Modifierts that are not usually opaque. This will be used to set is_opaque property
+    # Modifiers that are not usually opaque. This will be used to set is_opaque property
     # if it is not overridded by the user by setting the is_opaque property
     NONEOPAQUETYPES = set(('glass', 'trans', 'trans2', 'transdata', 'transfunc',
                            'dielectric', 'BSDF', 'mixfunc', 'BRTDfunc', 'mist',
@@ -460,6 +460,8 @@ class Primitive(object):
 
         if include_dependencies:
             for dep in self.dependencies:
+                if isinstance(dep, Void):
+                    continue
                 output.append(self._to_radiance(dep, minimal))
 
         if include_modifier and not self.modifier.is_void:
@@ -475,7 +477,7 @@ class Primitive(object):
             "type": self.type,
             "identifier": self.identifier,
             "values": self.values,
-            "dependencies": [dep.to_dict() for dep in self._dependencies]
+            "dependencies": [dep.to_dict() for dep in self.dependencies]
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
