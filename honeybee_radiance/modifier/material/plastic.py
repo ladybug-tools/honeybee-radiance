@@ -225,7 +225,8 @@ class Plastic(Material):
             modifier=modifier,
             dependencies=dependencies
         )
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict \
+                and primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
@@ -257,8 +258,7 @@ class Plastic(Material):
         assert 'type' in data, 'Input dictionary is missing "type".'
         if data['type'] != cls.__name__.lower():
             raise ValueError(
-                'Type must be %s not %s.' % (cls.__name__.lower(),
-                    data['type'])
+                'Type must be %s not %s.' % (cls.__name__.lower(), data['type'])
             )
         modifier, dependencies = Material.filter_dict_input(data)
 
