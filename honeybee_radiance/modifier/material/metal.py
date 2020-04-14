@@ -26,7 +26,7 @@ class Metal(Plastic):
             value of 0 corresponds to a perfectly smooth surface, and a value of 1
             would be a very rough surface. Roughness values greater than 0.2 are not
             very realistic. (Default: 0).
-        modifier: Material modifier (Default: "void").
+        modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])

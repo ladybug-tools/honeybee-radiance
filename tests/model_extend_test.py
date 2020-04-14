@@ -11,16 +11,20 @@ from honeybee.facetype import face_types
 from honeybee_radiance.properties.model import ModelRadianceProperties
 from honeybee_radiance.modifierset import ModifierSet
 from honeybee_radiance.modifier import Modifier
-from honeybee_radiance.modifier.material import Plastic, Glass
+from honeybee_radiance.modifier.material import Plastic, Glass, Trans
 
 from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
     generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
     generic_exterior_shade, generic_interior_shade, air_boundary
 
+
+from honeybee_radiance_folder.folder import ModelFolder
+from ladybug.futil import nukedir
 from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.plane import Plane
 from ladybug_geometry.geometry3d.face import Face3D
 
+import os
 import pytest
 
 
@@ -330,3 +334,100 @@ def test_writer_to_rad():
 
     assert hasattr(model.to, 'rad')
     rad_string = model.to.rad(model)
+    assert len(rad_string) == 2
+    assert 'outdoor_light_shelf_0.5' in rad_string[1]
+    assert 'Front_Door' in rad_string[0]
+
+
+def test_writer_to_rad_folder():
+    """Test the Model to.rad_folder method."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
+    garage = Room.from_box('Tiny_Garage', 5, 10, 3, origin=Point3D(5, 0, 0))
+
+    dark_floor = Plastic.from_single_reflectance('DarkFloor', 0.1)
+    room[0].properties.radiance.modifier = dark_floor
+    room[5].properties.radiance.modifier_blk = dark_floor
+
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.move_shades(Vector3D(0, 0, -0.5))
+    light_shelf_out = Plastic.from_single_reflectance('outdoor_light_shelf_0.5', 0.5)
+    light_shelf_in = Plastic.from_single_reflectance('indoor_light_shelf_0.70', 0.7)
+    south_face.apertures[0].outdoor_shades[0].properties.radiance.modifier = light_shelf_out
+    south_face.apertures[0].indoor_shades[0].properties.radiance.modifier = light_shelf_in
+
+    north_face = room[1]
+    north_face.overhang(0.25, indoor=False)
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                    Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    door = Door('Front_Door', Face3D(door_verts))
+    north_face.add_door(door)
+
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                        Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
+    triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
+    aperture.properties.radiance.modifier = triple_pane
+    north_face.add_aperture(aperture)
+
+    tree_canopy_geo = Face3D.from_regular_polygon(
+        6, 2, Plane(Vector3D(0, 0, 1), Point3D(5, -3, 4)))
+    tree_canopy = Shade('Tree_Canopy', tree_canopy_geo)
+    tree_trans = Trans.from_single_reflectance('Leaves', 0.3, 0.0, 0.1, 0.15, 0.15)
+    tree_canopy.properties.radiance.modifier = tree_trans
+
+    table_geo = Face3D.from_rectangle(2, 2, Plane(o=Point3D(1.5, 4, 1)))
+    table = Shade('Table', table_geo)
+    room.add_indoor_shade(table)
+
+    east_face = room[2]
+    east_face.apertures_by_ratio(0.1, 0.01)
+    west_face = garage[4]
+    west_face.apertures_by_ratio(0.1, 0.01)
+    Room.solve_adjacency([room, garage], 0.01)
+
+    model = Model('Tiny_House', [room, garage], orphaned_shades=[tree_canopy])
+    model.north_angle = 15
+
+    folder = os.path.abspath('./tests/assets/model/rad_folder')
+    model.to.rad_folder(model, folder)
+
+    model_folder = ModelFolder(folder)
+    rad_name = '{}.rad'.format(model.identifier)
+    mat_name = '{}.mat'.format(model.identifier)
+    blk_name = '{}.blk'.format(model.identifier)
+
+    ap_dir = os.path.join(folder, model_folder.STATIC_APERTURE_EXTERIOR)
+    assert os.path.isfile(os.path.join(ap_dir, rad_name))
+    assert os.path.isfile(os.path.join(ap_dir, mat_name))
+    assert os.path.isfile(os.path.join(ap_dir, blk_name))
+
+    int_ap_dir = os.path.join(folder, model_folder.STATIC_APERTURE_INTERIOR)
+    assert os.path.isfile(os.path.join(int_ap_dir, rad_name))
+    assert os.path.isfile(os.path.join(int_ap_dir, mat_name))
+    assert os.path.isfile(os.path.join(int_ap_dir, blk_name))
+
+    opaque_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_ROOT)
+    assert os.path.isfile(os.path.join(opaque_dir, rad_name))
+    assert os.path.isfile(os.path.join(opaque_dir, mat_name))
+    assert os.path.isfile(os.path.join(opaque_dir, blk_name))
+
+    opaque_indoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_INDOOR)
+    assert os.path.isfile(os.path.join(opaque_indoor_dir, rad_name))
+    assert os.path.isfile(os.path.join(opaque_indoor_dir, mat_name))
+    assert os.path.isfile(os.path.join(opaque_indoor_dir, blk_name))
+
+    opaque_outoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(opaque_outoor_dir, rad_name))
+    assert os.path.isfile(os.path.join(opaque_outoor_dir, mat_name))
+    assert os.path.isfile(os.path.join(opaque_outoor_dir, blk_name))
+
+    nonopaque_outoor_dir = os.path.join(folder, model_folder.STATIC_NONOPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, rad_name))
+    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, mat_name))
+    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, blk_name))
+
+    # clean up the folder
+    nukedir(folder, rmdir=True)

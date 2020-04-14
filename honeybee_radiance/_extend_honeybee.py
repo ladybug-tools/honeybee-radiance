@@ -14,8 +14,8 @@ from .properties.face import FaceRadianceProperties
 from .properties.shade import ShadeRadianceProperties
 from .properties.aperture import ApertureRadianceProperties
 from .properties.door import DoorRadianceProperties
-from .writer import model_to_rad, room_to_rad, face_to_rad, shade_to_rad, \
-    aperture_to_rad, door_to_rad
+from .writer import model_to_rad_folder, model_to_rad, room_to_rad, face_to_rad, \
+    shade_to_rad, aperture_to_rad, door_to_rad
 
 
 # set a hidden radiance attribute on each core geometry Property class to None
@@ -73,6 +73,7 @@ ApertureProperties.radiance = property(aperture_radiance_properties)
 DoorProperties.radiance = property(door_radiance_properties)
 
 # add energy writer to rad
+model_writer.rad_folder = model_to_rad_folder
 model_writer.rad = model_to_rad
 room_writer.rad = room_to_rad
 face_writer.rad = face_to_rad

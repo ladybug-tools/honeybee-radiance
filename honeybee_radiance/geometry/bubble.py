@@ -23,7 +23,7 @@ class Bubble(Sphere):
             a model and in the exported Radiance files.
         center_pt: Sphere center point as (x, y, z) (Default: (0, 0 ,0)).
         radius: Bubble radius as a number (Default: 10).
-        modifier: Geometry modifier (Default: "void").
+        modifier: Geometry modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])

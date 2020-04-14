@@ -72,8 +72,7 @@ class DoorRadianceProperties(_GeometryRadianceProperties):
     def modifier_blk(self):
         """Get or set a modifier to be used in direct solar and in isolation studies.
 
-        If None, this will be a completely black material if the Door's modifier
-        is opaque and will be equal to the modifier if the Door's modifier is non-opaque.
+        If None, this will be a completely black material.
         """
         if self._modifier_blk:  # set by user
             return self._modifier_blk

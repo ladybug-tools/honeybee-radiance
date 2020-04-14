@@ -72,7 +72,7 @@ def test_to_dict():
     assert mdict['g_emittance'] == 100000
     assert mdict['max_radius'] == 0
     assert mdict['type'] == 'glow'
-    assert mdict['modifier'] == {'type': 'void'}
+    assert 'modifier' not in mdict or mdict['modifier'] is None
 
 
 def test_to_from_dict():

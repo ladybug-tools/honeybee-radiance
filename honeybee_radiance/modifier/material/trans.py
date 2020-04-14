@@ -32,10 +32,10 @@ class Trans(Material):
             transmitted light that is transmitted diffusely in as scattering fashion.
         transmitted_spec: The transmitted specular component is the fraction of
             transmitted light that is not diffusely scattered.
-        modifier: Material modifier (Default: "void").
+        modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
-            primitive is defined based on other primitives. (Default: [])
+            primitive is defined based on other primitives. (Default: None)
 
     Properties:
         * identifier
@@ -58,7 +58,7 @@ class Trans(Material):
 
     def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
                  specularity=0.0, roughness=0.0, transmitted_diff=0.0,
-                 transmitted_spec=0.0, modifier="void", dependencies=None):
+                 transmitted_spec=0.0, modifier=None, dependencies=None):
         """Create trans material."""
         Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
@@ -190,7 +190,7 @@ class Trans(Material):
     def from_reflected_specularity(
             cls, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
             reflected_specularity=0.0, roughness=0.0, transmitted_diff=0.0,
-            transmitted_spec=0.0, modifier="void", dependencies=None):
+            transmitted_spec=0.0, modifier=None, dependencies=None):
         """Create trans material from reflected specularity.
 
         Note:
@@ -217,7 +217,7 @@ class Trans(Material):
                 transmitted light that is transmitted diffusely in as scattering fashion.
             transmitted_spec: The transmitted specular component is the fraction of
                 transmitted light that is not diffusely scattered.
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -263,7 +263,7 @@ class Trans(Material):
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
-        transmitted_diff=0.0, transmitted_spec=0.0, modifier="void",
+        transmitted_diff=0.0, transmitted_spec=0.0, modifier=None,
             dependencies=None):
         """Create trans material with single reflectance value.
 
@@ -283,7 +283,7 @@ class Trans(Material):
                 transmitted light that is transmitted diffusely in as scattering fashion.
             transmitted_spec: The transmitted specular component is the fraction of
                 transmitted light that is not diffusely scattered.
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -304,7 +304,7 @@ class Trans(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "trans",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -362,7 +362,7 @@ class Trans(Material):
             "transmitted_diff": float,
             "transmitted_spec": float,
             "dependencies": []
-            "modifier": {} or void,  # Material modifier
+            "modifier": {},  # Material modifier (Default: None)
             }
         """
         assert 'type' in data, 'Input dictionary is missing "type".'

@@ -27,10 +27,10 @@ class Plastic(Material):
             value of 0 corresponds to a perfectly smooth surface, and a value of 1
             would be a very rough surface. Roughness values greater than 0.2 are not
             very realistic. (Default: 0).
-        modifier: Material modifier (Default: "void").
+        modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
-            primitive is defined based on other primitives. (Default: [])
+            primitive is defined based on other primitives. (Default: None).
 
     Properties:
         * identifier
@@ -59,7 +59,7 @@ class Plastic(Material):
                  '_specularity', '_roughness')
 
     def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
-                 specularity=0.0, roughness=0.0, modifier="void", dependencies=None):
+                 specularity=0.0, roughness=0.0, modifier=None, dependencies=None):
         """Create plastic material."""
         Material.__init__(self, identifier, modifier=modifier, dependencies=dependencies)
         self.r_reflectance = r_reflectance
@@ -157,7 +157,7 @@ class Plastic(Material):
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
-        modifier="void", dependencies=None):
+        modifier=None, dependencies=None):
         """Create plastic material with single reflectance value.
 
         Args:
@@ -172,10 +172,10 @@ class Plastic(Material):
                 of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
                 a very rough surface. Roughness values greater than 0.2 are not very
                 realistic. (Default: 0).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
-                primitive is defined based on other primitives. (Default: [])
+                primitive is defined based on other primitives. (Default: None).
 
         Usage:
 
@@ -199,7 +199,7 @@ class Plastic(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "plastic",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -250,7 +250,7 @@ class Plastic(Material):
             "b_reflectance": float,  # Reflectance for blue
             "specularity": float,  # Material specularity
             "roughness": float,  # Material roughness
-            "modifier": {} or void,  # Material modifier
+            "modifier": {},  # Material modifier (Default: None)
             "dependencies": []
             }
         """

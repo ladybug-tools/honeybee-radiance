@@ -64,9 +64,7 @@ class _GeometryRadianceProperties(object):
         if self._modifier_blk:  # set by user
             return self._modifier_blk
         mod = self.modifier  # assign a default based on whether the modifier is opaque
-        if mod.is_void:
-            return black
-        elif mod.is_opaque:
+        if mod.is_void or mod.is_opaque:
             return black
         else:
             return mod

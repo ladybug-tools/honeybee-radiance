@@ -24,7 +24,7 @@ class Glass(Material):
             1 (Default: 0).
         refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
             (Default: 1.52).
-        modifier: Material modifier (Default: "void").
+        modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
             primitive is defined based on other primitives. (Default: [])
@@ -54,7 +54,7 @@ class Glass(Material):
                  '_refraction_index')
 
     def __init__(self, identifier, r_transmissivity=0.0, g_transmissivity=0.0,
-                 b_transmissivity=0.0, refraction_index=None, modifier="void",
+                 b_transmissivity=0.0, refraction_index=None, modifier=None,
                  dependencies=None):
         """Create glass material."""
         Material.__init__(self, identifier, modifier=modifier,
@@ -137,7 +137,7 @@ class Glass(Material):
 
     @classmethod
     def from_transmittance(cls, identifier, r_transmittance=0.0, g_transmittance=0.0,
-                           b_transmittance=0.0, refraction_index=None, modifier="void",
+                           b_transmittance=0.0, refraction_index=None, modifier=None,
                            dependencies=None):
         """Create glass material from transmittance values.
 
@@ -157,7 +157,7 @@ class Glass(Material):
                 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
                 (Default: 1.52).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -177,7 +177,7 @@ class Glass(Material):
 
     @classmethod
     def from_single_transmissivity(cls, identifier, rgb_transmissivity=0,
-                                   refraction_index=None, modifier="void",
+                                   refraction_index=None, modifier=None,
                                    dependencies=None):
         """Create glass material with single transmissivity value.
 
@@ -189,7 +189,7 @@ class Glass(Material):
                 be between 0 and 1 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
                 (Default: 1.52).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -209,7 +209,8 @@ class Glass(Material):
 
     @classmethod
     def from_single_transmittance(cls, identifier, rgb_transmittance=0,
-                                  refraction_index=None, modifier="void", dependencies=None):
+                                  refraction_index=None, modifier=None,
+                                  dependencies=None):
         """Create glass material with single transmittance value.
 
         Args:
@@ -220,7 +221,7 @@ class Glass(Material):
                 be between 0 and 1 (Default: 0).
             refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
                 (Default: 1.52).
-            modifier: Material modifier (Default: "void").
+            modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
@@ -249,7 +250,7 @@ class Glass(Material):
         .. code-block:: python
 
             {
-            "modifier": "",  # primitive modifier (Default: "void")
+            "modifier": {},  # primitive modifier (Default: None)
             "type": "glass",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
@@ -299,7 +300,7 @@ class Glass(Material):
             "g_transmissivity": float,  # Transmissivity for green
             "b_transmissivity": float,  # Transmissivity for blue
             "refraction_index": float,  # Index of refraction
-            "modifier": "",  # material modifier (Default: "void")
+            "modifier": {},  # material modifier (Default: None)
             "dependencies": []
             }
         """
