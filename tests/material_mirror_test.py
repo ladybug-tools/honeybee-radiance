@@ -160,6 +160,18 @@ def test_from_to_dict_with_alternate_material():
     assert mm == mmc
 
 
+def test_from_to_dict_with_void_alternate_material():
+    material_string = """
+    void mirror glass_mat
+    1 void
+    0
+    3 1 1 1
+    """
+    mm = Mirror.from_string(material_string)
+    mmc = Mirror.from_dict(mm.to_dict())
+    assert mm == mmc
+
+
 def test_from_primitive_dict_with_alt_material():
     alt_mat = {
         'modifier': 'void',

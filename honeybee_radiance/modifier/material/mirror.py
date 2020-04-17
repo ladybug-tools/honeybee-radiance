@@ -4,6 +4,7 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Mirror
 """
 from __future__ import division
 from .materialbase import Material
+from ...primitive import Void, VOID
 import honeybee.typing as typing
 
 
@@ -33,9 +34,11 @@ class Mirror(Material):
             (Default: 1).
         modifier: Material modifier (Default: None).
         alternate_material: An optional material may be used like the illum type to
-            specify a different material to be used for shading non-source rays. If this
-            alternate material is given as None, then the mirror surface will be
-            invisible. This is only appropriate if the surface hides other (more
+            specify a different material to be used for shading non-source rays.
+            If None, this alternate_material will effectively have the same
+            rgb reflectance properties of the base material. If this alternate
+            material is given as "void", then the mirror surface will be invisible.
+            Using "void" is only appropriate if the surface hides other (more
             detailed) geometry with the same overall reflectance (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
@@ -138,7 +141,7 @@ class Mirror(Material):
     @alternate_material.setter
     def alternate_material(self, material):
         if material is not None:
-            assert isinstance(material, Material), \
+            assert isinstance(material, (Material, Void)), \
                 'alternate material must be from type Material not {}'.format(
                 type(material))
 
@@ -167,9 +170,11 @@ class Mirror(Material):
                 between 0 and 1 (Default: 0).
             modifier: Material modifier (Default: None).
             alternate_material: An optional material may be used like the illum type to
-                specify a different material to be used for shading non-source rays. If
-                this alternate material is given as None, then the mirror surface will
-                be invisible. This is only appropriate if the surface hides other (more
+                specify a different material to be used for shading non-source rays.
+                If None, this alternate_material will effectively have the same
+                rgb reflectance properties of the base material. If this alternate
+                material is given as "void", then the mirror surface will be invisible.
+                Using "void" is only appropriate if the surface hides other (more
                 detailed) geometry with the same overall reflectance (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
@@ -215,7 +220,9 @@ class Mirror(Material):
         if len(primitive_dict['values'][0]) == 1:
             # find name
             alt_id = primitive_dict['values'][0][0]
-            if isinstance(alt_id, dict):
+            if alt_id == 'void':
+                alternate_material = VOID
+            elif isinstance(alt_id, dict):
                 try:  # see if the mutil module has already been imported
                     mutil
                 except NameError:
@@ -281,13 +288,15 @@ class Mirror(Material):
             )
         modifier, dependencies = Material.filter_dict_input(data)
         if 'alternate_material' in data and data['alternate_material']:
-            # alternate material
-            try:  # see if the mutil module has already been imported
-                mutil
-            except NameError:
-                # import the module here to avoid a circular import
-                import honeybee_radiance.mutil as mutil
-            alternate_material = mutil.dict_to_modifier(data['alternate_material'])
+            if data['alternate_material'] == 'void':
+                alternate_material = VOID
+            else:
+                try:  # see if the mutil module has already been imported
+                    mutil
+                except NameError:
+                    # import the module here to avoid a circular import
+                    import honeybee_radiance.mutil as mutil
+                alternate_material = mutil.dict_to_modifier(data['alternate_material'])
         else:
             alternate_material = None
 
@@ -315,7 +324,10 @@ class Mirror(Material):
             'dependencies': [dp.to_dict() for dp in self._dependencies]
         }
         if self.alternate_material:
-            base['alternate_material'] = self.alternate_material.to_dict()
+            if isinstance(self.alternate_material, Void):
+                base['alternate_material'] = {'type': 'void'}
+            else:
+                base['alternate_material'] = self.alternate_material.to_dict()
         else:
             base['alternate_material'] = None
         if self._display_name is not None:
