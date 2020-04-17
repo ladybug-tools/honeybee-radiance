@@ -21,7 +21,7 @@ def test_from_string():
     assert len(p.values[0]) == 1
     assert p.values[0][0] == 'glass_alt_mat'
     assert p.values[1] == []
-    assert p.values[2] == ['1', '1', '1']
+    assert p.values[2] == ['1', '1', '1', '1.52']
     assert len(p.dependencies) == 1
     # check modifier
     assert p.modifier.identifier == 'glass_angular_effect'

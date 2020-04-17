@@ -2,7 +2,7 @@ frit = '''
 void glass glass_alt_mat
 0
 0
-3 0.96 0.96 0.96
+4 0.96 0.96 0.96 1.52
 
 void brightfunc glass_angular_effect
 2 A1+(1-A1) (exp(-5.85 Rdot)-0.00287989916)
@@ -12,7 +12,7 @@ void brightfunc glass_angular_effect
 glass_angular_effect mirror glass_mat
 1 glass_alt_mat
 0
-3 1 1 1
+4 1 1 1 1.52
 '''
 
 

@@ -54,7 +54,7 @@ class Glass(Material):
                  '_refraction_index')
 
     def __init__(self, identifier, r_transmissivity=0.0, g_transmissivity=0.0,
-                 b_transmissivity=0.0, refraction_index=None, modifier=None,
+                 b_transmissivity=0.0, refraction_index=1.52, modifier=None,
                  dependencies=None):
         """Create glass material."""
         Material.__init__(self, identifier, modifier=modifier,
@@ -124,7 +124,7 @@ class Glass(Material):
     @refraction_index.setter
     def refraction_index(self, value):
         self._refraction_index = typing.float_positive(value) if value is not None \
-             else None
+             else 1.52
 
     @property
     def average_transmissivity(self):
@@ -137,7 +137,7 @@ class Glass(Material):
 
     @classmethod
     def from_transmittance(cls, identifier, r_transmittance=0.0, g_transmittance=0.0,
-                           b_transmittance=0.0, refraction_index=None, modifier=None,
+                           b_transmittance=0.0, refraction_index=1.52, modifier=None,
                            dependencies=None):
         """Create glass material from transmittance values.
 
@@ -177,7 +177,7 @@ class Glass(Material):
 
     @classmethod
     def from_single_transmissivity(cls, identifier, rgb_transmissivity=0,
-                                   refraction_index=None, modifier=None,
+                                   refraction_index=1.52, modifier=None,
                                    dependencies=None):
         """Create glass material with single transmissivity value.
 
@@ -209,7 +209,7 @@ class Glass(Material):
 
     @classmethod
     def from_single_transmittance(cls, identifier, rgb_transmittance=0,
-                                  refraction_index=None, modifier=None,
+                                  refraction_index=1.52, modifier=None,
                                   dependencies=None):
         """Create glass material with single transmittance value.
 
@@ -264,7 +264,7 @@ class Glass(Material):
 
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
         values = primitive_dict['values'][2]
-        refraction_index = values[3] if len(values) == 4 else None
+        refraction_index = values[3] if len(values) == 4 else 1.52
         cls_ = cls(
             identifier=primitive_dict['identifier'],
             r_transmissivity=values[0],

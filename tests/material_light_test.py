@@ -57,7 +57,7 @@ def test_from_dict_w_modifier():
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
         "b_transmissivity": 0.6,
-        "refraction_index": None,
+        "refraction_index": 1.52,
         "modifier": None,
         "dependencies": []
     }
@@ -76,7 +76,7 @@ def test_from_dict_w_modifier():
     assert gg.to_radiance(minimal=True, include_modifier=False) == \
         'test_glass_mod light test_light 0 0 3 0.1 0.2 0.3'
     assert gg.modifier.to_radiance(minimal=True) == \
-        'void glass test_glass_mod 0 0 3 0.4 0.5 0.6'
+        'void glass test_glass_mod 0 0 4 0.4 0.5 0.6 1.52'
 
 
 def test_from_single_value():

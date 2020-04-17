@@ -6,11 +6,11 @@ import pytest
 def test_frit():
     objects = reader.parse_from_string(frit)
     assert len(objects) == 3
-    assert objects[0] == 'void glass glass_alt_mat 0 0 3 0.96 0.96 0.96'
+    assert objects[0] == 'void glass glass_alt_mat 0 0 4 0.96 0.96 0.96 1.52'
     assert objects[1] == 'void brightfunc glass_angular_effect 2 ' \
         'A1+(1-A1) (exp(-5.85 Rdot)-0.00287989916) 0 1 0.08'
     assert objects[2] == 'glass_angular_effect mirror glass_mat 1 glass_alt_mat ' \
-        '0 3 1 1 1'
+        '0 4 1 1 1 1.52'
 
 
 def test_microshade():
