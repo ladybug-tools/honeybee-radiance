@@ -22,8 +22,9 @@ class Glass(Material):
             and 1 (Default: 0).
         b_transmissivity: Transmissivity for blue. The value should be between 0 and
             1 (Default: 0).
-        refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
-            (Default: 1.52).
+        refraction_index: Index of refraction. Typical values are 1.52 for float
+            glass and 1.4 for ETFE. If None, Radiance will default to using 1.52
+            for glass (Default: None).
         modifier: Material modifier (Default: None).
         dependencies: A list of primitives that this primitive depends on. This
             argument is only useful for defining advanced primitives where the
@@ -79,7 +80,7 @@ class Glass(Material):
 
     @property
     def r_transmissivity(self):
-        """Transmissivity for red channel.
+        """Get or set the transmissivity for red channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -92,7 +93,7 @@ class Glass(Material):
 
     @property
     def g_transmissivity(self):
-        """Transmissivity for green channel.
+        """Get or set the transmissivity for green channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -105,7 +106,7 @@ class Glass(Material):
 
     @property
     def b_transmissivity(self):
-        """Transmissivity for blue channel.
+        """get or set the transmissivity for blue channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -118,17 +119,21 @@ class Glass(Material):
 
     @property
     def refraction_index(self):
-        """Index of refraction. 1.52 for glass and 1.4 for ETFE (Default: 1.52)."""
+        """Get or set the index of refraction.
+        
+        Typical values are 1.52 for float glass and 1.4 for ETFE. If None, Radiance
+        will default to using 1.52 for glass.
+        """
         return self._refraction_index
 
     @refraction_index.setter
     def refraction_index(self, value):
         self._refraction_index = typing.float_positive(value) if value is not None \
-             else None
+            else None
 
     @property
     def average_transmissivity(self):
-        """Calculate average transmittance.
+        """Get the average transmissivity.
 
         The value is calculated by multiplying the r, g, b values by v-lambda.
         """
@@ -155,8 +160,9 @@ class Glass(Material):
                 (Default: 0).
             b_transmittance: Transmittance for blue. The value should be between 0 and 1
                 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
-                (Default: 1.52).
+            refraction_index: Index of refraction. Typical values are 1.52 for float
+                glass and 1.4 for ETFE. If None, Radiance will default to using 1.52
+                for glass (Default: None).
             modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
@@ -187,8 +193,9 @@ class Glass(Material):
                 a model and in the exported Radiance files.
             rgb_transmissivity: Transmissivity for red, green and blue. The value should
                 be between 0 and 1 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
-                (Default: 1.52).
+            refraction_index: Index of refraction. Typical values are 1.52 for float
+                glass and 1.4 for ETFE. If None, Radiance will default to using 1.52
+                for glass (Default: None).
             modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
@@ -217,10 +224,11 @@ class Glass(Material):
             identifier: Text string for a unique Material ID. Must not contain spaces
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
-            rgb_transmissivity: Transmissivity for red, green and blue. The value should
+            rgb_transmittance: Transmittance for red, green and blue. The value should
                 be between 0 and 1 (Default: 0).
-            refraction: Index of refraction. 1.52 for glass and 1.4 for ETFE
-                (Default: 1.52).
+            refraction_index: Index of refraction. Typical values are 1.52 for float
+                glass and 1.4 for ETFE. If None, Radiance will default to using 1.52
+                for glass (Default: None).
             modifier: Material modifier (Default: None).
             dependencies: A list of primitives that this primitive depends on. This
                 argument is only useful for defining advanced primitives where the
