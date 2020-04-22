@@ -5,6 +5,7 @@ from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions
 
 from honeybee_radiance.properties.aperture import ApertureRadianceProperties
+from honeybee_radiance.state import RadianceSubFaceState
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Glass
 
@@ -116,7 +117,7 @@ def test_to_dict():
     assert ad['properties']['radiance']['modifier']['identifier'] == 'TriplePane'
 
 
-def test_from_dict():
+def test_to_from_dict():
     """Test the Aperture from_dict method with radiance properties."""
     aperture = Aperture.from_vertices(
         'wall_aperture', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])

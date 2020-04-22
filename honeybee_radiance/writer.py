@@ -10,6 +10,7 @@ from .modifier.material import BSDF
 from .lib.modifiers import black
 
 import os
+import json
 import shutil
 
 
@@ -323,6 +324,178 @@ def model_to_rad_folder(model, folder=None, minimal=False):
                         nonopaque_shades, nonopaque_shades_blk, nos_mods, nos_mods_blk,
                         mod_combs, mod_names, False, minimal)
 
+    # write dynamic sub-face groups (apertures and doors)
+    int_dict = {}
+    ext_dict = {}
+    for group in model.properties.radiance.dynamic_subface_groups:
+        if group.is_indoor:
+            subfolder = model_folder.DYNAMIC_APERTURE_INTERIOR
+            st_d = _write_dynamic_subface_files(folder, subfolder, group, minimal)
+            _write_mtx_files(folder, subfolder, group, st_d, minimal)
+            int_dict[group.identifier] = st_d
+        else:
+            subfolder = model_folder.DYNAMIC_APERTURE_EXTERIOR
+            st_d = _write_dynamic_subface_files(folder, subfolder, group, minimal)
+            _write_mtx_files(folder, subfolder, group, st_d, minimal)
+            ext_dict[group.identifier] = st_d
+    _write_dynamic_json(folder, model_folder.DYNAMIC_APERTURE_INTERIOR, int_dict)
+    _write_dynamic_json(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR, ext_dict)
+
+    # write dynamic shade groups
+    opaque_in_dict = {}
+    opaque_out_dict = {}
+    nopaque_in_dict = {}
+    nopaque_out_dict = {}
+    for group in model.properties.radiance.dynamic_shade_groups:
+        if group.is_opaque:
+            if group.is_indoor:
+                st_d = _write_dynamic_shade_files(
+                    folder, model_folder.DYNAMIC_OPAQUE_INDOOR, group, minimal)
+                opaque_in_dict[group.identifier] = st_d
+            else:
+                st_d = _write_dynamic_shade_files(
+                    folder, model_folder.DYNAMIC_OPAQUE_OUTDOOR, group, minimal)
+                opaque_out_dict[group.identifier] = st_d
+        else:
+            if group.is_indoor:
+                st_d = _write_dynamic_shade_files(
+                    folder, model_folder.DYNAMIC_NONOPAQUE_INDOOR, group, minimal)
+                nopaque_in_dict[group.identifier] = st_d
+            else:
+                st_d = _write_dynamic_shade_files(
+                    folder, model_folder.DYNAMIC_NONOPAQUE_OUTDOOR, group, minimal)
+                nopaque_out_dict[group.identifier] = st_d
+    _write_dynamic_json(folder, model_folder.DYNAMIC_OPAQUE_INDOOR, opaque_in_dict)
+    _write_dynamic_json(folder, model_folder.DYNAMIC_OPAQUE_OUTDOOR, opaque_out_dict)
+    _write_dynamic_json(folder, model_folder.DYNAMIC_NONOPAQUE_INDOOR, nopaque_in_dict)
+    _write_dynamic_json(folder, model_folder.DYNAMIC_NONOPAQUE_OUTDOOR, nopaque_out_dict)
+
+    # copy all bsdfs into the bsdf folder
+    model_bsdf_folder = os.path.join(folder, 'model', 'bsdf')
+    for bdf_mod in model.properties.radiance.bsdf_modifiers:
+        bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
+        new_bsdf_path = os.path.join(model_bsdf_folder, bsdf_name)
+        shutil.copy(bdf_mod.bsdf_file, new_bsdf_path)
+
+
+def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
+    """Write out the files that need to go into any dynamic model folder.
+
+    Args:
+        folder: The model folder location on this machine.
+        sub_folder: The sub-folder for the three files (relative to the model folder).
+        group: A DynamicShadeGroup object to be written into files.
+        minimal: Boolean noting whether radiance strings should be written minimally.
+    
+    Returns:
+        A list of dictionaries to be written into the states.json file.
+    """
+    # destination folder for all of the radiance files
+    dest = os.path.join(folder, sub_folder)
+
+    # loop through all states and write out the .rad files for them
+    states_list = group.states_json_list
+    for state_i, file_names in enumerate(states_list):
+        default_str = group.to_radiance(state_i, direct=False, minimal=minimal)
+        direct_str = group.to_radiance(state_i, direct=True, minimal=minimal)
+        write_to_file_by_name(dest, file_names['default'].replace('./', ''), default_str)
+        write_to_file_by_name(dest, file_names['direct'].replace('./', ''), direct_str)
+    return states_list
+
+
+def _write_dynamic_subface_files(folder, sub_folder, group, minimal=False):
+    """Write out the files that need to go into any dynamic model folder.
+
+    Args:
+        folder: The model folder location on this machine.
+        sub_folder: The sub-folder for the three files (relative to the model folder).
+        group: A DynamicSubFaceGroup object to be written into files.
+        minimal: Boolean noting whether radiance strings should be written minimally.
+    
+    Returns:
+        A list of dictionaries to be written into the states.json file.
+    """
+    # destination folder for all of the radiance files
+    dest = os.path.join(folder, sub_folder)
+
+    # loop through all states and write out the .rad files for them
+    states_list = group.states_json_list
+    for state_i, file_names in enumerate(states_list):
+        default_str = group.to_radiance(state_i, direct=False, minimal=minimal)
+        direct_str = group.to_radiance(state_i, direct=True, minimal=minimal)
+        write_to_file_by_name(dest, file_names['default'].replace('./', ''), default_str)
+        write_to_file_by_name(dest, file_names['direct'].replace('./', ''), direct_str)
+
+    # write out the black representation of the aperture
+    black_str = group.blk_to_radiance(state_i, minimal=minimal)
+    write_to_file_by_name(dest, file_names['black'].replace('./', ''), black_str)
+    return states_list
+
+
+def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False):
+    """Write out the mtx files needed for 3-phase simulation into a model folder.
+
+    Args:
+        folder: The model folder location on this machine.
+        sub_folder: The sub-folder for the three files (relative to the model folder).
+        group: A DynamicSubFaceGroup object to be written into files.
+        states_json_list: A list to be written into the states.json file.
+        minimal: Boolean noting whether radiance strings should be written minimally.
+    
+    Returns:
+        A list of dictionaries to be written into the states.json file.
+    """
+    dest = os.path.join(folder, sub_folder)  # destination folder for radiance files
+
+    # check if all of the states of all of the vmtx and dmtx geometry are default
+    one_mtx = all(st.mtxs_default for obj in group.dynamic_objects
+                  for st in obj.properties.radiance._states)
+    if one_mtx:  # if they're all default, we can use one file
+        mtx_file = './{}..mtx.rad'.format(group.identifier)
+
+    # loop through all states and write out the .rad files for them
+    for state_i, st_dict in enumerate(states_json_list):
+        tmtx_bsdf = group.tmxt_bsdf(state_i)
+        if tmtx_bsdf is not None:  # it's a valid state for 3-phase
+            # add the tmxt to the states_json_list
+            bsdf_name = os.path.split(tmtx_bsdf.bsdf_file)[-1]
+            states_json_list[state_i]['tmtx'] = bsdf_name
+
+            # add the vmtx and the dmtx to the states_json_list
+            if one_mtx:
+                states_json_list[state_i]['vmtx'] = mtx_file
+                states_json_list[state_i]['dmtx'] = mtx_file
+            else:
+                states_json_list[state_i]['vmtx'] = \
+                    './{}..vmtx..{}.rad'.format(group.identifier, str(state_i))
+                states_json_list[state_i]['dmtx'] = \
+                    './{}..dmtx..{}.rad'.format(group.identifier, str(state_i))
+                vmtx_str = group.vmtx_to_radiance(state_i, minimal)
+                dmtx_str = group.dmtx_to_radiance(state_i, minimal)
+                write_to_file_by_name(
+                    dest, states_json_list[state_i]['vmtx'].replace('./', ''), vmtx_str)
+                write_to_file_by_name(
+                    dest, states_json_list[state_i]['dmtx'].replace('./', ''), dmtx_str)
+
+    # write the single mtx file if everything is default
+    if one_mtx:
+        mtx_str = group.vmtx_to_radiance(0, minimal)
+        write_to_file_by_name(dest, mtx_file, mtx_str)
+
+
+def _write_dynamic_json(folder, sub_folder, json_dict):
+    """Write out the files that need to go into any dynamic model folder.
+
+    Args:
+        folder: The model folder location on this machine.
+        sub_folder: The sub-folder for the three files (relative to the model folder).
+        json_dict: A dictionary to be written into the states.json file.
+    """
+    if json_dict != {}:
+        dest_file = os.path.join(folder, sub_folder, 'states.json')
+        with open(dest_file, 'w') as fp:
+            json.dump(json_dict, fp, indent=4)
+
 
 def _write_static_files(
         folder, sub_folder, model_id, geometry, geometry_blk, modifiers, modifiers_blk,
@@ -373,12 +546,12 @@ def _write_static_files(
         mod_blk_strs = []
         for mod in modifiers:
             if isinstance(mod, BSDF):
-                _process_bsdf_modifier(folder, mod, mod_strs, minimal)
+                _process_bsdf_modifier(mod, mod_strs, minimal)
             else:
                 mod_strs.append(mod.to_radiance(minimal))
         for mod in modifiers_blk:
             if isinstance(mod, BSDF):
-                _process_bsdf_modifier(folder, mod, mod_strs, minimal)
+                _process_bsdf_modifier(mod, mod_strs, minimal)
             else:
                 mod_blk_strs.append(mod.to_radiance(minimal))
 
@@ -408,7 +581,7 @@ def _unique_modifiers(geometry_objects):
 
 
 def _unique_modifier_blk_combinations(geometry_objects):
-    """Get lists of unique modifier/mofidier_blk combinations across geometry objects.
+    """Get lists of unique modifier/modifier_blk combinations across geometry objects.
 
     Args:
         geometry_objects: An array of geometry objects (Faces, Apertures,
@@ -464,24 +637,18 @@ def _collect_modifiers(geo, geo_blk, opaque_or_aperture):
     return mods, mods_blk, mod_combs, mod_names
 
 
-def _process_bsdf_modifier(folder, modifier, mod_strs, minimal):
+def _process_bsdf_modifier(modifier, mod_strs, minimal):
     """Process a BSDF modifier for a radiance model folder."""
-    # copy the BSDF to the model radiance folder
-    model_bsdf_folder = os.path.join(folder, 'model', 'bsdf')
     bsdf_name = os.path.split(modifier.bsdf_file)[-1]
-    new_bsdf_path = os.path.join(model_bsdf_folder, bsdf_name)
-    shutil.copy(modifier.bsdf_file, new_bsdf_path)
-
-    # write a radiance string using the correct path to the BSDF
     mod_dup = modifier.duplicate()  # duplicate to avoid editing the original
-    mod_dup.bsdf_file = new_bsdf_path
+    mod_dup.bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
     mod_strs.append(mod_dup.to_radiance(minimal))
 
 
 def _instance_in_array(object_instance, object_array):
     """Check if a specific object instance is already in an array.
 
-    This can be much faster than  `if object_instance in object_arrary`
+    This can be much faster than  `if object_instance in object_array`
     when you expect to be testing a lot of the same instance of an object for
     inclusion in an array since the builtin method uses an == operator to
     test inclusion.

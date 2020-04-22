@@ -1,13 +1,14 @@
 # coding=utf-8
 """Model Radiance Properties."""
-from honeybee.extensionutil import model_extension_dicts
-from honeybee.boundarycondition import Surface
-
-from ..lib.modifiersets import generic_modifier_set_visible
-from ..lib.modifiers import black, generic_context
+from .dynamic import DynamicShadeGroup, DynamicSubFaceGroup
 from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import BSDF
+from ..lib.modifiersets import generic_modifier_set_visible
+from ..lib.modifiers import black, generic_context
+
+from honeybee.extensionutil import model_extension_dicts
+from honeybee.boundarycondition import Surface
 
 try:
     from itertools import izip as zip  # python 2
@@ -31,6 +32,8 @@ class ModelRadianceProperties(object):
         * bsdf_modifiers
         * modifier_sets
         * global_modifier_set
+        * dynamic_shade_groups
+        * dynamic_subface_groups
     """
 
     def __init__(self, host):
@@ -47,10 +50,11 @@ class ModelRadianceProperties(object):
         """A list of all unique modifiers in the model.
 
         This includes modifiers across all Faces, Apertures, Doors, Shades,
-        Room ModifierSets, and the global_modifier_set.
+        Room ModifierSets, and the global_modifier_set. It also includes modifiers
+        for any dynamic states assigned to these objects.
 
-        However, it excludes blk_modifiers and these can be obtained separately
-        from the blk_modifiers property.
+        However, it excludes blk_modifiers and the modifier_direct of any states.
+        These can be obtained separately from the blk_modifiers property.
         """
         all_mods = self.global_modifier_set.modifiers_unique + self.room_modifiers + \
             self.face_modifiers + self.shade_modifiers
@@ -58,28 +62,21 @@ class ModelRadianceProperties(object):
 
     @property
     def blk_modifiers(self):
-        """A list of all unique modifier_blk assigned to Faces, Apertures and Doors."""
+        """A list of all unique modifier_blk in the model.
+        
+        This includes modifier_blk across all Faces, Apertures, Doors, and Shades.
+        It also includes modifier_direct for any dynamic states assigned to
+        these objects.
+        """
         modifiers = [black]
-        for room in self.host.rooms:
-            for face in room.faces:  # check all Room Face modifiers
-                self._check_and_add_face_modifier_blk(face, modifiers)
-        for face in self.host.orphaned_faces:  # check all orphaned Face modifiers
+        for face in self.host.faces:  # check all orphaned Face modifiers
             self._check_and_add_face_modifier_blk(face, modifiers)
         for ap in self.host.orphaned_apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier_blk(ap, modifiers)
+            self._check_and_add_dynamic_obj_modifier_blk(ap, modifiers)
         for dr in self.host.orphaned_doors:  # check all Door modifiers
-            self._check_and_add_obj_modifier_blk(dr, modifiers)
-
-        for room in self.host.rooms:
-            self._check_and_add_room_modifier_shade_blk(room, modifiers)
-        for face in self.host.orphaned_faces:
-            self._check_and_add_face_modifier_shade_blk(face, modifiers)
-        for ap in self.host.orphaned_apertures:
-            self._check_and_add_obj_modifier_shade_blk(ap, modifiers)
-        for dr in self.host.orphaned_doors:
-            self._check_and_add_obj_modifier_shade_blk(dr, modifiers)
-        for shade in self.host.orphaned_shades:
-            self._check_and_add_obj_modifier_blk(shade, modifiers)
+            self._check_and_add_dynamic_obj_modifier_blk(dr, modifiers)
+        for shade in self.host.shades:
+            self._check_and_add_dynamic_obj_modifier_blk(shade, modifiers)
         return list(set(modifiers))
 
     @property
@@ -103,10 +100,7 @@ class ModelRadianceProperties(object):
         objects. Nor does it include any blk modifiers.
         """
         modifiers = []
-        for room in self.host.rooms:
-            for face in room.faces:  # check all Room Face modifiers
-                self._check_and_add_face_modifier(face, modifiers)
-        for face in self.host.orphaned_faces:  # check all orphaned Face modifiers
+        for face in self.host.faces:  # check all orphaned Face modifiers
             self._check_and_add_face_modifier(face, modifiers)
         for ap in self.host.orphaned_apertures:  # check all Aperture modifiers
             self._check_and_add_obj_modifier(ap, modifiers)
@@ -162,6 +156,42 @@ class ModelRadianceProperties(object):
         """
         return generic_modifier_set_visible
 
+    @property
+    def dynamic_shade_groups(self):
+        """Get a list of DynamicShadeGroups in the model.
+
+        These can be used to write dynamic shades into radiance files.
+        """
+        # gather all of the shades with a common identifier into groups
+        group_dict = {}
+        for shade in self.host.shades:
+            if shade.properties.radiance._dynamic_group_identifier:
+                group_id = shade.properties.radiance._dynamic_group_identifier
+                try:
+                    group_dict[group_id].append(shade)
+                except KeyError:
+                    group_dict[group_id] = [shade]
+        # return DynamicShadeGroup objects
+        return [DynamicShadeGroup(ident, shades)for ident, shades in group_dict.items()]
+
+    @property
+    def dynamic_subface_groups(self):
+        """Get a list of DynamicSubFaceGroups in the model.
+
+        These can be used to write dynamic Apertures and Doors into radiance files.
+        """
+        # gather all of the subfaces with a common identifier into groups
+        group_dict = {}
+        for subface in self.host.apertures + self.host.doors:
+            if subface.properties.radiance._dynamic_group_identifier:
+                group_id = subface.properties.radiance._dynamic_group_identifier
+                try:
+                    group_dict[group_id].append(subface)
+                except KeyError:
+                    group_dict[group_id] = [subface]
+        # return DynamicSubFaceGroup objects
+        return [DynamicSubFaceGroup(ident, subf)for ident, subf in group_dict.items()]
+
     def faces_by_opaque(self):
         """Get all Faces in the model separated into opaque and nonopaque lists.
 
@@ -208,6 +238,7 @@ class ModelRadianceProperties(object):
     def subfaces_by_interior_exterior(self):
         """Get model sub-faces (Apertures, Doors) separated into interior/exterior lists.
 
+        Dynamic sub-faces will be excluded from the output lists.
         This method will also ensure that any interior sub-faces (with Surface
         boundary condition) only have one of such objects in the output lists.
 
@@ -231,26 +262,30 @@ class ModelRadianceProperties(object):
         interior_subfaces = []
         interior_subfaces_blk = []
         interior_ids = set()
-        for ap in self.host.apertures:
-            if isinstance(ap.boundary_condition, Surface):
-                if ap.identifier in interior_ids:
+        for subf in self.host.apertures + self.host.doors:
+            if subf.properties.radiance.dynamic_group_identifier:
+                continue  # sub-face will be accounted for in the dynamic objects
+            if isinstance(subf.boundary_condition, Surface):
+                if subf.identifier in interior_ids:
                     continue
-                interior_ids.add(ap.boundary_condition.boundary_condition_object)
-                if ap.properties.radiance._modifier_blk:
-                    interior_subfaces_blk.append(ap)
+                interior_ids.add(subf.boundary_condition.boundary_condition_object)
+                if subf.properties.radiance._modifier_blk:
+                    interior_subfaces_blk.append(subf)
                 else:
-                    interior_subfaces.append(ap)
+                    interior_subfaces.append(subf)
             else:
-                if ap.properties.radiance._modifier_blk:
-                    exterior_subfaces_blk.append(ap)
+                if subf.properties.radiance._modifier_blk:
+                    exterior_subfaces_blk.append(subf)
                 else:
-                    exterior_subfaces.append(ap)
+                    exterior_subfaces.append(subf)
         return exterior_subfaces, exterior_subfaces_blk, \
             interior_subfaces, interior_subfaces_blk
 
     def indoor_shades_by_opaque(self):
         """Get all indoor Shades in the model separated into opaque and nonopaque lists.
 
+        Dynamic shades will be excluded from the output lists.
+
         Returns:
             A tuple with 4 lists:
 
@@ -266,11 +301,13 @@ class ModelRadianceProperties(object):
             -   nonopaque_shades_blk: A list of all non opaque shades that
                 have a unique modifier_blk.
         """
-        return self._separate_shades_by_opaque(self._indoor_shades())
+        return self._separate_shades_by_opaque(self.host.indoor_shades)
 
     def outdoor_shades_by_opaque(self):
         """Get all outdoor Shades in the model separated into opaque and nonopaque lists.
 
+        Dynamic shades will be excluded from the output lists.
+
         Returns:
             A tuple with 4 lists:
 
@@ -286,7 +323,7 @@ class ModelRadianceProperties(object):
             -   nonopaque_shades_blk: A list of all non opaque shades that
                 have a unique modifier_blk.
         """
-        return self._separate_shades_by_opaque(self._outoor_shades())
+        return self._separate_shades_by_opaque(self.host.outdoor_shades)
 
     def check_duplicate_modifier_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Modifier identifiers in the model."""
@@ -439,54 +476,6 @@ class ModelRadianceProperties(object):
 
         return modifiers, modifier_sets
 
-    def _indoor_shades(self):
-        """Get a list of all indoor Shade objects in the model."""
-        host = self.host
-        child_shades = []
-        for room in host._rooms:
-            child_shades.extend(room._indoor_shades)
-            for face in room.faces:
-                child_shades.extend(face._indoor_shades)
-                for ap in face._apertures:
-                    child_shades.extend(ap._indoor_shades)
-                for dr in face._doors:
-                    child_shades.extend(dr._indoor_shades)
-        for face in host._orphaned_faces:
-            child_shades.extend(face._indoor_shades)
-            for ap in face._apertures:
-                child_shades.extend(ap._indoor_shades)
-            for dr in face._doors:
-                child_shades.extend(dr._indoor_shades)
-        for ap in host._orphaned_apertures:
-            child_shades.extend(ap._indoor_shades)
-        for dr in host._orphaned_doors:
-            child_shades.extend(dr._indoor_shades)
-        return child_shades
-    
-    def _outoor_shades(self):
-        """Get a list of all outdoor Shade objects in the model."""
-        host = self.host
-        child_shades = []
-        for room in host._rooms:
-            child_shades.extend(room._outdoor_shades)
-            for face in room.faces:
-                child_shades.extend(face._outdoor_shades)
-                for ap in face._apertures:
-                    child_shades.extend(ap._outdoor_shades)
-                for dr in face._doors:
-                    child_shades.extend(dr._outdoor_shades)
-        for face in host._orphaned_faces:
-            child_shades.extend(face._outdoor_shades)
-            for ap in face._apertures:
-                child_shades.extend(ap._outdoor_shades)
-            for dr in face._doors:
-                child_shades.extend(dr._outdoor_shades)
-        for ap in host._orphaned_apertures:
-            child_shades.extend(ap._outdoor_shades)
-        for dr in host._orphaned_doors:
-            child_shades.extend(dr._outdoor_shades)
-        return child_shades + host._orphaned_shades
-
     def _check_and_add_room_modifier_shade(self, room, modifiers):
         """Check if a modifier is assigned to a Room's shades and add it to a list."""
         self._check_and_add_obj_modifier_shade(room, modifiers)
@@ -504,47 +493,23 @@ class ModelRadianceProperties(object):
     def _check_and_add_obj_modifier_shade(self, subf, modifiers):
         """Check if a modifier is assigned to an object's shades and add it to a list."""
         for shade in subf.shades:
-            self._check_and_add_obj_modifier(shade, modifiers)
-
-    def _check_and_add_room_modifier_shade_blk(self, room, modifiers):
-        """Check if a modifier_blk is assigned to a Room's shades.
-
-        This method adds the modifier_blk to a list if assigned.
-        """
-        self._check_and_add_obj_modifier_shade_blk(room, modifiers)
-        for face in room.faces:  # check all Face modifiers
-            self._check_and_add_face_modifier_shade_blk(face, modifiers)
-
-    def _check_and_add_face_modifier_shade_blk(self, face, modifiers):
-        """Check if a modifier_blk is assigned to a Face's shades and add it to a list.
-        """
-        self._check_and_add_obj_modifier_shade_blk(face, modifiers)
-        for ap in face.apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier_shade_blk(ap, modifiers)
-        for dr in face.doors:  # check all Door Shade modifiers
-            self._check_and_add_obj_modifier_shade_blk(dr, modifiers)
-
-    def _check_and_add_obj_modifier_shade_blk(self, subf, modifiers):
-        """Check if a modifier_blk is assigned to an object's shades and add it to list.
-        """
-        for shade in subf.shades:
-            self._check_and_add_obj_modifier_blk(shade, modifiers)
+            self._check_and_add_dynamic_obj_modifier(shade, modifiers)
 
     def _check_and_add_face_modifier(self, face, modifiers):
         """Check if a modifier is assigned to a face and add it to a list."""
         self._check_and_add_obj_modifier(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier(ap, modifiers)
+            self._check_and_add_dynamic_obj_modifier(ap, modifiers)
         for dr in face.doors:  # check all Door modifiers
-            self._check_and_add_obj_modifier(dr, modifiers)
+            self._check_and_add_dynamic_obj_modifier(dr, modifiers)
 
     def _check_and_add_face_modifier_blk(self, face, modifiers):
         """Check if a modifier_blk is assigned to a face and add it to a list."""
         self._check_and_add_obj_modifier_blk(face, modifiers)
         for ap in face.apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier_blk(ap, modifiers)
+            self._check_and_add_dynamic_obj_modifier_blk(ap, modifiers)
         for dr in face.doors:  # check all Door modifiers
-            self._check_and_add_obj_modifier_blk(dr, modifiers)
+            self._check_and_add_dynamic_obj_modifier_blk(dr, modifiers)
 
     def _check_and_add_obj_modifier(self, obj, modifiers):
         """Check if a modifier is assigned to an object and add it to a list."""
@@ -553,12 +518,39 @@ class ModelRadianceProperties(object):
             if not self._instance_in_array(mod, modifiers):
                 modifiers.append(mod)
 
+    def _check_and_add_dynamic_obj_modifier(self, obj, modifiers):
+        """Check if a modifier is assigned to a dynamic object and add it to a list."""
+        mod = obj.properties.radiance._modifier
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
+        for st in obj.properties.radiance._states:
+            stm = (st._modifier, st._modifier_direct) + (s._modifier for s in st._shades)
+            for mod in stm:
+                if mod is not None:
+                    if not self._instance_in_array(mod, modifiers):
+                        modifiers.append(mod)
+
     def _check_and_add_obj_modifier_blk(self, obj, modifiers):
         """Check if a modifier_blk is assigned to an object and add it to a list."""
         mod = obj.properties.radiance._modifier_blk
         if mod is not None:
             if not self._instance_in_array(mod, modifiers):
                 modifiers.append(mod)
+
+    def _check_and_add_dynamic_obj_modifier_blk(self, obj, modifiers):
+        """Check if a modifier_blk is assigned to a dynamic object and add it to a list.
+        """
+        mod = obj.properties.radiance._modifier_blk
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
+        for st in obj.properties.radiance._states:
+            for s in st._shades:
+                mod = s._modifier
+                if mod is not None:
+                    if not self._instance_in_array(mod, modifiers):
+                        modifiers.append(mod)
 
     def _check_and_add_orphaned_shade_modifier(self, obj, modifiers):
         """Check if a modifier is assigned to an object and add it to a list."""
@@ -569,6 +561,12 @@ class ModelRadianceProperties(object):
         else:
             if not self._instance_in_array(generic_context, modifiers):
                 modifiers.append(generic_context)
+        for st in obj.properties.radiance._states:
+            stm = (st._modifier, st._modifier_direct) + (s._modifier for s in st._shades)
+            for mod in stm:
+                if mod is not None:
+                    if not self._instance_in_array(mod, modifiers):
+                        modifiers.append(mod)
 
     @staticmethod
     def _separate_shades_by_opaque(shades):
@@ -581,6 +579,8 @@ class ModelRadianceProperties(object):
         nonopaque = []
         nonopaque_blk = []
         for shade in shades:
+            if shade.properties.radiance.dynamic_group_identifier:
+                continue  # shade will be accounted for in the dynamic objects
             if shade.properties.radiance.is_opaque:
                 if shade.properties.radiance._modifier_blk:
                     opaque_blk.append(shade)
