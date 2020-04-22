@@ -1,12 +1,13 @@
 # coding=utf-8
 """Shade Radiance Properties."""
-from ._base import _GeometryRadianceProperties
+from ._base import _DynamicRadianceProperties
 from ..modifier import Modifier
+from ..state import RadianceShadeState
 from ..lib.modifiers import generic_context
 from ..lib.modifiersets import generic_modifier_set_visible
 
 
-class ShadeRadianceProperties(_GeometryRadianceProperties):
+class ShadeRadianceProperties(_DynamicRadianceProperties):
     """Radiance Properties for Honeybee Shade.
 
     Args:
@@ -19,11 +20,17 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
             the contribution of individual Apertures). If None, this will be
             a completely black material if the Shade's modifier is opaque and
             will be equal to the modifier if the Shade's modifier is non-opaque.
+        dynamic_group_identifier: An optional string to note the dynamic group
+            to which the Shade is a part of. Shades sharing the same
+            dynamic_group_identifier will have their states change in unison.
+            If None, the Shade is assumed to be static.
 
     Properties:
         * host
         * modifier
         * modifier_blk
+        * dynamic_group_identifier
+        * states
         * is_opaque
         * is_modifier_set_on_object
         * is_blk_overridden
@@ -31,9 +38,11 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
 
     __slots__ = ()
 
-    def __init__(self, host, modifier=None, modifier_blk=None):
+    def __init__(self, host, modifier=None, modifier_blk=None,
+                 dynamic_group_identifier=None):
         """Initialize Shade radiance properties."""
-        _GeometryRadianceProperties.__init__(self, host, modifier, modifier_blk)
+        _DynamicRadianceProperties.__init__(
+            self, host, modifier, modifier_blk, dynamic_group_identifier)
 
     @property
     def modifier(self):
@@ -80,13 +89,16 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
             {
             'type': 'ShadeRadianceProperties',
             'modifier': {},  # A Honeybee Radiance Modifier dictionary
-            'modifier_blk': {}  # A Honeybee Radiance Modifier dictionary
+            'modifier_blk': {},  # A Honeybee Radiance Modifier dictionary
+            'dynamic_group_identifier': str,  # An optional dynamic group identifier
+            'states': []  # An optional list of states
             }
         """
         assert data['type'] == 'ShadeRadianceProperties', \
             'Expected ShadeRadianceProperties. Got {}.'.format(data['type'])
         new_prop = cls(host)
-        return cls._restore_modifiers_from_dict(new_prop, data)
+        new_prop = cls._restore_modifiers_from_dict(new_prop, data)
+        return cls._restore_states_from_dict(new_prop, data)
 
     def apply_properties_from_dict(self, abridged_data, modifiers):
         """Apply properties from a ShadeRadiancePropertiesAbridged dictionary.
@@ -102,10 +114,13 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
             {
             'type': 'ShadeRadiancePropertiesAbridged',
             'modifier': str,  # A Honeybee Radiance Modifier identifier
-            'modifier_blk': str  # A Honeybee Radiance Modifier identifier
+            'modifier_blk': str,  # A Honeybee Radiance Modifier identifier
+            'dynamic_group_identifier': str,  # An optional dynamic group identifier
+            'states': []  # An optional list of states
             }
         """
         self._apply_modifiers_from_dict(abridged_data, modifiers)
+        self._apply_states_from_dict(abridged_data, modifiers)
 
     def to_dict(self, abridged=False):
         """Return radiance properties as a dictionary.
@@ -118,7 +133,42 @@ class ShadeRadianceProperties(_GeometryRadianceProperties):
         base = {'radiance': {}}
         base['radiance']['type'] = 'ShadeRadianceProperties' if not \
             abridged else 'ShadeRadiancePropertiesAbridged'
-        return self._add_modifiers_to_dict(base, abridged)
+        self._add_modifiers_to_dict(base, abridged)
+        return self._add_states_to_dict(base, abridged)
+
+    def _check_state(self, obj):
+        assert isinstance(obj, RadianceShadeState), \
+            'Expected RadianceShadeState. Got {}.'.format(type(obj))
+        assert obj.parent is None, \
+            'RadianceShadeState cannot already have a parent object.'
+        obj._parent = self.host
+        return obj
+
+    def _apply_states_from_dict(self, abridged_data, modifiers):
+        """Apply statess from an Abridged dictionary.
+
+        Args:
+            abridged_data: An Abridged dictionary (typically coming from a Model).
+            modifiers: A dictionary of modifiers with modifier identifiers as keys,
+                which will be used to re-assign modifiers.
+        """
+        if 'dynamic_group_identifier' in abridged_data and \
+                abridged_data['dynamic_group_identifier'] is not None:
+            self.dynamic_group_identifier = dynamic_group_identifier
+        if 'states' in abridged_data and abridged_data['states'] is not None:
+            self.states = [RadianceShadeState.from_dict_abridged(st, modifiers)
+                           for st in abridged_data['states']]
+
+    @staticmethod
+    def _restore_states_from_dict(new_prop, data):
+        """Restore states from a data dictionary to a new properties object."""
+        if 'dynamic_group_identifier' in data and \
+                data['dynamic_group_identifier'] is not None:
+            new_prop.dynamic_group_identifier = data['dynamic_group_identifier']
+        if 'states' in data and data['states'] is not None:
+            new_prop.states = [RadianceShadeState.from_dict(shd)
+                               for shd in data['states']]
+        return new_prop
 
     @staticmethod
     def _parent_modifier_set(host_parent):

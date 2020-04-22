@@ -2,10 +2,13 @@
 """Base class of Radiance Properties for all planar geometry objects."""
 from ..modifier import Modifier
 from ..mutil import dict_to_modifier  # imports all modifiers classes
+from ..state import _RadianceState
 from ..lib.modifiers import black
 
+from honeybee.typing import valid_rad_string
 
-class _GeometryRadianceProperties(object):
+
+class _RadianceProperties(object):
     """Base class of Radiance Properties for all planar geometry objects.
 
     This includes (Face, Aperture, Door, Shade).
@@ -110,7 +113,7 @@ class _GeometryRadianceProperties(object):
     def duplicate(self, new_host=None):
         """Get a copy of this object.
 
-        new_host: A new Shade object that hosts these properties.
+        new_host: A new object that hosts these properties.
             If None, the properties will be duplicated with the same host.
         """
         _host = new_host or self._host
@@ -148,7 +151,7 @@ class _GeometryRadianceProperties(object):
 
     @staticmethod
     def _restore_modifiers_from_dict(new_prop, data):
-        """Restor modifiers from a data dictionary to a new properties object."""
+        """Restore modifiers from a data dictionary to a new properties object."""
         if 'modifier' in data and data['modifier'] is not None:
             new_prop.modifier = dict_to_modifier(data['modifier'])
         if 'modifier_blk' in data and data['modifier_blk'] is not None:
@@ -160,3 +163,192 @@ class _GeometryRadianceProperties(object):
 
     def __repr__(self):
         return 'Base Radiance Properties:\n host: {}'.format(self.host.identifier)
+
+
+class _DynamicRadianceProperties(_RadianceProperties):
+    """Base class of Radiance Properties for all planar geometry objects.
+
+    This includes Apertures and Shades.
+
+    Args:
+        host: A honeybee_core object that hosts these properties.
+        modifier: A Honeybee Radiance Modifier for the object. If None,
+            it will be set by the parent Room ModifierSet or the Honeybee
+            default generic ModifierSet.
+        modifier_blk: A Honeybee Radiance Modifier to be used for this object
+            in direct solar simulations and in isolation studies (assessing
+            the contribution of individual Apertures).
+        dynamic_group_identifier: An optional string to note the dynamic group
+            to which the object is a part of. Objects sharing the same
+            dynamic_group_identifier will have their states change in unison.
+            If None, the object is assumed to be static.
+
+    Properties:
+        * host
+        * modifier
+        * modifier_blk
+        * dynamic_group_identifier
+        * states
+        * is_opaque
+        * is_modifier_set_on_object
+        * is_blk_overridden
+    """
+
+    __slots__ = ('_dynamic_group_identifier', '_states')
+
+    def __init__(self, host, modifier=None, modifier_blk=None,
+                 dynamic_group_identifier=None):
+        """Initialize radiance properties."""
+        _RadianceProperties.__init__(self, host, modifier, modifier_blk)
+        self._states = []
+        self.dynamic_group_identifier = dynamic_group_identifier
+
+    @property
+    def dynamic_group_identifier(self):
+        """Get or set a text string for the dynamic_group_identifier.
+        
+        Objects sharing the same dynamic_group_identifier will have their
+        states change in unison. If None, the object is assumed to be static.
+        """
+        return self._dynamic_group_identifier
+
+    @dynamic_group_identifier.setter
+    def dynamic_group_identifier(self, identifier):
+        if identifier is not None:
+            identifier = valid_rad_string(identifier)
+        else:
+            assert len(self._states) == 0, 'dynamic_group_identifier cannot be ' \
+                'None while states are assigned. Use the remove_states method ' \
+                'before setting to None.'
+        self._dynamic_group_identifier = identifier
+
+    @property
+    def states(self):
+        """Get or set an array of radiance states assigned to this object.
+    
+        These cannot be set unless there is also a dynamic_group_identifier for
+        the object.
+        """
+        return tuple(self._states)
+
+    @states.setter
+    def states(self, value):
+        if value is not None:
+            assert self._dynamic_group_identifier is not None, 'Object must have ' \
+                'a dynamic_group_identifier to assign states.'
+            try:
+                self._states = [self._check_state(st) for st in value]
+            except (ValueError, TypeError):
+                raise TypeError('Expected iterable for Object states. ' \
+                    'Got  {}.'.format(type(value)))
+        else:
+            self._states = []
+
+    def remove_states(self):
+        """Remove all states assigned to this object."""
+        for state in self._states:
+            state._parent = None
+        self._states = []
+
+    def add_state(self, state):
+        """Add a Radiance state object to this object.
+
+        Args:
+            state: A Radiance state object to add to the this object.
+        """
+        assert self._dynamic_group_identifier is not None, 'Object must have ' \
+                'a dynamic_group_identifier to assign states.'
+        self._states.append(self._check_state(state))
+
+    def move(self, moving_vec):
+        """Move all state geometry along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the shades.
+        """
+        for state in self._states:
+            state.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate all state geometry.
+
+        Args:
+            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for state in self._states:
+            state.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate all state geometry counterclockwise in the world XY plane.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for state in self._states:
+            state.rotate_xy(angle, origin)
+
+    def reflect(self, plane):
+        """Reflect all state geometry across a plane.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        for state in self._states:
+            state.reflect(plane)
+
+    def scale(self, factor, origin=None):
+        """Scale all state geometry by a factor.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for state in self._states:
+            state.scale(factor, origin)
+
+    def duplicate(self, new_host=None):
+        """Get a copy of this object.
+
+        new_host: A new object that hosts these properties.
+            If None, the properties will be duplicated with the same host.
+        """
+        _host = new_host or self._host
+        new_prop = self.__class__(
+            _host, self._modifier, self._modifier_blk, self._dynamic_group_identifier)
+        new_prop._states = []
+        for st in self._states:
+            new_st = st.duplicate()
+            new_st._parent = _host
+            new_prop._states.append(new_st)
+        return new_prop
+
+    def _check_state(self, obj):
+        assert isinstance(obj, _RadianceState), \
+            'Expected RadianceState. Got {}.'.format(type(obj))
+        assert obj.parent is None, \
+            'RadianceState cannot already have a parent object.'
+        obj._parent = self.host
+        return obj
+
+    def _add_states_to_dict(self, base, abridged=False):
+        """Add states to a base dictionary.
+
+        Args:
+            base: A base dictionary to which states will be added.
+            abridged: Boolean to note whether the full dictionary describing the
+                object should be returned (False) or just an abridged version (True).
+                Default: False.
+        """
+        if self._dynamic_group_identifier is not None:
+            base['radiance']['dynamic_group_identifier'] = self.dynamic_group_identifier
+        if len(self._states) != 0:
+            base['radiance']['states'] = [st.to_dict(abridged) for st in self._states]
+        return base

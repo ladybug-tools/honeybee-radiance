@@ -1,11 +1,11 @@
 # coding=utf-8
 """Face Radiance Properties."""
-from ._base import _GeometryRadianceProperties
+from ._base import _RadianceProperties
 from ..modifier import Modifier
 from ..lib.modifiersets import generic_modifier_set_visible
 
 
-class FaceRadianceProperties(_GeometryRadianceProperties):
+class FaceRadianceProperties(_RadianceProperties):
     """Radiance Properties for Honeybee Face.
 
     Args:
@@ -32,7 +32,7 @@ class FaceRadianceProperties(_GeometryRadianceProperties):
 
     def __init__(self, host, modifier=None, modifier_blk=None):
         """Initialize Face radiance properties."""
-        _GeometryRadianceProperties.__init__(self, host, modifier, modifier_blk)
+        _RadianceProperties.__init__(self, host, modifier, modifier_blk)
 
     @property
     def modifier(self):
