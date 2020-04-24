@@ -1,10 +1,12 @@
 """Tests the features that honeybee_radiance adds to honeybee_core Door."""
+from honeybee.shade import Shade
 from honeybee.door import Door
 from honeybee.face import Face
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions
 
 from honeybee_radiance.properties.door import DoorRadianceProperties
+from honeybee_radiance.state import RadianceSubFaceState
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass
 
@@ -126,6 +128,39 @@ def test_from_dict():
     new_door = Door.from_dict(ad)
     assert new_door.properties.radiance.modifier == painted_door
     assert new_door.to_dict() == ad
+
+
+def test_to_from_dict_with_states():
+    """Test the Door from_dict method with radiance properties."""
+    dr = Door.from_vertices(
+        'front_door', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
+    shd1 = Shade.from_vertices(
+        'wall_overhang1', [[0, 0, 10], [10, 0, 10], [10, 2, 10], [0, 2, 10]])
+    shd2 = Shade.from_vertices(
+        'wall_overhang2', [[0, 0, 5], [10, 0, 5], [10, 2, 5], [0, 2, 5]])
+
+    ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)
+    ecglass2 = Glass.from_single_transmittance('ElectrochromicState2', 0.27)
+    ecglass3 = Glass.from_single_transmittance('ElectrochromicState3', 0.14)
+    ecglass4 = Glass.from_single_transmittance('ElectrochromicState4', 0.01)
+
+    tint1 = RadianceSubFaceState(ecglass1)
+    tint2 = RadianceSubFaceState(ecglass2)
+    tint3 = RadianceSubFaceState(ecglass3, [shd1])
+    tint4 = RadianceSubFaceState(ecglass4, [shd1.duplicate(), shd2])
+    states = (tint1, tint2, tint3, tint4)
+
+    dr.properties.radiance.dynamic_group_identifier = 'ElectrochromicDoor1'
+    dr.properties.radiance.states = states
+
+    drd = dr.to_dict()
+    new_door = Door.from_dict(drd)
+    assert new_door.properties.radiance.dynamic_group_identifier == \
+        dr.properties.radiance.dynamic_group_identifier
+    state_ids1 = [state.modifier for state in states]
+    state_ids2 = [state.modifier for state in new_door.properties.radiance.states]
+    assert state_ids1 == state_ids2
+    assert new_door.to_dict() == drd
 
 
 def test_writer_to_rad():

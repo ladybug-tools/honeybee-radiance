@@ -525,7 +525,8 @@ class ModelRadianceProperties(object):
             if not self._instance_in_array(mod, modifiers):
                 modifiers.append(mod)
         for st in obj.properties.radiance._states:
-            stm = (st._modifier, st._modifier_direct) + (s._modifier for s in st._shades)
+            stm = (st._modifier, st._modifier_direct) + \
+                tuple(s.properties.radiance.modifier for s in st._shades)
             for mod in stm:
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
@@ -547,7 +548,7 @@ class ModelRadianceProperties(object):
                 modifiers.append(mod)
         for st in obj.properties.radiance._states:
             for s in st._shades:
-                mod = s._modifier
+                mod = s.properties.radiance.modifier
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
@@ -562,7 +563,8 @@ class ModelRadianceProperties(object):
             if not self._instance_in_array(generic_context, modifiers):
                 modifiers.append(generic_context)
         for st in obj.properties.radiance._states:
-            stm = (st._modifier, st._modifier_direct) + (s._modifier for s in st._shades)
+            stm = (st._modifier, st._modifier_direct) + \
+                tuple(s.properties.radiance.modifier for s in st._shades)
             for mod in stm:
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):

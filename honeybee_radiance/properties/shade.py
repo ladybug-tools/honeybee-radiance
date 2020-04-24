@@ -2,8 +2,8 @@
 """Shade Radiance Properties."""
 from ._base import _DynamicRadianceProperties
 from ..modifier import Modifier
-from ..state import RadianceShadeState
-from ..lib.modifiers import generic_context
+from ..state import _RadianceState, RadianceShadeState
+from ..lib.modifiers import generic_context, generic_exterior_shade
 from ..lib.modifiersets import generic_modifier_set_visible
 
 
@@ -58,7 +58,9 @@ class ShadeRadianceProperties(_DynamicRadianceProperties):
             return self._modifier
         elif not self._host.has_parent:  # orphaned shade
             return generic_context
-        else:  # shade with a parent
+        elif isinstance(self._host._parent, _RadianceState):  # radiance state parent
+            return generic_exterior_shade
+        else:  # shade with a parent modifier set
             m_set = self._parent_modifier_set(self._host.parent)
             if m_set is None:
                 m_set = generic_modifier_set_visible

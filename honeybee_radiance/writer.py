@@ -15,7 +15,7 @@ import shutil
 
 
 def shade_to_rad(shade, blk=False, minimal=False):
-    """Generate an RAD string representation of a Shade.
+    """Generate a RAD string representation of a Shade.
 
     Note that the resulting string does not include modifier definitions. Nor
     does it include any states for dynamic geometry.
@@ -35,7 +35,7 @@ def shade_to_rad(shade, blk=False, minimal=False):
 
 
 def door_to_rad(door, blk=False, minimal=False):
-    """Generate an RAD string representation of a Door.
+    """Generate a RAD string representation of a Door.
 
     Note that the resulting string does not include modifier definitions. Nor
     does it include any states for dynamic geometry. However, it does include
@@ -59,7 +59,7 @@ def door_to_rad(door, blk=False, minimal=False):
 
 
 def aperture_to_rad(aperture, blk=False, minimal=False):
-    """Generate an RAD string representation of an Aperture.
+    """Generate a RAD string representation of an Aperture.
 
     Note that the resulting string does not include modifier definitions. Nor
     does it include any states for dynamic geometry. However, it does include
@@ -112,7 +112,7 @@ def face_to_rad(face, blk=False, minimal=False):
 
 
 def room_to_rad(room, blk=False, minimal=False):
-    """Generate an RAD string representation of a Room.
+    """Generate a RAD string representation of a Room.
 
     This method will write all geometry associated with a Room including all
     Faces, Apertures, Doors, and Shades. However, it does not include modifiers
@@ -136,7 +136,7 @@ def room_to_rad(room, blk=False, minimal=False):
 
 
 def model_to_rad(model, blk=False, minimal=False):
-    r"""Generate an RAD string representation of a Model.
+    r"""Generate a RAD string representation of a Model.
 
     The resulting strings will include all geometry (Rooms, Faces, Shades, Apertures,
     Doors) and all modifiers. However, it does not include any states for dynamic
@@ -325,20 +325,18 @@ def model_to_rad_folder(model, folder=None, minimal=False):
                         mod_combs, mod_names, False, minimal)
 
     # write dynamic sub-face groups (apertures and doors)
-    int_dict = {}
     ext_dict = {}
     for group in model.properties.radiance.dynamic_subface_groups:
         if group.is_indoor:
-            subfolder = model_folder.DYNAMIC_APERTURE_INTERIOR
-            st_d = _write_dynamic_subface_files(folder, subfolder, group, minimal)
-            _write_mtx_files(folder, subfolder, group, st_d, minimal)
-            int_dict[group.identifier] = st_d
+            # TODO: Implement dynamic interior apertures once the radiance folder
+            # structure is clear about how the "light path" should be input
+            raise NotImplementedError('Dynamic interior apertures are not currently'
+                                      ' supported by Model.to.rad_folder.')
         else:
             subfolder = model_folder.DYNAMIC_APERTURE_EXTERIOR
             st_d = _write_dynamic_subface_files(folder, subfolder, group, minimal)
             _write_mtx_files(folder, subfolder, group, st_d, minimal)
             ext_dict[group.identifier] = st_d
-    _write_dynamic_json(folder, model_folder.DYNAMIC_APERTURE_INTERIOR, int_dict)
     _write_dynamic_json(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR, ext_dict)
 
     # write dynamic shade groups
@@ -427,7 +425,7 @@ def _write_dynamic_subface_files(folder, sub_folder, group, minimal=False):
         write_to_file_by_name(dest, file_names['direct'].replace('./', ''), direct_str)
 
     # write out the black representation of the aperture
-    black_str = group.blk_to_radiance(state_i, minimal=minimal)
+    black_str = group.blk_to_radiance(minimal)
     write_to_file_by_name(dest, file_names['black'].replace('./', ''), black_str)
     return states_list
 
@@ -454,9 +452,11 @@ def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False)
         mtx_file = './{}..mtx.rad'.format(group.identifier)
 
     # loop through all states and write out the .rad files for them
+    tmxt_valid = False
     for state_i, st_dict in enumerate(states_json_list):
         tmtx_bsdf = group.tmxt_bsdf(state_i)
         if tmtx_bsdf is not None:  # it's a valid state for 3-phase
+            tmxt_valid = True
             # add the tmxt to the states_json_list
             bsdf_name = os.path.split(tmtx_bsdf.bsdf_file)[-1]
             states_json_list[state_i]['tmtx'] = bsdf_name
@@ -478,7 +478,7 @@ def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False)
                     dest, states_json_list[state_i]['dmtx'].replace('./', ''), dmtx_str)
 
     # write the single mtx file if everything is default
-    if one_mtx:
+    if one_mtx and tmxt_valid:
         mtx_str = group.vmtx_to_radiance(0, minimal)
         write_to_file_by_name(dest, mtx_file, mtx_str)
 
@@ -641,7 +641,8 @@ def _process_bsdf_modifier(modifier, mod_strs, minimal):
     """Process a BSDF modifier for a radiance model folder."""
     bsdf_name = os.path.split(modifier.bsdf_file)[-1]
     mod_dup = modifier.duplicate()  # duplicate to avoid editing the original
-    mod_dup.bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
+    # we must edit the hidden _bsdf_file property since the file has not yet been copied
+    mod_dup._bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
     mod_strs.append(mod_dup.to_radiance(minimal))
 
 

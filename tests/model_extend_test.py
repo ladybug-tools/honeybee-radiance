@@ -9,9 +9,10 @@ from honeybee.boundarycondition import boundary_conditions, Ground, Outdoors
 from honeybee.facetype import face_types
 
 from honeybee_radiance.properties.model import ModelRadianceProperties
+from honeybee_radiance.state import RadianceSubFaceState, RadianceShadeState
 from honeybee_radiance.modifierset import ModifierSet
 from honeybee_radiance.modifier import Modifier
-from honeybee_radiance.modifier.material import Plastic, Glass, Trans
+from honeybee_radiance.modifier.material import Plastic, Glass, Trans, BSDF
 
 from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
     generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
@@ -419,15 +420,294 @@ def test_writer_to_rad_folder():
     assert os.path.isfile(os.path.join(opaque_indoor_dir, mat_name))
     assert os.path.isfile(os.path.join(opaque_indoor_dir, blk_name))
 
-    opaque_outoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(opaque_outoor_dir, rad_name))
-    assert os.path.isfile(os.path.join(opaque_outoor_dir, mat_name))
-    assert os.path.isfile(os.path.join(opaque_outoor_dir, blk_name))
+    opaque_outdoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(opaque_outdoor_dir, rad_name))
+    assert os.path.isfile(os.path.join(opaque_outdoor_dir, mat_name))
+    assert os.path.isfile(os.path.join(opaque_outdoor_dir, blk_name))
 
-    nonopaque_outoor_dir = os.path.join(folder, model_folder.STATIC_NONOPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, rad_name))
-    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, mat_name))
-    assert os.path.isfile(os.path.join(nonopaque_outoor_dir, blk_name))
+    nonopaque_outdoor_dir = os.path.join(folder, model_folder.STATIC_NONOPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, rad_name))
+    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, mat_name))
+    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, blk_name))
+
+    # clean up the folder
+    nukedir(folder, rmdir=True)
+
+
+def test_writer_to_rad_folder_dynamic():
+    """Test the Model to.rad_folder method with dynamic geometry."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
+    garage = Room.from_box('Tiny_Garage', 5, 10, 3, origin=Point3D(5, 0, 0))
+
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+    shd1 = Shade.from_vertices(
+        'outdoor_awning', [[0, 0, 2], [5, 0, 2], [5, 2, 2], [0, 2, 2]])
+
+    ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)
+    ecglass2 = Glass.from_single_transmittance('ElectrochromicState2', 0.27)
+    ecglass3 = Glass.from_single_transmittance('ElectrochromicState3', 0.14)
+    ecglass4 = Glass.from_single_transmittance('ElectrochromicState4', 0.01)
+
+    tint1 = RadianceSubFaceState(ecglass1)
+    tint2 = RadianceSubFaceState(ecglass2)
+    tint3 = RadianceSubFaceState(ecglass3, [shd1])
+    tint4 = RadianceSubFaceState(ecglass4, [shd1.duplicate()])
+    states = (tint1, tint2, tint3, tint4)
+    south_face.apertures[0].properties.radiance.dynamic_group_identifier = \
+        'ElectrochromicWindow'
+    south_face.apertures[0].properties.radiance.states = states
+
+    shd2 = Shade.from_vertices(
+        'indoor_light_shelf', [[0, 0, 2], [-1, 0, 2], [-1, 2, 2], [0, 2, 2]])
+    ref_1 = Plastic.from_single_reflectance('outdoor_light_shelf_0.5', 0.5)
+    ref_2 = Plastic.from_single_reflectance('indoor_light_shelf_0.70', 0.7)
+    light_shelf_1 = RadianceShadeState(ref_1)
+    light_shelf_2 = RadianceShadeState(ref_2)
+    shelf_states = (light_shelf_1, light_shelf_2)
+    shd2.properties.radiance.dynamic_group_identifier = 'DynamicLightShelf'
+    shd2.properties.radiance.states = shelf_states
+    room.add_indoor_shade(shd2)
+
+    north_face = room[1]
+    north_face.overhang(0.25, indoor=False)
+    door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
+                    Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+    door = Door('Front_Door', Face3D(door_verts))
+    north_face.add_door(door)
+
+    aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
+                        Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+    aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
+    triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
+    aperture.properties.radiance.modifier = triple_pane
+    north_face.add_aperture(aperture)
+
+    tree_canopy_geo = Face3D.from_regular_polygon(
+        6, 2, Plane(Vector3D(0, 0, 1), Point3D(5, -3, 4)))
+    tree_canopy = Shade('Tree_Canopy', tree_canopy_geo)
+    sum_tree_trans = Trans.from_single_reflectance('SummerLeaves', 0.3, 0.0, 0.1, 0.15, 0.15)
+    win_tree_trans = Trans.from_single_reflectance('WinterLeaves', 0.1, 0.0, 0.1, 0.1, 0.6)
+    summer = RadianceShadeState(sum_tree_trans)
+    winter = RadianceShadeState(win_tree_trans)
+    tree_canopy.properties.radiance.dynamic_group_identifier = 'DeciduousTree'
+    tree_canopy.properties.radiance.states = (summer, winter)
+
+    ground_geo = Face3D.from_rectangle(10, 10, Plane(o=Point3D(0, -10, 0)))
+    ground = Shade('Ground', ground_geo)
+    grass = Plastic.from_single_reflectance('grass', 0.3)
+    snow = Plastic.from_single_reflectance('snow', 0.7)
+    summer_ground = RadianceShadeState(grass)
+    winter_ground = RadianceShadeState(snow)
+    ground.properties.radiance.dynamic_group_identifier = 'SeasonalGround'
+    ground.properties.radiance.states = (summer_ground, winter_ground)
+
+    east_face = room[2]
+    east_face.apertures_by_ratio(0.1, 0.01)
+    west_face = garage[4]
+    west_face.apertures_by_ratio(0.1, 0.01)
+    Room.solve_adjacency([room, garage], 0.01)
+
+    model = Model('Tiny_House', [room, garage], orphaned_shades=[ground, tree_canopy])
+    model.north_angle = 15
+
+    folder = os.path.abspath('./tests/assets/model/rad_folder_dynamic')
+    model.to.rad_folder(model, folder)
+
+    model_folder = ModelFolder(folder)
+
+    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
+    group_name = south_face.apertures[0].properties.radiance.dynamic_group_identifier
+    assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
+    for i in range(len(south_face.apertures[0].properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..default..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(south_face.apertures[0].properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+
+    nono_out_dir = os.path.join(folder, model_folder.DYNAMIC_NONOPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(nono_out_dir, 'states.json'))
+    grp_name = tree_canopy.properties.radiance.dynamic_group_identifier
+    for i in range(len(tree_canopy.properties.radiance.states)):
+        d_file = (os.path.join(nono_out_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(tree_canopy.properties.radiance.states)):
+        d_file = (os.path.join(nono_out_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+
+    o_out_dir = os.path.join(folder, model_folder.DYNAMIC_OPAQUE_OUTDOOR)
+    assert os.path.isfile(os.path.join(o_out_dir, 'states.json'))
+    grp_name = ground.properties.radiance.dynamic_group_identifier
+    for i in range(len(ground.properties.radiance.states)):
+        d_file = (os.path.join(o_out_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(ground.properties.radiance.states)):
+        d_file = (os.path.join(o_out_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+
+    o_in_dir = os.path.join(folder, model_folder.DYNAMIC_OPAQUE_INDOOR)
+    assert os.path.isfile(os.path.join(o_in_dir, 'states.json'))
+    grp_name = shd2.properties.radiance.dynamic_group_identifier
+    for i in range(len(shd2.properties.radiance.states)):
+        d_file = (os.path.join(o_in_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(shd2.properties.radiance.states)):
+        d_file = (os.path.join(o_in_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        assert os.path.isfile(d_file)
+
+    # clean up the folder
+    nukedir(folder, rmdir=True)
+
+
+def test_writer_to_rad_folder_multiphase():
+    """Test the Model to.rad_folder method with multi-phase objects like BSDFs."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.5, 0.01)
+    south_aperture = south_face.apertures[0]
+    north_face = room[1]
+    north_face.apertures_by_ratio(0.5, 0.01)
+    north_aperture = north_face.apertures[0]
+
+    folder = os.path.abspath('./tests/assets/')
+    clear_bsdf = BSDF(os.path.join(folder, 'clear.xml'))
+    diff_bsdf = BSDF(os.path.join(folder, 'diffuse50.xml'))
+    clear = RadianceSubFaceState(clear_bsdf)
+    diffuse = RadianceSubFaceState(diff_bsdf)
+
+    south_aperture.properties.radiance.dynamic_group_identifier = 'SouthDynamicWindow'
+    south_aperture.properties.radiance.states = [clear, diffuse]
+    north_aperture.properties.radiance.dynamic_group_identifier = 'NorthDynamicWindow'
+    north_aperture.properties.radiance.states = [clear.duplicate(), diffuse.duplicate()]
+    north_aperture.properties.radiance.states[0].gen_geos_from_tmtx_thickness(0.1)
+    north_aperture.properties.radiance.states[1].gen_geos_from_tmtx_thickness(0.2)
+
+    model = Model('Tiny_House', [room])
+
+    folder = os.path.abspath('./tests/assets/model/rad_folder_multiphase')
+    model.to.rad_folder(model, folder)
+
+    model_folder = ModelFolder(folder)
+
+    bsdf_dir = os.path.join(folder, model_folder.BSDF[0])
+    assert os.path.isfile(os.path.join(bsdf_dir, 'clear.xml'))
+    assert os.path.isfile(os.path.join(bsdf_dir, 'diffuse50.xml'))
+
+    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
+
+    group_name = south_aperture.properties.radiance.dynamic_group_identifier
+    assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
+    assert os.path.isfile(os.path.join(ap_dir, '{}..mtx.rad'.format(group_name)))
+    for i in range(len(south_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..default..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(south_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+
+    group_name = north_aperture.properties.radiance.dynamic_group_identifier
+    assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
+    for i in range(len(north_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..default..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(north_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(north_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..dmtx..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(north_aperture.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..vmtx..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+
+    # clean up the folder
+    nukedir(folder, rmdir=True)
+
+
+def test_writer_to_rad_folder_shade_drop():
+    """Test the Model to.rad_folder method with shades that drop half-way."""
+    room = Room.from_box('Store_Entrance', 10, 10, 6)
+
+    # create the apertures on the south side and put them in the same dynamic group
+    pts_1 = [Point3D(1, 0, 1), Point3D(4, 0, 1), Point3D(4, 0, 3), Point3D(1, 0, 3)]
+    pts_2 = [Point3D(1, 0, 3), Point3D(4, 0, 3), Point3D(4, 0, 5), Point3D(1, 0, 5)]
+    pts_3 = [Point3D(6, 0, 1), Point3D(9, 0, 1), Point3D(9, 0, 3), Point3D(6, 0, 3)]
+    pts_4 = [Point3D(6, 0, 3), Point3D(9, 0, 3), Point3D(9, 0, 5), Point3D(6, 0, 5)]
+    pts_5 = [Point3D(4.5, 0, 0.25), Point3D(5.5, 0, 0.25), Point3D(5.5, 0, 5), Point3D(4.5, 0, 5)]
+    s_left_bottom = Aperture('s_left_bottom', Face3D(pts_1))
+    s_left_top = Aperture('s_left_top', Face3D(pts_2))
+    s_right_bottom = Aperture('s_right_bottom', Face3D(pts_3))
+    s_right_top = Aperture('s_right_top', Face3D(pts_4))
+    entry = Aperture('entry', Face3D(pts_5))
+    south_face = room[3]
+    south_apertures = [s_left_bottom, s_left_top, s_right_bottom, s_right_top, entry]
+    south_face.add_apertures(south_apertures)
+    for ap in south_apertures:
+        ap.properties.radiance.dynamic_group_identifier = 'SouthWall'
+
+    # create the apertures on the east side and put them in the same dynamic group
+    pts_6 = [Point3D(10, 1, 1), Point3D(10, 9, 1), Point3D(10, 9, 3), Point3D(10, 1, 3)]
+    pts_7 = [Point3D(10, 1, 3), Point3D(10, 9, 3), Point3D(10, 9, 5), Point3D(10, 1, 5)]
+    e_bottom = Aperture('e_bottom', Face3D(pts_6))
+    e_top = Aperture('e_top', Face3D(pts_7))
+    east_face = room[2]
+    east_apertures = [e_bottom, e_top]
+    east_face.add_apertures(east_apertures)
+    for ap in east_apertures:
+        ap.properties.radiance.dynamic_group_identifier = 'EastWall'
+
+    # create the states
+    bare_glass = Glass.from_single_transmittance('BareGlass', 0.7)
+    protected_glass = Glass.from_single_transmittance('ProtectedGlass', 0.3)
+    bare = RadianceSubFaceState(bare_glass)
+    protected = RadianceSubFaceState(protected_glass)
+
+    # assign states to individual apertures
+    s_left_bottom.properties.radiance.states = \
+        [bare.duplicate(), bare.duplicate(), protected.duplicate()]
+    s_right_bottom.properties.radiance.states = \
+        [bare.duplicate(), bare.duplicate(), protected.duplicate()]
+    s_left_top.properties.radiance.states = \
+        [bare.duplicate(), protected.duplicate(), protected.duplicate()]
+    s_right_top.properties.radiance.states = \
+        [bare.duplicate(), protected.duplicate(), protected.duplicate()]
+    entry.properties.radiance.modifier = bare_glass
+
+    e_bottom.properties.radiance.states = \
+        [bare.duplicate(), bare.duplicate(), protected.duplicate()]
+    e_top.properties.radiance.states = \
+        [bare.duplicate(), protected.duplicate(), protected.duplicate()]
+
+    # export the model radiance folder
+    model = Model('Apple_Store', [room])
+    folder = os.path.abspath('./tests/assets/model/rad_folder_shade_drop')
+    model.to.rad_folder(model, folder)
+
+    model_folder = ModelFolder(folder)
+
+    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
+
+    group_name = entry.properties.radiance.dynamic_group_identifier
+    assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
+    for i in range(len(entry.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..default..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(entry.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+
+    group_name = e_bottom.properties.radiance.dynamic_group_identifier
+    assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
+    for i in range(len(e_bottom.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..default..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
+    for i in range(len(e_bottom.properties.radiance.states)):
+        d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
+        assert os.path.isfile(d_file)
 
     # clean up the folder
     nukedir(folder, rmdir=True)
