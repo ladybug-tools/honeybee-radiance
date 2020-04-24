@@ -18,10 +18,8 @@ class _RadianceState(object):
 
     Args:
         modifier: A Honeybee Radiance Modifier object to be applied to this state's
-            parent in this state. This can be used to swap out aperture BSDFs
-            in 3-phase studies, change the modifier of a shade object representing
-            the ground to account for snow reflectance, etc. If None, it will
-            be the parent's default modifier.
+            parent in this state. This is used to swap out the modifier in
+            multi-phase studies. If None, it will be the parent's default modifier.
         shades: An optional array of honeybee-core Shade objects to be included
             with this state. These shades must not have a parent Room, Face or
             Aperture and they cannot already be assigned to another state.
@@ -120,6 +118,15 @@ class _RadianceState(object):
             shade._parent = None
         self._shades = []
 
+    def add_shades(self, shades):
+        """Add an array of Shade objects to this state.
+
+        Args:
+            shades: An array of Shade objects to add to the this state.
+        """
+        for shade in shades:
+            self._shades.append(self._check_shade(shade))
+
     def add_shade(self, shade):
         """Add a Shade object to this state.
 
@@ -183,7 +190,7 @@ class _RadianceState(object):
             shd.scale(factor, origin)
 
     def to_radiance(self, direct=False, minimal=False):
-        """Generate an RAD string representation of this state.
+        """Generate a RAD string representation of this state.
 
         Note that the resulting string lacks modifiers but includes both the
         parent geometry and the geometry of any shades.
@@ -286,9 +293,7 @@ class RadianceShadeState(_RadianceState):
             'type': 'RadianceShadeState',
             'modifier': {},  # A Honeybee Radiance Modifier dictionary
             'shades': [],  # A list of honeybee Shade dictionaries
-            'modifier_direct': {},  # A Honeybee Radiance Modifier dictionary
-            'vmtx_geometry': {},  # A Face3D for the view matrix geometry
-            'dmtx_geometry': {},  # A Face3D for the daylight matrix geometry
+            'modifier_direct': {}  # A Honeybee Radiance Modifier dictionary
             }
         """
         assert data['type'] == 'RadianceShadeState', \
@@ -321,9 +326,7 @@ class RadianceShadeState(_RadianceState):
             'type': 'RadianceShadeStateAbridged',
             'modifier': str,  # An identifier of a honeybee-radiance modifier
             'shades': [],  # A list of abridged honeybee Shade dictionaries
-            'modifier_direct': str,  # An identifier of a honeybee-radiance modifier
-            'vmtx_geometry': {},  # A Face3D for the view matrix geometry
-            'dmtx_geometry': {},  # A Face3D for the daylight matrix geometry
+            'modifier_direct': str  # An identifier of a honeybee-radiance modifier
             }
         """
         assert data['type'] == 'RadianceShadeStateAbridged', \
@@ -352,7 +355,7 @@ class RadianceShadeState(_RadianceState):
         """
         base = {'type': 'RadianceShadeStateAbridged'} if abridged else \
             {'type': 'RadianceShadeState'}
-        if self.self._modifier:
+        if self._modifier:
             base['modifier'] = self._modifier.identifier if abridged else \
                 self._modifier.to_dict()
         if len(self._shades) != 0:
@@ -379,9 +382,8 @@ class RadianceSubFaceState(_RadianceState):
 
     Args:
         modifier: A Honeybee Radiance Modifier object to be applied to this state's
-            parent in this state. This can be used to swap out aperture BSDFs
-            in 3-phase studies, switch the tint state of electrochromic glazing,
-            etc. If None, it will be the parent's default modifier.
+            parent in this state. This is used to swap out the modifier in
+            multi-phase studies. If None, it will be the parent's default modifier.
         shades: An optional array of honeybee-core Shade objects to be included
             with this state. These shades must not have a parent Room/Face/Aperture
             and they cannot already be assigned to another state. The Shade must
@@ -434,7 +436,7 @@ class RadianceSubFaceState(_RadianceState):
         If None, it will be a flipped (inward-facing) version of this state's parent.
         Note that this property is only used in 3-phase and 5-phase studies and
         its usual purpose is to account for thickness of the tmtx (BSDF) layer.
-        Also note that the vmtx_offset or tmtx_thickness methods can be used to
+        Also note that the gen_geo_from_vmtx_offset or gen_geos_from_tmtx_thickness methods can be used to
         automatically generate this geometry without the need to set it here.
         """
         if not self._vmtx_geometry:  # use the inward-version of the parent geometry
@@ -456,7 +458,7 @@ class RadianceSubFaceState(_RadianceState):
         If None, it will be a flipped (inward-facing) version of this state's parent.
         Note that this property is only used in 3-phase and 5-phase studies and
         its usual purpose is to account for thickness of the tmtx (BSDF) layer.
-        Also note that the dmtx_offset or tmtx_thickness methods can be used to
+        Also note that the gen_geo_from_dmtx_offset or gen_geos_from_tmtx_thickness methods can be used to
         automatically generate this geometry without the need to set it here.
         """
         if not self._dmtx_geometry:  # use the inward-version of the parent geometry
@@ -480,7 +482,7 @@ class RadianceSubFaceState(_RadianceState):
         """
         return self._vmtx_geometry is None and self._dmtx_geometry is None
 
-    def tmtx_thickness(self, thickness):
+    def gen_geos_from_tmtx_thickness(self, thickness):
         """Auto-generate the vmtx_geometry and dmtx_geometry using a tmtx thickness.
 
         Args:
@@ -489,7 +491,7 @@ class RadianceSubFaceState(_RadianceState):
                 of this thickness inward. The dmtx_geometry will be set to the
                 parent geometry moved half of this thickness outward.
         """
-        assert self.has_parent, 'State must have a parent to use tmtx_thickness.'
+        assert self.has_parent, 'State must have a parent to use gen_geos_from_tmtx_thickness.'
         dist = thickness / 2
         out_vec = self.parent.normal * dist
         in_vec = out_vec.reverse()
@@ -497,24 +499,24 @@ class RadianceSubFaceState(_RadianceState):
         self.dmtx_geometry = base_geo.move(out_vec)
         self.vmtx_geometry = base_geo.move(in_vec)
 
-    def vmtx_offset(self, offset):
+    def gen_geo_from_vmtx_offset(self, offset):
         """Auto-generate the vmtx_geometry using an offset from the parent geometry.
 
         Args:
             offset: A number for the offset of the vmtx layer from the parent geometry.
         """
-        assert self.has_parent, 'State must have a parent to use vmtx_offset.'
+        assert self.has_parent, 'State must have a parent to use gen_geo_from_vmtx_offset.'
         in_vec = self.parent.normal.reverse() * offset
         base_geo = self.parent.geometry.flip()
         self.vmtx_geometry = base_geo.move(in_vec)
 
-    def dmtx_offset(self, offset):
+    def gen_geo_from_dmtx_offset(self, offset):
         """Auto-generate the dmtx_geometry using an offset from the parent geometry.
 
         Args:
             offset: A number for the offset of the dmtx layer from the parent geometry.
         """
-        assert self.has_parent, 'State must have a parent to use dmtx_offset.'
+        assert self.has_parent, 'State must have a parent to use gen_geo_from_dmtx_offset.'
         out_vec = self.parent.normal * offset
         base_geo = self.parent.geometry.flip()
         self.vmtx_geometry = base_geo.move(out_vec)
@@ -598,7 +600,7 @@ class RadianceSubFaceState(_RadianceState):
             self._dmtx_geometry = self._dmtx_geometry.scale(factor, origin)
 
     def vmtx_to_radiance(self, minimal=False):
-        """Generate an RAD string representation of this state's vmtx.
+        """Generate a RAD string representation of this state's vmtx.
 
         The resulting string lacks modifiers and only includes the vmtx_geometry.
 
@@ -612,7 +614,7 @@ class RadianceSubFaceState(_RadianceState):
         return vmtx_poly.to_radiance(minimal, False, False)
 
     def dmtx_to_radiance(self, minimal=False):
-        """Generate an RAD string representation of this state's dmtx.
+        """Generate a RAD string representation of this state's dmtx.
 
         The resulting string lacks modifiers and only includes the dmtx_geometry.
 
@@ -644,7 +646,7 @@ class RadianceSubFaceState(_RadianceState):
             'shades': [],  # A list of honeybee Shade dictionaries
             'modifier_direct': {},  # A Honeybee Radiance Modifier dictionary
             'vmtx_geometry': {},  # A Face3D for the view matrix geometry
-            'dmtx_geometry': {},  # A Face3D for the daylight matrix geometry
+            'dmtx_geometry': {}  # A Face3D for the daylight matrix geometry
             }
         """
         assert data['type'] == 'RadianceSubFaceState', \
@@ -683,7 +685,7 @@ class RadianceSubFaceState(_RadianceState):
             'shades': [],  # A list of abridged honeybee Shade dictionaries
             'modifier_direct': str,  # An identifier of a honeybee-radiance modifier
             'vmtx_geometry': {},  # A Face3D for the view matrix geometry
-            'dmtx_geometry': {},  # A Face3D for the daylight matrix geometry
+            'dmtx_geometry': {}  # A Face3D for the daylight matrix geometry
             }
         """
         assert data['type'] == 'RadianceSubFaceStateAbridged', \
@@ -716,7 +718,7 @@ class RadianceSubFaceState(_RadianceState):
         """
         base = {'type': 'RadianceSubFaceStateAbridged'} if abridged else \
             {'type': 'RadianceSubFaceState'}
-        if self.self._modifier:
+        if self._modifier:
             base['modifier'] = self._modifier.identifier if abridged else \
                 self._modifier.to_dict()
         if len(self._shades) != 0:

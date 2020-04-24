@@ -87,7 +87,7 @@ class DynamicShadeGroup(object):
         for obj in self._dynamic_objects:
             for state in obj.properties.radiance._states:
                 if not state.modifier.is_opaque:
-                    False
+                    return False
         return True
 
     @property
@@ -95,7 +95,7 @@ class DynamicShadeGroup(object):
         """Get a boolean for whether all shades in the group are indoor."""
         for obj in self._dynamic_objects:
             if not obj.is_indoor:
-                False
+                return False
         return True
 
     @property
@@ -144,7 +144,7 @@ class DynamicShadeGroup(object):
         return states
 
     def to_radiance(self, state_index, direct=False, minimal=False):
-        """Generate an RAD string representation of a state for this group.
+        """Generate a RAD string representation of a state for this group.
 
         The resulting string includes everything going into a single .rad file
         to simulate the state, including all geometry and modifiers.
@@ -167,7 +167,7 @@ class DynamicShadeGroup(object):
                 if not self._instance_in_array(mod, modifiers):
                     modifiers.append(mod)
                 for shd in state._shades:
-                    mod = shd.modifier
+                    mod = shd.properties.radiance.modifier
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
         else:  # use modifier_direct and modifier_blk
@@ -176,13 +176,13 @@ class DynamicShadeGroup(object):
                 if not self._instance_in_array(mod, modifiers):
                     modifiers.append(mod)
                 for shd in state._shades:
-                    mod = shd.modifier_blk
+                    mod = shd.properties.radiance.modifier_blk
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
         modifiers = list(set(modifiers))
 
         # get rad strings for all modifier and geometry.
-        state_str = []
+        state_str = ['# STATE {} for "{}"'.format(state_index, self.identifier)]
         for mod in modifiers:
             if isinstance(mod, BSDF):
                 self._process_bsdf_modifier(mod, state_str, minimal)
@@ -203,7 +203,8 @@ class DynamicShadeGroup(object):
         """Process a BSDF modifier for a radiance model folder."""
         bsdf_name = os.path.split(modifier.bsdf_file)[-1]
         mod_dup = modifier.duplicate()  # duplicate to avoid editing the original
-        mod_dup.bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
+        # the hidden _bsdf_file property is edited since the file has not yet been copied
+        mod_dup._bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
         mod_strs.append(mod_dup.to_radiance(minimal))
 
     @staticmethod
@@ -261,7 +262,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         """Get a boolean for whether all sub-faces in the group have a Surface BC."""
         for obj in self._dynamic_objects:
             if not isinstance(obj.boundary_condition, Surface):
-                False
+                return False
         return True
 
     @property
@@ -315,7 +316,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         return states
 
     def blk_to_radiance(self, minimal=False):
-        """Generate an RAD string for the black representation of this group.
+        """Generate a RAD string for the black representation of this group.
 
         The resulting string includes everything going into the black .rad file,
         including all geometry and modifiers.
@@ -325,10 +326,10 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 in a minimal format (with spaces instead of line breaks). Default: False.
         """
         # gather all unique modifier_blk and write geometry rad strings
-        blk_str = []
+        blk_str = ['# BLACK representation for "{}"'.format(self.identifier)]
         modifiers = []
         for obj in self._dynamic_objects:
-            mod = obj.modifier_blk
+            mod = obj.properties.radiance.modifier_blk
             base_poly = Polygon(obj.identifier, obj.vertices, mod)
             blk_str.append(base_poly.to_radiance(minimal, False, False))
             if not self._instance_in_array(mod, modifiers):
@@ -379,7 +380,8 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         """
         states = self.states_by_index(state_index)
         # get rad strings for the white_glow modifier and geometry.
-        state_str = [white_glow.to_radiance(minimal)]
+        state_str = ['# VMTX representation for "{}"'.format(self.identifier),
+                     white_glow.to_radiance(minimal)]
         for state in states:
             state_str.append(state.vmtx_to_radiance(minimal))
         return '\n\n'.join(state_str)
@@ -397,7 +399,8 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         """
         states = self.states_by_index(state_index)
         # get rad strings for the white_glow modifier and geometry.
-        state_str = [white_glow.to_radiance(minimal)]
+        state_str = ['# DMTX representation for "{}"'.format(self.identifier),
+                     white_glow.to_radiance(minimal)]
         for state in states:
             state_str.append(state.dmtx_to_radiance(minimal))
         return '\n\n'.join(state_str)
