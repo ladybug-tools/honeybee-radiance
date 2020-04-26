@@ -376,13 +376,12 @@ class BSDF(Material):
 
         fp = os.path.join(folder, '%s.xml' % data['identifier'])
         # write bytes to xml file
-        cls.decompress_bytes_to_file(data['bsdf_data'], fp)
+        cls.decompress_to_file(data['bsdf_data'], fp)
 
-        uo_dict = data['up_orientation']
         cls_ = cls(
             bsdf_file=fp,
             identifier=data['identifier'],
-            up_orientation=[uo_dict['x'], uo_dict['y'], uo_dict['z']],
+            up_orientation=data['up_orientation'],
             thickness=data['thickness'],
             modifier=modifier,
             dependencies=dependencies
@@ -401,13 +400,13 @@ class BSDF(Material):
 
     def to_dict(self):
         """Convert BSDF material to a dictionary."""
-        bsdf_data = self.compress_file_to_bytes(self.bsdf_file)
+        bsdf_data = self.compress_file(self.bsdf_file)
 
         bsdf_dict = {
             'modifier': self.modifier.to_dict(),
             'type': 'BSDF',
             'identifier': self.identifier,
-            'up_orientation': self.up_orientation.to_dict(),
+            'up_orientation': self.up_orientation.to_array(),
             'thickness': self.thickness,
             'function_file': self.function_file,
             'transform': self.transform,
@@ -465,31 +464,18 @@ class BSDF(Material):
                 'Unknown IncidentDataStructure: {}'.format(data_structure))
 
     @staticmethod
-    def compress_file_to_bytes(filepath):
-        """Compress file to bytes."""
-        with open(filepath, 'rb') as input_file:
-            stream = StringIO()
-            with gzip.GzipFile(mode='wb', fileobj=stream) as compressor:
-                while True:  # until EOF
-                    chunk = input_file.read(8192)
-                    if not chunk:  # EOF?
-                        compressor.close()
-                        return stream.getvalue()
-                    compressor.write(chunk)
+    def compress_file(filepath):
+        """Compress bsdf data in an XML file to a string."""
+        # TODO: Research better ways to compress the file
+        with open(filepath, 'r') as input_file:
+            content = input_file.read()
+        return content
 
     @staticmethod
-    def decompress_bytes_to_file(value, filepath):
-        """Decompress bytes to file."""
-        stream = StringIO(value)
-        decompressor = gzip.GzipFile(fileobj=stream, mode='rb')
-        with open(filepath, 'wb') as output_file:
-            while True:  # until EOF
-                chunk = decompressor.read(8192)
-                if not chunk:
-                    decompressor.close()
-                    output_file.close()
-                    return
-                output_file.write(chunk)
+    def decompress_to_file(value, filepath):
+        """Write bsdf data string to a file."""
+        with open(filepath, 'w') as output_file:
+            output_file.write(value)
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()

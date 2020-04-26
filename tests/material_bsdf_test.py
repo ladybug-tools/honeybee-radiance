@@ -1,5 +1,6 @@
 from honeybee_radiance.modifier.material import BSDF
 import os
+import json
 
 klems_bsdf_file = './tests/assets/klemsfull.xml'
 tt_bsdf_file = './tests/assets/tensortree.xml'
@@ -61,3 +62,13 @@ def test_to_and_from_dict():
     with open(bsdf_in.bsdf_file, 'r') as f1, \
             open(bsdf_from_dict.bsdf_file, 'r') as f2:
         assert f1.read() == f2.read()
+
+
+def test_bsdf_to_json():
+    """Ensure that the BSDF dictionary is serialize-able to JSON."""
+    test_bsdf = BSDF(klems_bsdf_file)
+    bsdf_dict = test_bsdf.to_dict()
+    bsdf_str = json.dumps(bsdf_dict)
+    new_bsdf = BSDF.from_dict(json.loads(bsdf_str))
+
+    os.remove(new_bsdf.bsdf_file)
