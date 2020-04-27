@@ -244,8 +244,7 @@ class _RadianceState(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Radiance State: (Modifier: {}) ({} Shades)'.format(
-            self.modifier, len(self._shades))
+        return 'State: ({})'.format(self.modifier.display_name)
 
 
 class RadianceShadeState(_RadianceState):
@@ -371,10 +370,6 @@ class RadianceShadeState(_RadianceState):
         self._duplicate_shades(new_obj)
         new_obj._modifier_direct = self._modifier_direct
         return new_obj
-
-    def __repr__(self):
-        return 'Radiance Shade State: (Modifier: {}) ({} Shades)'.format(
-            self.modifier, len(self._shades))
 
 
 class RadianceSubFaceState(_RadianceState):
@@ -740,7 +735,3 @@ class RadianceSubFaceState(_RadianceState):
         new_obj._vmtx_geometry = self._vmtx_geometry
         new_obj._dmtx_geometry = self._dmtx_geometry
         return new_obj
-
-    def __repr__(self):
-        return 'Radiance SubFace State: (Modifier: {}) ({} Shades)'.format(
-            self.modifier, len(self._shades))

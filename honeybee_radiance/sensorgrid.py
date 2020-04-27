@@ -319,6 +319,9 @@ class SensorGrid(object):
         """String repr."""
         return self.to_radiance()
 
+    def ToString(self):
+        return self.__repr__()
+
     def __repr__(self):
-        """Return sensors and directions."""
+        """Get the string representation of the sensor grid."""
         return 'SensorGrid::{}::#{}'.format(self._identifier, len(self.sensors))
