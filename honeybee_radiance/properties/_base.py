@@ -189,6 +189,7 @@ class _DynamicRadianceProperties(_RadianceProperties):
         * modifier_blk
         * dynamic_group_identifier
         * states
+        * state_count
         * is_opaque
         * is_modifier_set_on_object
         * is_blk_overridden
@@ -243,6 +244,11 @@ class _DynamicRadianceProperties(_RadianceProperties):
                     'Got  {}.'.format(type(value)))
         else:
             self._states = []
+
+    @property
+    def state_count(self):
+        """Get an integer for the number of dynamic states assigned to the object."""
+        return len(self._states)
 
     def remove_states(self):
         """Remove all states assigned to this object."""

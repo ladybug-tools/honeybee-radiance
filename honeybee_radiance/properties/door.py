@@ -31,6 +31,7 @@ class DoorRadianceProperties(_DynamicRadianceProperties):
         * modifier_blk
         * dynamic_group_identifier
         * states
+        * state_count
         * is_opaque
         * is_modifier_set_on_object
         * is_blk_overridden

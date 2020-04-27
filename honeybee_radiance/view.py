@@ -691,6 +691,9 @@ class View(object):
         new_obj._display_name = self._display_name
         return new_obj
 
+    def ToString(self):
+        return self.__repr__()
+
     def __repr__(self):
         """View representation."""
         return self.to_radiance()

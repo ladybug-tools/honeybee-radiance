@@ -7,21 +7,21 @@ class Sensor(object):
     """A radiance sensor.
 
     Args:
-        position: Position of sensor as (x, y, z) (Default: (0, 0, 0)).
-        direction: Direction of sensor as (x, y, z) (Default: (0, 0, 1)).
+        pos: Position of sensor as (x, y, z) (Default: (0, 0, 0)).
+        dir: Direction of sensor as (x, y, z) (Default: (0, 0, 1)).
 
     Properties:
-        * position
-        * direction
+        * pos
+        * dir
 
     """
     __slots__ = ('_pos', '_dir')
 
-    def __init__(self, position=None, direction=None):
+    def __init__(self, pos=None, dir=None):
         """Create a sensor."""
-        self._pos = typing.tuple_with_length(position) if position is not None \
+        self._pos = typing.tuple_with_length(pos) if pos is not None \
             else (0, 0, 0)
-        self._dir = typing.tuple_with_length(direction) if direction is not None \
+        self._dir = typing.tuple_with_length(dir) if dir is not None \
             else (0, 0, 1)
 
     @classmethod
@@ -31,14 +31,13 @@ class Sensor(object):
         .. code-block:: python
 
             {
-            'x': float, 'y': float, 'z': float,
-            'dx': float, 'dx': float, 'dz': float
+            'pos': [0, 0, 0],  # array of 3 numbers for the sensor position
+            'dir': [0, 0, 1]  # array of 3 numbers for the sensor direction
             }
         """
-        return cls(
-            [sensor_dict['x'], sensor_dict['y'], sensor_dict['z']],
-            [sensor_dict['dx'], sensor_dict['dy'], sensor_dict['dz']]
-        )
+        pos = sensor_dict['pos'] if 'pos' in sensor_dict else None
+        direct = sensor_dict['dir'] if 'dir' in sensor_dict else None
+        return cls(pos, direct)
 
     @classmethod
     def from_raw_values(cls, x=0, y=0, z=0, dx=0, dy=0, dz=1):
@@ -49,18 +48,18 @@ class Sensor(object):
         return cls((x, y, z), (dx, dy, dz))
 
     @property
-    def position(self):
-        """Position of sensors as (x, y, z)."""
+    def pos(self):
+        """Get the position of the sensor as a tuple of 3 (x, y, z) numbers."""
         return self._pos
 
     @property
-    def direction(self):
-        """Direction of sensors as (x, y, z)."""
+    def dir(self):
+        """Get the dir of the sensor as a tuple of 3 (x, y, z) numbers."""
         return self._dir
 
     def duplicate(self):
         """Duplicate the sensor."""
-        return Sensor(self.position, self.direction)
+        return Sensor(self.pos, self.dir)
 
     def ToString(self):
         """Overwrite .NET ToString."""
@@ -69,8 +68,8 @@ class Sensor(object):
     def to_radiance(self):
         """Return Radiance string for a test point."""
         return '%s %s' % (
-            ' '.join(str(v) for v in self.position),
-            ' '.join(str(v) for v in self.direction)
+            ' '.join(str(v) for v in self.pos),
+            ' '.join(str(v) for v in self.dir)
         )
 
     def to_dict(self):
@@ -79,23 +78,23 @@ class Sensor(object):
         .. code-block:: python
 
             {
-            'x': float, 'y': float, 'z': float,
-            'dx': float, 'dx': float, 'dz': float
+            'pos': [0, 0, 0],  # array of 3 numbers for the sensor position
+            'dir': [0, 0, 1]  # array of 3 numbers for the sensor direction
             }
         """
-        return {
-            'x': self.position[0], 'y': self.position[1], 'z': self.position[2],
-            'dx': self.direction[0], 'dy': self.direction[1], 'dz': self.direction[2]
-        }
+        return {'pos': self.pos, 'dir': self.dir}
 
     def __eq__(self, value):
         if not isinstance(value, Sensor):
             return False
-        return self.position == value.position and self.direction == value.direction
+        return self.pos == value.pos and self.dir == value.dir
 
     def __ne__(self, value):
         return not self.__eq__(value)
 
+    def ToString(self):
+        return self.__repr__()
+
     def __repr__(self):
-        """Print a sensor."""
+        """Get the string representation of the sensor grid."""
         return self.to_radiance()
