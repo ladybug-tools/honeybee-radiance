@@ -728,9 +728,9 @@ class RadianceSubFaceState(_RadianceState):
             base['modifier_direct'] = self._modifier_direct.identifier if abridged \
                 else self._modifier.to_dict()
         if self._vmtx_geometry is not None:
-            base['vmtx_geometry'] = self._vmtx_geometry
+            base['vmtx_geometry'] = self._vmtx_geometry.to_dict()
         if self._dmtx_geometry is not None:
-            base['dmtx_geometry'] = self._dmtx_geometry
+            base['dmtx_geometry'] = self._dmtx_geometry.to_dict()
         return base
 
     def __copy__(self):
