@@ -324,6 +324,7 @@ def test_to_from_dict_with_states():
 
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
     ap.properties.radiance.states = states
+    tint4.gen_geos_from_tmtx_thickness(0.05)
 
     ad = ap.to_dict()
     new_aperture = Aperture.from_dict(ad)
