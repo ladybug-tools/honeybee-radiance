@@ -44,7 +44,7 @@ def test_to_and_from_dict():
     sky = CertainIrradiance()
     sky_from_dict = CertainIrradiance.from_dict(sky.to_dict())
 
-    assert sky == CertainIrradiance.from_dict(sky.to_dict())
+    assert sky == sky_from_dict
 
 
 def test_to_file():
