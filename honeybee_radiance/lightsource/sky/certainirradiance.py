@@ -1,13 +1,13 @@
 """Generate sky with certain irradiance."""
 from __future__ import division
-from ._skybase import Sky
+from ._skybase import _PointInTime
 from .hemisphere import Hemisphere
 from honeybee_radiance.lightsource.ground import Ground
 import honeybee.typing as typing
 import ladybug.futil as futil
 
 
-class CertainIrradiance(Sky):
+class CertainIrradiance(_PointInTime):
     """sky with certain irradiance.
 
     The output of CertainIrradiance sky is similar to using command below::
@@ -53,18 +53,12 @@ class CertainIrradiance(Sky):
         * is_point_in_time
         * is_climate_based
     """
-    __slots__ = (
-        '_irradiance', '_ground', '_ground_reflectance',
-        '_ground_hemisphere', '_sky_hemisphere'
-    )
+    __slots__ = ('_irradiance',)
 
     def __init__(self, irradiance=558.659, ground_reflectance=0.2):
         """Create sky with certain irradiance."""
-        Sky.__init__(self)
+        _PointInTime.__init__(self, ground_reflectance)
         self.irradiance = irradiance
-        self.ground_reflectance = ground_reflectance
-        self._ground_hemisphere = Ground()
-        self._sky_hemisphere = Hemisphere()
 
     @classmethod
     def from_illuminance(cls, illuminance=100000, ground_reflectance=0.2):
@@ -92,34 +86,8 @@ class CertainIrradiance(Sky):
         return round(self._irradiance * 179.0, 2)
 
     @property
-    def ground_hemisphere(self):
-        """Sky ground glow source."""
-        return self._ground_hemisphere
-
-    @property
-    def sky_hemisphere(self):
-        """Sky hemisphere glow source."""
-        return self._sky_hemisphere
-
-    @property
-    def ground_reflectance(self):
-        """Ground reflectance value."""
-        return self._ground_reflectance
-
-    @ground_reflectance.setter
-    def ground_reflectance(self, ground_reflectance):
-        self._ground_reflectance = \
-            typing.float_in_range(ground_reflectance, 0, 1, 'ground reflectance') \
-            if ground_reflectance is not None else 0.2
-
-    @property
     def is_point_in_time(self):
         """Return True if the sky is generated for a single point in time."""
-        return False
-
-    @property
-    def is_climate_based(self):
-        """Return True if the sky is created based on values from weather file."""
         return False
 
     @classmethod
