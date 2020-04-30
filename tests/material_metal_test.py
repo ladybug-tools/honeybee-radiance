@@ -7,10 +7,10 @@ def test_metal():
     assert mt.r_reflectance == 0
     assert mt.g_reflectance == 0
     assert mt.b_reflectance == 0
-    assert mt.specularity == 0
+    assert mt.specularity == 0.9
     assert mt.roughness == 0
     assert mt.to_radiance(
-        minimal=True) == 'void metal test_metal 0 0 5 0.0 0.0 0.0 0.0 0.0'
+        minimal=True) == 'void metal test_metal 0 0 5 0.0 0.0 0.0 0.9 0.0'
 
 
 def test_assign_values():
