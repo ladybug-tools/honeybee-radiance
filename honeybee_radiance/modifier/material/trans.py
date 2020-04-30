@@ -23,7 +23,7 @@ class Trans(Material):
         b_reflectance: Reflectance for blue. The value should be between 0 and 1
             (Default: 0).
         specularity: Fraction of specularity. Specularity fractions greater than 0.1
-            are not realistic (Default: 0).
+            are not common in non-metallic materials (Default: 0).
         roughness: Roughness is specified as the rms slope of surface facets. A
             value of 0 corresponds to a perfectly smooth surface, and a value of 1
             would be a very rough surface. Roughness values greater than 0.2 are not
@@ -122,8 +122,8 @@ class Trans(Material):
     def specularity(self):
         """Fraction of specularity.
 
-        In most cases specularity fractions greater than 0.1 are not realistic
-        (Default: 0).
+        In most cases specularity fractions greater than 0.1 are not common in
+        non-metallic materials (Default: 0).
         """
         return self._specularity
 
@@ -274,13 +274,13 @@ class Trans(Material):
             rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
-                are not realistic (Default: 0).
+                are not common in non-metallic materials (Default: 0).
             roughness: Roughness is specified as the rms slope of surface facets. A value
                 of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
                 a very rough surface. Roughness values greater than 0.2 are not very
                 realistic. (Default: 0).
             transmitted_diff: The transmitted diffuse component is the fraction of
-                transmitted light that is transmitted diffusely in as scattering fashion.
+                transmitted light that is transmitted diffusely in a scattering fashion.
             transmitted_spec: The transmitted specular component is the fraction of
                 transmitted light that is not diffusely scattered.
             modifier: Material modifier (Default: None).

@@ -22,7 +22,7 @@ class Plastic(Material):
         b_reflectance: Reflectance for blue. The value should be between 0 and 1
             (Default: 0).
         specularity: Fraction of specularity. Specularity fractions greater than 0.1
-            are not realistic (Default: 0).
+            are not common in non-metallic materials (Default: 0).
         roughness: Roughness is specified as the rms slope of surface facets. A
             value of 0 corresponds to a perfectly smooth surface, and a value of 1
             would be a very rough surface. Roughness values greater than 0.2 are not
@@ -125,8 +125,7 @@ class Plastic(Material):
     def specularity(self):
         """Fraction of specularity.
 
-        In most cases specularity fractions greater than 0.1 are not realistic
-        (Default: 0).
+        Specularity fractions greater than 0.1 are not common in non-metallic materials.
         """
         return self._specularity
 
@@ -150,7 +149,7 @@ class Plastic(Material):
 
     @property
     def average_reflectance(self):
-        """Calculate average reflectance of plastic material."""
+        """Calculate average reflectance of the material."""
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
@@ -158,7 +157,7 @@ class Plastic(Material):
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
         modifier=None, dependencies=None):
-        """Create plastic material with single reflectance value.
+        """Create material with single reflectance value.
 
         Args:
             identifier: Text string for a unique Material ID. Must not contain spaces
@@ -167,7 +166,7 @@ class Plastic(Material):
             rgb_reflectance: Reflectance for red, green and blue. The value should be
                 between 0 and 1 (Default: 0).
             specularity: Fraction of specularity. Specularity fractions greater than 0.1
-                are not realistic (Default: 0).
+                are not common in non-metallic materials (Default: 0).
             roughness: Roughness is specified as the rms slope of surface facets. A value
                 of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
                 a very rough surface. Roughness values greater than 0.2 are not very
@@ -191,7 +190,7 @@ class Plastic(Material):
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
-        """Initialize Plastic from a primitive dict.
+        """Initialize material from a primitive dict.
 
         Args:
             data: A dictionary in the format below.
@@ -200,7 +199,7 @@ class Plastic(Material):
 
             {
             "modifier": {},  # primitive modifier (Default: None)
-            "type": "plastic",  # primitive type
+            "type": string,  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
             "values": [],  # values
@@ -235,7 +234,7 @@ class Plastic(Material):
 
     @classmethod
     def from_dict(cls, data):
-        """Initialize Plastic from a dictionary.
+        """Initialize material from a dictionary.
 
         Args:
             data: A dictionary in the format below.
@@ -243,7 +242,7 @@ class Plastic(Material):
         .. code-block:: python
 
             {
-            "type": "plastic",  # Material type
+            "type": string,  # Material type
             "identifier": "",  # Material identifier
             "display_name": string  # Material display name
             "r_reflectance": float,  # Reflectance for red

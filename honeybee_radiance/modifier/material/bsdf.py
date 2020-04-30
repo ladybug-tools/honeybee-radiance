@@ -32,8 +32,8 @@ class BSDF(Material):
             rbdif gbdif bbdif
             rtdif gtdif btdif
 
-    The __init__ method sets additional diffuse reflectance for front and  back as well
-    as addition diffuse transmittance to 0. You can set-up these values by using their
+    The __init__ method sets additional diffuse reflectance for front and back as well
+    as additional diffuse transmittance to 0. You can setup these values by using their
     respective property.
 
     Args:

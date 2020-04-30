@@ -10,6 +10,9 @@ from .plastic import Plastic
 class Metal(Plastic):
     """Radiance metal material.
 
+    Metal is similar to plastic, but specular highlights are modified by the
+    material color. Specularity of metals is usually .9 or greater.
+
     Args:
         identifier: Text string for a unique Material ID. Must not contain spaces
             or special characters. This will be used to identify the object across
@@ -20,8 +23,8 @@ class Metal(Plastic):
             (Default: 0).
         b_reflectance: Reflectance for blue. The value should be between 0 and 1
             (Default: 0).
-        specularity: Fraction of specularity. Specularity fractions greater than 0.1
-            are not realistic (Default: 0).
+        specularity: Fraction of specularity. Specularity of metals is usually
+            0.9 or greater. (Default: 0.9).
         roughness: Roughness is specified as the rms slope of surface facets. A
             value of 0 corresponds to a perfectly smooth surface, and a value of 1
             would be a very rough surface. Roughness values greater than 0.2 are not
@@ -48,6 +51,12 @@ class Metal(Plastic):
     """
 
     __slots__ = ()
+
+    def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+                 specularity=0.9, roughness=0.0, modifier=None, dependencies=None):
+        """Create metal material."""
+        Plastic.__init__(self, identifier, r_reflectance, g_reflectance, b_reflectance,
+                         specularity, roughness, modifier, dependencies)
 
     def _update_values(self):
         "update value dictionaries."
