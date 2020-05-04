@@ -221,15 +221,22 @@ class CIE(_PointInTime):
 
         .. code-block:: python
 
-                {
+            {
+                'type': 'CIE',
                 'altitude': 0.0,
                 'azimuth': 0.0,
                 'sky_type': 0,
                 'ground_reflectance': 0.2,
                 'ground_hemisphere': {},  # see ground.Ground class [optional],
                 'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
-                }
+            }
+
         """
+        assert 'type' in input_dict, \
+            'Input dict is missing type. Not a valid CIE dictionary.'
+        assert input_dict['type'] == 'CIE', \
+            'Input type must be CIE not %s' % input_dict['type']
+
         sky = cls(
             input_dict['altitude'],
             input_dict['azimuth'],
@@ -261,6 +268,7 @@ class CIE(_PointInTime):
     def to_dict(self):
         """Translate sky to a dictionary."""
         return {
+            'type': 'CIE',
             'altitude': self.altitude,
             'azimuth': self.azimuth,
             'sky_type': self.sky_type,
@@ -271,6 +279,12 @@ class CIE(_PointInTime):
 
     def to_file(self, folder, name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
+
+        Args:
+            folder: Target folder.
+            name: File name.
+            mkdir: A boolean to note if the directory should be created if doesn't
+                exist (default: False).
 
         Returns:
             Full path to the newly created file.

@@ -99,13 +99,19 @@ class CertainIrradiance(_PointInTime):
 
         .. code-block:: python
 
-                {
+            {
+                'type': 'CertainIrradiance',
                 'irradiance': 558.659,
                 'ground_reflectance': 0.2,
                 'ground_hemisphere': {},  # see ground.Ground class [optional],
                 'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
-                }
+            }
         """
+        assert 'type' in input_dict, \
+            'Input dict is missing type. Not a valid CertainIrradiance dictionary.'
+        assert input_dict['type'] == 'CertainIrradiance', \
+            'Input type must be CertainIrradiance not %s' % input_dict['type']
+
         sky = cls(
             input_dict['irradiance'],
             input_dict['ground_reflectance']
@@ -132,6 +138,7 @@ class CertainIrradiance(_PointInTime):
     def to_dict(self):
         """Translate sky to a dictionary."""
         return {
+            'type': 'CertainIrradiance',
             'irradiance': self.irradiance,
             'ground_reflectance': self.ground_reflectance,
             'ground_hemisphere': self.ground_hemisphere.to_dict(),
@@ -140,6 +147,12 @@ class CertainIrradiance(_PointInTime):
 
     def to_file(self, folder, name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
+
+        Args:
+            folder: Target folder.
+            name: File name.
+            mkdir: A boolean to note if the directory should be created if doesn't
+                exist (default: False).
 
         Returns:
             Full path to the newly created file.

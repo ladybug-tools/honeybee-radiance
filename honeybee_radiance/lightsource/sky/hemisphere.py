@@ -24,8 +24,7 @@ class Hemisphere(object):
     For more information see Chapter `6.3.2  Example: CIE Overcast Sky` in
     Rendering with Radiance. The chapter is also accessible online at the
     link below.
-    https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/\
-Mardaljevic/rwr_ch6.pdf
+    https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/Mardaljevic/rwr_ch6.pdf
 
     Properties:
         * r_emittance
@@ -93,6 +92,12 @@ Mardaljevic/rwr_ch6.pdf
 
     def to_file(self, folder='.', name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
+
+        Args:
+            folder: Target folder.
+            name: File name.
+            mkdir: A boolean to note if the directory should be created if doesn't
+                exist (default: False).
 
         Returns:
             Full path to the newly created file.

@@ -225,7 +225,8 @@ class ClimateBased(_PointInTime):
 
         .. code-block:: python
 
-                {
+            {
+                'type': 'ClimateBased',
                 'altitude': 0.0,
                 'azimuth': 0.0,
                 'direct_normal_irradiance': 0,
@@ -233,8 +234,14 @@ class ClimateBased(_PointInTime):
                 'ground_reflectance': 0.2,
                 'ground_hemisphere': {},  # see ground.Ground class [optional],
                 'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
-                }
+            }
+
         """
+        assert 'type' in input_dict, \
+            'Input dict is missing type. Not a valid ClimateBased dictionary.'
+        assert input_dict['type'] == 'ClimateBased', \
+            'Input type must be ClimateBased not %s' % input_dict['type']
+
         sky = cls(
             input_dict['altitude'],
             input_dict['azimuth'],
@@ -275,6 +282,7 @@ class ClimateBased(_PointInTime):
     def to_dict(self):
         """Translate sky to a dictionary."""
         return {
+            'type': 'ClimateBased',
             'altitude': self.altitude,
             'azimuth': self.azimuth,
             'direct_normal_irradiance': self.direct_normal_irradiance,
@@ -286,6 +294,12 @@ class ClimateBased(_PointInTime):
 
     def to_file(self, folder, name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
+
+        Args:
+            folder: Target folder.
+            name: File name.
+            mkdir: A boolean to note if the directory should be created if doesn't
+                exist (default: False).
 
         Returns:
             Full path to the newly created file.
