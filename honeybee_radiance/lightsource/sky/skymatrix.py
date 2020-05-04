@@ -114,12 +114,12 @@ class SkyMatrix(SunMatrix):
             cumulative: A boolean to generate cumulative sky. This option is only
                 available in Radiance 5.3 and higher versions (default: False).
             components: An integer between 0-2 to note the distribution of which
-                components should be included. 0 might be used to include both solar and
+                components should be included. 0 might be used to include both sun and
                 sky contribution. 1 may be used to produce a sun-only matrix, with no sky
-                contributions.  Alternatively, 2 may be used to exclude any direct solar
-                component from the output.  If there is a sun in the description,
-                gendaymtx will include its contribution in the four nearest sky patches,
-                distributing energy according to centroid proximity (default: 0).
+                contributions.  Alternatively, 2 may be used to exclude any sun component
+                from the output.  If there is a sun in the description, gendaymtx will
+                include its contribution in the four nearest sky patches, distributing
+                energy according to centroid proximity (default: 0).
         """
         output_type = typing.int_in_range(output_type, 0, 1, 'SkyMatrix output type')
         wea_file = wea_file or 'in.wea'

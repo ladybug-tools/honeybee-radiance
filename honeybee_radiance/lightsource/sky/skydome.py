@@ -2,27 +2,30 @@
 
 Here is an example of the output.
 
-#@rfluxmtx h=u u=Y
-void glow grd_glow
-0
-0
-4 1 1 1 0
+.. code-block:: shell
 
-grd_glow source ground
-0
-0
-4 0 0 -1 180
+    #@rfluxmtx h=u u=Y
+    void glow grd_glow
+    0
+    0
+    4 1 1 1 0
 
-#@rfluxmtx h=r1 u=Y
-void glow sky_glow
-0
-0
-4 1 1 1 0
+    grd_glow source ground
+    0
+    0
+    4 0 0 -1 180
 
-sky_glow source sky
-0
-0
-4 0 0 1 180
+    #@rfluxmtx h=r1 u=Y
+    void glow sky_glow
+    0
+    0
+    4 1 1 1 0
+
+    sky_glow source sky
+    0
+    0
+    4 0 0 1 180
+
 """
 
 from ._skybase import _Skydome
