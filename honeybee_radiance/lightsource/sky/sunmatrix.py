@@ -111,7 +111,7 @@ class SunMatrix(object):
         Alternatively you can use write method which will write the wea data to a file.
 
         Args:
-            output_type: An integer between 0 to 2 for output type.
+            output_type: An integer between 0 to 1 for output type.
                 * 0 = output in W/m2/sr visible
                 * 1 = output in W/m2/sr solar (default)
             wea_file: Path to wea file (default: in.wea).
@@ -164,6 +164,8 @@ class SunMatrix(object):
         Args:
             folder: Target folder.
             name: File name.
+            hoys: Optional list of hoys to filter the annual hours. If None it will
+                generate an annual wea file.
             mkdir: A boolean to note if the directory should be created if doesn't
                 exist (default: False).
 
@@ -178,7 +180,7 @@ class SunMatrix(object):
         return futil.write_to_file_by_name(folder, name, '!' + content, mkdir)
 
     def __eq__(self, value):
-        if type(value) != type(self) \
+        if not isinstance(value, self.__class__) \
             or value.wea != self.wea \
                 or value.north != self.north:
             return False
