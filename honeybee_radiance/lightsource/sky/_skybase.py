@@ -1,61 +1,10 @@
-from abc import ABCMeta, abstractproperty, abstractmethod
 from .hemisphere import Hemisphere
 from ..ground import Ground
 import honeybee.typing as typing
 import ladybug.futil as futil
 
 
-class Sky(object):
-    """Base class for Honeybee Skies.
-
-    Properties:
-        * is_point_in_time
-        * is_climate_based
-    """
-    __metaclass__ = ABCMeta
-    __slots__ = ()
-
-    @property
-    def is_point_in_time(self):
-        """Return True if the sky is generated for a single point in time."""
-        return False
-
-    @property
-    def is_climate_based(self):
-        """Return True if the sky is created based on values from weather data."""
-        return False
-
-    @classmethod
-    def from_dict(cls):
-        raise NotImplementedError(
-            "from_dict is not implemented for {}.".format(cls.__class__.__name__)
-        )
-
-    @abstractmethod
-    def to_dict(self):
-        """Convert sky to a dictionary."""
-        pass
-
-    @abstractmethod
-    def to_radiance(self):
-        """Return radiance definition as a string."""
-        pass
-
-    @abstractmethod
-    def to_file(self, file_path):
-        """Write sky to file."""
-        pass
-
-    def ToString(self):
-        """Overwrite .NET ToString method."""
-        return self.__repr__()
-
-    def __repr__(self):
-        """Sky representation."""
-        return self.to_radiance()
-
-
-class _Skydome(Sky):
+class _Skydome(object):
     """Virtual Skydome base-class with Radiance ground and sky sphere.
 
     Properties:
@@ -81,6 +30,16 @@ class _Skydome(Sky):
         """Sky hemisphere glow source."""
         return self._sky_hemisphere
 
+    @property
+    def is_point_in_time(self):
+        """Return True if the sky is generated for a single point in time."""
+        return False
+
+    @property
+    def is_climate_based(self):
+        """Return True if the sky is created based on values from weather data."""
+        return False
+
     @classmethod
     def from_dict(cls, input_dict):
         """Create the sky baseclass from a dictionary.
@@ -90,11 +49,18 @@ class _Skydome(Sky):
 
         .. code-block:: python
 
-                {
+            {
+                'type': 'SkyDome',
                 'ground_hemisphere': {},  # see ground.Ground class [optional],
                 'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
-                }
+            }
+
         """
+        assert 'type' in input_dict, \
+            'Input dict is missing type. Not a valid SkyDome dictionary.'
+        assert input_dict['type'] == 'SkyDome', \
+            'Input type must be SkyDome not %s' % input_dict['type']
+
         sky = cls()
 
         if 'ground_hemisphere' in input_dict:
@@ -112,6 +78,7 @@ class _Skydome(Sky):
     def to_dict(self):
         """Translate sky to a dictionary."""
         return {
+            'type': 'SkyDome',
             'ground_hemisphere': self.ground_hemisphere.to_dict(),
             'sky_hemisphere': self.sky_hemisphere.to_dict()
         }
@@ -130,6 +97,10 @@ class _Skydome(Sky):
         content = self.to_radiance()
         name = typing.valid_string(name) if name else 'skydome.rad'
         return futil.write_to_file_by_name(folder, name, content, mkdir)
+
+    def __repr__(self):
+        """Sky representation."""
+        return self.to_radiance()
 
 
 class _PointInTime(_Skydome):
