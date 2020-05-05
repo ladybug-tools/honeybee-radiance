@@ -1,12 +1,11 @@
 """Tests the features that honeybee_radiance adds to honeybee_core Door."""
-from honeybee.shade import Shade
 from honeybee.door import Door
 from honeybee.face import Face
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions
 
 from honeybee_radiance.properties.door import DoorRadianceProperties
-from honeybee_radiance.state import RadianceSubFaceState
+from honeybee_radiance.dynamic import RadianceSubFaceState, StateGeometry
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass
 
@@ -134,9 +133,9 @@ def test_to_from_dict_with_states():
     """Test the Door from_dict method with radiance properties."""
     dr = Door.from_vertices(
         'front_door', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'wall_overhang1', [[0, 0, 10], [10, 0, 10], [10, 2, 10], [0, 2, 10]])
-    shd2 = Shade.from_vertices(
+    shd2 = StateGeometry.from_vertices(
         'wall_overhang2', [[0, 0, 5], [10, 0, 5], [10, 2, 5], [0, 2, 5]])
 
     ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)

@@ -32,7 +32,7 @@ class View(object):
             * 0 - Perspective (v)
             * 1 - Hemispherical fisheye (h)
             * 2 - Parallel (l)
-            * 3 - Cylindrical panoroma (c)
+            * 3 - Cylindrical panorama (c)
             * 4 - Angular fisheye (a)
             * 5 - Planisphere [stereographic] projection (s)
 
@@ -160,7 +160,7 @@ class View(object):
             * v - Perspective (v)
             * h - Hemispherical fisheye (h)
             * l - Parallel (l)
-            * c - Cylindrical panorma (c)
+            * c - Cylindrical panorama (c)
             * a - Angular fisheye (a)
             * s - Planisphere [stereographic] projection (s)
         """
@@ -375,6 +375,7 @@ class View(object):
         .. code-block:: python
 
             {
+            'type': 'View',
             'identifier': str,  # View identifier
             "display_name": str,  # View display name
             'position': [],  # list with position value
@@ -384,11 +385,13 @@ class View(object):
             'v_size': number,  # v_size value
             'shift': number,  # shift value
             'lift': number,  # lift value
-            'type': number,  # type value
+            'view_type': number,  # view_type value
             'fore_clip': number,  # fore_clip value
             'aft_clip': number  # aft_clip value
             }
         """
+        assert view_dict['type'] == 'View', \
+            'Expected View dictionary. Got {}.'.format(view_dict['type'])
 
         view = cls(
             identifier=view_dict['identifier'],
@@ -422,6 +425,7 @@ class View(object):
         }
 
         base = {
+            'type': 'View',
             'identifier': identifier,
             'position': None,
             'direction': None,
@@ -430,7 +434,7 @@ class View(object):
             'v_size': None,
             'shift': None,
             'lift': None,
-            'type': None,
+            'view_type': None,
             'fore_clip': None,
             'aft_clip': None
         }
@@ -442,7 +446,7 @@ class View(object):
             if opt in mapper:
                 base[mapper[opt]] = value
             elif opt[:2] == 'vt':
-                base['type'] = opt
+                base['view_type'] = opt
             else:
                 print('%s is not a view parameter and is ignored.' % opt)
 
@@ -615,6 +619,7 @@ class View(object):
     def to_dict(self):
         """Translate view to a dictionary."""
         base = {
+            'type': 'View',
             'identifier': self.identifier,
             'position': self.position.value,
             'direction': self.direction.value,
@@ -623,7 +628,7 @@ class View(object):
             'v_size': self.v_size.value,
             'shift': self.shift.value,
             'lift': self.lift.value,
-            'type': self.type.value,
+            'view_type': self.type.value,
             'fore_clip': self.fore_clip.value,
             'aft_clip': self.aft_clip.value
         }

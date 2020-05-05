@@ -1,6 +1,6 @@
 # coding=utf-8
 """Model Radiance Properties."""
-from .dynamic import DynamicShadeGroup, DynamicSubFaceGroup
+from ..dynamic.group import DynamicShadeGroup, DynamicSubFaceGroup
 from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import BSDF
@@ -526,7 +526,7 @@ class ModelRadianceProperties(object):
                 modifiers.append(mod)
         for st in obj.properties.radiance._states:
             stm = (st._modifier, st._modifier_direct) + \
-                tuple(s.properties.radiance.modifier for s in st._shades)
+                tuple(s.modifier for s in st._shades)
             for mod in stm:
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
@@ -548,7 +548,7 @@ class ModelRadianceProperties(object):
                 modifiers.append(mod)
         for st in obj.properties.radiance._states:
             for s in st._shades:
-                mod = s.properties.radiance.modifier
+                mod = s.modifier
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
@@ -564,7 +564,7 @@ class ModelRadianceProperties(object):
                 modifiers.append(generic_context)
         for st in obj.properties.radiance._states:
             stm = (st._modifier, st._modifier_direct) + \
-                tuple(s.properties.radiance.modifier for s in st._shades)
+                tuple(s.modifier for s in st._shades)
             for mod in stm:
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):

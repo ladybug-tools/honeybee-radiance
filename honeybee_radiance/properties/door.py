@@ -2,7 +2,7 @@
 """Door Radiance Properties."""
 from ._base import _DynamicRadianceProperties
 from ..modifier import Modifier
-from ..state import RadianceSubFaceState
+from ..dynamic.state import RadianceSubFaceState
 from ..lib.modifiers import black
 from ..lib.modifiersets import generic_modifier_set_visible
 

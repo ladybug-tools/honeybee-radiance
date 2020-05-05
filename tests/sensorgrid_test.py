@@ -65,6 +65,7 @@ def test_to_and_from_dict():
     sg = SensorGrid('sg', sensors)
     sg_dict = sg.to_dict()
     assert sg_dict == {
+        'type': 'SensorGrid',
         'identifier': 'sg',
         'sensors': [
             {'pos': (0, 0, 0), 'dir': (0,  0, 1)},

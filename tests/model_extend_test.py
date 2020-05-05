@@ -9,7 +9,8 @@ from honeybee.boundarycondition import boundary_conditions, Ground, Outdoors
 from honeybee.facetype import face_types
 
 from honeybee_radiance.properties.model import ModelRadianceProperties
-from honeybee_radiance.state import RadianceSubFaceState, RadianceShadeState
+from honeybee_radiance.dynamic import RadianceSubFaceState, RadianceShadeState, \
+    StateGeometry
 from honeybee_radiance.modifierset import ModifierSet
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass, Trans, BSDF
@@ -441,7 +442,7 @@ def test_writer_to_rad_folder_dynamic():
 
     south_face = room[3]
     south_face.apertures_by_ratio(0.5, 0.01)
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'outdoor_awning', [[0, 0, 2], [5, 0, 2], [5, 2, 2], [0, 2, 2]])
 
     ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)
