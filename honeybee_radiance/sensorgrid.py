@@ -49,11 +49,14 @@ class SensorGrid(object):
         .. code-block:: python
 
             {
+            "type": "SensorGrid",
             "identifier": str,  # SensorGrid identifier
             "display_name": str,  # SensorGrid display name
             "sensors": []  # list of Sensor dictionaries
             }
         """
+        assert ag_dict['type'] == 'SensorGrid', \
+            'Expected SensorGrid dictionary. Got {}.'.format(ag_dict['type'])
         sensors = (Sensor.from_dict(sensor) for sensor in ag_dict['sensors'])
         new_obj = cls(identifier=ag_dict["identifier"], sensors=sensors)
         if 'display_name' in ag_dict and ag_dict['display_name'] is not None:
@@ -275,8 +278,9 @@ class SensorGrid(object):
     def to_dict(self):
         """Convert SensorGrid to a dictionary."""
         base = {
-            "identifier": self.identifier,
-            "sensors": [sen.to_dict() for sen in self.sensors]
+            'type': 'SensorGrid',
+            'identifier': self.identifier,
+            'sensors': [sen.to_dict() for sen in self.sensors]
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name

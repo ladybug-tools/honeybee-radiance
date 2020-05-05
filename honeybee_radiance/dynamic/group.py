@@ -2,7 +2,7 @@
 """Object representing a group of sub-faces or shades that change states in unison."""
 from __future__ import division
 
-from ..state import RadianceShadeState, RadianceSubFaceState
+from .state import RadianceShadeState, RadianceSubFaceState
 from ..geometry import Polygon
 from ..modifier.material import BSDF
 from ..lib.modifiers import white_glow
@@ -167,16 +167,16 @@ class DynamicShadeGroup(object):
                 if not self._instance_in_array(mod, modifiers):
                     modifiers.append(mod)
                 for shd in state._shades:
-                    mod = shd.properties.radiance.modifier
+                    mod = shd.modifier
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
-        else:  # use modifier_direct and modifier_blk
+        else:  # use modifier_direct
             for state in states:
                 mod = state.modifier_direct
                 if not self._instance_in_array(mod, modifiers):
                     modifiers.append(mod)
                 for shd in state._shades:
-                    mod = shd.properties.radiance.modifier_blk
+                    mod = shd.modifier_direct
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
         modifiers = list(set(modifiers))

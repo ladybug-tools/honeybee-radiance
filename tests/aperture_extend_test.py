@@ -1,12 +1,11 @@
 """Tests the features that honeybee_radiance adds to honeybee_core Aperture."""
-from honeybee.shade import Shade
 from honeybee.aperture import Aperture
 from honeybee.face import Face
 from honeybee.room import Room
 from honeybee.boundarycondition import boundary_conditions
 
 from honeybee_radiance.properties.aperture import ApertureRadianceProperties
-from honeybee_radiance.state import RadianceSubFaceState
+from honeybee_radiance.dynamic import RadianceSubFaceState, StateGeometry
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Glass
 
@@ -104,9 +103,9 @@ def test_set_states():
     """Test the setting of states on an Aperture."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
     ap = Aperture('TestWindow', Face3D(pts))
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'wall_overhang1', [[0, 0, 10], [10, 0, 10], [10, 2, 10], [0, 2, 10]])
-    shd2 = Shade.from_vertices(
+    shd2 = StateGeometry.from_vertices(
         'wall_overhang2', [[0, 0, 5], [10, 0, 5], [10, 2, 5], [0, 2, 5]])
 
     ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)
@@ -156,7 +155,7 @@ def move_state_shades():
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
     ap = Aperture('TestWindow', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceSubFaceState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
@@ -178,7 +177,7 @@ def scale_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Aperture('TestWindow', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceSubFaceState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
@@ -200,7 +199,7 @@ def rotate_state_shades():
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     ap = Aperture('TestWindow', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceSubFaceState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
@@ -225,7 +224,7 @@ def rotate_xy_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Aperture('TestWindow', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceSubFaceState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
@@ -249,7 +248,7 @@ def reflect_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Aperture('TestWindow', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceSubFaceState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'ElectrochromicWindow1'
@@ -306,9 +305,9 @@ def test_to_from_dict_with_states():
     """Test the Aperture from_dict method with radiance properties."""
     ap = Aperture.from_vertices(
         'wall_aperture', [[0, 0, 0], [10, 0, 0], [10, 0, 10], [0, 0, 10]])
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'wall_overhang1', [[0, 0, 10], [10, 0, 10], [10, 2, 10], [0, 2, 10]])
-    shd2 = Shade.from_vertices(
+    shd2 = StateGeometry.from_vertices(
         'wall_overhang2', [[0, 0, 5], [10, 0, 5], [10, 2, 5], [0, 2, 5]])
 
     ecglass1 = Glass.from_single_transmittance('ElectrochromicState1', 0.4)

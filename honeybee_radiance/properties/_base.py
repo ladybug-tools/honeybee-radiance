@@ -2,7 +2,7 @@
 """Base class of Radiance Properties for all planar geometry objects."""
 from ..modifier import Modifier
 from ..mutil import dict_to_modifier  # imports all modifiers classes
-from ..state import _RadianceState
+from ..dynamic.state import _RadianceState
 from ..lib.modifiers import black
 
 from honeybee.typing import valid_rad_string

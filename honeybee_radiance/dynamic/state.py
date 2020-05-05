@@ -2,12 +2,12 @@
 """Object representing a single state for a dynamic object."""
 from __future__ import division
 
-from .geometry import Polygon
-from .modifier import Modifier
-from .mutil import dict_to_modifier
-from .lib.modifiers import white_glow
+from .stategeo import StateGeometry
+from ..geometry import Polygon
+from ..modifier import Modifier
+from ..mutil import dict_to_modifier
+from ..lib.modifiers import white_glow
 
-from honeybee.shade import Shade
 from ladybug_geometry.geometry3d.face import Face3D
 
 import math
@@ -20,10 +20,9 @@ class _RadianceState(object):
         modifier: A Honeybee Radiance Modifier object to be applied to this state's
             parent in this state. This is used to swap out the modifier in
             multi-phase studies. If None, it will be the parent's default modifier.
-        shades: An optional array of honeybee-core Shade objects to be included
-            with this state. These shades must not have a parent Room, Face or
-            Aperture and they cannot already be assigned to another state.
-            Also, the Shade must not have a dynamic_group_identifier of its own.
+        shades: An optional array of StateGeometry objects to be included
+            with this state. The StateGeometry objects cannot already have
+            another parent state.
 
     Properties:
         * modifier
@@ -60,12 +59,9 @@ class _RadianceState(object):
 
     @property
     def shades(self):
-        """Get or set an array of honeybee-core shades to be included with this state.
-    
-        These shades must not have a parent Room, Face or Aperture and they cannot
-        already be assigned to another RadianceState. Also, the Shade must not have
-        a dynamic_group_identifier of its own, meaning that a dynamic shade cannot
-        be assigned to another dynamic object.
+        """Get or set an array of StateGeometry objects to be included with this state.
+
+        The StateGeometry objects cannot already have another parent state.
         """
         return tuple(self._shades)
 
@@ -208,10 +204,7 @@ class _RadianceState(object):
         base_poly = Polygon(self.parent.identifier, self.parent.vertices, modifier)
         rad_strs = [base_poly.to_radiance(minimal, False, False)]
         for shd in self._shades:
-            modifier = shd.properties.radiance.modifier_blk if direct else \
-                shd.properties.radiance.modifier
-            shd_poly = Polygon(shd.identifier, shd.vertices, modifier)
-            rad_strs.append(shd_poly.to_radiance(minimal, False, False))
+            rad_strs.append(shd.to_radiance(direct, minimal))
         return '\n\n'.join(rad_strs)
 
     def duplicate(self):
@@ -219,12 +212,10 @@ class _RadianceState(object):
         return self.__copy__()
 
     def _check_shade(self, shade):
-        assert isinstance(shade, Shade), \
-            'Expected Shade for RadianceState. Got {}.'.format(type(shade))
+        assert isinstance(shade, StateGeometry), \
+            'Expected StateGeometry for RadianceState. Got {}.'.format(type(shade))
         assert shade.parent is None, \
-            'Shade for a RadianceState cannot already have a parent object.'
-        assert shade.properties.radiance.dynamic_group_identifier is None, \
-            'Shade for a RadianceState cannot already be dynamic.'
+            'StateGeometry for a RadianceState cannot already have a parent object.'
         shade._parent = self
         return shade
 
@@ -256,11 +247,9 @@ class RadianceShadeState(_RadianceState):
             deciduous trees, change the modifier of a ground surface to account
             for snow reflectance, etc. If None, it will be the parent's default
             modifier.
-        shades: An optional array of honeybee-core Shade objects to be included
-            with this state. These shades must not have a parent Room/Face/Aperture
-            and they cannot already be assigned to another state. The Shade must
-            also not have a dynamic_group_identifier of its own, meaning that a
-            dynamic shade cannot be assigned to another dynamic shade.
+        shades: An optional array of StateGeometry objects to be included
+            with this state. The StateGeometry objects cannot already have
+            another parent state.
 
     Properties:
         * modifier
@@ -291,7 +280,7 @@ class RadianceShadeState(_RadianceState):
             {
             'type': 'RadianceShadeState',
             'modifier': {},  # A Honeybee Radiance Modifier dictionary
-            'shades': [],  # A list of honeybee Shade dictionaries
+            'shades': [],  # A list of StateGeometry dictionaries
             'modifier_direct': {}  # A Honeybee Radiance Modifier dictionary
             }
         """
@@ -301,7 +290,7 @@ class RadianceShadeState(_RadianceState):
         if 'modifier' in data and data['modifier'] is not None:
             new_state.modifier = dict_to_modifier(data['modifier'])
         if 'shades' in data and data['shades'] is not None:
-            new_state.shades = [Shade.from_dict(shd) for shd in data['shades']]
+            new_state.shades = [StateGeometry.from_dict(shd) for shd in data['shades']]
         if 'modifier_direct' in data and data['modifier_direct'] is not None:
             new_state.modifier_direct = dict_to_modifier(data['modifier_direct'])
         return new_state
@@ -309,9 +298,6 @@ class RadianceShadeState(_RadianceState):
     @classmethod
     def from_dict_abridged(cls, data, modifiers):
         """Create RadianceShadeState from an abridged dictionary.
-
-        Note that the dictionary must be a non-abridged version for this
-        classmethod to work.
 
         Args:
             data: A dictionary representation of RadianceShadeStateAbridged with
@@ -324,7 +310,7 @@ class RadianceShadeState(_RadianceState):
             {
             'type': 'RadianceShadeStateAbridged',
             'modifier': str,  # An identifier of a honeybee-radiance modifier
-            'shades': [],  # A list of abridged honeybee Shade dictionaries
+            'shades': [],  # A list of abridged StateGeometry dictionaries
             'modifier_direct': str  # An identifier of a honeybee-radiance modifier
             }
         """
@@ -334,12 +320,8 @@ class RadianceShadeState(_RadianceState):
         if 'modifier' in data and data['modifier'] is not None:
             new_state.modifier = modifiers[data['modifier']]
         if 'shades' in data and data['shades'] is not None:
-            for shd in data['shades']:
-                prop = shd['properties']
-                shd['properties'] = []
-                new_shd = Shade.from_dict(shd)
-                new_shd.apply_properties_from_dict(prop, modifiers)
-                new_state._shades.append(new_shd)
+            new_state.shades = [StateGeometry.from_dict_abridged(shd, modifiers)
+                                for shd in data['shades']]
         if 'modifier_direct' in data and data['modifier_direct'] is not None:
             new_state.modifier_direct = modifiers[data['modifier_direct']]
         return new_state
@@ -358,8 +340,7 @@ class RadianceShadeState(_RadianceState):
             base['modifier'] = self._modifier.identifier if abridged else \
                 self._modifier.to_dict()
         if len(self._shades) != 0:
-            base['shades'] = [shd.to_dict(abridged=abridged, included_prop=['radiance'])
-                              for shd in self.shades]
+            base['shades'] = [shd.to_dict(abridged=abridged) for shd in self.shades]
         if self._modifier_direct is not None:
             base['modifier_direct'] = self._modifier_direct.identifier if abridged \
                 else self._modifier.to_dict()
@@ -379,11 +360,9 @@ class RadianceSubFaceState(_RadianceState):
         modifier: A Honeybee Radiance Modifier object to be applied to this state's
             parent in this state. This is used to swap out the modifier in
             multi-phase studies. If None, it will be the parent's default modifier.
-        shades: An optional array of honeybee-core Shade objects to be included
-            with this state. These shades must not have a parent Room/Face/Aperture
-            and they cannot already be assigned to another state. The Shade must
-            also not have a dynamic_group_identifier of its own, meaning that
-            a dynamic shade cannot be assigned to a dynamic aperture.
+        shades: An optional array of StateGeometry objects to be included
+            with this state. The StateGeometry objects cannot already have
+            another parent state.
 
     Properties:
         * modifier
@@ -398,7 +377,7 @@ class RadianceSubFaceState(_RadianceState):
     __slots__ = ('_vmtx_geometry', '_dmtx_geometry')
 
     def __init__(self, modifier=None, shades=None):
-        """Initialize RadianceShadeState."""
+        """Initialize RadianceSubFaceState."""
         _RadianceState.__init__(self, modifier, shades)
         self._vmtx_geometry = None
         self._dmtx_geometry = None
@@ -638,7 +617,7 @@ class RadianceSubFaceState(_RadianceState):
             {
             'type': 'RadianceSubFaceState',
             'modifier': {},  # A Honeybee Radiance Modifier dictionary
-            'shades': [],  # A list of honeybee Shade dictionaries
+            'shades': [],  # A list of abridged StateGeometry dictionaries
             'modifier_direct': {},  # A Honeybee Radiance Modifier dictionary
             'vmtx_geometry': {},  # A Face3D for the view matrix geometry
             'dmtx_geometry': {}  # A Face3D for the daylight matrix geometry
@@ -650,7 +629,7 @@ class RadianceSubFaceState(_RadianceState):
         if 'modifier' in data and data['modifier'] is not None:
             new_state.modifier = dict_to_modifier(data['modifier'])
         if 'shades' in data and data['shades'] is not None:
-            new_state.shades = [Shade.from_dict(shd) for shd in data['shades']]
+            new_state.shades = [StateGeometry.from_dict(shd) for shd in data['shades']]
         if 'modifier_direct' in data and data['modifier_direct'] is not None:
             new_state.modifier_direct = dict_to_modifier(data['modifier_direct'])
         if 'vmtx_geometry' in data and data['vmtx_geometry'] is not None:
@@ -677,7 +656,7 @@ class RadianceSubFaceState(_RadianceState):
             {
             'type': 'RadianceSubFaceStateAbridged',
             'modifier': str,  # An identifier of a honeybee-radiance modifier
-            'shades': [],  # A list of abridged honeybee Shade dictionaries
+            'shades': [],  # A list of abridged StateGeometry dictionaries
             'modifier_direct': str,  # An identifier of a honeybee-radiance modifier
             'vmtx_geometry': {},  # A Face3D for the view matrix geometry
             'dmtx_geometry': {}  # A Face3D for the daylight matrix geometry
@@ -689,12 +668,8 @@ class RadianceSubFaceState(_RadianceState):
         if 'modifier' in data and data['modifier'] is not None:
             new_state.modifier = modifiers[data['modifier']]
         if 'shades' in data and data['shades'] is not None:
-            for shd in data['shades']:
-                prop = shd['properties']
-                shd['properties'] = []
-                new_shd = Shade.from_dict(shd)
-                new_shd.apply_properties_from_dict(prop, modifiers)
-                new_state._shades.append(new_shd)
+            new_state.shades = [StateGeometry.from_dict_abridged(shd, modifiers)
+                                for shd in data['shades']]
         if 'modifier_direct' in data and data['modifier_direct'] is not None:
             new_state.modifier_direct = modifiers[data['modifier_direct']]
         if 'vmtx_geometry' in data and data['vmtx_geometry'] is not None:
@@ -717,8 +692,7 @@ class RadianceSubFaceState(_RadianceState):
             base['modifier'] = self._modifier.identifier if abridged else \
                 self._modifier.to_dict()
         if len(self._shades) != 0:
-            base['shades'] = [shd.to_dict(abridged=abridged, included_prop=['radiance'])
-                              for shd in self.shades]
+            base['shades'] = [shd.to_dict(abridged=abridged) for shd in self.shades]
         if self._modifier_direct is not None:
             base['modifier_direct'] = self._modifier_direct.identifier if abridged \
                 else self._modifier.to_dict()

@@ -3,7 +3,7 @@ from honeybee.shade import Shade
 from honeybee.aperture import Aperture
 
 from honeybee_radiance.properties.shade import ShadeRadianceProperties
-from honeybee_radiance.state import RadianceShadeState
+from honeybee_radiance.dynamic import RadianceShadeState, StateGeometry
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass
 
@@ -99,9 +99,9 @@ def test_set_states():
     """Test the setting of states on a Shade."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
     shd = Shade('TreeTrunk', Face3D(pts))
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'tree_foliage1', [[0, 0, 5], [2, 0, 5], [2, 2, 5], [0, 2, 5]])
-    shd2 = Shade.from_vertices(
+    shd2 = StateGeometry.from_vertices(
         'tree_foliage2', [[0, 0, 5], [-2, 0, 5], [-2, 2, 5], [0, 2, 5]])
 
     trans1 = Glass.from_single_transmittance('TreeTrans1', 0.5)
@@ -144,7 +144,7 @@ def move_state_shades():
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
     ap = Shade('TestShade', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceShadeState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'DeciduousTrees'
@@ -166,7 +166,7 @@ def scale_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Shade('TestShade', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceShadeState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'DeciduousTrees'
@@ -188,7 +188,7 @@ def rotate_state_shades():
     pts = (Point3D(0, 0, 2), Point3D(2, 0, 2), Point3D(2, 2, 2), Point3D(0, 2, 2))
     ap = Shade('TestShade', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceShadeState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'DeciduousTrees'
@@ -213,7 +213,7 @@ def rotate_xy_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Shade('TestShade', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceShadeState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'DeciduousTrees'
@@ -237,7 +237,7 @@ def reflect_state_shades():
     pts = (Point3D(1, 1, 2), Point3D(2, 1, 2), Point3D(2, 2, 2), Point3D(1, 2, 2))
     ap = Shade('TestShade', Face3D(pts))
     pts_1 = (Point3D(0, 0, 0), Point3D(2, 0, 0), Point3D(2, 2, 0), Point3D(0, 2, 0))
-    shade = Shade('RectangleShade', Face3D(pts_1))
+    shade = StateGeometry('RectangleShade', Face3D(pts_1))
 
     tint1 = RadianceShadeState(shades=[shade])
     ap.properties.radiance.dynamic_group_identifier = 'DeciduousTrees'
@@ -294,9 +294,9 @@ def test_to_from_dict_with_states():
     """Test the Shade from_dict method with radiance properties."""
     pts = (Point3D(0, 0, 0), Point3D(0, 0, 3), Point3D(1, 0, 3), Point3D(1, 0, 0))
     shd = Shade('TreeTrunk', Face3D(pts))
-    shd1 = Shade.from_vertices(
+    shd1 = StateGeometry.from_vertices(
         'tree_foliage1', [[0, 0, 5], [2, 0, 5], [2, 2, 5], [0, 2, 5]])
-    shd2 = Shade.from_vertices(
+    shd2 = StateGeometry.from_vertices(
         'tree_foliage2', [[0, 0, 5], [-2, 0, 5], [-2, 2, 5], [0, 2, 5]])
 
     trans1 = Glass.from_single_transmittance('TreeTrans1', 0.5)
