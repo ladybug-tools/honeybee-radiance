@@ -134,7 +134,7 @@ class ClimateBased(_PointInTime):
         sp = Sunpath(latitude, longitude, time_zone, north_angle)
         sun = sp.calculate_sun(month, day, hour)
         return cls(
-            sun.altitude, sun.azimuth, direct_normal_irradiance,
+            sun.altitude, sun.azimuth_from_y_axis, direct_normal_irradiance,
             diffuse_horizontal_irradiance, ground_reflectance)
 
     @classmethod

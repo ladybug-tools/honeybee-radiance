@@ -38,6 +38,6 @@ for f in os.listdir(folders.modifier_lib):
                 except Exception:
                     raise ValueError(
                         'Honeybee JSON file {} is not formatted correctly for inclusion '
-                        'in the honeybee_radiance modifier library.\nJSONs must be '
+                        'in the honeybee_radiance modifier library.\nJSON must be '
                         'formatted with modifier identifiers as keys and modifier '
                         'dictionaries as values'.format(f_path))

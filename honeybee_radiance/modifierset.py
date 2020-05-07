@@ -69,7 +69,7 @@ class ModifierSet(object):
         shade_set: An optional ShadeModifierSet object for this ModifierSet.
             If None, it will be the honeybee generic default ShadeModifierSet.
         air_boundary_modifier: An optional Modifier to be used for all Faces with
-            an AirBoundary face type. If None, it will be the honyebee generic
+            an AirBoundary face type. If None, it will be the honeybee generic
             air wall modifier.
 
     Properties:
@@ -371,7 +371,7 @@ class ModifierSet(object):
             'identifier': str,  # ModifierSet identifier
             "display_name": str,  # ModifierSet display name
             'wall_set': {},  # WallModifierSet dictionary
-            'floor_set': {},  # FloorlSet dictionary
+            'floor_set': {},  # FloorSet dictionary
             'roof_ceiling_set': {},  # RoofCeilingModifierSet dictionary
             'aperture_set': {},  # ApertureModifierSet dictionary
             'door_set': {},  # DoorModifierSet dictionary
@@ -411,7 +411,7 @@ class ModifierSet(object):
         """Create a ModifierSet from an abridged dictionary.
 
         Args:
-            data: A ModifierSetAbridged dictionary with the fotmat below.
+            data: A ModifierSetAbridged dictionary with the format below.
             modifier_dict: A dictionary with modifier identifiers as keys and
                 honeybee modifier objects as values. These will be used to
                 assign the 4 to the ModifierSet object.
@@ -423,7 +423,7 @@ class ModifierSet(object):
             'identifier': str,  # ModifierSet identifier
             "display_name": str,  # ModifierSet display name
             'wall_set': {},  # WallModifierSetAbridged dictionary
-            'floor_set': {},  # FloorlSetAbridged dictionary
+            'floor_set': {},  # FloorSetAbridged dictionary
             'roof_ceiling_set': {},  # RoofCeilingModifierSetAbridged dictionary
             'aperture_set': {},  # ApertureModifierSetAbridged dictionary
             'door_set': {},  # DoorModifierSetAbridged dictionary
@@ -511,7 +511,7 @@ class ModifierSet(object):
 
     @staticmethod
     def _get_subsets_from_abridged(data, modifiers):
-        """Get subset objects from and abirdged dictionary."""
+        """Get subset objects from and abridged dictionary."""
         wall_set = ModifierSet._make_modifier_subset(
             data, WallModifierSet(), 'wall_set', modifiers)
         floor_set = ModifierSet._make_modifier_subset(
