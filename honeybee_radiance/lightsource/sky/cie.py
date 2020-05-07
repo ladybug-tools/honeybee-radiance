@@ -176,7 +176,7 @@ class CIE(_PointInTime):
         #  calculate altitude and azimuth using ladybug's sunpath
         sp = Sunpath(latitude, longitude, time_zone, north_angle)
         sun = sp.calculate_sun(month, day, hour)
-        return cls(sun.altitude, sun.azimuth, sky_type, ground_reflectance)
+        return cls(sun.altitude, sun.azimuth_from_y_axis, sky_type, ground_reflectance)
 
     @classmethod
     def from_location(cls, location, month, day, hour, sky_type=0,

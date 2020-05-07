@@ -3,7 +3,10 @@ from __future__ import division
 import honeybee.typing as typing
 import ladybug.futil as futil
 from ladybug.wea import Wea
+from ladybug_geometry.geometry2d.pointvector import Vector2D
+
 import os
+import math
 
 
 class SunMatrix(object):
@@ -75,6 +78,14 @@ class SunMatrix(object):
     def location(self):
         """Location information for sky matrix."""
         return self.wea.location
+
+    def north_from_vector(self, north_vector):
+        """Automatically set the north property using a Vector2D.
+
+        Args:
+            north_vector: A ladybug_geometry Vector2D for the north direction
+        """
+        self._north = math.degrees(north_vector.angle_clockwise(Vector2D(0, 1)))
 
     @classmethod
     def from_dict(cls, input_dict):

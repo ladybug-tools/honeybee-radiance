@@ -27,6 +27,6 @@ for f in os.listdir(folders.modifierset_lib):
             except Exception:
                 raise ValueError(
                         'Honeybee JSON file {} is not formatted correctly for inclusion '
-                        'in the honeybee_radiance modifier set library.\nJSONs must be '
+                        'in the honeybee_radiance modifier set library.\nJSON must be '
                         'formatted with ModifierSet identifiers as keys and abridged '
                         'ModifierSet dictionaries as values'.format(f_path))

@@ -98,6 +98,10 @@ class _Skydome(object):
         name = typing.valid_string(name) if name else 'skydome.rad'
         return futil.write_to_file_by_name(folder, name, content, mkdir)
 
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
+
     def __repr__(self):
         """Sky representation."""
         return self.to_radiance()
@@ -170,3 +174,7 @@ class _PointInTime(_Skydome):
             'ground_hemisphere': self.ground_hemisphere.to_dict(),
             'sky_hemisphere': self.sky_hemisphere.to_dict()
         }
+
+    def ToString(self):
+        """Overwrite .NET ToString."""
+        return self.__repr__()
