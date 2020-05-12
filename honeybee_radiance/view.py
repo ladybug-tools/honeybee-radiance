@@ -1,15 +1,19 @@
 # coding=utf-8
 u"""Create a Radiance view."""
 from __future__ import division
-import honeybee.typing as typing
+
+from .lightpath import light_path_from_room
+
 from honeybee_radiance_command.cutil import parse_radiance_options
-import math
-import os
+from honeybee_radiance_command.options import TupleOption, \
+    StringOptionJoined, NumericOption
+import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
 import ladybug_geometry.geometry3d.plane as plane
 import ladybug.futil as futil
-from honeybee_radiance_command.options import TupleOption, \
-    StringOptionJoined, NumericOption
+
+import math
+import os
 
 
 class View(object):
@@ -27,14 +31,14 @@ class View(object):
             the pixel depth of field (-pd) in rpict. Default: (0, 0, 1)
         up_vector: Set the view up (-vu) vector (vertical direction) to
             (x, y, z) default: (0, 1, 0).
-        type: Set view type (-vt) to one of the choices below.
+        type: A single character for the view type (-vt). Choose from the following.
 
-            * 0 - Perspective (v)
-            * 1 - Hemispherical fisheye (h)
-            * 2 - Parallel (l)
-            * 3 - Cylindrical panorama (c)
-            * 4 - Angular fisheye (a)
-            * 5 - Planisphere [stereographic] projection (s)
+            * v - Perspective
+            * h - Hemispherical fisheye
+            * l - Parallel
+            * c - Cylindrical panorama
+            * a - Angular fisheye
+            * s - Planisphere [stereographic] projection
 
             For more detailed description about view types check rpict manual
             page: (http://radsite.lbl.gov/radiance/man_html/rpict.1.html)
@@ -67,6 +71,8 @@ class View(object):
         * v_size
         * shift
         * lift
+        * room_identifier
+        * light_path
 
     Usage:
 
@@ -98,10 +104,15 @@ class View(object):
           0.000 -vh 29.341 -vv 32.204 -vs 0.500 -vl 0.500 -vo 100.000
     """
 
+    __slots__ = ('_identifier', '_display_name', '_position', '_direction',
+                 '_up_vector', '_h_size', '_v_size', '_shift', '_lift',
+                 '_type', '_fore_clip', '_aft_clip', '_room_identifier', '_light_path')
+
     def __init__(self, identifier, position=None, direction=None, up_vector=None,
                  type='v', h_size=60, v_size=60, shift=None, lift=None):
         u"""Create a view."""
         self.identifier = identifier
+        self._display_name = None
         self._position = TupleOption(
             'vp', 'view position', position if position is not None else (0, 0, 0)
         )
@@ -121,6 +132,9 @@ class View(object):
         # set for_clip to None
         self._fore_clip = NumericOption('vo', 'view fore clip')
         self._aft_clip = NumericOption('va', 'view aft clip')
+
+        self._room_identifier = None
+        self._light_path = None
 
     @property
     def identifier(self):
@@ -368,6 +382,44 @@ class View(object):
     def aft_clip(self, distance):
         self._aft_clip.value = distance
 
+    @property
+    def room_identifier(self):
+        """Get or set text for the Room identifier to which this View belongs.
+        
+        This will be used in the info_dict method to narrow down the
+        number of aperture groups that have to be run with this view. If None,
+        the view will be run with all aperture groups in the model.
+        """
+        return self._room_identifier
+
+    @room_identifier.setter
+    def room_identifier(self, n):
+        self._room_identifier = typing.valid_string(n)
+
+    @property
+    def light_path(self):
+        """Get or set list of lists for the light path from the view to the sky.
+        
+        Each sub-list contains identifiers of aperture groups through which light
+        passes. (eg. [['SouthWindow1'], ['static_apertures', 'NorthWindow2']]).
+        Setting this property will override any auto-calculation of the light
+        path from the model upon export to the simulation.
+        """
+        return self._light_path
+    
+    @light_path.setter
+    def light_path(self, l_path):
+        if l_path is not None:
+            assert isinstance(l_path, (tuple, list)), 'Expected list or tuple for ' \
+                'light_path. Got {}.'.format(type(l_path))
+            for ap_list in l_path:
+                assert isinstance(ap_list, (tuple, list)), 'Expected list or tuple for ' \
+                    'light_path sub-list. Got {}.'.format(type(ap_list))
+                for ap in ap_list:
+                    assert isinstance(ap, str), 'Expected text for light_path ' \
+                    'aperture group identifier. Got {}.'.format(type(ap))
+        self._light_path = l_path
+
     @classmethod
     def from_dict(cls, view_dict):
         """Create a view from a dictionary in the following format.
@@ -387,7 +439,9 @@ class View(object):
             'lift': number,  # lift value
             'view_type': number,  # view_type value
             'fore_clip': number,  # fore_clip value
-            'aft_clip': number  # aft_clip value
+            'aft_clip': number,  # aft_clip value
+            'room_identifier': str,  # optional room identifier
+            'light_path':  []  # optional list of lists for light path
             }
         """
         assert view_dict['type'] == 'View', \
@@ -404,11 +458,16 @@ class View(object):
             lift=view_dict['lift'],
         )
 
-        view.fore_clip = view_dict['fore_clip']
-        view.aft_clip = view_dict['aft_clip']
-
+        if 'fore_clip' in view_dict:
+            view.fore_clip = view_dict['fore_clip']
+        if 'aft_clip' in view_dict:
+            view.aft_clip = view_dict['aft_clip']
         if 'display_name' in view_dict and view_dict['display_name'] is not None:
             view.display_name = view_dict['display_name']
+        if 'room_identifier' in view_dict and view_dict['room_identifier'] is not None:
+            view.display_name = view_dict['room_identifier']
+        if 'light_path' in view_dict and view_dict['light_path'] is not None:
+            view.light_path = view_dict['light_path']
         return view
 
     @classmethod
@@ -599,6 +658,10 @@ class View(object):
             _n_view.v_size = _vv
             _n_view.shift = _vs
             _n_view.lift = _vl
+            _n_view._fore_clip = self._fore_clip
+            _n_view._aft_clip = self._aft_clip
+            _n_view._room_identifier = self._room_identifier
+            _n_view._light_path = self._light_path
 
             # add the new view to views list
             _views[view_count] = _n_view
@@ -615,6 +678,23 @@ class View(object):
         ))
 
         return ' '.join(view_options.split())  # remove white spaces
+
+    def info_dict(self, model=None):
+        """Get a dictionary with information about the View.
+
+        This can be written as a JSON into a model radiance folder to narrow
+        down the number of aperture groups that have to be run with this sensor grid.
+
+        Args:
+            model: A honeybee Model object which will be used to identify
+                the aperture groups that will be run with this view. Default: None.
+        """
+        base = {}
+        if self._light_path:
+            base['light_path'] = self._light_path
+        elif model and self._room_identifier:  # auto-calculate the light path
+            base['light_path'] = light_path_from_room(model, self._room_identifier)
+        return base
 
     def to_dict(self):
         """Translate view to a dictionary."""
@@ -634,6 +714,10 @@ class View(object):
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
+        if self._room_identifier is not None:
+            base['room_identifier'] = self.room_identifier
+        if self._light_path is not None:
+            base['light_path'] = self.light_path
         return base
 
     def to_file(self, folder, file_name=None, mkdir=False):
@@ -684,19 +768,18 @@ class View(object):
         """Get a copy of this object."""
         return self.__copy__()
 
-    def ToString(self):
-        """Overwrite .NET ToString."""
-        return self.__repr__()
-
     def __copy__(self):
         new_obj = View(
             self.identifier, position=self.position, direction=self.direction,
             up_vector=self.up_vector, type=self.type, h_size=self.h_size,
             v_size=self.v_size, shift=self.shift, lift=self.lift)
         new_obj._display_name = self._display_name
+        new_obj._room_identifier = self._room_identifier
+        new_obj._light_path = self._light_path
         return new_obj
 
     def ToString(self):
+        """Overwrite .NET ToString."""
         return self.__repr__()
 
     def __repr__(self):

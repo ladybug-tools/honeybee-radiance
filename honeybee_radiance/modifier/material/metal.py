@@ -68,3 +68,38 @@ class Metal(Plastic):
             print("Warning: Specularity of metals is usually .9 or greater.")
         if self.roughness > 0.2:
             print("Warning: Roughness values above .2 is uncommon.")
+    
+    @classmethod
+    def from_single_reflectance(
+        cls, identifier, rgb_reflectance=0.0, specularity=0.9, roughness=0.0,
+        modifier=None, dependencies=None):
+        """Create Metal material with single reflectance value.
+
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            rgb_reflectance: Reflectance for red, green and blue. The value should be
+                between 0 and 1 (Default: 0).
+            specularity: Fraction of specularity. Specularity of metals is usually
+                0.9 or greater. (Default: 0.9).
+            roughness: Roughness is specified as the rms slope of surface facets. A value
+                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+                a very rough surface. Roughness values greater than 0.2 are not very
+                realistic. (Default: 0).
+            modifier: Material modifier (Default: None).
+            dependencies: A list of primitives that this primitive depends on. This
+                argument is only useful for defining advanced primitives where the
+                primitive is defined based on other primitives. (Default: None).
+
+        Usage:
+
+        .. code-block:: python
+
+            wall_material = Metal.from_single_reflectance("sheet_metal", .55)
+            print(wall_material)
+        """
+        return cls(identifier, r_reflectance=rgb_reflectance,
+                   g_reflectance=rgb_reflectance, b_reflectance=rgb_reflectance,
+                   specularity=specularity, roughness=roughness,
+                   modifier=modifier, dependencies=dependencies)

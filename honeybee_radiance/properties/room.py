@@ -1,5 +1,6 @@
 # coding=utf-8
 """Room Radiance Properties."""
+from ..sensorgrid import SensorGrid
 from ..modifierset import ModifierSet
 from ..lib.modifiersets import generic_modifier_set_visible
 
@@ -50,6 +51,50 @@ class RoomRadianceProperties(object):
                 'Expected ModifierSet. Got {}'.format(type(value))
             value.lock()   # lock in case modifier set has multiple references
         self._modifier_set = value
+
+    def generate_sensor_grid(self, x_dim, y_dim=None, offset=1.0):
+        """Get a radiance SensorGrid generated from this Room's floors.
+    
+        The output will also include a Mesh3D object with faces that align with
+        the positions of the SensorGrid.
+
+        Note that the x_dim and y_dim refer to dimensions within the XY coordinate
+        system of the floor faces's planes. So rotating the planes of the floor faces
+        will result in rotated grid cells.
+
+        Args:
+            x_dim: The x dimension of the grid cells as a number.
+            y_dim: The y dimension of the grid cells as a number. Default is None,
+                which will assume the same cell dimension for y as is set for x.
+            offset: A number for how far to offset the grid from the base face.
+                Default is 1.0, which will not offset the grid to be 1 unit above
+                the floor.
+
+        Returns:
+            A tuple with the following two values.
+
+            * sensor_grid -- A honeybee_radiance SensorGrid generated from the
+                floors of the room.
+
+            * mesh_grid -- A ladybug_geometry Mesh3D that aligns with the sensor_grid.
+
+        Usage:
+
+        .. code-block:: python
+
+            from honeybee.room import Room
+            room = Room.from_box(3.0, 6.0, 3.2, 180)
+            sensor_grid, mesh_grid = room.properties.radiance.generate_grid(0.5, 0.5, 1)
+        """
+        floor_grid = self.host.generate_grid(x_dim, y_dim, offset)
+        if floor_grid is None:
+            return None, None
+        base_poss = [(pt.x, pt.y, pt.z) for pt in floor_grid.face_centroids]
+        base_dirs = [(vec.x, vec.y, vec.z) for vec in floor_grid.face_normals]
+        sensor_grid = SensorGrid.from_position_and_direction(
+            self.host.identifier, base_poss, base_dirs)
+        sensor_grid.room_identifier = self.host.identifier
+        return sensor_grid, floor_grid
 
     @classmethod
     def from_dict(cls, data, host):

@@ -34,6 +34,8 @@ class ModelRadianceProperties(object):
         * global_modifier_set
         * dynamic_shade_groups
         * dynamic_subface_groups
+        * shade_group_identifiers
+        * subface_group_identifiers
     """
 
     def __init__(self, host):
@@ -191,6 +193,24 @@ class ModelRadianceProperties(object):
                     group_dict[group_id] = [subface]
         # return DynamicSubFaceGroup objects
         return [DynamicSubFaceGroup(ident, subf)for ident, subf in group_dict.items()]
+
+    @property
+    def shade_group_identifiers(self):
+        """Get a list of identifers for all the DynamicShadeGroups in the model."""
+        group_ids = set()
+        for shade in self.host.shades:
+            if shade.properties.radiance._dynamic_group_identifier:
+                group_ids.add(shade.properties.radiance._dynamic_group_identifier)
+        return list(group_ids)
+    
+    @property
+    def subface_group_identifiers(self):
+        """Get a list of identifers for all the DynamicSubFaceGroups in the model."""
+        group_ids = set()
+        for subface in self.host.apertures + self.host.doors:
+            if subface.properties.radiance._dynamic_group_identifier:
+                 group_ids.add(subface.properties.radiance._dynamic_group_identifier)
+        return list(group_ids)
 
     def faces_by_opaque(self):
         """Get all Faces in the model separated into opaque and nonopaque lists.
