@@ -125,7 +125,9 @@ class Plastic(Material):
     def specularity(self):
         """Fraction of specularity.
 
-        Specularity fractions greater than 0.1 are not common in non-metallic materials.
+        Specularity fractions greater than 0.1 are not common for non-metallic
+        materials. Specularity fractions smaller than 0.9 are not common for
+        metallic materials.
         """
         return self._specularity
 
@@ -157,7 +159,7 @@ class Plastic(Material):
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
         modifier=None, dependencies=None):
-        """Create material with single reflectance value.
+        """Create Plastic material with single reflectance value.
 
         Args:
             identifier: Text string for a unique Material ID. Must not contain spaces
@@ -180,7 +182,7 @@ class Plastic(Material):
 
         .. code-block:: python
 
-            wall_material = Plastic.by_single_reflect_value("generic_wall", .55)
+            wall_material = Plastic.from_single_reflectance("generic_wall", .55)
             print(wall_material)
         """
         return cls(identifier, r_reflectance=rgb_reflectance,

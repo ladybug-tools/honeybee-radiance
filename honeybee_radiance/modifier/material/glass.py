@@ -205,7 +205,7 @@ class Glass(Material):
 
         .. code-block:: python
 
-            glassMaterial = Glass.by_single_trans_value("generic glass", .65)
+            glassMaterial = Glass.from_single_transmissivity("generic glass", .65)
             print(glassMaterial)
         """
         return cls(
@@ -238,7 +238,7 @@ class Glass(Material):
 
         .. code-block:: python
 
-            glassMaterial = Glass.by_single_trans_value("generic glass", .65)
+            glassMaterial = Glass.from_single_transmittance("generic glass", .65)
             print(glassMaterial)
         """
         rgb_transmissivity = cls.get_transmissivity(rgb_transmittance)

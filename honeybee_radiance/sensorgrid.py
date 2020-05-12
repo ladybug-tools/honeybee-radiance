@@ -1,8 +1,11 @@
 """A grid of sensors."""
 from __future__ import division
-import ladybug.futil as futil
-import honeybee.typing as typing
+
 from .sensor import Sensor
+from .lightpath import light_path_from_room
+
+import honeybee.typing as typing
+import ladybug.futil as futil
 
 import os
 try:
@@ -27,9 +30,12 @@ class SensorGrid(object):
         * sensors
         * positions
         * directions
+        * room_identifier
+        * light_path
     """
 
-    __slots__ = ('_identifier', '_display_name', '_sensors')
+    __slots__ = ('_identifier', '_display_name', '_sensors', '_room_identifier',
+                 '_light_path')
 
     def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
@@ -41,6 +47,8 @@ class SensorGrid(object):
                 raise ValueError(
                     'Sensors in SensorGrid must be form type Sensor not %s' % type(sen)
                 )
+        self._room_identifier = None
+        self._light_path = None
 
     @classmethod
     def from_dict(cls, ag_dict):
@@ -52,7 +60,9 @@ class SensorGrid(object):
             "type": "SensorGrid",
             "identifier": str,  # SensorGrid identifier
             "display_name": str,  # SensorGrid display name
-            "sensors": []  # list of Sensor dictionaries
+            "sensors": [],  # list of Sensor dictionaries
+            'room_identifier': str,  # optional room identifier
+            'light_path':  []  # optional list of lists for light path
             }
         """
         assert ag_dict['type'] == 'SensorGrid', \
@@ -61,6 +71,10 @@ class SensorGrid(object):
         new_obj = cls(identifier=ag_dict["identifier"], sensors=sensors)
         if 'display_name' in ag_dict and ag_dict['display_name'] is not None:
             new_obj.display_name = ag_dict['display_name']
+        if 'room_identifier' in ag_dict and ag_dict['room_identifier'] is not None:
+            new_obj.room_identifier = ag_dict['room_identifier']
+        if 'light_path' in ag_dict and ag_dict['light_path'] is not None:
+            new_obj.light_path = ag_dict['light_path']
         return new_obj
 
     @classmethod
@@ -190,6 +204,61 @@ class SensorGrid(object):
         """Number of sensors."""
         return len(self._sensors)
 
+    @property
+    def room_identifier(self):
+        """Get or set text for the Room identifier to which this SensorGrid belongs.
+        
+        This will be used in the info_dict method to narrow down the
+        number of aperture groups that have to be run with this sensor grid.
+        If None, the grid will be run with all aperture groups in the model.
+        """
+        return self._room_identifier
+
+    @room_identifier.setter
+    def room_identifier(self, n):
+        self._room_identifier = typing.valid_string(n)
+    
+    @property
+    def light_path(self):
+        """Get or set list of lists for the light path from the grid to the sky.
+        
+        Each sub-list contains identifiers of aperture groups through which light
+        passes. (eg. [['SouthWindow1'], ['static_apertures', 'NorthWindow2']]).
+        Setting this property will override any auto-calculation of the light
+        path from the model upon export to the simulation.
+        """
+        return self._light_path
+    
+    @light_path.setter
+    def light_path(self, l_path):
+        if l_path is not None:
+            assert isinstance(l_path, (tuple, list)), 'Expected list or tuple for ' \
+                'light_path. Got {}.'.format(type(l_path))
+            for ap_list in l_path:
+                assert isinstance(ap_list, (tuple, list)), 'Expected list or tuple for ' \
+                    'light_path sub-list. Got {}.'.format(type(ap_list))
+                for ap in ap_list:
+                    assert isinstance(ap, str), 'Expected text for light_path ' \
+                    'aperture group identifier. Got {}.'.format(type(ap))
+        self._light_path = l_path
+
+    def info_dict(self, model=None):
+        """Get a dictionary with information about the SensorGrid.
+
+        This can be written as a JSON into a model radiance folder to narrow
+        down the number of aperture groups that have to be run with this sensor grid.
+
+        Args:
+            model: A honeybee Model object which will be used to identify
+                the aperture groups that will be run with this sensor grid.
+        """
+        base = {'count': self.count}
+        if self._light_path:
+            base['light_path'] = self._light_path
+        elif model and self._room_identifier:  # auto-calculate the light path
+            base['light_path'] = light_path_from_room(model, self._room_identifier)
+        return base
+
     def to_radiance(self):
         """Return sensors grid as a Radiance string."""
         return "\n".join((ap.to_radiance() for ap in self._sensors))
@@ -271,10 +340,6 @@ class SensorGrid(object):
 
         return grids_info
 
-    def ToString(self):
-        """Overwrite ToString .NET method."""
-        return self.__repr__()
-
     def to_dict(self):
         """Convert SensorGrid to a dictionary."""
         base = {
@@ -284,6 +349,10 @@ class SensorGrid(object):
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
+        if self._room_identifier is not None:
+            base['room_identifier'] = self.room_identifier
+        if self._light_path is not None:
+            base['light_path'] = self.light_path
         return base
 
     def duplicate(self):
@@ -301,6 +370,8 @@ class SensorGrid(object):
     def __copy__(self):
         new_obj = SensorGrid(self.identifier, (sen.duplicate() for sen in self.sensors))
         new_obj._display_name = self._display_name
+        new_obj._room_identifier = self._room_identifier
+        new_obj._light_path = self._light_path
         return new_obj
 
     def __eq__(self, value):
@@ -309,6 +380,10 @@ class SensorGrid(object):
         if self.identifier != value.identifier:
             return False
         if self.sensors != value.sensors:
+            return False
+        if self.room_identifier != value.room_identifier:
+            return False
+        if self.light_path != value.light_path:
             return False
         return True
 
@@ -324,6 +399,7 @@ class SensorGrid(object):
         return self.to_radiance()
 
     def ToString(self):
+        """Overwrite ToString .NET method."""
         return self.__repr__()
 
     def __repr__(self):

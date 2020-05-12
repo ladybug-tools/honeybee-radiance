@@ -1,4 +1,4 @@
-"""Primitive utility functions."""
+"""Modifier utility functions."""
 import honeybee_radiance.modifier.material as material
 import honeybee_radiance.modifier.mixture as mixture
 import honeybee_radiance.modifier.pattern as pattern
