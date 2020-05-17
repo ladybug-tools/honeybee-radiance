@@ -392,39 +392,19 @@ def test_writer_to_rad_folder():
     model.to.rad_folder(model, folder)
 
     model_folder = ModelFolder(folder)
-    rad_name = '{}.rad'.format(model.identifier)
-    mat_name = '{}.mat'.format(model.identifier)
-    blk_name = '{}.blk'.format(model.identifier)
 
-    ap_dir = os.path.join(folder, model_folder.STATIC_APERTURE_EXTERIOR)
-    assert os.path.isfile(os.path.join(ap_dir, rad_name))
-    assert os.path.isfile(os.path.join(ap_dir, mat_name))
-    assert os.path.isfile(os.path.join(ap_dir, blk_name))
+    ap_dir = model_folder.aperture_folder(full=True)
+    assert os.path.isfile(os.path.join(ap_dir, '{}.rad'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(ap_dir, '{}.mat'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(ap_dir, '{}.blk'.format(model.identifier)))
 
-    int_ap_dir = os.path.join(folder, model_folder.STATIC_APERTURE_INTERIOR)
-    assert os.path.isfile(os.path.join(int_ap_dir, rad_name))
-    assert os.path.isfile(os.path.join(int_ap_dir, mat_name))
-    assert os.path.isfile(os.path.join(int_ap_dir, blk_name))
-
-    opaque_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_ROOT)
-    assert os.path.isfile(os.path.join(opaque_dir, rad_name))
-    assert os.path.isfile(os.path.join(opaque_dir, mat_name))
-    assert os.path.isfile(os.path.join(opaque_dir, blk_name))
-
-    opaque_indoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_INDOOR)
-    assert os.path.isfile(os.path.join(opaque_indoor_dir, rad_name))
-    assert os.path.isfile(os.path.join(opaque_indoor_dir, mat_name))
-    assert os.path.isfile(os.path.join(opaque_indoor_dir, blk_name))
-
-    opaque_outdoor_dir = os.path.join(folder, model_folder.STATIC_OPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(opaque_outdoor_dir, rad_name))
-    assert os.path.isfile(os.path.join(opaque_outdoor_dir, mat_name))
-    assert os.path.isfile(os.path.join(opaque_outdoor_dir, blk_name))
-
-    nonopaque_outdoor_dir = os.path.join(folder, model_folder.STATIC_NONOPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, rad_name))
-    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, mat_name))
-    assert os.path.isfile(os.path.join(nonopaque_outdoor_dir, blk_name))
+    scene_dir = model_folder.scene_folder(full=True)
+    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.rad'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.mat'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.blk'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.rad'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.mat'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.blk'.format(model.identifier)))
 
     # clean up the folder
     nukedir(folder, rmdir=True)
@@ -511,7 +491,7 @@ def test_writer_to_rad_folder_dynamic():
 
     model_folder = ModelFolder(folder)
 
-    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    ap_dir = model_folder.aperture_group_folder(full=True)
     assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
     group_name = south_face.apertures[0].properties.radiance.dynamic_group_identifier
     assert os.path.isfile(os.path.join(ap_dir, '{}..black.rad'.format(group_name)))
@@ -522,34 +502,32 @@ def test_writer_to_rad_folder_dynamic():
         d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
         assert os.path.isfile(d_file)
 
-    nono_out_dir = os.path.join(folder, model_folder.DYNAMIC_NONOPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(nono_out_dir, 'states.json'))
+    out_scene_dir = model_folder.dynamic_scene_folder(full=True, indoor=False)
+    assert os.path.isfile(os.path.join(out_scene_dir, 'states.json'))
     grp_name = tree_canopy.properties.radiance.dynamic_group_identifier
     for i in range(len(tree_canopy.properties.radiance.states)):
-        d_file = (os.path.join(nono_out_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(out_scene_dir, '{}..default..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
     for i in range(len(tree_canopy.properties.radiance.states)):
-        d_file = (os.path.join(nono_out_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(out_scene_dir, '{}..direct..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
-
-    o_out_dir = os.path.join(folder, model_folder.DYNAMIC_OPAQUE_OUTDOOR)
-    assert os.path.isfile(os.path.join(o_out_dir, 'states.json'))
     grp_name = ground.properties.radiance.dynamic_group_identifier
     for i in range(len(ground.properties.radiance.states)):
-        d_file = (os.path.join(o_out_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(out_scene_dir, '{}..default..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
     for i in range(len(ground.properties.radiance.states)):
-        d_file = (os.path.join(o_out_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(out_scene_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(out_scene_dir, '{}..direct..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
 
-    o_in_dir = os.path.join(folder, model_folder.DYNAMIC_OPAQUE_INDOOR)
-    assert os.path.isfile(os.path.join(o_in_dir, 'states.json'))
+    in_scene_dir = model_folder.dynamic_scene_folder(full=True, indoor=True)
+    assert os.path.isfile(os.path.join(in_scene_dir, 'states.json'))
     grp_name = shd2.properties.radiance.dynamic_group_identifier
     for i in range(len(shd2.properties.radiance.states)):
-        d_file = (os.path.join(o_in_dir, '{}..default..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(in_scene_dir, '{}..default..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
     for i in range(len(shd2.properties.radiance.states)):
-        d_file = (os.path.join(o_in_dir, '{}..direct..{}.rad'.format(grp_name, i)))
+        d_file = (os.path.join(in_scene_dir, '{}..direct..{}.rad'.format(grp_name, i)))
         assert os.path.isfile(d_file)
 
     # clean up the folder
@@ -586,11 +564,11 @@ def test_writer_to_rad_folder_multiphase():
 
     model_folder = ModelFolder(folder)
 
-    bsdf_dir = os.path.join(folder, model_folder.BSDF[0])
+    bsdf_dir = model_folder.bsdf_folder(full=True)
     assert os.path.isfile(os.path.join(bsdf_dir, 'clear.xml'))
     assert os.path.isfile(os.path.join(bsdf_dir, 'diffuse50.xml'))
 
-    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    ap_dir = model_folder.aperture_group_folder(full=True)
     assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
 
     group_name = south_aperture.properties.radiance.dynamic_group_identifier
@@ -683,7 +661,7 @@ def test_writer_to_rad_folder_shade_drop():
 
     model_folder = ModelFolder(folder)
 
-    ap_dir = os.path.join(folder, model_folder.DYNAMIC_APERTURE_EXTERIOR)
+    ap_dir = model_folder.aperture_group_folder(full=True)
     assert os.path.isfile(os.path.join(ap_dir, 'states.json'))
 
     group_name = entry.properties.radiance.dynamic_group_identifier
