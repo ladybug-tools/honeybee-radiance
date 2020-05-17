@@ -212,75 +212,50 @@ class ModelRadianceProperties(object):
                  group_ids.add(subface.properties.radiance._dynamic_group_identifier)
         return list(group_ids)
 
-    def faces_by_opaque(self):
-        """Get all Faces in the model separated into opaque and nonopaque lists.
+    def faces_by_blk(self):
+        """Get all Faces in the model separated by their blk property.
 
         This method will also ensure that any faces with Surface boundary condition
         only have one of such objects in the output lists.
 
         Returns:
-            A tuple with 4 lists:
+            A tuple with 2 lists:
 
-            -   opaque_faces: A list of all opaque faces without a unique
-                modifier_blk (just using the default black).
+            -   faces: A list of all  faces without a unique modifier_blk.
 
-            -   opaque_faces_blk: A list of all opaque faces that have a
-                unique modifier_blk.
-
-            -   nonopaque_faces: A list of all nonopaque faces without a
-                unique modifier_blk (just using their own modifier in blk studies).
-
-            -   nonopaque_faces_blk: A list of all non opaque faces that
-                have a unique modifier_blk.
+            -   faces_blk: A list of all opaque faces that have a unique modifier_blk.
         """
-        opaque_faces = []
-        opaque_faces_blk = []
-        nonopaque_faces = []
-        nonopaque_faces_blk = []
+        faces = []
+        faces_blk = []
         interior_faces = set()
         for face in self.host.faces:
             if isinstance(face.boundary_condition, Surface):
                 if face.identifier in interior_faces:
                     continue
                 interior_faces.add(face.boundary_condition.boundary_condition_object)
-            if face.properties.radiance.is_opaque:
-                if face.properties.radiance._modifier_blk:
-                    opaque_faces_blk.append(face)
-                else:
-                    opaque_faces.append(face)
+            if face.properties.radiance._modifier_blk:
+                faces_blk.append(face)
             else:
-                if face.properties.radiance._modifier_blk:
-                    nonopaque_faces_blk.append(face)
-                else:
-                    nonopaque_faces.append(face)
-        return opaque_faces, opaque_faces_blk, nonopaque_faces, nonopaque_faces_blk
-    
-    def subfaces_by_interior_exterior(self):
-        """Get model sub-faces (Apertures, Doors) separated into interior/exterior lists.
+                faces.append(face)
+        return faces, faces_blk
+
+    def subfaces_by_blk(self):
+        """Get model sub-faces (Apertures, Doors) separated by their blk property.
 
         Dynamic sub-faces will be excluded from the output lists.
         This method will also ensure that any interior sub-faces (with Surface
         boundary condition) only have one of such objects in the output lists.
 
         Returns:
-            A tuple with 4 lists:
+            A tuple with 2 lists:
 
-            -   exterior_subfaces: A list of all exterior sub-faces without a unique
-                modifier_blk (just using the default black).
+            -   subfaces: A list of all sub-faces without a unique modifier_blk
+                (just using the default black).
 
-            -   exterior_subfaces_blk: A list of all exterior sub-faces that have a
-                unique modifier_blk.
-
-            -   interior_subfaces: A list of all interior sub-faces without a
-                unique modifier_blk (just using the default black).
-
-            -   interior_subfaces_blk: A list of all interior sub-faces that
-                have a unique modifier_blk.
+            -   subfaces_blk: A list of all sub-faces that have a unique modifier_blk.
         """
-        exterior_subfaces = []
-        exterior_subfaces_blk = []
-        interior_subfaces = []
-        interior_subfaces_blk = []
+        subfaces = []
+        subfaces_blk = []
         interior_ids = set()
         for subf in self.host.apertures + self.host.doors:
             if subf.properties.radiance.dynamic_group_identifier:
@@ -289,61 +264,35 @@ class ModelRadianceProperties(object):
                 if subf.identifier in interior_ids:
                     continue
                 interior_ids.add(subf.boundary_condition.boundary_condition_object)
-                if subf.properties.radiance._modifier_blk:
-                    interior_subfaces_blk.append(subf)
-                else:
-                    interior_subfaces.append(subf)
+            if subf.properties.radiance._modifier_blk:
+                subfaces_blk.append(subf)
             else:
-                if subf.properties.radiance._modifier_blk:
-                    exterior_subfaces_blk.append(subf)
-                else:
-                    exterior_subfaces.append(subf)
-        return exterior_subfaces, exterior_subfaces_blk, \
-            interior_subfaces, interior_subfaces_blk
+                subfaces.append(subf)
+        return subfaces, subfaces_blk
 
-    def indoor_shades_by_opaque(self):
-        """Get all indoor Shades in the model separated into opaque and nonopaque lists.
+    def shades_by_blk(self):
+        """Get all Shades in the model separated by their blk property.
 
         Dynamic shades will be excluded from the output lists.
 
         Returns:
-            A tuple with 4 lists:
+            A tuple with 2 lists:
 
-            -   opaque_shades: A list of all opaque shades without a unique
-                modifier_blk (just using the default black).
+            -   shades: A list of all opaque shades without a unique modifier_blk
+                (just using the default black or transparent modifier).
 
-            -   opaque_shades_blk: A list of all opaque shades that have a
-                unique modifier_blk.
-
-            -   nonopaque_shades: A list of all nonopaque shades without a
-                unique modifier_blk (just using their own modifier in blk studies).
-
-            -   nonopaque_shades_blk: A list of all non opaque shades that
-                have a unique modifier_blk.
+            -   shades_blk: A list of all opaque shades that have a unique modifier_blk.
         """
-        return self._separate_shades_by_opaque(self.host.indoor_shades)
-
-    def outdoor_shades_by_opaque(self):
-        """Get all outdoor Shades in the model separated into opaque and nonopaque lists.
-
-        Dynamic shades will be excluded from the output lists.
-
-        Returns:
-            A tuple with 4 lists:
-
-            -   opaque_shades: A list of all opaque shades without a unique
-                modifier_blk (just using the default black).
-
-            -   opaque_shades_blk: A list of all opaque shades that have a
-                unique modifier_blk.
-
-            -   nonopaque_shades: A list of all nonopaque shades without a
-                unique modifier_blk (just using their own modifier in blk studies).
-
-            -   nonopaque_shades_blk: A list of all non opaque shades that
-                have a unique modifier_blk.
-        """
-        return self._separate_shades_by_opaque(self.host.outdoor_shades)
+        shades = []
+        shades_blk = []
+        for shade in self.host.shades:
+            if shade.properties.radiance.dynamic_group_identifier:
+                continue  # shade will be accounted for in the dynamic objects
+            if shade.properties.radiance._modifier_blk:
+                shades_blk.append(shade)
+            else:
+                shades.append(shade)
+        return shades, shades_blk
 
     def check_duplicate_modifier_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Modifier identifiers in the model."""
@@ -589,31 +538,6 @@ class ModelRadianceProperties(object):
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
-
-    @staticmethod
-    def _separate_shades_by_opaque(shades):
-        """Sort a list of shade objects into 4 lists.
-        
-        These are: opaque, opaque_blk, nonopaque, nonopaque_blk
-        """
-        opaque = []
-        opaque_blk = []
-        nonopaque = []
-        nonopaque_blk = []
-        for shade in shades:
-            if shade.properties.radiance.dynamic_group_identifier:
-                continue  # shade will be accounted for in the dynamic objects
-            if shade.properties.radiance.is_opaque:
-                if shade.properties.radiance._modifier_blk:
-                    opaque_blk.append(shade)
-                else:
-                    opaque.append(shade)
-            else:
-                if shade.properties.radiance._modifier_blk:
-                    nonopaque_blk.append(shade)
-                else:
-                    nonopaque.append(shade)
-        return opaque, opaque_blk, nonopaque, nonopaque_blk
 
     @staticmethod
     def _instance_in_array(object_instance, object_array):
