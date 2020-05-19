@@ -82,7 +82,7 @@ Mardaljevic/rwr_ch6.pdf
         .. code-block:: python
 
                 {
-                'type': 'SkyHemisphere',
+                'type': 'Ground',
                 'r_emittance': r_emittance,
                 'g_emittance': g_emittance,
                 'b_emittance': b_emittance

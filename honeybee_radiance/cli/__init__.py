@@ -8,6 +8,7 @@ except ImportError:
     )
 
 from honeybee.cli import main
+from .translate import translate
 from .sky import sky
 from .grid import grid
 from .sunpath import sunpath
@@ -18,6 +19,7 @@ def radiance():
     pass
 
 # add sub-commands to radiance
+radiance.add_command(translate)
 radiance.add_command(sky)
 radiance.add_command(grid)
 radiance.add_command(sunpath)

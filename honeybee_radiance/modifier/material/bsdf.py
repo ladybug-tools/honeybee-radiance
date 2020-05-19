@@ -358,7 +358,7 @@ class BSDF(Material):
             "thickness": number,  # default: 0
             "function_file": string,  # default: '.'
             "transform": string,  # default: None
-            "bsdf_data": bytes,  # bsdf file data as bytes
+            "bsdf_data": string,  # bsdf file data as string
             "front_diffuse_reflectance": [number, number, number],  # optional
             "back_diffuse_reflectance": [number, number, number],  # optional
             "diffuse_transmittance": [number, number, number]  # optional

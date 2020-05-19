@@ -1,0 +1,13 @@
+[{
+    "modifier": null,
+    "type": "trans",
+    "identifier": "Foliage_0.3",
+    "r_reflectance": 0.3,
+    "g_reflectance": 0.3,
+    "b_reflectance": 0.3,
+    "specularity": 0.0,
+    "roughness": 0.1,
+    "transmitted_diff": 0.15,
+    "transmitted_spec": 0.15,
+    "dependencies": []
+}]

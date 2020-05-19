@@ -1,0 +1,11 @@
+[{
+    "modifier": null,
+    "type": "plastic",
+    "identifier": "generic_wall_0.50",
+    "r_reflectance": 0.5,
+    "g_reflectance": 0.5,
+    "b_reflectance": 0.5,
+    "specularity": 0.0,
+    "roughness": 0.0,
+    "dependencies": []
+}]

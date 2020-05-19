@@ -41,11 +41,11 @@ class _Skydome(object):
         return False
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, data):
         """Create the sky baseclass from a dictionary.
 
         Args:
-            input_dict: A python dictionary in the following format
+            data: A python dictionary in the following format
 
         .. code-block:: python
 
@@ -56,18 +56,18 @@ class _Skydome(object):
             }
 
         """
-        assert 'type' in input_dict, \
+        assert 'type' in data, \
             'Input dict is missing type. Not a valid SkyDome dictionary.'
-        assert input_dict['type'] == 'SkyDome', \
-            'Input type must be SkyDome not %s' % input_dict['type']
+        assert data['type'] == 'SkyDome', \
+            'Input type must be SkyDome not %s' % data['type']
 
         sky = cls()
 
-        if 'ground_hemisphere' in input_dict:
-            sky._ground_hemisphere = Ground.from_dict(input_dict['ground_hemisphere'])
+        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
+            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
 
-        if 'sky_hemisphere' in input_dict:
-            sky._sky_hemisphere = Hemisphere.from_dict(input_dict['sky_hemisphere'])
+        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
+            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
 
         return sky
 
@@ -143,11 +143,11 @@ class _PointInTime(_Skydome):
         return True
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, data):
         """Create the sky baseclass from a dictionary.
 
         Args:
-            input_dict: A python dictionary in the following format
+            data: A python dictionary in the following format
 
         .. code-block:: python
 
@@ -157,13 +157,13 @@ class _PointInTime(_Skydome):
                 'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
                 }
         """
-        sky = cls(input_dict['ground_reflectance'])
+        sky = cls(data['ground_reflectance'])
 
-        if 'ground_hemisphere' in input_dict:
-            sky._ground_hemisphere = Ground.from_dict(input_dict['ground_hemisphere'])
+        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
+            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
 
-        if 'sky_hemisphere' in input_dict:
-            sky._sky_hemisphere = Hemisphere.from_dict(input_dict['sky_hemisphere'])
+        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
+            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
 
         return sky
 
