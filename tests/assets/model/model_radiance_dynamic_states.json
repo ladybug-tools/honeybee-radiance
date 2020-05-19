@@ -1,0 +1,1858 @@
+{
+    "type": "Model",
+    "identifier": "Tiny_House",
+    "display_name": "Tiny_House",
+    "units": "Meters",
+    "properties": {
+        "type": "ModelProperties",
+        "energy": {
+            "type": "ModelEnergyProperties",
+            "construction_sets": [
+                {
+                    "type": "ConstructionSetAbridged",
+                    "identifier": "Default Generic Construction Set",
+                    "wall_set": {
+                        "type": "WallConstructionSetAbridged",
+                        "exterior_construction": "Generic Exterior Wall",
+                        "interior_construction": "Generic Interior Wall",
+                        "ground_construction": "Generic Underground Wall"
+                    },
+                    "floor_set": {
+                        "type": "FloorConstructionSetAbridged",
+                        "exterior_construction": "Generic Exposed Floor",
+                        "interior_construction": "Generic Interior Floor",
+                        "ground_construction": "Generic Ground Slab"
+                    },
+                    "roof_ceiling_set": {
+                        "type": "RoofCeilingConstructionSetAbridged",
+                        "exterior_construction": "Generic Roof",
+                        "interior_construction": "Generic Interior Ceiling",
+                        "ground_construction": "Generic Underground Roof"
+                    },
+                    "aperture_set": {
+                        "type": "ApertureConstructionSetAbridged",
+                        "window_construction": "Generic Double Pane",
+                        "interior_construction": "Generic Single Pane",
+                        "skylight_construction": "Generic Double Pane",
+                        "operable_construction": "Generic Double Pane"
+                    },
+                    "door_set": {
+                        "type": "DoorConstructionSetAbridged",
+                        "exterior_construction": "Generic Exterior Door",
+                        "interior_construction": "Generic Interior Door",
+                        "exterior_glass_construction": "Generic Double Pane",
+                        "interior_glass_construction": "Generic Single Pane",
+                        "overhead_construction": "Generic Exterior Door"
+                    },
+                    "shade_construction": "Generic Shade",
+                    "air_boundary_construction": "Generic Air Boundary"
+                }
+            ],
+            "global_construction_set": "Default Generic Construction Set",
+            "constructions": [
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Interior Door",
+                    "layers": [
+                        "Generic 25mm Wood"
+                    ]
+                },
+                {
+                    "type": "WindowConstructionAbridged",
+                    "identifier": "Generic Single Pane",
+                    "layers": [
+                        "Generic Clear Glass"
+                    ]
+                },
+                {
+                    "type": "ShadeConstruction",
+                    "identifier": "Generic Shade",
+                    "solar_reflectance": 0.35,
+                    "visible_reflectance": 0.35,
+                    "is_specular": false
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Interior Ceiling",
+                    "layers": [
+                        "Generic LW Concrete",
+                        "Generic Ceiling Air Gap",
+                        "Generic Acoustic Tile"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Interior Wall",
+                    "layers": [
+                        "Generic Gypsum Board",
+                        "Generic Wall Air Gap",
+                        "Generic Gypsum Board"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Exposed Floor",
+                    "layers": [
+                        "Generic Painted Metal",
+                        "Generic Ceiling Air Gap",
+                        "Generic 50mm Insulation",
+                        "Generic LW Concrete"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Interior Floor",
+                    "layers": [
+                        "Generic Acoustic Tile",
+                        "Generic Ceiling Air Gap",
+                        "Generic LW Concrete"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Ground Slab",
+                    "layers": [
+                        "Generic 50mm Insulation",
+                        "Generic HW Concrete"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Roof",
+                    "layers": [
+                        "Generic Roof Membrane",
+                        "Generic 50mm Insulation",
+                        "Generic LW Concrete",
+                        "Generic Ceiling Air Gap",
+                        "Generic Acoustic Tile"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Exterior Wall",
+                    "layers": [
+                        "Generic Brick",
+                        "Generic LW Concrete",
+                        "Generic 50mm Insulation",
+                        "Generic Wall Air Gap",
+                        "Generic Gypsum Board"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Underground Wall",
+                    "layers": [
+                        "Generic 50mm Insulation",
+                        "Generic HW Concrete",
+                        "Generic Wall Air Gap",
+                        "Generic Gypsum Board"
+                    ]
+                },
+                {
+                    "type": "AirBoundaryConstructionAbridged",
+                    "identifier": "Generic Air Boundary",
+                    "air_mixing_per_area": 0.1,
+                    "air_mixing_schedule": "Always On"
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Underground Roof",
+                    "layers": [
+                        "Generic 50mm Insulation",
+                        "Generic HW Concrete",
+                        "Generic Ceiling Air Gap",
+                        "Generic Acoustic Tile"
+                    ]
+                },
+                {
+                    "type": "WindowConstructionAbridged",
+                    "identifier": "Generic Double Pane",
+                    "layers": [
+                        "Generic Low-e Glass",
+                        "Generic Window Air Gap",
+                        "Generic Clear Glass"
+                    ]
+                },
+                {
+                    "type": "OpaqueConstructionAbridged",
+                    "identifier": "Generic Exterior Door",
+                    "layers": [
+                        "Generic Painted Metal",
+                        "Generic 25mm Insulation",
+                        "Generic Painted Metal"
+                    ]
+                }
+            ],
+            "materials": [
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Roof Membrane",
+                    "roughness": "MediumRough",
+                    "thickness": 0.01,
+                    "conductivity": 0.16,
+                    "density": 1120.0,
+                    "specific_heat": 1460.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.65,
+                    "visible_absorptance": 0.65
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Acoustic Tile",
+                    "roughness": "MediumSmooth",
+                    "thickness": 0.02,
+                    "conductivity": 0.06,
+                    "density": 368.0,
+                    "specific_heat": 590.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.2,
+                    "visible_absorptance": 0.2
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic 25mm Wood",
+                    "roughness": "MediumSmooth",
+                    "thickness": 0.0254,
+                    "conductivity": 0.15,
+                    "density": 608.0,
+                    "specific_heat": 1630.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.5,
+                    "visible_absorptance": 0.5
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic HW Concrete",
+                    "roughness": "MediumRough",
+                    "thickness": 0.2,
+                    "conductivity": 1.95,
+                    "density": 2240.0,
+                    "specific_heat": 900.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.8,
+                    "visible_absorptance": 0.8
+                },
+                {
+                    "type": "EnergyWindowMaterialGas",
+                    "identifier": "Generic Window Air Gap",
+                    "thickness": 0.0127,
+                    "gas_type": "Air"
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Gypsum Board",
+                    "roughness": "MediumSmooth",
+                    "thickness": 0.0127,
+                    "conductivity": 0.16,
+                    "density": 800.0,
+                    "specific_heat": 1090.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.5,
+                    "visible_absorptance": 0.5
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Wall Air Gap",
+                    "roughness": "Smooth",
+                    "thickness": 0.1,
+                    "conductivity": 0.667,
+                    "density": 1.28,
+                    "specific_heat": 1000.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.7,
+                    "visible_absorptance": 0.7
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Ceiling Air Gap",
+                    "roughness": "Smooth",
+                    "thickness": 0.1,
+                    "conductivity": 0.556,
+                    "density": 1.28,
+                    "specific_heat": 1000.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.7,
+                    "visible_absorptance": 0.7
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Brick",
+                    "roughness": "MediumRough",
+                    "thickness": 0.1,
+                    "conductivity": 0.9,
+                    "density": 1920.0,
+                    "specific_heat": 790.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.65,
+                    "visible_absorptance": 0.65
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic 50mm Insulation",
+                    "roughness": "MediumRough",
+                    "thickness": 0.05,
+                    "conductivity": 0.03,
+                    "density": 43.0,
+                    "specific_heat": 1210.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.7,
+                    "visible_absorptance": 0.7
+                },
+                {
+                    "type": "EnergyWindowMaterialGlazing",
+                    "identifier": "Generic Low-e Glass",
+                    "thickness": 0.006,
+                    "solar_transmittance": 0.45,
+                    "solar_reflectance": 0.36,
+                    "solar_reflectance_back": 0.36,
+                    "visible_transmittance": 0.71,
+                    "visible_reflectance": 0.21,
+                    "visible_reflectance_back": 0.21,
+                    "infrared_transmittance": 0.0,
+                    "emissivity": 0.84,
+                    "emissivity_back": 0.047,
+                    "conductivity": 1.0,
+                    "dirt_correction": 1.0,
+                    "solar_diffusing": false
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic Painted Metal",
+                    "roughness": "Smooth",
+                    "thickness": 0.0015,
+                    "conductivity": 45.0,
+                    "density": 7690.0,
+                    "specific_heat": 410.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.5,
+                    "visible_absorptance": 0.5
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic LW Concrete",
+                    "roughness": "MediumRough",
+                    "thickness": 0.1,
+                    "conductivity": 0.53,
+                    "density": 1280.0,
+                    "specific_heat": 840.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.8,
+                    "visible_absorptance": 0.8
+                },
+                {
+                    "type": "EnergyMaterial",
+                    "identifier": "Generic 25mm Insulation",
+                    "roughness": "MediumRough",
+                    "thickness": 0.05,
+                    "conductivity": 0.03,
+                    "density": 43.0,
+                    "specific_heat": 1210.0,
+                    "thermal_absorptance": 0.9,
+                    "solar_absorptance": 0.7,
+                    "visible_absorptance": 0.7
+                },
+                {
+                    "type": "EnergyWindowMaterialGlazing",
+                    "identifier": "Generic Clear Glass",
+                    "thickness": 0.006,
+                    "solar_transmittance": 0.77,
+                    "solar_reflectance": 0.07,
+                    "solar_reflectance_back": 0.07,
+                    "visible_transmittance": 0.88,
+                    "visible_reflectance": 0.08,
+                    "visible_reflectance_back": 0.08,
+                    "infrared_transmittance": 0.0,
+                    "emissivity": 0.84,
+                    "emissivity_back": 0.84,
+                    "conductivity": 1.0,
+                    "dirt_correction": 1.0,
+                    "solar_diffusing": false
+                }
+            ],
+            "hvacs": [],
+            "program_types": [],
+            "schedules": [
+                {
+                    "type": "ScheduleRulesetAbridged",
+                    "identifier": "Always On",
+                    "day_schedules": [
+                        {
+                            "type": "ScheduleDay",
+                            "identifier": "Always On_Day Schedule",
+                            "values": [
+                                1.0
+                            ],
+                            "times": [
+                                [
+                                    0,
+                                    0
+                                ]
+                            ],
+                            "interpolate": false
+                        }
+                    ],
+                    "default_day_schedule": "Always On_Day Schedule",
+                    "schedule_type_limit": "Fractional"
+                }
+            ],
+            "schedule_type_limits": [
+                {
+                    "type": "ScheduleTypeLimit",
+                    "identifier": "Fractional",
+                    "lower_limit": 0.0,
+                    "upper_limit": 1.0,
+                    "numeric_type": "Continuous",
+                    "unit_type": "Dimensionless"
+                }
+            ]
+        },
+        "radiance": {
+            "type": "ModelRadianceProperties",
+            "modifier_sets": [
+                {
+                    "type": "ModifierSetAbridged",
+                    "identifier": "Generic_Interior_Visible_Modifier_Set",
+                    "wall_set": {
+                        "exterior_modifier": "generic_wall_0.50",
+                        "interior_modifier": "generic_wall_0.50",
+                        "type": "WallModifierSetAbridged"
+                    },
+                    "floor_set": {
+                        "exterior_modifier": "generic_floor_0.20",
+                        "interior_modifier": "generic_floor_0.20",
+                        "type": "FloorModifierSetAbridged"
+                    },
+                    "roof_ceiling_set": {
+                        "exterior_modifier": "generic_ceiling_0.80",
+                        "interior_modifier": "generic_ceiling_0.80",
+                        "type": "RoofCeilingModifierSetAbridged"
+                    },
+                    "aperture_set": {
+                        "skylight_modifier": "generic_exterior_window_vis_0.64",
+                        "operable_modifier": "generic_exterior_window_vis_0.64",
+                        "interior_modifier": "generic_interior_window_vis_0.88",
+                        "type": "ApertureModifierSetAbridged",
+                        "window_modifier": "generic_exterior_window_vis_0.64"
+                    },
+                    "door_set": {
+                        "overhead_modifier": "generic_opaque_door_0.50",
+                        "exterior_glass_modifier": "generic_exterior_window_vis_0.64",
+                        "interior_glass_modifier": "generic_interior_window_vis_0.88",
+                        "exterior_modifier": "generic_opaque_door_0.50",
+                        "interior_modifier": "generic_opaque_door_0.50",
+                        "type": "DoorModifierSetAbridged"
+                    },
+                    "shade_set": {
+                        "exterior_modifier": "generic_exterior_shade_0.35",
+                        "interior_modifier": "generic_interior_shade_0.50",
+                        "type": "ShadeModifierSetAbridged"
+                    },
+                    "air_boundary_modifier": "air_boundary"
+                }
+            ],
+            "global_modifier_set": "Generic_Interior_Visible_Modifier_Set",
+            "modifiers": [
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_exterior_shade_0.35",
+                    "r_reflectance": 0.35,
+                    "g_reflectance": 0.35,
+                    "b_reflectance": 0.35,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "air_boundary",
+                    "r_transmissivity": 1.0,
+                    "g_transmissivity": 1.0,
+                    "b_transmissivity": 1.0,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "trans",
+                    "identifier": "WinterLeaves",
+                    "r_reflectance": 0.1,
+                    "g_reflectance": 0.1,
+                    "b_reflectance": 0.1,
+                    "specularity": 0.0,
+                    "roughness": 0.1,
+                    "transmitted_diff": 0.1,
+                    "transmitted_spec": 0.6,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_interior_shade_0.50",
+                    "r_reflectance": 0.5,
+                    "g_reflectance": 0.5,
+                    "b_reflectance": 0.5,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_opaque_door_0.50",
+                    "r_reflectance": 0.5,
+                    "g_reflectance": 0.5,
+                    "b_reflectance": 0.5,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "trans",
+                    "identifier": "SummerLeaves",
+                    "r_reflectance": 0.3,
+                    "g_reflectance": 0.3,
+                    "b_reflectance": 0.3,
+                    "specularity": 0.0,
+                    "roughness": 0.1,
+                    "transmitted_diff": 0.15,
+                    "transmitted_spec": 0.15,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_ceiling_0.80",
+                    "r_reflectance": 0.8,
+                    "g_reflectance": 0.8,
+                    "b_reflectance": 0.8,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "grass",
+                    "r_reflectance": 0.3,
+                    "g_reflectance": 0.3,
+                    "b_reflectance": 0.3,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "ElectrochromicState2",
+                    "r_transmissivity": 0.2945034602948791,
+                    "g_transmissivity": 0.2945034602948791,
+                    "b_transmissivity": 0.2945034602948791,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_context_0.20",
+                    "r_reflectance": 0.2,
+                    "g_reflectance": 0.2,
+                    "b_reflectance": 0.2,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "snow",
+                    "r_reflectance": 0.7,
+                    "g_reflectance": 0.7,
+                    "b_reflectance": 0.7,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "indoor_light_shelf_0.70",
+                    "r_reflectance": 0.7,
+                    "g_reflectance": 0.7,
+                    "b_reflectance": 0.7,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_wall_0.50",
+                    "r_reflectance": 0.5,
+                    "g_reflectance": 0.5,
+                    "b_reflectance": 0.5,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "ElectrochromicState1",
+                    "r_transmissivity": 0.43621953425431875,
+                    "g_transmissivity": 0.43621953425431875,
+                    "b_transmissivity": 0.43621953425431875,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "generic_interior_window_vis_0.88",
+                    "r_transmissivity": 0.9584154328610596,
+                    "g_transmissivity": 0.9584154328610596,
+                    "b_transmissivity": 0.9584154328610596,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "outdoor_light_shelf_0.5",
+                    "r_reflectance": 0.5,
+                    "g_reflectance": 0.5,
+                    "b_reflectance": 0.5,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "custom_triple_pane_0.3",
+                    "r_transmissivity": 0.3272140103902576,
+                    "g_transmissivity": 0.3272140103902576,
+                    "b_transmissivity": 0.3272140103902576,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "plastic",
+                    "identifier": "generic_floor_0.20",
+                    "r_reflectance": 0.2,
+                    "g_reflectance": 0.2,
+                    "b_reflectance": 0.2,
+                    "specularity": 0.0,
+                    "roughness": 0.0,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "generic_exterior_window_vis_0.64",
+                    "r_transmissivity": 0.6975761815384331,
+                    "g_transmissivity": 0.6975761815384331,
+                    "b_transmissivity": 0.6975761815384331,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "ElectrochromicState4",
+                    "r_transmissivity": 0.010907888742458781,
+                    "g_transmissivity": 0.010907888742458781,
+                    "b_transmissivity": 0.010907888742458781,
+                    "refraction_index": null,
+                    "dependencies": []
+                },
+                {
+                    "modifier": null,
+                    "type": "glass",
+                    "identifier": "ElectrochromicState3",
+                    "r_transmissivity": 0.15272298493612294,
+                    "g_transmissivity": 0.15272298493612294,
+                    "b_transmissivity": 0.15272298493612294,
+                    "refraction_index": null,
+                    "dependencies": []
+                }
+            ]
+        }
+    },
+    "rooms": [
+        {
+            "type": "Room",
+            "identifier": "Tiny_House_Zone",
+            "display_name": "Tiny_House_Zone",
+            "properties": {
+                "type": "RoomPropertiesAbridged",
+                "energy": {
+                    "type": "RoomEnergyPropertiesAbridged"
+                },
+                "radiance": {
+                    "type": "RoomRadiancePropertiesAbridged"
+                }
+            },
+            "faces": [
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Bottom",
+                    "display_name": "Tiny_House_Zone_Bottom",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Floor",
+                    "boundary_condition": {
+                        "type": "Ground"
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Front",
+                    "display_name": "Tiny_House_Zone_Front",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                10.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    },
+                    "apertures": [
+                        {
+                            "type": "Aperture",
+                            "identifier": "Front_Aperture",
+                            "display_name": "Front_Aperture",
+                            "properties": {
+                                "type": "AperturePropertiesAbridged",
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged",
+                                    "modifier": "custom_triple_pane_0.3"
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        4.5,
+                                        10.0,
+                                        2.5
+                                    ],
+                                    [
+                                        4.5,
+                                        10.0,
+                                        1.0
+                                    ],
+                                    [
+                                        2.5,
+                                        10.0,
+                                        1.0
+                                    ],
+                                    [
+                                        2.5,
+                                        10.0,
+                                        2.5
+                                    ]
+                                ]
+                            },
+                            "is_operable": false,
+                            "boundary_condition": {
+                                "type": "Outdoors",
+                                "sun_exposure": true,
+                                "wind_exposure": true,
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }
+                            }
+                        }
+                    ],
+                    "doors": [
+                        {
+                            "type": "Door",
+                            "identifier": "Front_Door",
+                            "display_name": "Front_Door",
+                            "properties": {
+                                "type": "DoorPropertiesAbridged",
+                                "energy": {
+                                    "type": "DoorEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "DoorRadiancePropertiesAbridged"
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        2.0,
+                                        10.0,
+                                        2.5
+                                    ],
+                                    [
+                                        2.0,
+                                        10.0,
+                                        0.1
+                                    ],
+                                    [
+                                        1.0,
+                                        10.0,
+                                        0.1
+                                    ],
+                                    [
+                                        1.0,
+                                        10.0,
+                                        2.5
+                                    ]
+                                ]
+                            },
+                            "is_glass": false,
+                            "boundary_condition": {
+                                "type": "Outdoors",
+                                "sun_exposure": true,
+                                "wind_exposure": true,
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }
+                            }
+                        }
+                    ],
+                    "outdoor_shades": [
+                        {
+                            "type": "Shade",
+                            "identifier": "Tiny_House_Zone_Front_OutOverhang0",
+                            "display_name": "Tiny_House_Zone_Front_OutOverhang0",
+                            "properties": {
+                                "type": "ShadePropertiesAbridged",
+                                "energy": {
+                                    "type": "ShadeEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "ShadeRadiancePropertiesAbridged"
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        0.0,
+                                        10.0,
+                                        2.9999998999999997
+                                    ],
+                                    [
+                                        5.0,
+                                        10.0,
+                                        2.9999998999999997
+                                    ],
+                                    [
+                                        5.0,
+                                        10.25,
+                                        2.9999998999999997
+                                    ],
+                                    [
+                                        0.0,
+                                        10.25,
+                                        2.9999998999999997
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Right",
+                    "display_name": "Tiny_House_Zone_Right",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Surface",
+                        "boundary_condition_objects": [
+                            "Tiny_Garage_Left",
+                            "Tiny_Garage"
+                        ]
+                    },
+                    "apertures": [
+                        {
+                            "type": "Aperture",
+                            "identifier": "Tiny_House_Zone_Right_Glz0",
+                            "display_name": "Tiny_House_Zone_Right_Glz0",
+                            "properties": {
+                                "type": "AperturePropertiesAbridged",
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged"
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        5.0,
+                                        3.41886116991581,
+                                        1.974341649025257
+                                    ],
+                                    [
+                                        5.0,
+                                        3.41886116991581,
+                                        1.025658350974743
+                                    ],
+                                    [
+                                        5.0,
+                                        6.58113883008419,
+                                        1.025658350974743
+                                    ],
+                                    [
+                                        5.0,
+                                        6.58113883008419,
+                                        1.974341649025257
+                                    ]
+                                ]
+                            },
+                            "is_operable": false,
+                            "boundary_condition": {
+                                "type": "Surface",
+                                "boundary_condition_objects": [
+                                    "Tiny_Garage_Left_Glz0",
+                                    "Tiny_Garage_Left",
+                                    "Tiny_Garage"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Back",
+                    "display_name": "Tiny_House_Zone_Back",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                0.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    },
+                    "apertures": [
+                        {
+                            "type": "Aperture",
+                            "identifier": "Tiny_House_Zone_Back_Glz0",
+                            "display_name": "Tiny_House_Zone_Back_Glz0",
+                            "properties": {
+                                "type": "AperturePropertiesAbridged",
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged",
+                                    "dynamic_group_identifier": "ElectrochromicWindow",
+                                    "states": [
+                                        {
+                                            "type": "RadianceSubFaceStateAbridged",
+                                            "modifier": "ElectrochromicState1"
+                                        },
+                                        {
+                                            "type": "RadianceSubFaceStateAbridged",
+                                            "modifier": "ElectrochromicState2"
+                                        },
+                                        {
+                                            "type": "RadianceSubFaceStateAbridged",
+                                            "modifier": "ElectrochromicState3",
+                                            "shades": [
+                                                {
+                                                    "type": "StateGeometryAbridged",
+                                                    "identifier": "outdoor_awning",
+                                                    "display_name": "outdoor_awning",
+                                                    "geometry": {
+                                                        "type": "Face3D",
+                                                        "boundary": [
+                                                            [
+                                                                0.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                5.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                5.0,
+                                                                2.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                0.0,
+                                                                2.0,
+                                                                2.0
+                                                            ]
+                                                        ],
+                                                        "plane": {
+                                                            "type": "Plane",
+                                                            "n": [
+                                                                0.0,
+                                                                0.0,
+                                                                1.0
+                                                            ],
+                                                            "o": [
+                                                                0.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            "x": [
+                                                                1.0,
+                                                                0.0,
+                                                                0.0
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "RadianceSubFaceStateAbridged",
+                                            "modifier": "ElectrochromicState4",
+                                            "shades": [
+                                                {
+                                                    "type": "StateGeometryAbridged",
+                                                    "identifier": "outdoor_awning",
+                                                    "display_name": "outdoor_awning",
+                                                    "geometry": {
+                                                        "type": "Face3D",
+                                                        "boundary": [
+                                                            [
+                                                                0.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                5.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                5.0,
+                                                                2.0,
+                                                                2.0
+                                                            ],
+                                                            [
+                                                                0.0,
+                                                                2.0,
+                                                                2.0
+                                                            ]
+                                                        ],
+                                                        "plane": {
+                                                            "type": "Plane",
+                                                            "n": [
+                                                                0.0,
+                                                                0.0,
+                                                                1.0
+                                                            ],
+                                                            "o": [
+                                                                0.0,
+                                                                0.0,
+                                                                2.0
+                                                            ],
+                                                            "x": [
+                                                                1.0,
+                                                                0.0,
+                                                                0.0
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        0.7322330470336311,
+                                        0.0,
+                                        2.5606601717798214
+                                    ],
+                                    [
+                                        0.7322330470336311,
+                                        0.0,
+                                        0.4393398282201786
+                                    ],
+                                    [
+                                        4.267766952966369,
+                                        0.0,
+                                        0.4393398282201786
+                                    ],
+                                    [
+                                        4.267766952966369,
+                                        0.0,
+                                        2.5606601717798214
+                                    ]
+                                ]
+                            },
+                            "is_operable": false,
+                            "boundary_condition": {
+                                "type": "Outdoors",
+                                "sun_exposure": true,
+                                "wind_exposure": true,
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Left",
+                    "display_name": "Tiny_House_Zone_Left",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                0.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                0.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_House_Zone_Top",
+                    "display_name": "Tiny_House_Zone_Top",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                0.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "RoofCeiling",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                }
+            ],
+            "indoor_shades": [
+                {
+                    "type": "Shade",
+                    "identifier": "indoor_light_shelf",
+                    "display_name": "indoor_light_shelf",
+                    "properties": {
+                        "type": "ShadePropertiesAbridged",
+                        "energy": {
+                            "type": "ShadeEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "ShadeRadiancePropertiesAbridged",
+                            "dynamic_group_identifier": "DynamicLightShelf",
+                            "states": [
+                                {
+                                    "type": "RadianceShadeStateAbridged",
+                                    "modifier": "outdoor_light_shelf_0.5"
+                                },
+                                {
+                                    "type": "RadianceShadeStateAbridged",
+                                    "modifier": "indoor_light_shelf_0.70"
+                                }
+                            ]
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                0.0,
+                                0.0,
+                                2.0
+                            ],
+                            [
+                                -1.0,
+                                0.0,
+                                2.0
+                            ],
+                            [
+                                -1.0,
+                                2.0,
+                                2.0
+                            ],
+                            [
+                                0.0,
+                                2.0,
+                                2.0
+                            ]
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Room",
+            "identifier": "Tiny_Garage",
+            "display_name": "Tiny_Garage",
+            "properties": {
+                "type": "RoomPropertiesAbridged",
+                "energy": {
+                    "type": "RoomEnergyPropertiesAbridged"
+                },
+                "radiance": {
+                    "type": "RoomRadiancePropertiesAbridged"
+                }
+            },
+            "faces": [
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Bottom",
+                    "display_name": "Tiny_Garage_Bottom",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                0.0,
+                                0.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Floor",
+                    "boundary_condition": {
+                        "type": "Ground"
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Front",
+                    "display_name": "Tiny_Garage_Front",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                10.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                10.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Right",
+                    "display_name": "Tiny_Garage_Right",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                10.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                10.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                10.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Back",
+                    "display_name": "Tiny_Garage_Back",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                10.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Left",
+                    "display_name": "Tiny_Garage_Left",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "Wall",
+                    "boundary_condition": {
+                        "type": "Surface",
+                        "boundary_condition_objects": [
+                            "Tiny_House_Zone_Right",
+                            "Tiny_House_Zone"
+                        ]
+                    },
+                    "apertures": [
+                        {
+                            "type": "Aperture",
+                            "identifier": "Tiny_Garage_Left_Glz0",
+                            "display_name": "Tiny_Garage_Left_Glz0",
+                            "properties": {
+                                "type": "AperturePropertiesAbridged",
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                },
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged"
+                                }
+                            },
+                            "geometry": {
+                                "type": "Face3D",
+                                "boundary": [
+                                    [
+                                        5.0,
+                                        6.58113883008419,
+                                        1.974341649025257
+                                    ],
+                                    [
+                                        5.0,
+                                        6.58113883008419,
+                                        1.025658350974743
+                                    ],
+                                    [
+                                        5.0,
+                                        3.41886116991581,
+                                        1.025658350974743
+                                    ],
+                                    [
+                                        5.0,
+                                        3.41886116991581,
+                                        1.974341649025257
+                                    ]
+                                ]
+                            },
+                            "is_operable": false,
+                            "boundary_condition": {
+                                "type": "Surface",
+                                "boundary_condition_objects": [
+                                    "Tiny_House_Zone_Right_Glz0",
+                                    "Tiny_House_Zone_Right",
+                                    "Tiny_House_Zone"
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "Face",
+                    "identifier": "Tiny_Garage_Top",
+                    "display_name": "Tiny_Garage_Top",
+                    "properties": {
+                        "type": "FacePropertiesAbridged",
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        },
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }
+                    },
+                    "geometry": {
+                        "type": "Face3D",
+                        "boundary": [
+                            [
+                                10.0,
+                                0.0,
+                                3.0
+                            ],
+                            [
+                                10.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                10.0,
+                                3.0
+                            ],
+                            [
+                                5.0,
+                                0.0,
+                                3.0
+                            ]
+                        ]
+                    },
+                    "face_type": "RoofCeiling",
+                    "boundary_condition": {
+                        "type": "Outdoors",
+                        "sun_exposure": true,
+                        "wind_exposure": true,
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "orphaned_shades": [
+        {
+            "type": "Shade",
+            "identifier": "Ground",
+            "display_name": "Ground",
+            "properties": {
+                "type": "ShadePropertiesAbridged",
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                },
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged",
+                    "dynamic_group_identifier": "SeasonalGround",
+                    "states": [
+                        {
+                            "type": "RadianceShadeStateAbridged",
+                            "modifier": "grass"
+                        },
+                        {
+                            "type": "RadianceShadeStateAbridged",
+                            "modifier": "snow"
+                        }
+                    ]
+                }
+            },
+            "geometry": {
+                "type": "Face3D",
+                "boundary": [
+                    [
+                        0.0,
+                        -10.0,
+                        0.0
+                    ],
+                    [
+                        10.0,
+                        -10.0,
+                        0.0
+                    ],
+                    [
+                        10.0,
+                        0.0,
+                        0.0
+                    ],
+                    [
+                        0.0,
+                        0.0,
+                        0.0
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Shade",
+            "identifier": "Tree_Canopy",
+            "display_name": "Tree_Canopy",
+            "properties": {
+                "type": "ShadePropertiesAbridged",
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                },
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged",
+                    "dynamic_group_identifier": "DeciduousTree",
+                    "states": [
+                        {
+                            "type": "RadianceShadeStateAbridged",
+                            "modifier": "SummerLeaves"
+                        },
+                        {
+                            "type": "RadianceShadeStateAbridged",
+                            "modifier": "WinterLeaves"
+                        }
+                    ]
+                }
+            },
+            "geometry": {
+                "type": "Face3D",
+                "boundary": [
+                    [
+                        3.2679491924311224,
+                        -4.0,
+                        4.0
+                    ],
+                    [
+                        5.0,
+                        -5.0,
+                        4.0
+                    ],
+                    [
+                        6.732050807568877,
+                        -4.000000000000001,
+                        4.0
+                    ],
+                    [
+                        6.732050807568878,
+                        -2.000000000000001,
+                        4.0
+                    ],
+                    [
+                        5.000000000000002,
+                        -1.0,
+                        4.0
+                    ],
+                    [
+                        3.2679491924311233,
+                        -1.9999999999999987,
+                        4.0
+                    ]
+                ]
+            }
+        }
+    ]
+}

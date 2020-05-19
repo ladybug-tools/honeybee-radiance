@@ -314,6 +314,8 @@ def model_to_rad_folder(model, folder=None, folder_type=2, minimal=False):
         new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
         shutil.copy(bdf_mod.bsdf_file, new_bsdf_path)
 
+    return folder
+
 
 def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
     """Write out the files that need to go into any dynamic model folder.

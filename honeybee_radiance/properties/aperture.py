@@ -177,7 +177,7 @@ class ApertureRadianceProperties(_DynamicRadianceProperties):
         """
         if 'dynamic_group_identifier' in abridged_data and \
                 abridged_data['dynamic_group_identifier'] is not None:
-            self.dynamic_group_identifier = dynamic_group_identifier
+            self.dynamic_group_identifier = abridged_data['dynamic_group_identifier']
         if 'states' in abridged_data and abridged_data['states'] is not None:
             self.states = [RadianceSubFaceState.from_dict_abridged(st, modifiers)
                            for st in abridged_data['states']]

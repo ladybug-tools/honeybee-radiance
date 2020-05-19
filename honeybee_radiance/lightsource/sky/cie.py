@@ -213,11 +213,11 @@ class CIE(_PointInTime):
             sky_type, north_angle, ground_reflectance)
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, data):
         """Create the sky from a dictionary.
 
         Args:
-            input_dict: A python dictionary in the following format
+            data: A python dictionary in the following format
 
         .. code-block:: python
 
@@ -232,23 +232,23 @@ class CIE(_PointInTime):
             }
 
         """
-        assert 'type' in input_dict, \
+        assert 'type' in data, \
             'Input dict is missing type. Not a valid CIE dictionary.'
-        assert input_dict['type'] == 'CIE', \
-            'Input type must be CIE not %s' % input_dict['type']
+        assert data['type'] == 'CIE', \
+            'Input type must be CIE not %s' % data['type']
 
         sky = cls(
-            input_dict['altitude'],
-            input_dict['azimuth'],
-            input_dict['sky_type'],
-            input_dict['ground_reflectance']
+            data['altitude'],
+            data['azimuth'],
+            data['sky_type'],
+            data['ground_reflectance']
         )
 
-        if 'ground_hemisphere' in input_dict:
-            sky._ground_hemisphere = Ground.from_dict(input_dict['ground_hemisphere'])
+        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
+            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
 
-        if 'sky_hemisphere' in input_dict:
-            sky._sky_hemisphere = Hemisphere.from_dict(input_dict['sky_hemisphere'])
+        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
+            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
 
         return sky
 

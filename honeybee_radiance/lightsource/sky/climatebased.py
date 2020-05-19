@@ -217,11 +217,11 @@ class ClimateBased(_PointInTime):
             ground_reflectance)
 
     @classmethod
-    def from_dict(cls, input_dict):
+    def from_dict(cls, data):
         """Create the sky from a dictionary.
 
         Args:
-            input_dict: A python dictionary in the following format
+            data: A python dictionary in the following format
 
         .. code-block:: python
 
@@ -237,24 +237,24 @@ class ClimateBased(_PointInTime):
             }
 
         """
-        assert 'type' in input_dict, \
+        assert 'type' in data, \
             'Input dict is missing type. Not a valid ClimateBased dictionary.'
-        assert input_dict['type'] == 'ClimateBased', \
-            'Input type must be ClimateBased not %s' % input_dict['type']
+        assert data['type'] == 'ClimateBased', \
+            'Input type must be ClimateBased not %s' % data['type']
 
         sky = cls(
-            input_dict['altitude'],
-            input_dict['azimuth'],
-            input_dict['direct_normal_irradiance'],
-            input_dict['diffuse_horizontal_irradiance'],
-            input_dict['ground_reflectance']
+            data['altitude'],
+            data['azimuth'],
+            data['direct_normal_irradiance'],
+            data['diffuse_horizontal_irradiance'],
+            data['ground_reflectance']
         )
 
-        if 'ground_hemisphere' in input_dict:
-            sky._ground_hemisphere = Ground.from_dict(input_dict['ground_hemisphere'])
+        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
+            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
 
-        if 'sky_hemisphere' in input_dict:
-            sky._sky_hemisphere = Hemisphere.from_dict(input_dict['sky_hemisphere'])
+        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
+            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
 
         return sky
 
