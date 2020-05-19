@@ -4,7 +4,7 @@ try:
     import click
 except ImportError:
     raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
+        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
     )
 
 from honeybee_radiance.reader import string_to_dicts
@@ -33,13 +33,16 @@ def translate():
 @click.option('--folder-type', help='An integer between 0-2 to note the type of '
               'folders to be written out with the Model.\n0: grid-based\n1: view-based'
               '\n2: includes both views and grids', default=2, show_default=True)
+@click.option('--config-file', help='An optional config file path to modify the '
+              'default folder names. If None, folder.cfg in honeybee-radiance-folder '
+              'will be used.', default=None, show_default=True)
 @click.option('--minimal', help='Boolean to note whether the radiance strings should '
               'be written in a minimal format (with spaces instead of line breaks).',
               default=False, show_default=True)
 @click.option('--log-file', help='Optional log file to output the progress of the'
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-')
-def model_to_rad_folder(model_json, folder, folder_type, minimal, log_file):
+def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, log_file):
     """Translate a Model JSON file into a Radiance Folder.
     \n
     Args:
@@ -52,7 +55,7 @@ def model_to_rad_folder(model_json, folder, folder_type, minimal, log_file):
 
         # set the default folder if it's not specified
         if folder is None:
-            folder = os.path.split(os.path.abspath(model_json))[0]
+            folder = os.path.dirname(os.path.abspath(model_json))
 
         # re-serialize the Model to Python
         log_file.write('Re-serializing Model JSON.\n')
@@ -63,7 +66,7 @@ def model_to_rad_folder(model_json, folder, folder_type, minimal, log_file):
 
         # translate the model to a radiance folder
         log_file.write('Translating Model to Radiance folder.\n')
-        rad_fold = model.to.rad_folder(model, folder, folder_type, minimal)
+        rad_fold = model.to.rad_folder(model, folder, folder_type, config_file, minimal)
         log_file.write('Model translation successful.\n')
         log_file.write('Radiance folder output to: {}'.format(rad_fold))
     except Exception as e:
@@ -106,12 +109,14 @@ def model_to_rad(model_json, blk, minimal, log_file):
             data = json.load(json_file)
         model = Model.from_dict(data)
 
-        # translate the model to a rad string and put it in a dictionary
+        # translate the model to a rad string
         model_str, modifier_str = model.to.rad(model, blk, minimal)
-        rad_dict = {'model_str': model_str, 'modifier_str': modifier_str}
+        rad_str_list = ['# ========  MODEL MODIFIERS ========', modifier_str,
+                        '# ========  MODEL GEOMETRY ========', model_str]
+        rad_str = '\n\n'.join(rad_str_list)
 
         # write out the rad string
-        log_file.write(json.dumps(rad_dict))
+        log_file.write(rad_str)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
