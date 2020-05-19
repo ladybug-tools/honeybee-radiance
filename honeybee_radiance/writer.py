@@ -226,7 +226,8 @@ def model_to_rad(model, blk=False, minimal=False):
     return '\n\n'.join(model_str), '\n\n'.join(modifier_str)
 
 
-def model_to_rad_folder(model, folder=None, folder_type=2, minimal=False):
+def model_to_rad_folder(model, folder=None, folder_type=2, config_file=None,
+                        minimal=False):
     r"""Write a honeybee model to a rad folder.
 
     The rad files in the resulting folders will include all geometry
@@ -244,6 +245,9 @@ def model_to_rad_folder(model, folder=None, folder_type=2, minimal=False):
                 * 0: grid-based
                 * 1: view-based
                 * 2: includes both views and grids
+        config_file: An optional config file path to modify the default folder
+            names. If None, ``folder.cfg`` in ``honeybee-radiance-folder``
+            will be used. (Default: None).
         minimal: Boolean to note whether the radiance strings should be written
             in a minimal format (with spaces instead of line breaks). Default: False.
     """
@@ -253,7 +257,7 @@ def model_to_rad_folder(model, folder=None, folder_type=2, minimal=False):
         folder = os.path.join(folders.default_simulation_folder, model_id, 'Radiance')
     if not os.path.isdir(folder):
         preparedir(folder)  # create the directory if it's not there
-    model_folder = ModelFolder(folder)
+    model_folder = ModelFolder(folder, config_file)
     model_folder.write(folder_type=folder_type, cfg=folder_config.full, overwrite=True)
 
     # gather and write static apertures to the folder

@@ -68,7 +68,7 @@ class CIE(_PointInTime):
 
     @property
     def altitude(self):
-        """Get and set solar altitude.
+        """Get or set a number between -90 and 90 for the solar altitude.
 
         The altitude is measured in degrees above the horizon.
         """
@@ -76,12 +76,12 @@ class CIE(_PointInTime):
 
     @altitude.setter
     def altitude(self, value):
-        value = typing.float_in_range(value, 0, 90, 'Solar altitude')
+        value = typing.float_in_range(value, -90, 90, 'Solar altitude')
         self._altitude = value
 
     @property
     def azimuth(self):
-        """Get and set solar azimuth.
+        """Get or set a number between 0 and 360 for the solar azimuth.
 
         The azimuth is measured in degrees east of North. East is 90, South is 180 and
         West is 270. Note that this input is different from Radiance convention. In
