@@ -110,6 +110,7 @@ class DynamicShadeGroup(object):
         states_list = []
         for st_i in range(self.state_count):
             states_list.append({
+                'identifier': '{}_{}'.format(st_i, ident),
                 'default': './{}..default..{}.rad'.format(ident, str(st_i)),
                 'direct': './{}..direct..{}.rad'.format(ident, str(st_i))
                 })
@@ -281,6 +282,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         states_list = []
         for st_i in range(self.state_count):
             states_list.append({
+                'identifier': '{}_{}'.format(st_i, ident),
                 'default': './{}..default..{}.rad'.format(ident, str(st_i)),
                 'direct': './{}..direct..{}.rad'.format(ident, str(st_i)),
                 'black': './{}..black.rad'.format(ident)
