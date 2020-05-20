@@ -39,9 +39,9 @@ def translate():
 @click.option('--minimal', help='Boolean to note whether the radiance strings should '
               'be written in a minimal format (with spaces instead of line breaks).',
               default=False, show_default=True)
-@click.option('--log-file', help='Optional log file to output the progress of the'
-              'translation. By default this will be printed out to stdout',
-              type=click.File('w'), default='-')
+@click.option('--log-file', help='Optional log file to output the path of the radiance '
+              'folder generated from the model. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-')
 def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, log_file):
     """Translate a Model JSON file into a Radiance Folder.
     \n
@@ -58,17 +58,13 @@ def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, l
             folder = os.path.dirname(os.path.abspath(model_json))
 
         # re-serialize the Model to Python
-        log_file.write('Re-serializing Model JSON.\n')
         with open(model_json) as json_file:
             data = json.load(json_file)
         model = Model.from_dict(data)
-        log_file.write('Model re-serialization successful.\n')
 
         # translate the model to a radiance folder
-        log_file.write('Translating Model to Radiance folder.\n')
         rad_fold = model.to.rad_folder(model, folder, folder_type, config_file, minimal)
-        log_file.write('Model translation successful.\n')
-        log_file.write('Radiance folder output to: {}'.format(rad_fold))
+        log_file.write(rad_fold)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -85,10 +81,10 @@ def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, l
 @click.option('--minimal', help='Boolean to note whether the radiance strings should '
               'be written in a minimal format (with spaces instead of line breaks).',
               default=False, show_default=True)
-@click.option('--log-file', help='Optional RAD file to output the RAD string of the '
+@click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-')
-def model_to_rad(model_json, blk, minimal, log_file):
+def model_to_rad(model_json, blk, minimal, output_file):
     """Translate a Model JSON file to a Radiance string.
     \n
     The resulting strings will include all geometry (Rooms, Faces, Shades, Apertures,
@@ -116,7 +112,7 @@ def model_to_rad(model_json, blk, minimal, log_file):
         rad_str = '\n\n'.join(rad_str_list)
 
         # write out the rad string
-        log_file.write(rad_str)
+        output_file.write(rad_str)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -128,10 +124,10 @@ def model_to_rad(model_json, blk, minimal, log_file):
 @click.option('--minimal', help='Boolean to note whether the radiance strings should '
               'be written in a minimal format (with spaces instead of line breaks).',
               default=False, show_default=True)
-@click.option('--log-file', help='Optional RAD file to output the RAD string of the '
+@click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-')
-def modifier_to_rad(modifier_json, minimal, log_file):
+def modifier_to_rad(modifier_json, minimal, output_file):
     """Translate a Modifier JSON file to an RAD using direct-to-rad translators.
     \n
     Args:
@@ -159,7 +155,7 @@ def modifier_to_rad(modifier_json, minimal, log_file):
         rad_str = '\n\n'.join(rad_str_list)
 
         # write out the RAD file
-        log_file.write(rad_str)
+        output_file.write(rad_str)
     except Exception as e:
         _logger.exception('Modifier translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -168,10 +164,10 @@ def modifier_to_rad(modifier_json, minimal, log_file):
 
 @translate.command('modifiers-from-rad')
 @click.argument('modifier-rad')
-@click.option('--log-file', help='Optional JSON file to output the JSON string of the'
+@click.option('--output-file', help='Optional JSON file to output the JSON string of the'
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-')
-def modifier_from_rad(modifier_rad, log_file):
+def modifier_from_rad(modifier_rad, output_file):
     """Translate a Modifier JSON file to a honeybee JSON as an array of modifiers.
     \n
     Args:
@@ -194,7 +190,7 @@ def modifier_from_rad(modifier_rad, log_file):
         json_dicts = [mod.to_dict() for mod in mod_objs]
 
         # write out the JSON file
-        log_file.write(json.dumps(json_dicts))
+        output_file.write(json.dumps(json_dicts))
     except Exception as e:
         _logger.exception('Modifier translation failed.\n{}'.format(e))
         sys.exit(1)
