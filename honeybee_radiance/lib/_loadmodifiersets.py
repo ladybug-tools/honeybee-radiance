@@ -20,8 +20,11 @@ for f in os.listdir(folders.modifierset_lib):
             mod_set_dict = json.load(json_file)
         for mod_set_id in mod_set_dict:
             try:
-                modifierset = ModifierSet.from_dict_abridged(
-                    mod_set_dict[mod_set_id], _rad_modifiers)
+                if mod_set_dict[mod_set_id]['type'] == 'ModifierSetAbridged':
+                    modifierset = ModifierSet.from_dict_abridged(
+                        mod_set_dict[mod_set_id], _rad_modifiers)
+                else:
+                    modifierset = ModifierSet.from_dict(mod_set_dict[mod_set_id])
                 modifierset.lock()
                 _json_modifier_sets[mod_set_id] = modifierset
             except Exception:

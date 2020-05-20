@@ -4,7 +4,7 @@ try:
     import click
 except ImportError:
     raise ImportError(
-        'click is not installed. Try `pip install . [cli]` command.'
+        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
     )
 
 import sys
