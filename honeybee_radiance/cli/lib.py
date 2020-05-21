@@ -26,7 +26,7 @@ def lib():
 @lib.command('modifiers')
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifiers(output_file):
     """Get a list of all modifiers in the standards library."""
     try:
@@ -40,7 +40,7 @@ def modifiers(output_file):
 @lib.command('modifier-sets')
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_sets(output_file):
     """Get a list of all modifier sets in the standards library."""
     try:
@@ -55,7 +55,7 @@ def modifier_sets(output_file):
 @click.argument('modifier-id', type=str)
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_by_id(modifier_id, output_file):
     """Get a modifier definition from the standards lib with its identifier.
     \n
@@ -75,12 +75,12 @@ def modifier_by_id(modifier_id, output_file):
 @click.argument('modifier-set-id', type=str)
 @click.option('--none-defaults', help='Boolean to note whether default modifiers '
               'in the set should be included in detail (False) or should be None '
-              '(True).', type=bool, default=True)
-@click.option('--abridged', help='Optional boolean to note wether an abridged '
-              'defintion should be returned.', type=bool, default=False)
+              '(True).', type=bool, default=True, show_default=True)
+@click.option('--abridged', help='Optional boolean to note wether an abridged definition'
+              ' should be returned.', type=bool, default=False, show_default=True)
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_set_by_id(modifier_set_id, none_defaults, abridged, output_file):
     """Get an modifier set definition from the standards lib with its identifier.
     \n
@@ -102,7 +102,7 @@ def modifier_set_by_id(modifier_set_id, none_defaults, abridged, output_file):
 @click.argument('modifier-ids', nargs=-1)
 @click.option('--output-file', help='Optional file to output the JSON strings of '
               'the objects. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifiers_by_id(modifier_ids, output_file):
     """Get several modifier definitions from the standards lib at once.
     \n
@@ -123,12 +123,12 @@ def modifiers_by_id(modifier_ids, output_file):
 @click.argument('modifier-set-ids', nargs=-1)
 @click.option('--none-defaults', help='Boolean to note whether default modifiers '
               'in the set should be included in detail (False) or should be None '
-              '(True).', type=bool, default=True)
-@click.option('--abridged', help='Optional boolean to note wether an abridged '
-              'defintion should be returned.', type=bool, default=False)
+              '(True).', type=bool, default=True, show_default=True)
+@click.option('--abridged', help='Optional boolean to note wether an abridged definition'
+              ' should be returned.', type=bool, default=False, show_default=True)
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_sets_by_id(modifier_set_ids, none_defaults, abridged, output_file):
     """Get several modifier set definitions from the standards lib at once.
     \n
