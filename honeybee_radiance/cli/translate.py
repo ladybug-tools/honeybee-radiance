@@ -83,7 +83,7 @@ def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, l
               default=False, show_default=True)
 @click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def model_to_rad(model_json, blk, minimal, output_file):
     """Translate a Model JSON file to a Radiance string.
     \n
@@ -126,7 +126,7 @@ def model_to_rad(model_json, blk, minimal, output_file):
               default=False, show_default=True)
 @click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_to_rad(modifier_json, minimal, output_file):
     """Translate a Modifier JSON file to an RAD using direct-to-rad translators.
     \n
@@ -166,7 +166,7 @@ def modifier_to_rad(modifier_json, minimal, output_file):
 @click.argument('modifier-rad')
 @click.option('--output-file', help='Optional JSON file to output the JSON string of the'
               'translation. By default this will be printed out to stdout',
-              type=click.File('w'), default='-')
+              type=click.File('w'), default='-', show_default=True)
 def modifier_from_rad(modifier_rad, output_file):
     """Translate a Modifier JSON file to a honeybee JSON as an array of modifiers.
     \n
