@@ -347,15 +347,25 @@ class ModelRadianceProperties(object):
 
         # apply radiance properties to objects using the radiance property dictionaries
         for room, r_dict in zip(self.host.rooms, room_e_dicts):
-            room.properties.radiance.apply_properties_from_dict(r_dict, modifier_sets)
+            if r_dict is not None:
+                room.properties.radiance.apply_properties_from_dict(
+                    r_dict, modifier_sets)
         for face, f_dict in zip(self.host.faces, face_e_dicts):
-            face.properties.radiance.apply_properties_from_dict(f_dict, modifiers)
+            if f_dict is not None:
+                face.properties.radiance.apply_properties_from_dict(
+                    f_dict, modifiers)
         for aperture, a_dict in zip(self.host.apertures, ap_e_dicts):
-            aperture.properties.radiance.apply_properties_from_dict(a_dict, modifiers)
+            if a_dict is not None:
+                aperture.properties.radiance.apply_properties_from_dict(
+                    a_dict, modifiers)
         for door, d_dict in zip(self.host.doors, dr_e_dicts):
-            door.properties.radiance.apply_properties_from_dict(d_dict, modifiers)
+            if d_dict is not None:
+                door.properties.radiance.apply_properties_from_dict(
+                    d_dict, modifiers)
         for shade, s_dict in zip(self.host.shades, shd_e_dicts):
-            shade.properties.radiance.apply_properties_from_dict(s_dict, modifiers)
+            if s_dict is not None:
+                shade.properties.radiance.apply_properties_from_dict(
+                    s_dict, modifiers)
 
     def to_dict(self, include_global_modifier_set=True):
         """Return Model radiance properties as a dictionary.
