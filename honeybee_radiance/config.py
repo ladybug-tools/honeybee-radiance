@@ -205,23 +205,15 @@ class Folders(object):
         elif os.name == 'nt':  # search the C:/ drive on Windows
             test_path = 'C:\\Radiance'
             rad_path = test_path if os.path.isdir(test_path) else None
-        elif platform.system() == 'Darwin':  # search the Applications folder on Mac
-            test_path = '/Applications/radiance'
+        elif platform.system() == 'Darwin':  # search usr/local and Applications on Mac
+            test_path = '/usr/local/radiance'
             rad_path = test_path if os.path.isdir(test_path) else None
+            if rad_path is None:
+                test_path = '/Applications/radiance'
+                rad_path = test_path if os.path.isdir(test_path) else None
         elif platform.system() == 'Linux':  # search the usr/local folder
             test_path = '/usr/local/radiance'
             rad_path = test_path if os.path.isdir(test_path) else None
-
-        # lastly, check if honeybee_energy is installed and get Radiance with OpenStudio
-        if not rad_path:
-            try:
-                import honeybee_energy.config as hbe_config
-                os_path = hbe_config.folders.openstudio_path
-                if os_path:
-                    test_path = os.path.join(os.path.split(os_path)[0], 'Radiance')
-                    rad_path = test_path if os.path.isdir(test_path) else None
-            except ImportError:
-                pass  # no honeybee_energy installation found
 
         if not rad_path:  # No Radiance installations were found
             return None
