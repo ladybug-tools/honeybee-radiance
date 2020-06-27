@@ -11,6 +11,7 @@ Usage:
     folders.radiance_path = "C:/Radiance/bin"
 """
 import ladybug.config as lb_config
+import honeybee_standards
 
 import os
 import platform
@@ -35,6 +36,7 @@ class Folders(object):
         * standards_data_folder
         * modifier_lib
         * modifierset_lib
+        * defaults_file
         * config_file
         * mute
     """
@@ -106,15 +108,8 @@ class Folders(object):
             path = self._find_standards_data_folder()
 
         # gather all of the sub folders underneath the master folder
-        self._modifier_lib = os.path.join(path, 'modifiers') if path else None
-        self._modifierset_lib = os.path.join(path, 'modifiersets') if path else None
-
-        # check that the library's sub-folders exist
-        if path:
-            assert os.path.isdir(self._modifier_lib), \
-                '{} lacks a "modifiers" folder.'.format(path)
-            assert os.path.isdir(self._modifierset_lib), \
-                '{} lacks a "modifiersets" folder.'.format(path)
+        self._modifier_lib, self._modifierset_lib, self._defaults_file = \
+            self._check_standards_folder(path)
 
         # set the standards_data_folder
         self._standards_data_folder = path
@@ -131,6 +126,11 @@ class Folders(object):
     def modifierset_lib(self):
         """Get the path to the modifierset library in the standards_data_folder."""
         return self._modifierset_lib
+
+    @property
+    def defaults_file(self):
+        """Get the path to the JSON file where honeybee's defaults are loaded from."""
+        return self._defaults_file
 
     @property
     def config_file(self):
@@ -240,7 +240,27 @@ class Folders(object):
                 return lib_folder
 
         # default to the library folder that installs with this Python package
-        return os.path.join(os.path.dirname(__file__), 'lib', 'data')
+        return os.path.join(os.path.dirname(honeybee_standards.__file__))
+
+    @staticmethod
+    def _check_standards_folder(path):
+        """Check that a standards data sub-folders exist."""
+        if not path:  # first check that a path exists
+            return [None] * 3
+
+        # gather all of the sub folders underneath the master folder
+        _modifier_lib = os.path.join(path, 'modifiers') if path else None
+        _modifierset_lib = os.path.join(path, 'modifiersets') if path else None
+        _radiance_default = os.path.join(path, 'radiance_default.json')
+
+        assert os.path.isdir(_modifier_lib), \
+            '{} lacks a "modifiers" folder.'.format(path)
+        assert os.path.isdir(_modifierset_lib), \
+            '{} lacks a "modifiersets" folder.'.format(path)
+        assert os.path.isfile(_radiance_default), \
+            '{} lacks a "radiance_default.json."'.format(path)
+
+        return _modifier_lib, _modifierset_lib, _radiance_default
 
 
 """Object possesing all key folders within the configuration."""

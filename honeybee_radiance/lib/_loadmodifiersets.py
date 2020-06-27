@@ -8,28 +8,40 @@ import os
 import json
 
 
-# empty dictionaries to hold json-loaded modifier sets
+# empty dictionary to hold loaded modifier sets
 _json_modifier_sets = {}
 
 
-# load modifier sets from the default and user-supplied files
+# first load the honeybee defaults
+with open(folders.defaults_file) as json_file:
+    default_data = json.load(json_file)['modifier_sets']
+for mset_dict in default_data:
+    modifierset = ModifierSet.from_dict_abridged(mset_dict, _rad_modifiers)
+    modifierset.lock()
+    _json_modifier_sets[mset_dict['identifier']] = modifierset
+
+
+# then load modifier sets from the user-supplied files
+def load_modifier_set_object(mset_dict):
+    """Load a modifier set object from a dictionary and add it to the lib dict."""
+    try:
+        if mset_dict['type'] == 'ModifierSetAbridged':
+            modifierset = ModifierSet.from_dict_abridged(mset_dict, _rad_modifiers)
+        else:
+            modifierset = ModifierSet.from_dict(mset_dict)
+        modifierset.lock()
+        _json_modifier_sets[mset_dict['identifier']] = modifierset
+    except (TypeError, KeyError, ValueError):
+        pass  # not a Honeybee ModifierSet JSON; possibly a comment
+
+
 for f in os.listdir(folders.modifierset_lib):
     f_path = os.path.join(folders.modifierset_lib, f)
     if os.path.isfile(f_path) and f_path.endswith('.json'):
         with open(f_path, 'r') as json_file:
             mod_set_dict = json.load(json_file)
-        for mod_set_id in mod_set_dict:
-            try:
-                if mod_set_dict[mod_set_id]['type'] == 'ModifierSetAbridged':
-                    modifierset = ModifierSet.from_dict_abridged(
-                        mod_set_dict[mod_set_id], _rad_modifiers)
-                else:
-                    modifierset = ModifierSet.from_dict(mod_set_dict[mod_set_id])
-                modifierset.lock()
-                _json_modifier_sets[mod_set_id] = modifierset
-            except Exception:
-                raise ValueError(
-                        'Honeybee JSON file {} is not formatted correctly for inclusion '
-                        'in the honeybee_radiance modifier set library.\nJSON must be '
-                        'formatted with ModifierSet identifiers as keys and abridged '
-                        'ModifierSet dictionaries as values'.format(f_path))
+        if 'type' in mod_set_dict:  # single object
+            load_modifier_set_object(mod_set_dict)
+        else:  # a collection of several objects
+            for mod_set_id in mod_set_dict:
+                load_modifier_set_object(mod_set_dict[mod_set_id])

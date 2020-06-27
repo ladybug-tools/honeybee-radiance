@@ -7,11 +7,32 @@ import os
 import json
 
 
-# empty dictionaries to hold rad-loaded modifiers
+# empty dictionary to hold loaded modifiers
 _rad_modifiers = {}
 
 
-# load modifiers from the default and user-supplied files
+# first load the honeybee defaults
+with open(folders.defaults_file) as json_file:
+    default_data = json.load(json_file)['modifiers']
+for mod_dict in default_data:
+    m_class = modifier_class_from_type_string(mod_dict['type'].lower())
+    mod = m_class.from_dict(mod_dict)
+    mod.lock()
+    _rad_modifiers[mod_dict['identifier']] = mod
+
+
+# then load modifiers from the user-supplied files
+def load_modifier_object(mod_dict):
+    """Load a modifier object from a dictionary and add it to the library dict."""
+    try:
+        m_class = modifier_class_from_type_string(mod_dict['type'].lower())
+        mod = m_class.from_dict(mod_dict)
+        mod.lock()
+        _rad_modifiers[mod_dict['identifier']] = mod
+    except (TypeError, KeyError):
+        pass  # not a Honeybee Modifier JSON; possibly a comment
+
+
 for f in os.listdir(folders.modifier_lib):
     f_path = os.path.join(folders.modifier_lib, f)
     if os.path.isfile(f_path):
@@ -28,16 +49,8 @@ for f in os.listdir(folders.modifier_lib):
         if f_path.endswith('.json'):
             with open(f_path) as json_file:
                 data = json.load(json_file)
-            for mod_identifier in data:
-                try:
-                    mod_dict = data[mod_identifier]
-                    m_class = modifier_class_from_type_string(mod_dict['type'].lower())
-                    mod = m_class.from_dict(mod_dict)
-                    mod.lock()
-                    _rad_modifiers[mod_identifier] = mod
-                except Exception:
-                    raise ValueError(
-                        'Honeybee JSON file {} is not formatted correctly for inclusion '
-                        'in the honeybee_radiance modifier library.\nJSON must be '
-                        'formatted with modifier identifiers as keys and modifier '
-                        'dictionaries as values'.format(f_path))
+            if 'type' in data:  # single object
+                load_modifier_object(data)
+            else:  # a collection of several objects
+                for mod_identifier in data:
+                    load_modifier_object(data[mod_identifier])
