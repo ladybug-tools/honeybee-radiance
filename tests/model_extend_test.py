@@ -5,7 +5,7 @@ from honeybee.face import Face
 from honeybee.shade import Shade
 from honeybee.aperture import Aperture
 from honeybee.door import Door
-from honeybee.boundarycondition import boundary_conditions, Ground, Outdoors
+from honeybee.boundarycondition import Ground, Outdoors
 from honeybee.facetype import face_types
 
 from honeybee_radiance.properties.model import ModelRadianceProperties
@@ -14,11 +14,6 @@ from honeybee_radiance.dynamic import RadianceSubFaceState, RadianceShadeState, 
 from honeybee_radiance.modifierset import ModifierSet
 from honeybee_radiance.modifier import Modifier
 from honeybee_radiance.modifier.material import Plastic, Glass, Trans, BSDF
-
-from honeybee_radiance.lib.modifiers import generic_floor, generic_wall, \
-    generic_ceiling, generic_door, generic_exterior_window, generic_interior_window, \
-    generic_exterior_shade, generic_interior_shade, air_boundary
-
 
 from honeybee_radiance_folder.folder import ModelFolder
 from ladybug.futil import nukedir
@@ -46,13 +41,12 @@ def test_radiance_properties():
     assert hasattr(model.properties, 'radiance')
     assert isinstance(model.properties.radiance, ModelRadianceProperties)
     assert isinstance(model.properties.host, Model)
-    assert len(model.properties.radiance.modifiers) == 10
+    assert len(model.properties.radiance.modifiers) == 1
     assert len(model.properties.radiance.blk_modifiers) == 1
     for mat in model.properties.radiance.modifiers:
         assert isinstance(mat, Modifier)
     assert len(model.properties.radiance.face_modifiers) == 0
     assert len(model.properties.radiance.modifier_sets) == 0
-    assert isinstance(model.properties.radiance.global_modifier_set, ModifierSet)
 
 
 def test_check_duplicate_modifier_set_identifiers():
@@ -63,6 +57,9 @@ def test_check_duplicate_modifier_set_identifiers():
         face.apertures_by_ratio(0.2, 0.01)
     for face in second_floor[1:5]:
         face.apertures_by_ratio(0.2, 0.01)
+    mod_set_bottom = ModifierSet('Lower_Floor_Modifier_Set')
+    first_floor.properties.radiance.modifier_set = mod_set_bottom
+    second_floor.properties.radiance.modifier_set = mod_set_bottom
 
     pts_1 = [Point3D(0, 0, 6), Point3D(0, 10, 6), Point3D(10, 10, 6), Point3D(10, 0, 6)]
     pts_2 = [Point3D(0, 0, 6), Point3D(5, 0, 9), Point3D(5, 10, 9), Point3D(0, 10, 6)]
@@ -87,7 +84,7 @@ def test_check_duplicate_modifier_set_identifiers():
 
     assert model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
     mod_set.unlock()
-    mod_set.identifier = 'Generic_Interior_Visible_Modifier_Set'
+    mod_set.identifier = 'Lower_Floor_Modifier_Set'
     mod_set.lock()
     assert not model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
     with pytest.raises(ValueError):
@@ -225,10 +222,9 @@ def test_to_dict_single_zone():
     assert 'radiance' in model_dict['properties']
     assert 'modifiers' in model_dict['properties']['radiance']
     assert 'modifier_sets' in model_dict['properties']['radiance']
-    assert 'global_modifier_set' in model_dict['properties']['radiance']
 
-    assert len(model_dict['properties']['radiance']['modifiers']) == 14
-    assert len(model_dict['properties']['radiance']['modifier_sets']) == 1
+    assert len(model_dict['properties']['radiance']['modifiers']) == 5
+    assert len(model_dict['properties']['radiance']['modifier_sets']) == 0
 
     assert model_dict['rooms'][0]['faces'][0]['properties']['radiance']['modifier'] == \
         dark_floor.identifier
@@ -275,10 +271,9 @@ def test_to_dict_multizone_house():
     assert 'radiance' in model_dict['properties']
     assert 'modifiers' in model_dict['properties']['radiance']
     assert 'modifier_sets' in model_dict['properties']['radiance']
-    assert 'global_modifier_set' in model_dict['properties']['radiance']
 
-    assert len(model_dict['properties']['radiance']['modifiers']) == 11
-    assert len(model_dict['properties']['radiance']['modifier_sets']) == 2
+    assert len(model_dict['properties']['radiance']['modifiers']) == 2
+    assert len(model_dict['properties']['radiance']['modifier_sets']) == 1
 
     assert model_dict['rooms'][0]['faces'][5]['boundary_condition']['type'] == 'Surface'
     assert model_dict['rooms'][1]['faces'][0]['boundary_condition']['type'] == 'Surface'
@@ -359,12 +354,12 @@ def test_writer_to_rad_folder():
     north_face = room[1]
     north_face.overhang(0.25, indoor=False)
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
-                    Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
     door = Door('Front_Door', Face3D(door_verts))
     north_face.add_door(door)
 
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
-                        Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
     aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
     triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
     aperture.properties.radiance.modifier = triple_pane

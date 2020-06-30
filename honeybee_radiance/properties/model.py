@@ -4,7 +4,6 @@ from ..dynamic.group import DynamicShadeGroup, DynamicSubFaceGroup
 from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import BSDF
-from ..lib.modifiersets import generic_modifier_set_visible
 from ..lib.modifiers import black, generic_context
 
 from honeybee.extensionutil import model_extension_dicts
@@ -31,7 +30,6 @@ class ModelRadianceProperties(object):
         * shade_modifiers
         * bsdf_modifiers
         * modifier_sets
-        * global_modifier_set
         * dynamic_shade_groups
         * dynamic_subface_groups
         * shade_group_identifiers
@@ -51,21 +49,20 @@ class ModelRadianceProperties(object):
     def modifiers(self):
         """A list of all unique modifiers in the model.
 
-        This includes modifiers across all Faces, Apertures, Doors, Shades,
-        Room ModifierSets, and the global_modifier_set. It also includes modifiers
-        for any dynamic states assigned to these objects.
+        This includes modifiers across all Faces, Apertures, Doors, Shades, Room
+        ModifierSets, and modifiers for any dynamic states assigned to these objects.
 
-        However, it excludes blk_modifiers and the modifier_direct of any states.
-        These can be obtained separately from the blk_modifiers property.
+        However, it excludes modifiers in the default modifier set. It also excludes
+        blk_modifiers and the modifier_direct of any states, which can be obtained
+        separately from the blk_modifiers property.
         """
-        all_mods = self.global_modifier_set.modifiers_unique + self.room_modifiers + \
-            self.face_modifiers + self.shade_modifiers
+        all_mods = self.room_modifiers + self.face_modifiers + self.shade_modifiers
         return list(set(all_mods))
 
     @property
     def blk_modifiers(self):
         """A list of all unique modifier_blk in the model.
-        
+
         This includes modifier_blk across all Faces, Apertures, Doors, and Shades.
         It also includes modifier_direct for any dynamic states assigned to
         these objects.
@@ -83,11 +80,7 @@ class ModelRadianceProperties(object):
 
     @property
     def room_modifiers(self):
-        """A list of all unique modifiers assigned to Room ModifierSets.
-
-        Note that this does not include modifiers in the global_modifier_set.
-        For these, you can request global_modifier_set.modifiers_unique.
-        """
+        """A list of all unique modifiers assigned to Room ModifierSets."""
         room_mods = []
         for cnstr_set in self.modifier_sets:
             room_mods.extend(cnstr_set.modified_modifiers_unique)
@@ -148,17 +141,6 @@ class ModelRadianceProperties(object):
         return list(set(modifier_sets))  # catch equivalent modifier sets
 
     @property
-    def global_modifier_set(self):
-        """A default ModifierSet object for all unassigned objects in the Model.
-
-        This ModifierSet will be written in its entirety to the dictionary
-        representation of ModelRadianceProperties as well as the resulting OpenStudio
-        model.  This is to ensure that all objects lacking a modifier specification
-        always have a default.
-        """
-        return generic_modifier_set_visible
-
-    @property
     def dynamic_shade_groups(self):
         """Get a list of DynamicShadeGroups in the model.
 
@@ -202,14 +184,14 @@ class ModelRadianceProperties(object):
             if shade.properties.radiance._dynamic_group_identifier:
                 group_ids.add(shade.properties.radiance._dynamic_group_identifier)
         return list(group_ids)
-    
+
     @property
     def subface_group_identifiers(self):
         """Get a list of identifers for all the DynamicSubFaceGroups in the model."""
         group_ids = set()
         for subface in self.host.apertures + self.host.doors:
             if subface.properties.radiance._dynamic_group_identifier:
-                 group_ids.add(subface.properties.radiance._dynamic_group_identifier)
+                group_ids.add(subface.properties.radiance._dynamic_group_identifier)
         return list(group_ids)
 
     def faces_by_blk(self):
@@ -315,7 +297,7 @@ class ModelRadianceProperties(object):
         """Check that there are no duplicate ModifierSet identifiers in the model."""
         mod_set_identifiers = set()
         duplicate_identifiers = set()
-        for mod_set in self.modifier_sets + [self.global_modifier_set]:
+        for mod_set in self.modifier_sets:
             if mod_set.identifier not in mod_set_identifiers:
                 mod_set_identifiers.add(mod_set.identifier)
             else:
@@ -367,22 +349,12 @@ class ModelRadianceProperties(object):
                 shade.properties.radiance.apply_properties_from_dict(
                     s_dict, modifiers)
 
-    def to_dict(self, include_global_modifier_set=True):
-        """Return Model radiance properties as a dictionary.
-
-        include_global_modifier_set: Boolean to note whether the
-            global_modifier_set should be included within the dictionary. This
-            will ensure that all objects lacking a modifier specification always
-            have a default modifier. Default: True.
-        """
+    def to_dict(self):
+        """Return Model radiance properties as a dictionary."""
         base = {'radiance': {'type': 'ModelRadianceProperties'}}
 
         # add all ModifierSets to the dictionary
         base['radiance']['modifier_sets'] = []
-        if include_global_modifier_set:
-            base['radiance']['global_modifier_set'] = self.global_modifier_set.identifier
-            base['radiance']['modifier_sets'].append(
-                self.global_modifier_set.to_dict(abridged=True, none_for_defaults=False))
         modifier_sets = self.modifier_sets
         for mod_set in modifier_sets:
             base['radiance']['modifier_sets'].append(mod_set.to_dict(abridged=True))
@@ -392,8 +364,6 @@ class ModelRadianceProperties(object):
         for mod_set in modifier_sets:
             room_mods.extend(mod_set.modified_modifiers_unique)
         all_mods = room_mods + self.face_modifiers + self.shade_modifiers
-        if include_global_modifier_set:
-            all_mods.extend(self.global_modifier_set.modifiers_unique)
         modifiers = list(set(all_mods))
         base['radiance']['modifiers'] = []
         for mod in modifiers:
