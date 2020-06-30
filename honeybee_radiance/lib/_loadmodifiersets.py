@@ -2,23 +2,24 @@
 from honeybee_radiance.config import folders
 from honeybee_radiance.modifierset import ModifierSet
 
-from ._loadmodifiers import _rad_modifiers
+from ._loadmodifiers import _loaded_modifiers
 
 import os
 import json
 
 
 # empty dictionary to hold loaded modifier sets
-_json_modifier_sets = {}
+_loaded_modifier_sets = {}
 
 
 # first load the honeybee defaults
 with open(folders.defaults_file) as json_file:
     default_data = json.load(json_file)['modifier_sets']
 for mset_dict in default_data:
-    modifierset = ModifierSet.from_dict_abridged(mset_dict, _rad_modifiers)
+    modifierset = ModifierSet.from_dict_abridged(mset_dict, _loaded_modifiers)
     modifierset.lock()
-    _json_modifier_sets[mset_dict['identifier']] = modifierset
+    _loaded_modifier_sets[mset_dict['identifier']] = modifierset
+_default_mod_sets = set(list(_loaded_modifier_sets.keys()))
 
 
 # then load modifier sets from the user-supplied files
@@ -26,11 +27,13 @@ def load_modifier_set_object(mset_dict):
     """Load a modifier set object from a dictionary and add it to the lib dict."""
     try:
         if mset_dict['type'] == 'ModifierSetAbridged':
-            modifierset = ModifierSet.from_dict_abridged(mset_dict, _rad_modifiers)
+            modifierset = ModifierSet.from_dict_abridged(mset_dict, _loaded_modifiers)
         else:
             modifierset = ModifierSet.from_dict(mset_dict)
         modifierset.lock()
-        _json_modifier_sets[mset_dict['identifier']] = modifierset
+        assert mset_dict['identifier'] not in _default_mod_sets, 'Cannot overwrite ' \
+            'default modifier set "{}".'.format(mset_dict['identifier'])
+        _loaded_modifier_sets[mset_dict['identifier']] = modifierset
     except (TypeError, KeyError, ValueError):
         pass  # not a Honeybee ModifierSet JSON; possibly a comment
 

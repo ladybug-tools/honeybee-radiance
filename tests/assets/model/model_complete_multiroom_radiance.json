@@ -490,7 +490,6 @@
                     "air_boundary_modifier": null
                 }
             ],
-            "global_modifier_set": "Generic_Interior_Visible_Modifier_Set",
             "modifiers": [
                 {
                     "modifier": null,

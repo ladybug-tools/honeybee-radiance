@@ -8,7 +8,7 @@ import json
 
 
 # empty dictionary to hold loaded modifiers
-_rad_modifiers = {}
+_loaded_modifiers = {}
 
 
 # first load the honeybee defaults
@@ -18,7 +18,8 @@ for mod_dict in default_data:
     m_class = modifier_class_from_type_string(mod_dict['type'].lower())
     mod = m_class.from_dict(mod_dict)
     mod.lock()
-    _rad_modifiers[mod_dict['identifier']] = mod
+    _loaded_modifiers[mod_dict['identifier']] = mod
+_default_mods = set(list(_loaded_modifiers.keys()))
 
 
 # then load modifiers from the user-supplied files
@@ -28,7 +29,9 @@ def load_modifier_object(mod_dict):
         m_class = modifier_class_from_type_string(mod_dict['type'].lower())
         mod = m_class.from_dict(mod_dict)
         mod.lock()
-        _rad_modifiers[mod_dict['identifier']] = mod
+        assert mod_dict['identifier'] not in _default_mods, 'Cannot overwrite ' \
+            'default modifier "{}".'.format(mod_dict['identifier'])
+        _loaded_modifiers[mod_dict['identifier']] = mod
     except (TypeError, KeyError):
         pass  # not a Honeybee Modifier JSON; possibly a comment
 
@@ -43,7 +46,7 @@ for f in os.listdir(folders.modifier_lib):
                     for mod_dict in rad_dicts:
                         mod = dict_to_modifier(mod_dict)
                         mod.lock()
-                        _rad_modifiers[mod.identifier] = mod
+                        _loaded_modifiers[mod.identifier] = mod
                 except ValueError:
                     pass  # empty rad file with no modifiers in them
         if f_path.endswith('.json'):

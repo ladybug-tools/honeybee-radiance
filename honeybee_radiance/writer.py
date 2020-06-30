@@ -155,7 +155,7 @@ def model_to_rad(model, blk=False, minimal=False):
             studies to understand the contribution of individual apertures.
         minimal: Boolean to note whether the radiance string should be written
             in a minimal format (with spaces instead of line breaks). Default: False.
-    
+
     Returns:
         A tuple of two strings.
 
@@ -168,6 +168,10 @@ def model_to_rad(model, blk=False, minimal=False):
     modifier_str = ['#   ============== MODIFIERS ==============\n']
     rad_prop = model.properties.radiance
     modifiers = rad_prop.blk_modifiers if blk else rad_prop.modifiers
+    if not blk:
+        # must be imported here to avoid circular imports
+        from .lib.modifiersets import generic_modifier_set_visible
+        modifiers = set(modifiers + generic_modifier_set_visible.modifiers_unique)
     for mod in modifiers:
         modifier_str.append(mod.to_radiance(minimal))
 
@@ -329,7 +333,7 @@ def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
         sub_folder: The sub-folder for the three files (relative to the model folder).
         group: A DynamicShadeGroup object to be written into files.
         minimal: Boolean noting whether radiance strings should be written minimally.
-    
+
     Returns:
         A list of dictionaries to be written into the states.json file.
     """
@@ -354,7 +358,7 @@ def _write_dynamic_subface_files(folder, sub_folder, group, minimal=False):
         sub_folder: The sub-folder for the three files (relative to the model folder).
         group: A DynamicSubFaceGroup object to be written into files.
         minimal: Boolean noting whether radiance strings should be written minimally.
-    
+
     Returns:
         A list of dictionaries to be written into the states.json file.
     """
@@ -384,7 +388,7 @@ def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False)
         group: A DynamicSubFaceGroup object to be written into files.
         states_json_list: A list to be written into the states.json file.
         minimal: Boolean noting whether radiance strings should be written minimally.
-    
+
     Returns:
         A list of dictionaries to be written into the states.json file.
     """
@@ -509,7 +513,7 @@ def _write_static_files(
 
 def _unique_modifiers(geometry_objects):
     """Get a list of unique modifiers across an array of geometry objects.
-    
+
     Args:
         geometry_objects: An array of geometry objects (Faces, Apertures,
             Doors, Shades) for which unique modifiers will be determined.
@@ -532,7 +536,7 @@ def _unique_modifier_blk_combinations(geometry_objects):
         geometry_objects: An array of geometry objects (Faces, Apertures,
             Doors, Shades) for which unique combinations of modifier and
             modifier_blk will be determined.
-    
+
     Returns:
         A tuple with two objects.
 
