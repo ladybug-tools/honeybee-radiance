@@ -10,7 +10,6 @@ except ImportError:
 from honeybee_radiance.reader import string_to_dicts
 from honeybee_radiance.mutil import dict_to_modifier, modifier_class_from_type_string
 
-from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
 
 import sys
@@ -24,6 +23,7 @@ _logger = logging.getLogger(__name__)
 @click.group(help='Commands for translating Honeybee JSON files to/from RAD.')
 def translate():
     pass
+
 
 @translate.command('model-to-rad-folder')
 @click.argument('model-json')
@@ -119,6 +119,7 @@ def model_to_rad(model_json, blk, minimal, output_file):
     else:
         sys.exit(0)
 
+
 @translate.command('modifiers-to-rad')
 @click.argument('modifier-json')
 @click.option('--minimal', help='Boolean to note whether the radiance strings should '
@@ -161,6 +162,7 @@ def modifier_to_rad(modifier_json, minimal, output_file):
         sys.exit(1)
     else:
         sys.exit(0)
+
 
 @translate.command('modifiers-from-rad')
 @click.argument('modifier-rad')
