@@ -16,3 +16,4 @@ tox.ini
 /tests/assets/temp/*
 *.code-workspace
 honeybee.log*
+tmp/
