@@ -1,17 +1,40 @@
-FROM python:3.7
+FROM ubuntu:eoan
 
-WORKDIR /tmp/
+MAINTAINER Ladybug Tools info@ladybug.tools
+
+# Install core software deps
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    curl \
+    ca-certificates \
+    python3.7 \
+    python3-pip \
+    unzip \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN adduser ladybugbot --uid 1000 --disabled-password --gecos ""
+USER ladybugbot
+WORKDIR /home/ladybugbot
+
+# Install radiance
+ENV RAYPATH=/home/ladybugbot/lib
+ENV PATH="/home/ladybugbot/bin:${PATH}"
 RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.5.2_Linux.zip --output radiance.zip \
 && unzip -p radiance.zip | tar xz \
-&& mv ./radiance-Linux/usr/local/radiance/bin/* /usr/local/bin \
-&& mv ./radiance-Linux/usr/local/radiance/lib/* /usr/local/lib \
-&& rm -rf `ls`
+&& mkdir bin \
+&& mkdir lib \
+&& mv ./radiance-Linux/usr/local/radiance/bin/* /home/ladybugbot/bin \
+&& mv ./radiance-Linux/usr/local/radiance/lib/* /home/ladybugbot/lib \
+&& rm -rf radiance-Linux \
+&& rm radiance.zip
 
-ENV RAYPATH=/usr/local/lib
+# Install honeybee-radiance cli
+ENV PATH="/home/ladybugbot/.local/bin:${PATH}"
+COPY . honeybee-radiance
+RUN pip3 install setuptools
+RUN pip3 install ./honeybee-radiance[cli]
 
-WORKDIR /usr/app/
-
-COPY . .
-RUN pip install .[cli]
-
-WORKDIR /opt/run-folder/
+# Set workdir
+WORKDIR /home/ladybugbot/run
