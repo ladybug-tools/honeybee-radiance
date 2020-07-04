@@ -261,7 +261,7 @@ def model_to_rad_folder(model, folder=None, folder_type=2, config_file=None,
         folder = os.path.join(folders.default_simulation_folder, model_id, 'Radiance')
     if not os.path.isdir(folder):
         preparedir(folder)  # create the directory if it's not there
-    model_folder = ModelFolder(folder, config_file)
+    model_folder = ModelFolder(folder, 'model', config_file)
     model_folder.write(folder_type=folder_type, cfg=folder_config.full, overwrite=True)
 
     # gather and write static apertures to the folder
