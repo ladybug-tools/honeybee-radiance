@@ -13,11 +13,13 @@ from .lib import lib
 from .sky import sky
 from .grid import grid
 from .sunpath import sunpath
+from .octree import octree
 
 # command group for all radiance extension commands.
 @click.group(help='honeybee radiance commands.')
 def radiance():
     pass
+
 
 # add sub-commands to radiance
 radiance.add_command(translate)
@@ -25,6 +27,7 @@ radiance.add_command(lib)
 radiance.add_command(sky)
 radiance.add_command(grid)
 radiance.add_command(sunpath)
+radiance.add_command(octree)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)

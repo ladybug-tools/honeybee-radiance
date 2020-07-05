@@ -148,6 +148,16 @@ class Folders(object):
         self._load_from_file(cfg)
         self._config_file = cfg
 
+    @property
+    def env(self):
+        "Return Radiance environment as a dictionary."
+        env = {}
+        if self.radbin_path:
+            env['PATH'] = self.radbin_path.replace('\\', '/')
+        if self.radlib_path:
+            env['RAYPATH'] = self.radlib_path.replace('\\', '/')
+        return env
+
     def _load_from_file(self, file_path):
         """Set all of the the properties of this object from a config JSON file.
 
