@@ -14,6 +14,7 @@ tox.ini
 .eggs
 /radiance*
 /tests/assets/temp/*
+/tests/assets/sample_office/temp/*
 *.code-workspace
 honeybee.log*
 tmp/
