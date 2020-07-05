@@ -9,6 +9,7 @@ except ImportError:
 
 import sys
 import logging
+import os
 
 from honeybee_radiance_folder import ModelFolder
 from honeybee_radiance_command.oconv import Oconv
@@ -73,6 +74,8 @@ def create_octree_from_folder(
         if dry_run:
             click.echo(cmd)
         else:
+            env = folders.env
+            env = dict(os.environ, **env) if env else None
             cmd.run(env=folders.env, cwd=model_folder.folder)
     except Exception:
         _logger.exception('Failed to generate octree.')
