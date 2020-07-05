@@ -5,6 +5,15 @@ python:
   - "3.6"
   - "3.7"
 
+before_install:
+# install Radiance
+- wget https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.5.2_Linux.zip
+- unzip Radiance_5.5.2_Linux.zip
+- tar -xzvf radiance-Linux.tar.gz
+- sudo cp -a ./radiance-Linux/usr/local/radiance/bin/. /usr/local/bin
+- sudo cp -a ./radiance-Linux/usr/local/radiance/lib/. /usr/local/lib/ray
+- export RAYPATH = /usr/local/lib/ray
+
 install:
   - pip install -r dev-requirements.txt
   - pip install -r requirements.txt
