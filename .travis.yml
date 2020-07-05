@@ -10,17 +10,17 @@ before_install:
 - wget https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.5.2_Linux.zip
 - unzip Radiance_5.5.2_Linux.zip
 - tar -xzvf radiance-Linux.tar.gz
-- sudo mv ./radiance-Linux/usr/local/radiance/bin/* /usr/local/bin
+- sudo cp -r radiance-Linux/usr/local/radiance/bin/* /usr/local/bin
 - sudo mkdir /usr/local/lib/ray
-- sudo mv ./radiance-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
+- sudo cp -r radiance-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
 
 install:
   - pip install -r dev-requirements.txt
   - pip install -r requirements.txt
 
 script:
-  - export PATH="/usr/local/bin:${PATH}"
-  - export RAYPATH="/usr/local/lib/ray"
+  - export PATH=$PATH:/usr/local/bin
+  - export RAYPATH=/usr/local/lib/ray
   - python -m pytest --cov=. tests/
 
 after_success:
