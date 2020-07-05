@@ -24,6 +24,7 @@ location_dict = {
 location = Location.from_dict(location_dict)
 epw_file = './tests/assets/epw/denver.epw'
 
+
 def test_creation():
     sp = Sunpath(location, 10)
     assert sp.location == location
