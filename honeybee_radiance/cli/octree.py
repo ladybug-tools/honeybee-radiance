@@ -74,9 +74,11 @@ def create_octree_from_folder(
         if dry_run:
             click.echo(cmd)
         else:
-            env = folders.env
+            env = None
+            if folders.env != {}:
+                env = folder.env
             env = dict(os.environ, **env) if env else None
-            cmd.run(env=folders.env, cwd=model_folder.folder)
+            cmd.run(env=env, cwd=model_folder.folder)
     except Exception:
         _logger.exception('Failed to generate octree.')
         sys.exit(1)
