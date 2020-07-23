@@ -6,3 +6,4 @@ tests/
 .releaserc.json
 .travis.yml
 deploy.sh
+Dockerfile

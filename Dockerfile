@@ -37,4 +37,5 @@ RUN pip3 install setuptools
 RUN pip3 install ./honeybee-radiance[cli]
 
 # Set workdir
+RUN mkdir -p /home/ladybugbot/run
 WORKDIR /home/ladybugbot/run
