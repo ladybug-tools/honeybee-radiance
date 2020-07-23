@@ -76,7 +76,7 @@ def create_octree_from_folder(
         else:
             env = None
             if folders.env != {}:
-                env = folder.env
+                env = folders.env
             env = dict(os.environ, **env) if env else None
             cmd.run(env=env, cwd=model_folder.folder)
     except Exception:
