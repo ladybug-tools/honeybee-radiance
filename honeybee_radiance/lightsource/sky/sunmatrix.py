@@ -155,28 +155,35 @@ class SunMatrix(object):
         """Write wea to a file.
 
         Args:
-            folder: Path to target folder (default: '.').
-            name: Optional name for wea file (default: in.wea)
-            hoys: Optional list of hoys to filter the annual hours. If None it will
-                generate an annual wea file.
+            folder: Path to target folder (Default: '.').
+            name: Optional name for the wea file (Default: in.wea)
+            hoys: Optional list of hoys to filter the hours of the wea. If None,
+                this object's wea will be used as-is. Note that you may not want
+                to use this input if this object's wea is not annual since an
+                exception will be raised if a given hoy is not found in the
+                wea. (Default: None).
 
         Returns:
             Path to wea file.
         """
         name = name or 'in.wea'
         file_path = os.path.join(folder, name)
-        return self.wea.write(file_path=file_path, hoys=hoys)
+        wea_obj = self.wea if hoys is None else self.wea.filter_by_hoys(hoys)
+        return wea_obj.write(file_path=file_path)
 
     def to_file(self, folder, name=None, hoys=None, mkdir=False):
         """Write matrix to a Radiance file.
 
-        This method also writes the wea information to a wea file.
+        This method also writes the wea information to a .wea file.
 
         Args:
             folder: Target folder.
             name: File name.
-            hoys: Optional list of hoys to filter the annual hours. If None it will
-                generate an annual wea file.
+            hoys: Optional list of hoys to filter the hours of the wea. If None,
+                this object's wea will be used as-is. Note that you may not want
+                to use this input if this object's wea is not annual since an
+                exception will be raised if a given hoy is not found in the
+                wea. (Default: None).
             mkdir: A boolean to note if the directory should be created if doesn't
                 exist (default: False).
 
