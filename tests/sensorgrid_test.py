@@ -94,5 +94,5 @@ def test_split_grid():
     assert len(info) == 6
     for i in range(6 - 1):
         assert info[i]['count'] == 4
-    
+
     assert info[-1]['count'] == 1

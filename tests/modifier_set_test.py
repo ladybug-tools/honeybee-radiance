@@ -68,7 +68,7 @@ def test_setting_modifier():
     opaque_material_1 = Plastic.from_single_reflectance('test_opaque', 0.5)
     opaque_material_2 = Plastic.from_single_reflectance('test_opaque', 0.45)
     opaque_material_3 = Plastic.from_single_reflectance('test_opaque', 0.55)
-    
+
     default_set.wall_set.exterior_modifier = opaque_material_1
     assert default_set.wall_set.exterior_modifier == opaque_material_1
     assert len(default_set.modified_modifiers_unique) == 1

@@ -1,0 +1,56 @@
+# coding=utf-8
+"""Utilities to convert light source dictionaries to Python objects."""
+from honeybee_radiance.lightsource.sunpath import Sunpath
+from honeybee_radiance.lightsource.ground import Ground
+from honeybee_radiance.lightsource.sky.certainirradiance import CertainIrradiance
+from honeybee_radiance.lightsource.sky.cie import CIE
+from honeybee_radiance.lightsource.sky.climatebased import ClimateBased
+from honeybee_radiance.lightsource.sky.hemisphere import Hemisphere
+from honeybee_radiance.lightsource.sky.skydome import Skydome
+from honeybee_radiance.lightsource.sky.skymatrix import SkyMatrix
+from honeybee_radiance.lightsource.sky.sunmatrix import SunMatrix
+
+
+LIGHT_SOURCE_TYPES = \
+    ('Sunpath', 'Ground', 'CertainIrradiance', 'CIE', 'ClimateBased',
+     'Hemisphere', 'SkyDome', 'SkyMatrix', 'SunMatrix')
+
+
+def dict_to_light_source(light_source_dict, raise_exception=True):
+    """Get a Python object of any light source from a dictionary.
+
+    Args:
+        load_dict: A dictionary of any Honeybee energy load. Note
+            that this should be a non-abridged dictionary to be valid.
+        raise_exception: Boolean to note whether an excpetion should be raised
+            if the object is not identified as a load. Default: True.
+
+    Returns:
+        A Python object derived from the input load_dict.
+    """
+    try:  # get the type key from the dictionary
+        light_type = light_source_dict['type']
+    except KeyError:
+        raise ValueError('Load dictionary lacks required "type" key.')
+
+    if light_type == 'Sunpath':
+        return Sunpath.from_dict(light_source_dict)
+    elif light_type == 'Ground':
+        return Ground.from_dict(light_source_dict)
+    elif light_type == 'CertainIrradiance':
+        return CertainIrradiance.from_dict(light_source_dict)
+    elif light_type == 'CIE':
+        return CIE.from_dict(light_source_dict)
+    elif light_type == 'ClimateBased':
+        return ClimateBased.from_dict(light_source_dict)
+    elif light_type == 'Hemisphere':
+        return Hemisphere.from_dict(light_source_dict)
+    elif light_type == 'SkyDome':
+        return Skydome.from_dict(light_source_dict)
+    elif light_type == 'SkyMatrix':
+        return SkyMatrix.from_dict(light_source_dict)
+    elif light_type == 'SunMatrix':
+        return SunMatrix.from_dict(light_source_dict)
+    elif raise_exception:
+        raise ValueError(
+            '{} is not a recognized radiance Light Source type'.format(light_type))
