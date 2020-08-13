@@ -9,7 +9,7 @@ def test_glass():
     assert gl.r_transmissivity == 0
     assert gl.g_transmissivity == 0
     assert gl.b_transmissivity == 0
-    assert gl.refraction_index == None
+    assert gl.refraction_index is None
     assert gl.to_radiance(
         minimal=True) == 'void glass test_glass 0 0 3 0.0 0.0 0.0'
 

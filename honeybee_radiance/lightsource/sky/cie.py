@@ -294,7 +294,7 @@ class CIE(_PointInTime):
             else '%.3f_%.3f_%s.sky' % (
                 self.altitude, self.azimuth,
                 self.sky_type_human_readable.replace(' ', '_').lower()
-            )
+        )
         return futil.write_to_file_by_name(folder, name, content, mkdir)
 
     def __eq__(self, value):

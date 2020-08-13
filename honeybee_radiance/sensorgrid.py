@@ -10,8 +10,7 @@ import ladybug.futil as futil
 import os
 try:
     from itertools import izip as zip
-except:
-    # python 3
+except ImportError:  # python 3
     pass
 
 
@@ -207,7 +206,7 @@ class SensorGrid(object):
     @property
     def room_identifier(self):
         """Get or set text for the Room identifier to which this SensorGrid belongs.
-        
+
         This will be used in the info_dict method to narrow down the
         number of aperture groups that have to be run with this sensor grid.
         If None, the grid will be run with all aperture groups in the model.
@@ -217,18 +216,18 @@ class SensorGrid(object):
     @room_identifier.setter
     def room_identifier(self, n):
         self._room_identifier = typing.valid_string(n)
-    
+
     @property
     def light_path(self):
         """Get or set list of lists for the light path from the grid to the sky.
-        
+
         Each sub-list contains identifiers of aperture groups through which light
         passes. (eg. [['SouthWindow1'], ['static_apertures', 'NorthWindow2']]).
         Setting this property will override any auto-calculation of the light
         path from the model upon export to the simulation.
         """
         return self._light_path
-    
+
     @light_path.setter
     def light_path(self, l_path):
         if l_path is not None:
@@ -239,7 +238,7 @@ class SensorGrid(object):
                     'light_path sub-list. Got {}.'.format(type(ap_list))
                 for ap in ap_list:
                     assert isinstance(ap, str), 'Expected text for light_path ' \
-                    'aperture group identifier. Got {}.'.format(type(ap))
+                        'aperture group identifier. Got {}.'.format(type(ap))
         self._light_path = l_path
 
     def info_dict(self, model=None):

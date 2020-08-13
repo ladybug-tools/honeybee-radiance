@@ -309,7 +309,7 @@ class ClimateBased(_PointInTime):
             else '%.3f_%.3f_%d_%d.sky' % (
                 self.altitude, self.azimuth,
                 self.direct_normal_irradiance, self.diffuse_horizontal_irradiance
-            )
+        )
         return futil.write_to_file_by_name(folder, name, content, mkdir)
 
     def __eq__(self, value):
