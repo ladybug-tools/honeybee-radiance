@@ -389,17 +389,17 @@ def test_writer_to_rad_folder():
     model_folder = ModelFolder(folder)
 
     ap_dir = model_folder.aperture_folder(full=True)
-    assert os.path.isfile(os.path.join(ap_dir, '{}.rad'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(ap_dir, '{}.mat'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(ap_dir, '{}.blk'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(ap_dir, 'aperture.rad'))
+    assert os.path.isfile(os.path.join(ap_dir, 'aperture.mat'))
+    assert os.path.isfile(os.path.join(ap_dir, 'aperture.blk'))
 
     scene_dir = model_folder.scene_folder(full=True)
-    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.rad'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.mat'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(scene_dir, '{}_envelope.blk'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.rad'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.mat'.format(model.identifier)))
-    assert os.path.isfile(os.path.join(scene_dir, '{}_shades.blk'.format(model.identifier)))
+    assert os.path.isfile(os.path.join(scene_dir, 'envelope.rad'))
+    assert os.path.isfile(os.path.join(scene_dir, 'envelope.mat'))
+    assert os.path.isfile(os.path.join(scene_dir, 'envelope.blk'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shades.rad'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shades.mat'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shades.blk'))
 
     # clean up the folder
     nukedir(folder, rmdir=True)
@@ -443,12 +443,12 @@ def test_writer_to_rad_folder_dynamic():
     north_face = room[1]
     north_face.overhang(0.25, indoor=False)
     door_verts = [Point3D(2, 10, 0.1), Point3D(1, 10, 0.1),
-                    Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
+                  Point3D(1, 10, 2.5), Point3D(2, 10, 2.5)]
     door = Door('Front_Door', Face3D(door_verts))
     north_face.add_door(door)
 
     aperture_verts = [Point3D(4.5, 10, 1), Point3D(2.5, 10, 1),
-                        Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
+                      Point3D(2.5, 10, 2.5), Point3D(4.5, 10, 2.5)]
     aperture = Aperture('Front_Aperture', Face3D(aperture_verts))
     triple_pane = Glass.from_single_transmittance('custom_triple_pane_0.3', 0.3)
     aperture.properties.radiance.modifier = triple_pane

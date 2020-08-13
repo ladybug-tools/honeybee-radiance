@@ -23,9 +23,11 @@ def grid():
 
 
 @grid.command('split')
-@click.argument('grid-file')
+@click.argument('grid-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('count', type=int)
-@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--folder', help='Output folder.', default='.', show_default=True,
+              type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 @click.option('--log-file', help='Optional log file to output the name of the newly'
               ' created grids. By default the list will be printed out to stdout',
               type=click.File('w'), default='-')
@@ -54,9 +56,10 @@ def split_grid(grid_file, count, folder, log_file):
 
 
 @grid.command('merge')
-@click.argument('input-folder')
-@click.argument('base-name')
-@click.argument('extension', default='.pts')
+@click.argument('input-folder', type=click.Path(
+    file_okay=False, dir_okay=True, resolve_path=True))
+@click.argument('base-name', type=str)
+@click.argument('extension', default='.pts', type=str)
 @click.option('--folder', help='Optional output folder.', default='.', show_default=True)
 def merge_grid(input_folder, base_name, extension, folder):
     """Merge several radiance grid files into a single file.

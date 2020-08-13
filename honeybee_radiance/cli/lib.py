@@ -12,7 +12,6 @@ from honeybee_radiance.lib.modifiersets import modifier_set_by_identifier, \
     MODIFIER_SETS
 
 import sys
-import os
 import logging
 import json
 
@@ -22,6 +21,7 @@ _logger = logging.getLogger(__name__)
 @click.group(help='Commands for retrieving objects from the standards library.')
 def lib():
     pass
+
 
 @lib.command('modifiers')
 @click.option('--output-file', help='Optional file to output the JSON string of '
@@ -37,6 +37,7 @@ def modifiers(output_file):
     else:
         sys.exit(0)
 
+
 @lib.command('modifier-sets')
 @click.option('--output-file', help='Optional file to output the JSON string of '
               'the object. By default, it will be printed out to stdout',
@@ -50,6 +51,7 @@ def modifier_sets(output_file):
         sys.exit(1)
     else:
         sys.exit(0)
+
 
 @lib.command('modifier-by-id')
 @click.argument('modifier-id', type=str)
@@ -70,6 +72,7 @@ def modifier_by_id(modifier_id, output_file):
         sys.exit(1)
     else:
         sys.exit(0)
+
 
 @lib.command('modifier-set-by-id')
 @click.argument('modifier-set-id', type=str)
@@ -98,6 +101,7 @@ def modifier_set_by_id(modifier_set_id, none_defaults, abridged, output_file):
     else:
         sys.exit(0)
 
+
 @lib.command('modifiers-by-id')
 @click.argument('modifier-ids', nargs=-1)
 @click.option('--output-file', help='Optional file to output the JSON strings of '
@@ -118,6 +122,7 @@ def modifiers_by_id(modifier_ids, output_file):
         sys.exit(1)
     else:
         sys.exit(0)
+
 
 @lib.command('modifier-sets-by-id')
 @click.argument('modifier-set-ids', nargs=-1)

@@ -4,8 +4,8 @@ import honeybee.typing as typing
 import ladybug.futil as futil
 
 
-class _Skydome(object):
-    """Virtual Skydome base-class with Radiance ground and sky sphere.
+class _SkyDome(object):
+    """Virtual SkyDome base-class with Radiance ground and sky sphere.
 
     Properties:
         * ground_hemisphere
@@ -107,7 +107,7 @@ class _Skydome(object):
         return self.to_radiance()
 
 
-class _PointInTime(_Skydome):
+class _PointInTime(_SkyDome):
     """Point-in-time sky base-class with Radiance ground and sky sphere.
 
     Properties:
@@ -121,7 +121,7 @@ class _PointInTime(_Skydome):
     __slots__ = ('_ground_reflectance',)
 
     def __init__(self, ground_reflectance):
-        _Skydome.__init__(self)
+        _SkyDome.__init__(self)
         self.ground_reflectance = ground_reflectance
 
     @property

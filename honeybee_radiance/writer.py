@@ -268,21 +268,21 @@ def model_to_rad_folder(model, folder=None, folder_type=2, config_file=None,
     aps, aps_blk = model.properties.radiance.subfaces_by_blk()
     mods, mods_blk, mod_combs, mod_names = _collect_modifiers(aps, aps_blk)
     _write_static_files(
-        folder, model_folder.aperture_folder(full=True), model_id,
+        folder, model_folder.aperture_folder(full=True), 'aperture',
         aps, aps_blk, mods, mods_blk, mod_combs, mod_names, False, minimal)
 
     # gather and write static faces
     faces, faces_blk = model.properties.radiance.faces_by_blk()
     f_mods, f_mods_blk, mod_combs, mod_names = _collect_modifiers(faces, faces_blk)
     _write_static_files(
-        folder, model_folder.scene_folder(full=True), '{}_envelope'.format(model_id),
+        folder, model_folder.scene_folder(full=True), 'envelope',
         faces, faces_blk, f_mods, f_mods_blk, mod_combs, mod_names, True, minimal)
 
     # gather and write static shades
     shades, shades_blk = model.properties.radiance.shades_by_blk()
     s_mods, s_mods_blk, mod_combs, mod_names = _collect_modifiers(shades, shades_blk)
     _write_static_files(
-        folder, model_folder.scene_folder(full=True), '{}_shades'.format(model_id),
+        folder, model_folder.scene_folder(full=True), 'shades',
         shades, shades_blk, s_mods, s_mods_blk, mod_combs, mod_names, False, minimal)
 
     # write dynamic sub-face groups (apertures and doors)

@@ -51,8 +51,7 @@ def octree():
     help='A flag to show the command without running it.'
 )
 def create_octree_from_folder(
-    folder, output, include_aperture, default, add_before, add_after, dry_run
-        ):
+        folder, output, include_aperture, default, add_before, add_after, dry_run):
     """Generate a static octree from a folder.
 
     folder: Path to a Radiance model folder.
