@@ -44,7 +44,7 @@ def dict_to_object(honeybee_radiance_dict, raise_exception=True):
     else:
         try:
             return dict_to_primitive(honeybee_radiance_dict)
-        except ValueError:
+        except (NotImplementedError, ValueError):
             if raise_exception:
                 raise ValueError(
                     '{} is not a recognized honeybee radiance object'.format(obj_type))
