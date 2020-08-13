@@ -28,18 +28,18 @@ Here is an example of the output.
 
 """
 
-from ._skybase import _Skydome
+from ._skybase import _SkyDome
 import honeybee.typing as typing
 
 
-class Skydome(_Skydome):
+class SkyDome(_SkyDome):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     Use this sky to calculate daylight matrix.
     """
 
     def to_radiance(self, density=1):
-        """Radiance definition for Skydome.
+        """Radiance definition for SkyDome.
 
         Args:
             density: Sky patch subdivision density. This values is similar to -m option

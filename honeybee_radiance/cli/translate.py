@@ -26,7 +26,8 @@ def translate():
 
 
 @translate.command('model-to-rad-folder')
-@click.argument('model-json')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--folder', help='Folder on this computer, into which the Radiance '
               'folders will be written. If None, the files will be output in the'
               'same location as the model_json.', default=None, show_default=True)
@@ -36,9 +37,9 @@ def translate():
 @click.option('--config-file', help='An optional config file path to modify the '
               'default folder names. If None, folder.cfg in honeybee-radiance-folder '
               'will be used.', default=None, show_default=True)
-@click.option('--minimal', help='Boolean to note whether the radiance strings should '
-              'be written in a minimal format (with spaces instead of line breaks).',
-              default=False, show_default=True)
+@click.option('--minimal/--maximal', help='Flag to note whether the radiance strings '
+              'should be written in a minimal format (with spaces instead of line '
+              'breaks).', default=False, show_default=True)
 @click.option('--log-file', help='Optional log file to output the path of the radiance '
               'folder generated from the model. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
@@ -73,14 +74,15 @@ def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, l
 
 
 @translate.command('model-to-rad')
-@click.argument('model-json')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--blk', help='Boolean to note whether the "blacked out" version '
               'of the geometry should be output, which is useful for direct studies '
               'and isolation studies of individual apertures.',
               default=False, show_default=True)
-@click.option('--minimal', help='Boolean to note whether the radiance strings should '
-              'be written in a minimal format (with spaces instead of line breaks).',
-              default=False, show_default=True)
+@click.option('--minimal/--maximal', help='Flag to note whether the radiance strings '
+              'should be written in a minimal format (with spaces instead of line '
+              'breaks).', default=False, show_default=True)
 @click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-', show_default=True)
@@ -121,10 +123,11 @@ def model_to_rad(model_json, blk, minimal, output_file):
 
 
 @translate.command('modifiers-to-rad')
-@click.argument('modifier-json')
-@click.option('--minimal', help='Boolean to note whether the radiance strings should '
-              'be written in a minimal format (with spaces instead of line breaks).',
-              default=False, show_default=True)
+@click.argument('modifier-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--minimal/--maximal', help='Flag to note whether the radiance strings '
+              'should be written in a minimal format (with spaces instead of line '
+              'breaks).', default=False, show_default=True)
 @click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-', show_default=True)
@@ -165,7 +168,8 @@ def modifier_to_rad(modifier_json, minimal, output_file):
 
 
 @translate.command('modifiers-from-rad')
-@click.argument('modifier-rad')
+@click.argument('modifier-rad', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--output-file', help='Optional JSON file to output the JSON string of the'
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-', show_default=True)
@@ -173,13 +177,13 @@ def modifier_from_rad(modifier_rad, output_file):
     """Translate a Modifier JSON file to a honeybee JSON as an array of modifiers.
     \n
     Args:
-        modifier_rad: Full path to a Modifier JSON file. Only the modifiers
+        modifier_rad: Full path to a Modifier .rad or .mat file. Only the modifiers
             and materials in this file will be extracted.
     """
     try:
-        # check that the modifier JSON is there
+        # check that the modifier file is there
         assert os.path.isfile(modifier_rad), \
-            'No Modifier JSON file found at {}.'.format(modifier_rad)
+            'No Modifier file found at {}.'.format(modifier_rad)
 
         # re-serialize the Modifiers to Python
         mod_objs = []

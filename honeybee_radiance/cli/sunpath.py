@@ -38,16 +38,13 @@ def sunpath():
     help='A number representing the time zone of the location you are constructing. This'
     ' can improve the accuracy of the resulting sun plot.  The time zone should follow'
     ' the epw convention and should be between -12 and +12, where 0 is at Greenwich, UK,'
-    ' positive values are to the East of Greenwich and negative values are to the West.'
-    )
+    ' positive values are to the East of Greenwich and negative values are to the West.')
 @click.option(
     '--north', default=0, type=float, show_default=True,
-    help='Angle to north (0-360). 90 is west and 270 is east'
-    )
+    help='Angle to north (0-360). 90 is west and 270 is east')
 @click.option(
     '--start-date', default='JAN-01', show_default=True,
-    help='Start date as MMM-DD (e.g JUL-21). Start date itself will also be included.'
-    )
+    help='Start date as MMM-DD (e.g JUL-21). Start date itself will also be included.')
 @click.option(
     '--start-time', default='00:00', show_default=True,
     help='Start time as HH:MM (e.g 14:10). Start time itself will also be included.')
@@ -60,8 +57,7 @@ def sunpath():
 @click.option(
     '--timestep', default=1, type=int, show_default=True,
     help='An optional integer to set the number of time steps per hour. Default is 1'
-    ' for one value per hour.'
-    )
+    ' for one value per hour.')
 @click.option('--leap-year', is_flag=True, help='Dates are for a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
@@ -108,11 +104,11 @@ def sunpath_from_location(
 
 
 @sunpath.command('wea')
-@click.argument('wea', type=click.Path(exists=True))
+@click.argument('wea', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
     '--north', default=0, type=float, show_default=True,
-    help='Angle to north (0-360). 90 is west and 270 is east'
-    )
+    help='Angle to north (0-360). 90 is west and 270 is east')
 @click.option('--leap-year', is_flag=True, help='dates are for a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
@@ -157,15 +153,14 @@ def sunpath_from_wea(wea, north, folder, name, log_file, leap_year, reverse_vect
 
 
 @sunpath.command('epw')
-@click.argument('epw', type=click.Path(exists=True))
+@click.argument('epw', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option(
     '--north', default=0, type=float, show_default=True,
-    help='Angle to north (0-360). 90 is west and 270 is east'
-    )
+    help='Angle to north (0-360). 90 is west and 270 is east')
 @click.option(
     '--start-date', default='JAN-01', show_default=True,
-    help='Start date as MMM-DD (e.g JUL-21). Start date itself will also be included.'
-    )
+    help='Start date as MMM-DD (e.g JUL-21). Start date itself will also be included.')
 @click.option(
     '--start-time', default='00:00', show_default=True,
     help='Start time as HH:MM (e.g 14:10). Start time itself will also be included.')
@@ -178,11 +173,10 @@ def sunpath_from_wea(wea, north, folder, name, log_file, leap_year, reverse_vect
 @click.option(
     '--timestep', default=1, type=int, show_default=True,
     help='An optional integer to set the number of time steps per hour. Default is 1'
-    ' for one value per hour.'
-    )
+    ' for one value per hour.')
 @click.option('--leap-year', is_flag=True, help='dates are for a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
-@click.option('--name', default='sunpath', help='File name.')
+@click.option('--name', default='sunpath', help='File name.', type=str)
 @click.option(
     '--log-file', help='Optional log file to output the name of the newly'
     ' created modifier files. By default the list will be printed out to stdout',

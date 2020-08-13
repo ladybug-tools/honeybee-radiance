@@ -6,14 +6,22 @@ from honeybee_radiance.lightsource.sky.certainirradiance import CertainIrradianc
 from honeybee_radiance.lightsource.sky.cie import CIE
 from honeybee_radiance.lightsource.sky.climatebased import ClimateBased
 from honeybee_radiance.lightsource.sky.hemisphere import Hemisphere
-from honeybee_radiance.lightsource.sky.skydome import Skydome
+from honeybee_radiance.lightsource.sky.skydome import SkyDome
 from honeybee_radiance.lightsource.sky.skymatrix import SkyMatrix
 from honeybee_radiance.lightsource.sky.sunmatrix import SunMatrix
 
 
-LIGHT_SOURCE_TYPES = \
-    ('Sunpath', 'Ground', 'CertainIrradiance', 'CIE', 'ClimateBased',
-     'Hemisphere', 'SkyDome', 'SkyMatrix', 'SunMatrix')
+LIGHT_SOURCE_TYPES = {
+    'Sunpath': Sunpath,
+    'Ground': Ground,
+    'CertainIrradiance': CertainIrradiance,
+    'CIE': CIE,
+    'ClimateBased': ClimateBased,
+    'Hemisphere': Hemisphere,
+    'SkyDome': SkyDome,
+    'SkyMatrix': SkyMatrix,
+    'SunMatrix': SunMatrix
+}
 
 
 def dict_to_light_source(light_source_dict, raise_exception=True):
@@ -33,24 +41,9 @@ def dict_to_light_source(light_source_dict, raise_exception=True):
     except KeyError:
         raise ValueError('Load dictionary lacks required "type" key.')
 
-    if light_type == 'Sunpath':
-        return Sunpath.from_dict(light_source_dict)
-    elif light_type == 'Ground':
-        return Ground.from_dict(light_source_dict)
-    elif light_type == 'CertainIrradiance':
-        return CertainIrradiance.from_dict(light_source_dict)
-    elif light_type == 'CIE':
-        return CIE.from_dict(light_source_dict)
-    elif light_type == 'ClimateBased':
-        return ClimateBased.from_dict(light_source_dict)
-    elif light_type == 'Hemisphere':
-        return Hemisphere.from_dict(light_source_dict)
-    elif light_type == 'SkyDome':
-        return Skydome.from_dict(light_source_dict)
-    elif light_type == 'SkyMatrix':
-        return SkyMatrix.from_dict(light_source_dict)
-    elif light_type == 'SunMatrix':
-        return SunMatrix.from_dict(light_source_dict)
-    elif raise_exception:
-        raise ValueError(
-            '{} is not a recognized radiance Light Source type'.format(light_type))
+    try:
+        return LIGHT_SOURCE_TYPES[light_type].from_dict(light_source_dict)
+    except KeyError:
+        if raise_exception:
+            raise ValueError(
+                '{} is not a recognized radiance Light Source type'.format(light_type))
