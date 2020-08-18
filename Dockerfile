@@ -1,6 +1,6 @@
 FROM ubuntu:eoan
 
-MAINTAINER Ladybug Tools info@ladybug.tools
+LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
 
 # Install core software deps
 RUN apt-get update && \
@@ -21,7 +21,7 @@ WORKDIR /home/ladybugbot
 # Install radiance
 ENV RAYPATH=/home/ladybugbot/lib
 ENV PATH="/home/ladybugbot/bin:${PATH}"
-RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.5.2_Linux.zip --output radiance.zip \
+RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.3a.fc2a2610_Linux.zip --output radiance.zip \
 && unzip -p radiance.zip | tar xz \
 && mkdir bin \
 && mkdir lib \
@@ -33,8 +33,8 @@ RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_
 # Install honeybee-radiance cli
 ENV PATH="/home/ladybugbot/.local/bin:${PATH}"
 COPY . honeybee-radiance
-RUN pip3 install setuptools
-RUN pip3 install ./honeybee-radiance[cli]
+RUN pip3 install setuptools wheel \
+    && pip3 install pydantic==1.5.1 honeybee-schema ./honeybee-radiance[cli]
 
 # Set workdir
 RUN mkdir -p /home/ladybugbot/run
