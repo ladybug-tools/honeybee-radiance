@@ -25,9 +25,9 @@ RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_
 && unzip -p radiance.zip | tar xz \
 && mkdir bin \
 && mkdir lib \
-&& mv ./radiance-Linux/usr/local/radiance/bin/* /home/ladybugbot/bin \
-&& mv ./radiance-Linux/usr/local/radiance/lib/* /home/ladybugbot/lib \
-&& rm -rf radiance-Linux \
+&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/bin/* /home/ladybugbot/bin \
+&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/lib/* /home/ladybugbot/lib \
+&& rm -rf radiance-5.3.fc2a261076-Linux \
 && rm radiance.zip
 
 # Install honeybee-radiance cli
