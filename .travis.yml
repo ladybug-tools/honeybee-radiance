@@ -7,12 +7,12 @@ python:
 
 before_install:
 # install Radiance
-- wget https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.5.2_Linux.zip
-- unzip Radiance_5.5.2_Linux.zip
-- tar -xzvf radiance-Linux.tar.gz
-- sudo cp -r radiance-Linux/usr/local/radiance/bin/* /usr/local/bin
+- wget https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.3a.fc2a2610_Linux.zip
+- unzip Radiance_5.3a.fc2a2610_Linux.zip
+- tar -xzvf radiance-5.3.fc2a261076-Linux.tar.gz
+- sudo cp -r radiance-5.3.fc2a261076-Linux/usr/local/radiance/bin/* /usr/local/bin
 - sudo mkdir /usr/local/lib/ray
-- sudo cp -r radiance-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
+- sudo cp -r radiance-5.3.fc2a261076-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
 
 install:
   - pip install -r dev-requirements.txt
