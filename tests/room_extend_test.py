@@ -50,7 +50,7 @@ def test_set_modifier_set():
     room.properties.radiance.modifier_set = insect_screen_set
     assert room[1].apertures[0].properties.radiance.modifier == \
         generic_exterior_window_insect_screen_solar
-    
+
     with pytest.raises(AttributeError):
         room[1].properties.radiance.modifier.r_reflectance = 0.3
     with pytest.raises(AttributeError):

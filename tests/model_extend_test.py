@@ -284,6 +284,47 @@ def test_to_dict_multizone_house():
         mod_set.identifier
 
 
+def test_to_dict_sensor_grids_views():
+    """Test the Model to_dict method with assigned sensor grids and views."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
+    garage = Room.from_box('Tiny_Garage', 5, 10, 3, origin=Point3D(5, 0, 0))
+
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.move_shades(Vector3D(0, 0, -0.5))
+    north_face = garage[1]
+    north_face.apertures_by_ratio(0.1, 0.01)
+
+    room_grid = room.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
+    garage_grid = garage.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
+    room_view = room.properties.radiance.generate_view((0, -1, 0))
+    garage_view = garage.properties.radiance.generate_view((0, 1, 0))
+
+    Room.solve_adjacency([room, garage], 0.01)
+
+    model = Model('Tiny_House', [room, garage])
+    model.properties.radiance.sensor_grids = [room_grid]
+    model.properties.radiance.add_sensor_grids([garage_grid])
+    model.properties.radiance.views = [room_view]
+    model.properties.radiance.add_views([garage_view])
+
+    model_dict = model.to_dict(included_prop=['radiance'])
+
+    assert 'sensor_grids' in model_dict['properties']['radiance']
+    assert 'views' in model_dict['properties']['radiance']
+    assert len(model_dict['properties']['radiance']['sensor_grids']) == 2
+    assert len(model_dict['properties']['radiance']['views']) == 2
+
+    new_model = Model.from_dict(model_dict)
+    assert new_model.properties.radiance.has_sensor_grids
+    assert new_model.properties.radiance.has_views
+    assert len(new_model.properties.radiance.sensor_grids) == 2
+    assert len(new_model.properties.radiance.views) == 2
+    assert model_dict == new_model.to_dict(included_prop=['radiance'])
+
+
 def test_writer_to_rad():
     """Test the Model to.rad method."""
     room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
@@ -676,6 +717,53 @@ def test_writer_to_rad_folder_shade_drop():
     for i in range(len(e_bottom.properties.radiance.states)):
         d_file = (os.path.join(ap_dir, '{}..direct..{}.rad'.format(group_name, i)))
         assert os.path.isfile(d_file)
+
+    # clean up the folder
+    nukedir(folder, rmdir=True)
+
+
+def test_writer_to_rad_folder_sensor_grids_views():
+    """Test the Model to.rad_folder method with assigned sensor grids and views."""
+    room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
+    garage = Room.from_box('Tiny_Garage', 5, 10, 3, origin=Point3D(5, 0, 0))
+
+    south_face = room[3]
+    south_face.apertures_by_ratio(0.4, 0.01)
+    south_face.apertures[0].overhang(0.5, indoor=False)
+    south_face.apertures[0].overhang(0.5, indoor=True)
+    south_face.move_shades(Vector3D(0, 0, -0.5))
+    north_face = garage[1]
+    north_face.apertures_by_ratio(0.1, 0.01)
+
+    room_grid = room.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
+    garage_grid = garage.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
+    room_view = room.properties.radiance.generate_view((0, -1, 0))
+    garage_view = garage.properties.radiance.generate_view((0, 1, 0))
+
+    Room.solve_adjacency([room, garage], 0.01)
+
+    model = Model('Tiny_House', [room, garage])
+    model.properties.radiance.sensor_grids = [room_grid]
+    model.properties.radiance.add_sensor_grids([garage_grid])
+    model.properties.radiance.views = [room_view]
+    model.properties.radiance.add_views([garage_view])
+
+    folder = os.path.abspath('./tests/assets/model/rad_folder_grids_views')
+    model.to.rad_folder(model, folder)
+
+    model_folder = ModelFolder(folder)
+
+    grid_dir = model_folder.grid_folder(full=True)
+    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_House_Zone.pts'))
+    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_House_Zone.json'))
+    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_Garage.pts'))
+    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_Garage.json'))
+
+    view_dir = model_folder.view_folder(full=True)
+    assert os.path.isfile(os.path.join(view_dir, 'Tiny_House_Zone.vf'))
+    assert os.path.isfile(os.path.join(view_dir, 'Tiny_House_Zone.json'))
+    assert os.path.isfile(os.path.join(view_dir, 'Tiny_Garage.vf'))
+    assert os.path.isfile(os.path.join(view_dir, 'Tiny_Garage.json'))
 
     # clean up the folder
     nukedir(folder, rmdir=True)

@@ -1,11 +1,13 @@
 from honeybee_radiance.view import View
 import ladybug_geometry.geometry3d.pointvector as pv
-import math
-import pytest
+from ladybug_geometry.geometry3d.plane import Plane
 
 
 def test_default_values():
     v = View('test_view')
+    str(v)  # test string representation
+    hash(v)  # test hashability
+
     assert v.position == (0, 0, 0)
     assert v.direction == (0, 0, 1)
     assert v.up_vector == (0, 1, 0)
@@ -76,14 +78,15 @@ def test_dimensions():
 
 def test_move():
     v = View('test_view')
-    v.move((10, 20, 30))
+    v.move(pv.Vector3D(10, 20, 30))
 
     assert v.position == (10, 20, 30)
     assert v.up_vector == (0, 1, 0)
 
+
 def test_rotate():
     v = View('test_view', (0, 0, 0), (1, 0, 0), (0, 0, 1))
-    v.rotate(0.5 * math.pi, (0, 1, 1), (0, 0, 20))
+    v.rotate(90, pv.Vector3D(0, 1, 1), pv.Point3D(0, 0, 20))
     assert round(v.position[0], 3) == -14.142
     assert round(v.position[1]) == -10
     assert round(v.position[2]) == 10
@@ -93,6 +96,52 @@ def test_rotate():
     assert round(v.direction[0], 1) == 0.0
     assert round(v.direction[1], 3) == 0.707
     assert round(v.direction[2], 3) == -0.707
+
+
+def test_rotate_xy():
+    v = View('test_view', (1, 0, 2), (2, 0, 0), (0, 0, 3))
+    v.rotate_xy(90, pv.Point3D(0, 0, 0))
+
+    assert round(v.position[0]) == 0
+    assert round(v.position[1]) == 1
+    assert round(v.position[2]) == 2
+    assert round(v.up_vector[0]) == 0
+    assert round(v.up_vector[1]) == 0
+    assert round(v.up_vector[2]) == 3
+    assert round(v.direction[0]) == 0
+    assert round(v.direction[1]) == 2
+    assert round(v.direction[2]) == 0
+
+
+def test_reflect():
+    v = View('test_view', (1, 0, 2), (2, 0, 0), (0, 0, 3))
+    v.reflect(Plane(pv.Vector3D(1, 0, 0), pv.Point3D(0, 0, 0)))
+
+    assert round(v.position[0]) == -1
+    assert round(v.position[1]) == 0
+    assert round(v.position[2]) == 2
+    assert round(v.up_vector[0]) == 0
+    assert round(v.up_vector[1]) == 0
+    assert round(v.up_vector[2]) == 3
+    assert round(v.direction[0]) == -2
+    assert round(v.direction[1]) == 0
+    assert round(v.direction[2]) == 0
+
+
+def test_scale():
+    v = View('test_view', (1, 0, 2), (2, 0, 0), (0, 0, 3))
+    v.scale(2)
+
+    assert round(v.position[0]) == 2
+    assert round(v.position[1]) == 0
+    assert round(v.position[2]) == 4
+    assert round(v.up_vector[0]) == 0
+    assert round(v.up_vector[1]) == 0
+    assert round(v.up_vector[2]) == 6
+    assert round(v.direction[0]) == 4
+    assert round(v.direction[1]) == 0
+    assert round(v.direction[2]) == 0
+
 
 def test_from_string():
     view = 'rvu -vtv -vp 0.000 0.000 0.000 -vd 0.000 0.000 1.000 ' \
@@ -123,3 +172,13 @@ def test_from_file():
     assert vw.lift == -0.500
     assert vw.fore_clip == 100
     assert vw.aft_clip == 200
+
+
+def test_to_from_dict():
+    view = View('test_view', (0, 0, 10), (0, 1, 0), (0, 0, 1), 'l', 240, 300, -10, -25)
+    view.room_identifier = 'Test_room'
+
+    view_dict = view.to_dict()
+    new_view = View.from_dict(view_dict)
+    assert new_view == view
+    assert view_dict == new_view.to_dict()

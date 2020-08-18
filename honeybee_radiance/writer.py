@@ -234,9 +234,10 @@ def model_to_rad_folder(model, folder=None, folder_type=2, config_file=None,
                         minimal=False):
     r"""Write a honeybee model to a rad folder.
 
-    The rad files in the resulting folders will include all geometry
-    (Rooms, Faces, Shades, Apertures, Doors), all modifiers, and all states
-    of dynamic objects.
+    The rad files in the resulting folders will include all geometry (Rooms, Faces,
+    Shades, Apertures, Doors), all modifiers, and all states of dynamic objects.
+    It also includes any SensorGrids and Views that are assigned to the model's
+    radiance properties.
 
     Args:
         model: A honeybee Model for which radiance folder will be written.
@@ -321,6 +322,20 @@ def model_to_rad_folder(model, folder=None, folder_type=2, config_file=None,
         bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
         new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
         shutil.copy(bdf_mod.bsdf_file, new_bsdf_path)
+
+    # write the assigned sensor grids and views into the correct folder
+    grid_dir = model_folder.grid_folder(full=True)
+    for grid in model.properties.radiance.sensor_grids:
+        grid.to_file(grid_dir)
+        info_file = os.path.join(grid_dir, '{}.json'.format(grid.identifier))
+        with open(info_file, 'w') as fp:
+            json.dump(grid.info_dict(model), fp, indent=4)
+    view_dir = model_folder.view_folder(full=True)
+    for view in model.properties.radiance.views:
+        view.to_file(view_dir)
+        info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
+        with open(info_file, 'w') as fp:
+            json.dump(view.info_dict(model), fp, indent=4)
 
     return folder
 

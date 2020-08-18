@@ -6,6 +6,7 @@ from .lightpath import light_path_from_room
 
 import honeybee.typing as typing
 import ladybug.futil as futil
+from ladybug_geometry.geometry3d.mesh import Mesh3D
 
 import os
 try:
@@ -31,23 +32,20 @@ class SensorGrid(object):
         * directions
         * room_identifier
         * light_path
+        * mesh
     """
 
     __slots__ = ('_identifier', '_display_name', '_sensors', '_room_identifier',
-                 '_light_path')
+                 '_light_path', '_mesh')
 
     def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
         self.identifier = typing.valid_rad_string(identifier)
         self._display_name = None
-        self._sensors = tuple(sensors)
-        for sen in self._sensors:
-            if not isinstance(sen, Sensor):
-                raise ValueError(
-                    'Sensors in SensorGrid must be form type Sensor not %s' % type(sen)
-                )
+        self.sensors = sensors
         self._room_identifier = None
         self._light_path = None
+        self._mesh = None
 
     @classmethod
     def from_dict(cls, ag_dict):
@@ -74,10 +72,12 @@ class SensorGrid(object):
             new_obj.room_identifier = ag_dict['room_identifier']
         if 'light_path' in ag_dict and ag_dict['light_path'] is not None:
             new_obj.light_path = ag_dict['light_path']
+        if 'mesh' in ag_dict and ag_dict['mesh'] is not None:
+            new_obj.mesh = Mesh3D.from_dict(ag_dict['mesh'])
         return new_obj
 
     @classmethod
-    def from_planar_grid(cls, identifier, positions, plane_normal):
+    def from_planar_positions(cls, identifier, positions, plane_normal):
         """Create a sensor grid from a collection of positions with the same direction.
 
         Args:
@@ -108,8 +108,30 @@ class SensorGrid(object):
         return cls(identifier, sg)
 
     @classmethod
+    def from_mesh3d(cls, identifier, mesh):
+        """Create a sensor grid from a ladybug_geometry Mesh3D.
+
+        The centroids of the mesh faces will be used to create the sensor positions
+        and the normals of the faces will set the directions. The mesh will be
+        assigned to the resulting SensorGrid's mesh property.
+
+        Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            mesh: A ladybug_geometry Mesh3D.
+        """
+        assert isinstance(mesh, Mesh3D), 'Expected ladybug_geometry Mesh3D for ' \
+            'SensorGrid.from_mesh3d. Got {}.'.format(type(mesh))
+        positions = [(pt.x, pt.y, pt.z) for pt in mesh.face_centroids]
+        directions = [(vec.x, vec.y, vec.z) for vec in mesh.face_normals]
+        s_grid = cls.from_position_and_direction(identifier, positions, directions)
+        s_grid.mesh = mesh
+        return s_grid
+
+    @classmethod
     def from_file(cls, file_path, start_line=None, end_line=None, identifier=None):
-        """Create a sensor grid from a sensors file.
+        """Create a sensor grid from a sensor (.pts) file.
 
         The sensors must be structured as
 
@@ -117,8 +139,9 @@ class SensorGrid(object):
         x2, y2, z2, dx2, dy2, dz2
         ...
 
-        The lines that starts with # will be considred as commented lines and won't be
-        loaded. These lines will be considered in line count for start_line and end_line.
+        The lines that start with # will be considred as commented lines and won't be
+        loaded. However, these commented lines are still considered in total line
+        count for the start_line and end_line inputs.
 
         Args:
             file_path: Full path to sensors file
@@ -184,23 +207,31 @@ class SensorGrid(object):
             self._display_name = value  # keep it as unicode
 
     @property
+    def sensors(self):
+        """Get or set a tuple of Sensor objects for the grid sensors."""
+        return self._sensors
+
+    @sensors.setter
+    def sensors(self, value):
+        self._sensors = tuple(value)
+        for sen in self._sensors:
+            if not isinstance(sen, Sensor):
+                raise ValueError(
+                    'SensorGrid sensors must be of the Sensor type not %s' % type(sen))
+
+    @property
     def positions(self):
-        """A generator of sensor positions as x, y, z."""
+        """Get a generator of sensor positions as x, y, z."""
         return (ap.position for ap in self.sensors)
 
     @property
     def directions(self):
-        """A generator of sensor directions as x, y , z."""
+        """Get a generator of sensor directions as x, y , z."""
         return (ap.direction for ap in self.sensors)
 
     @property
-    def sensors(self):
-        """Return a list of sensors."""
-        return self._sensors
-
-    @property
     def count(self):
-        """Number of sensors."""
+        """Get the number of sensors."""
         return len(self._sensors)
 
     @property
@@ -240,6 +271,26 @@ class SensorGrid(object):
                     assert isinstance(ap, str), 'Expected text for light_path ' \
                         'aperture group identifier. Got {}.'.format(type(ap))
         self._light_path = l_path
+
+    @property
+    def mesh(self):
+        """Get or set an optional ladybug_geometry Mesh3D that aligns with the sensors.
+
+        Note that the number of sensors in the grid must match the number of
+        faces or the number vertices within the Mesh3D.
+        """
+        return self._mesh
+
+    @mesh.setter
+    def mesh(self, value):
+        if value is not None:
+            assert isinstance(value, Mesh3D), \
+                'Expected Mesh3D for SensorGrid mesh. Got {}.'.format(type(value))
+            assert self.count == len(value.faces) or self.count == len(value.vertices), \
+                'Number of sensors ({}) does not match the number of mesh faces ({}) ' \
+                'nor the number of vertices ({}).'.format(
+                    self.count, len(value.faces), len(value.vertices))
+        self._mesh = value
 
     def info_dict(self, model=None):
         """Get a dictionary with information about the SensorGrid.
@@ -352,7 +403,73 @@ class SensorGrid(object):
             base['room_identifier'] = self.room_identifier
         if self._light_path is not None:
             base['light_path'] = self.light_path
+        if self._mesh is not None:
+            base['mesh'] = self._mesh.to_dict()
         return base
+
+    def move(self, moving_vec):
+        """Move this sensor grid along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the sensor.
+        """
+        for sens in self._sensors:
+            sens.move(moving_vec)
+        if self._mesh is not None:
+            self._mesh.move(moving_vec)
+
+    def rotate(self, angle, axis, origin):
+        """Rotate this sensor grid by a certain angle around an axis and origin.
+
+        Args:
+            angle: An angle for rotation in degrees.
+            axis: Rotation axis as a Vector3D.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for sens in self._sensors:
+            sens.rotate(angle, axis, origin)
+        if self._mesh is not None:
+            self._mesh.rotate(angle, axis, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate this sensor grid counterclockwise in the world XY plane by an angle.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for sens in self._sensors:
+            sens.rotate_xy(angle, origin)
+        if self._mesh is not None:
+            self._mesh.rotate_xy(angle, origin)
+
+    def reflect(self, plane):
+        """Reflect this sensor grid across a plane.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        for sens in self._sensors:
+            sens.reflect(plane)
+        if self._mesh is not None:
+            self._mesh.reflect(plane)
+
+    def scale(self, factor, origin=None):
+        """Scale this sensor grid by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for sens in self._sensors:
+            sens.scale(factor, origin)
+        if self._mesh is not None:
+            self._mesh.scale(factor, origin)
 
     def duplicate(self):
         """Get a copy of this object."""
@@ -371,20 +488,20 @@ class SensorGrid(object):
         new_obj._display_name = self._display_name
         new_obj._room_identifier = self._room_identifier
         new_obj._light_path = self._light_path
+        new_obj._mesh = self._mesh
         return new_obj
 
-    def __eq__(self, value):
-        if not isinstance(value, SensorGrid) or len(value) != len(self):
-            return False
-        if self.identifier != value.identifier:
-            return False
-        if self.sensors != value.sensors:
-            return False
-        if self.room_identifier != value.room_identifier:
-            return False
-        if self.light_path != value.light_path:
-            return False
-        return True
+    def __key(self):
+        """A tuple based on the object properties, useful for hashing."""
+        return (self.identifier, self._display_name, self._room_identifier,
+                self._mesh) + tuple(hash(sensor) for sensor in self.sensors)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        return isinstance(other, SensorGrid) and self.__key() == other.__key() and \
+            self.light_path == other.light_path
 
     def __ne__(self, value):
         return not self.__eq__(value)
