@@ -207,7 +207,7 @@ class _DynamicRadianceProperties(_RadianceProperties):
     @property
     def dynamic_group_identifier(self):
         """Get or set a text string for the dynamic_group_identifier.
-        
+
         Objects sharing the same dynamic_group_identifier will have their
         states change in unison. If None, the object is assumed to be static.
         """
@@ -226,7 +226,7 @@ class _DynamicRadianceProperties(_RadianceProperties):
     @property
     def states(self):
         """Get or set an array of radiance states assigned to this object.
-    
+
         These cannot be set unless there is also a dynamic_group_identifier for
         the object.
         """
@@ -240,8 +240,8 @@ class _DynamicRadianceProperties(_RadianceProperties):
             try:
                 self._states = [self._check_state(st) for st in value]
             except (ValueError, TypeError):
-                raise TypeError('Expected iterable for Object states. ' \
-                    'Got  {}.'.format(type(value)))
+                raise TypeError('Expected iterable for Object states. '
+                                'Got  {}.'.format(type(value)))
         else:
             self._states = []
 
@@ -263,7 +263,7 @@ class _DynamicRadianceProperties(_RadianceProperties):
             state: A Radiance state object to add to the this object.
         """
         assert self._dynamic_group_identifier is not None, 'Object must have ' \
-                'a dynamic_group_identifier to assign states.'
+            'a dynamic_group_identifier to assign states.'
         self._states.append(self._check_state(state))
 
     def move(self, moving_vec):

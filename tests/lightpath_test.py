@@ -47,7 +47,7 @@ def test_grid_and_view_info_dict():
     south_ap2 = room2[3].apertures[0]
     south_ap2.properties.radiance.dynamic_group_identifier = 'SouthWindow2'
 
-    sensor_grid, mesh_grid = room1.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
+    sensor_grid = room1.properties.radiance.generate_sensor_grid(0.5, 0.5, 1)
 
     assert isinstance(sensor_grid, SensorGrid)
     assert sensor_grid.room_identifier == room1.identifier

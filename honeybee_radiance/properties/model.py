@@ -1,5 +1,7 @@
 # coding=utf-8
 """Model Radiance Properties."""
+from ..sensorgrid import SensorGrid
+from ..view import View
 from ..dynamic.group import DynamicShadeGroup, DynamicSubFaceGroup
 from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
@@ -23,6 +25,8 @@ class ModelRadianceProperties(object):
 
     Properties:
         * host
+        * sensor_grids
+        * views
         * modifiers
         * blk_modifiers
         * room_modifiers
@@ -34,16 +38,58 @@ class ModelRadianceProperties(object):
         * dynamic_subface_groups
         * shade_group_identifiers
         * subface_group_identifiers
+        * has_sensor_grids
+        * has_views
     """
 
-    def __init__(self, host):
+    def __init__(self, host, sensor_grids=None, views=None):
         """Initialize Model radiance properties."""
         self._host = host
+        self.sensor_grids = sensor_grids
+        self.views = views
 
     @property
     def host(self):
         """Get the Model object hosting these properties."""
         return self._host
+
+    @property
+    def sensor_grids(self):
+        """Get or set an array of SensorGrids that are associated with the model."""
+        return tuple(self._sensor_grids)
+
+    @sensor_grids.setter
+    def sensor_grids(self, value):
+        if value:
+            try:
+                self._sensor_grids = list(value)
+                for obj in self._sensor_grids:
+                    assert isinstance(obj, SensorGrid), 'Expected SensorGrid for Model' \
+                        ' sensor_grids. Got {}.'.format(type(value))
+            except (ValueError, TypeError):
+                raise TypeError(
+                    'Model sensor_grids must be an array. Got {}.'.format(type(value)))
+        else:
+            self._sensor_grids = []
+
+    @property
+    def views(self):
+        """Get or set an array of Views that are associated with the model."""
+        return tuple(self._views)
+
+    @views.setter
+    def views(self, value):
+        if value:
+            try:
+                self._views = list(value)
+                for obj in self._views:
+                    assert isinstance(obj, View), 'Expected View for Model' \
+                        ' views. Got {}.'.format(type(value))
+            except (ValueError, TypeError):
+                raise TypeError(
+                    'Model views must be an array. Got {}.'.format(type(value)))
+        else:
+            self._views = []
 
     @property
     def modifiers(self):
@@ -194,6 +240,53 @@ class ModelRadianceProperties(object):
                 group_ids.add(subface.properties.radiance._dynamic_group_identifier)
         return list(group_ids)
 
+    @property
+    def has_sensor_grids(self):
+        """Get a boolean for whether there are sensor grids assigned to the model."""
+        return len(self._sensor_grids) != 0
+
+    @property
+    def has_views(self):
+        """Get a boolean for whether there are views assigned to the model."""
+        return len(self._views) != 0
+
+    def remove_sensor_grids(self):
+        """Remove all sensor grids from the model."""
+        self._sensor_grids = []
+
+    def remove_views(self):
+        """Remove all views from the model."""
+        self._views = []
+
+    def add_sensor_grid(self, sensor_grid):
+        """Add a SensorGrid to this model.
+
+        Args:
+            sensor_grid: A SensorGrid to add to this model.
+        """
+        assert isinstance(sensor_grid, SensorGrid), \
+            'Expected SensorGrid. Got {}.'.format(type(sensor_grid))
+        self._sensor_grids.append(sensor_grid)
+
+    def add_view(self, view):
+        """Add a View to this model.
+
+        Args:
+            view: A View to add to this model.
+        """
+        assert isinstance(view, View), 'Expected View. Got {}.'.format(type(view))
+        self._views.append(view)
+
+    def add_sensor_grids(self, sensor_grids):
+        """Add a list of SensorGrids to this model."""
+        for grid in sensor_grids:
+            self.add_sensor_grid(grid)
+
+    def add_views(self, views):
+        """Add a list of Views to this model."""
+        for view in views:
+            self.add_view(view)
+
     def faces_by_blk(self):
         """Get all Faces in the model separated by their blk property.
 
@@ -276,6 +369,70 @@ class ModelRadianceProperties(object):
                 shades.append(shade)
         return shades, shades_blk
 
+    def move(self, moving_vec):
+        """Move all sensor_grid and view geometry along a vector.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the objects.
+        """
+        for grid in self._sensor_grids:
+            grid.move(moving_vec)
+        for view in self._views:
+            view.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate all sensor_grid and view geometry.
+
+        Args:
+            axis: A ladybug_geometry Vector3D axis representing the axis of rotation.
+            angle: An angle for rotation in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for grid in self._sensor_grids:
+            grid.rotate(axis, angle, origin)
+        for view in self._views:
+            view.rotate(axis, angle, origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate all sensor_grids and views counterclockwise in the world XY plane.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for grid in self._sensor_grids:
+            grid.rotate_xy(angle, origin)
+        for view in self._views:
+            view.rotate_xy(angle, origin)
+
+    def reflect(self, plane):
+        """Reflect all sensor_grid and view geometry across a plane.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        for grid in self._sensor_grids:
+            grid.reflect(plane)
+        for view in self._views:
+            view.reflect(plane)
+
+    def scale(self, factor, origin=None):
+        """Scale all sensor_grid and view geometry by a factor.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for grid in self._sensor_grids:
+            grid.scale(factor, origin)
+        for view in self._views:
+            view.scale(factor, origin)
+
     def check_duplicate_modifier_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Modifier identifiers in the model."""
         mod_identifiers = set()
@@ -307,6 +464,72 @@ class ModelRadianceProperties(object):
                 raise ValueError(
                     'The model has the following duplicated ModifierSet '
                     'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
+            return False
+        return True
+
+    def check_duplicate_sensor_grid_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate SensorGrid identifiers in the model."""
+        grid_identifiers = set()
+        duplicate_identifiers = set()
+        for grid in self.sensor_grids:
+            if grid.identifier not in grid_identifiers:
+                grid_identifiers.add(grid.identifier)
+            else:
+                duplicate_identifiers.add(grid.identifier)
+        if len(duplicate_identifiers) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following duplicated sensor grid '
+                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
+            return False
+        return True
+
+    def check_duplicate_view_identifiers(self, raise_exception=True):
+        """Check that there are no duplicate View identifiers in the model."""
+        view_identifiers = set()
+        duplicate_identifiers = set()
+        for view in self.views:
+            if view.identifier not in view_identifiers:
+                view_identifiers.add(view.identifier)
+            else:
+                duplicate_identifiers.add(view.identifier)
+        if len(duplicate_identifiers) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following duplicated view '
+                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
+            return False
+        return True
+
+    def check_sensor_grid_rooms_in_model(self, raise_exception=True):
+        """Check that the room_identifiers of SenorGrids are in the model."""
+        grid_ids = [grid.room_identifier for grid in self.sensor_grids]
+        room_ids = set(room.identifier for room in self.host.rooms)
+        missing_rooms = set()
+        for grid in grid_ids:
+            if grid not in room_ids:
+                missing_rooms.add(grid)
+        if len(missing_rooms) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following missing rooms referenced by sensor '
+                    'grids:\n{}'.format('\n'.join(missing_rooms)))
+            return False
+        return True
+
+    def check_view_rooms_in_model(self, raise_exception=True):
+        """Check that the room_identifiers of Views are in the model."""
+        view_ids = [view.room_identifier for view in self.views]
+        room_ids = set(room.identifier for room in self.host.rooms)
+        missing_rooms = set()
+        for view in view_ids:
+            if view not in room_ids:
+                missing_rooms.add(view)
+        if len(missing_rooms) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following missing rooms referenced by '
+                    'views:\n{}'.format('\n'.join(missing_rooms)))
             return False
         return True
 
@@ -349,6 +572,14 @@ class ModelRadianceProperties(object):
                 shade.properties.radiance.apply_properties_from_dict(
                     s_dict, modifiers)
 
+        # apply the sensor grids and views if they are in the data.
+        rad_data = data['properties']['radiance']
+        if 'sensor_grids' in rad_data and rad_data['sensor_grids'] is not None:
+            self.sensor_grids = \
+                [SensorGrid.from_dict(grid) for grid in rad_data['sensor_grids']]
+        if 'views' in rad_data and rad_data['views'] is not None:
+            self.views = [View.from_dict(view) for view in rad_data['views']]
+
     def to_dict(self):
         """Return Model radiance properties as a dictionary."""
         base = {'radiance': {'type': 'ModelRadianceProperties'}}
@@ -369,6 +600,13 @@ class ModelRadianceProperties(object):
         for mod in modifiers:
             base['radiance']['modifiers'].append(mod.to_dict())
 
+        # add the sensor grids and views to the dictionary
+        if len(self._sensor_grids) != 0:
+            base['radiance']['sensor_grids'] = \
+                [grid.to_dict() for grid in self._sensor_grids]
+        if len(self._views) != 0:
+            base['radiance']['views'] = [view.to_dict() for view in self._views]
+
         return base
 
     def duplicate(self, new_host=None):
@@ -378,7 +616,7 @@ class ModelRadianceProperties(object):
             If None, the properties will be duplicated with the same host.
         """
         _host = new_host or self._host
-        return ModelRadianceProperties(_host)
+        return ModelRadianceProperties(_host, self._sensor_grids, self._views)
 
     @staticmethod
     def load_properties_from_dict(data):

@@ -9,7 +9,7 @@ from honeybee_radiance_command.options import TupleOption, \
     StringOptionJoined, NumericOption
 import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
-import ladybug_geometry.geometry3d.plane as plane
+from ladybug_geometry.geometry3d.plane import Plane
 import ladybug.futil as futil
 
 import math
@@ -458,6 +458,8 @@ class View(object):
             lift=view_dict['lift'],
         )
 
+        if 'view_type' in view_dict:
+            view.type = view_dict['view_type']
         if 'fore_clip' in view_dict:
             view.fore_clip = view_dict['fore_clip']
         if 'aft_clip' in view_dict:
@@ -465,7 +467,7 @@ class View(object):
         if 'display_name' in view_dict and view_dict['display_name'] is not None:
             view.display_name = view_dict['display_name']
         if 'room_identifier' in view_dict and view_dict['room_identifier'] is not None:
-            view.display_name = view_dict['room_identifier']
+            view.room_identifier = view_dict['room_identifier']
         if 'light_path' in view_dict and view_dict['light_path'] is not None:
             view.light_path = view_dict['light_path']
         return view
@@ -738,31 +740,90 @@ class View(object):
         content = 'rvu ' + self.to_radiance()
         return futil.write_to_file_by_name(folder, identifier, content, mkdir)
 
-    def move(self, vector):
-        """Move view."""
-        position = pv.Point3D(*self.position)
-        self.position = tuple(position.move(pv.Vector3D(*vector)))
-
-    def rotate(self, angle, axis=None, position=None):
-        """Rotate view around an axis.
+    def move(self, moving_vec):
+        """Move this view along a vector.
 
         Args:
-            angle: Rotation angle in radians.
-            axis: Rotation axis as a Vector3D (Default: self.up_vector).
-            position: Rotation position point as a Point3D (Default: self.position)
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the view.
+        """
+        position = pv.Point3D(*self.position)
+        self.position = tuple(position.move(moving_vec))
+
+    def rotate(self, angle, axis=None, origin=None):
+        """Rotate this view by a certain angle around an axis and origin.
+
+        Args:
+            angle: An angle for rotation in degrees.
+            axis: Rotation axis as a Vector3D. If None, self.up_vector will be
+                used. (Default: None).
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated. If None, self.position is used. (Default: None).
         """
         view_up_vector = pv.Vector3D(*self.up_vector)
         view_position = pv.Point3D(*self.position)
         view_direction = pv.Vector3D(*self.direction)
-        view_plane = plane.Plane(n=view_up_vector, o=view_position, x=view_direction)
-        axis = pv.Vector3D(*axis) or view_up_vector
-        position = pv.Point3D(*position) or view_position
+        view_plane = Plane(n=view_up_vector, o=view_position, x=view_direction)
+        axis = axis if axis is not None else view_up_vector
+        position = origin if origin is not None else view_position
 
-        rotated_plane = view_plane.rotate(axis, angle, position)
+        rotated_plane = view_plane.rotate(axis, math.radians(angle), position)
+        self._apply_plane_properties(rotated_plane, view_direction, view_up_vector)
 
-        self.position = rotated_plane.o
-        self.direction = rotated_plane.x
-        self.up_vector = rotated_plane.n
+    def rotate_xy(self, angle, origin=None):
+        """Rotate this view counterclockwise in the world XY plane by a certain angle.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated. If None, self.position is used. (Default: None).
+        """
+        view_up_vector = pv.Vector3D(*self.up_vector)
+        view_position = pv.Point3D(*self.position)
+        view_direction = pv.Vector3D(*self.direction)
+        view_plane = Plane(n=view_up_vector, o=view_position, x=view_direction)
+        position = origin if origin is not None else view_position
+
+        rotated_plane = view_plane.rotate_xy(math.radians(angle), position)
+        self._apply_plane_properties(rotated_plane, view_direction, view_up_vector)
+
+    def reflect(self, plane):
+        """Reflect this view across a plane.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        view_up_vector = pv.Vector3D(*self.up_vector)
+        view_position = pv.Point3D(*self.position)
+        view_direction = pv.Vector3D(*self.direction)
+        view_plane = Plane(n=view_up_vector, o=view_position, x=view_direction)
+
+        ref_plane = view_plane.reflect(plane.n, plane.o)
+        self._apply_plane_properties(ref_plane, view_direction, view_up_vector)
+
+    def scale(self, factor, origin=None):
+        """Scale this view by a factor from an origin point.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        view_position = pv.Point3D(*self.position)
+        self.position = view_position.scale(factor, origin)
+        self.direction = pv.Vector3D(*self.direction) * factor
+        self.up_vector = pv.Vector3D(*self.up_vector) * factor
+
+    def _apply_plane_properties(self, plane, view_direction, view_up_vector):
+        """Re-set the position, direction and up_vector from a Plane.
+
+        This method also ensures that the magnitude of the vectors is unchanged
+        (since all Plane objects will have unitized vectors).
+        """
+        self.position = plane.o
+        self.direction = plane.x * view_direction.magnitude
+        self.up_vector = plane.n * view_up_vector.magnitude
 
     def duplicate(self):
         """Get a copy of this object."""
@@ -781,6 +842,23 @@ class View(object):
     def ToString(self):
         """Overwrite .NET ToString."""
         return self.__repr__()
+
+    def __key(self):
+        """A tuple based on the object properties, useful for hashing."""
+        return (self.identifier, hash(self.position.value), hash(self.direction.value),
+                hash(self.up_vector.value), self.type.value, self.h_size.value,
+                self.v_size.value, self.shift.value, self.lift.value, self._display_name,
+                self._room_identifier)
+
+    def __hash__(self):
+        return hash(self.__key())
+
+    def __eq__(self, other):
+        return isinstance(other, View) and self.__key() == other.__key() and \
+            self.light_path == other.light_path
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         """View representation."""
