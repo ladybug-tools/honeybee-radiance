@@ -143,7 +143,7 @@ class View(object):
 
     @identifier.setter
     def identifier(self, n):
-        self._identifier = typing.valid_rad_string(n)
+        self._identifier = typing.valid_rad_string(n, 'view identifier')
 
     @property
     def display_name(self):
@@ -157,10 +157,7 @@ class View(object):
 
     @display_name.setter
     def display_name(self, value):
-        try:
-            self._display_name = str(value)
-        except UnicodeEncodeError:  # Python 2 machine lacking the character set
-            self._display_name = value  # keep it as unicode
+        self._display_name = typing.valid_rad_string(value, 'view display_name')
 
     @property
     def is_fisheye(self):
@@ -664,6 +661,7 @@ class View(object):
             _n_view._aft_clip = self._aft_clip
             _n_view._room_identifier = self._room_identifier
             _n_view._light_path = self._light_path
+            _n_view.display_name = '%s_%d' % (self.display_name, view_count)
 
             # add the new view to views list
             _views[view_count] = _n_view
@@ -727,7 +725,7 @@ class View(object):
 
         Args:
             folder: Target folder.
-            file_name: Optional file name without extension (Default: self.identifier).
+            file_name: Optional file name without extension (Default: self.display_name).
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
@@ -735,10 +733,10 @@ class View(object):
             Full path to newly created file.
         """
 
-        identifier = file_name or self.identifier + '.vf'
+        display_name = file_name or self.display_name + '.vf'
         # add rvu before the view itself
         content = 'rvu ' + self.to_radiance()
-        return futil.write_to_file_by_name(folder, identifier, content, mkdir)
+        return futil.write_to_file_by_name(folder, display_name, content, mkdir)
 
     def move(self, moving_vec):
         """Move this view along a vector.

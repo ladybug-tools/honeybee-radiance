@@ -187,7 +187,7 @@ class SensorGrid(object):
 
     @identifier.setter
     def identifier(self, n):
-        self._identifier = typing.valid_rad_string(n)
+        self._identifier = typing.valid_rad_string(n, 'sensor grid identifier')
 
     @property
     def display_name(self):
@@ -201,10 +201,7 @@ class SensorGrid(object):
 
     @display_name.setter
     def display_name(self, value):
-        try:
-            self._display_name = str(value)
-        except UnicodeEncodeError:  # Python 2 machine lacking the character set
-            self._display_name = value  # keep it as unicode
+        self._display_name = typing.valid_rad_string(value, 'sensor grid display_name')
 
     @property
     def sensors(self):
@@ -318,18 +315,18 @@ class SensorGrid(object):
 
         Args:
             folder: Target folder.
-            file_name: Optional file name without extension. (Default: self.identifier)
+            file_name: Optional file name without extension. (Default: self.display_name)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
         Returns:
             Full path to newly created file.
         """
-        identifier = file_name or self.identifier + '.pts'
-        if not identifier.endswith('.pts'):
-            identifier += '.pts'
+        display_name = file_name or self.display_name + '.pts'
+        if not display_name.endswith('.pts'):
+            display_name += '.pts'
         return futil.write_to_file_by_name(
-            folder, identifier, self.to_radiance() + '\n', mkdir)
+            folder, display_name, self.to_radiance() + '\n', mkdir)
 
     def to_files(self, folder, count, base_name=None, mkdir=False):
         """Split this sensor grid and write them to several files.
@@ -338,7 +335,7 @@ class SensorGrid(object):
             folder: Target folder.
             count: Number of files.
             base_name: Optional text for a unique base_name for sensor files.
-                (Default: self.identifier)
+                (Default: self.display_name)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
@@ -347,14 +344,14 @@ class SensorGrid(object):
             to the grid.
         """
         count = typing.int_in_range(count, 1, input_name='file count')
-        base_name = base_name or self.identifier
+        base_name = base_name or self.display_name
         if count == 1 or self.count == 0:
             full_path = self.to_file(folder, base_name, mkdir)
             return [
-                {'name': base_name if not self.identifier.endswith('.pts')
-                    else self.identifier.replace('.pts', ''),
-                 'path': self.identifier + '.pts'
-                    if not self.identifier.endswith('.pts') else self.identifier,
+                {'name': base_name if not self.display_name.endswith('.pts')
+                    else self.display_name.replace('.pts', ''),
+                 'path': self.display_name + '.pts'
+                    if not self.display_name.endswith('.pts') else self.display_name,
                  'full_path': full_path,
                  'count': self.count}
             ]

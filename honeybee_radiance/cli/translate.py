@@ -31,9 +31,6 @@ def translate():
 @click.option('--folder', help='Folder on this computer, into which the Radiance '
               'folders will be written. If None, the files will be output in the'
               'same location as the model_json.', default=None, show_default=True)
-@click.option('--folder-type', help='An integer between 0-2 to note the type of '
-              'folders to be written out with the Model.\n0: grid-based\n1: view-based'
-              '\n2: includes both views and grids', default=2, show_default=True)
 @click.option('--config-file', help='An optional config file path to modify the '
               'default folder names. If None, folder.cfg in honeybee-radiance-folder '
               'will be used.', default=None, show_default=True)
@@ -43,7 +40,7 @@ def translate():
 @click.option('--log-file', help='Optional log file to output the path of the radiance '
               'folder generated from the model. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
-def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, log_file):
+def model_to_rad_folder(model_json, folder, config_file, minimal, log_file):
     """Translate a Model JSON file into a Radiance Folder.
     \n
     Args:
@@ -64,7 +61,7 @@ def model_to_rad_folder(model_json, folder, folder_type, config_file, minimal, l
         model = Model.from_dict(data)
 
         # translate the model to a radiance folder
-        rad_fold = model.to.rad_folder(model, folder, folder_type, config_file, minimal)
+        rad_fold = model.to.rad_folder(model, folder, config_file, minimal)
         log_file.write(rad_fold)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
