@@ -501,6 +501,40 @@ class ModelRadianceProperties(object):
             return False
         return True
 
+    def check_duplicate_sensor_grid_display_names(self, raise_exception=True):
+        """Check that there are no duplicate SensorGrid display_names in the model."""
+        grid_display_names = set()
+        duplicate_display_names = set()
+        for grid in self.sensor_grids:
+            if grid.display_name not in grid_display_names:
+                grid_display_names.add(grid.display_name)
+            else:
+                duplicate_display_names.add(grid.display_name)
+        if len(duplicate_display_names) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following duplicated sensor grid '
+                    'display_names:\n{}'.format('\n'.join(duplicate_display_names)))
+            return False
+        return True
+
+    def check_duplicate_view_display_names(self, raise_exception=True):
+        """Check that there are no duplicate View display_names in the model."""
+        view_display_names = set()
+        duplicate_display_names = set()
+        for view in self.views:
+            if view.display_name not in view_display_names:
+                view_display_names.add(view.display_name)
+            else:
+                duplicate_display_names.add(view.display_name)
+        if len(duplicate_display_names) != 0:
+            if raise_exception:
+                raise ValueError(
+                    'The model has the following duplicated view '
+                    'display_names:\n{}'.format('\n'.join(duplicate_display_names)))
+            return False
+        return True
+
     def check_sensor_grid_rooms_in_model(self, raise_exception=True):
         """Check that the room_identifiers of SenorGrids are in the model."""
         grid_ids = [grid.room_identifier for grid in self.sensor_grids]
