@@ -339,7 +339,7 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
         model.properties.radiance.check_duplicate_sensor_grid_display_names()
         for grid in grids:
             grid.to_file(grid_dir)
-            info_file = os.path.join(grid_dir, '{}.json'.format(grid.identifier))
+            info_file = os.path.join(grid_dir, '{}.json'.format(grid.display_name))
             with open(info_file, 'w') as fp:
                 json.dump(grid.info_dict(model), fp, indent=4)
     view_dir = model_folder.view_folder(full=True)
@@ -349,7 +349,7 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
         model.properties.radiance.check_duplicate_view_display_names()
         for view in views:
             view.to_file(view_dir)
-            info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
+            info_file = os.path.join(view_dir, '{}.json'.format(view.display_name))
             with open(info_file, 'w') as fp:
                 json.dump(view.info_dict(model), fp, indent=4)
 
