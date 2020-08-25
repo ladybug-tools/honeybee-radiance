@@ -44,7 +44,7 @@ def split_grid(grid_file, count, folder, log_file):
     """
     try:
         grid = sensorgrid.SensorGrid.from_file(grid_file)
-        file_count = int(round(grid.count / count))
+        file_count = max(1, int(round(grid.count / count)))
         files = grid.to_files(folder, file_count, mkdir=True)
 
         log_file.write(json.dumps(files))

@@ -346,12 +346,11 @@ class SensorGrid(object):
         count = typing.int_in_range(count, 1, input_name='file count')
         base_name = base_name or self.display_name
         if count == 1 or self.count == 0:
-            full_path = self.to_file(folder, base_name, mkdir)
+            name = '%s_0000' % base_name
+            full_path = self.to_file(folder, name, mkdir)
             return [
-                {'name': base_name if not self.display_name.endswith('.pts')
-                    else self.display_name.replace('.pts', ''),
-                 'path': self.display_name + '.pts'
-                    if not self.display_name.endswith('.pts') else self.display_name,
+                {'name': name if not name.endswith('.pts') else name.replace('.pts', ''),
+                 'path': name + '.pts' if not name.endswith('.pts') else name,
                  'full_path': full_path,
                  'count': self.count}
             ]
