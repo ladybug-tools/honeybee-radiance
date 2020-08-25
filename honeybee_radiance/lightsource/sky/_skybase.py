@@ -16,9 +16,9 @@ class _SkyDome(object):
 
     __slots__ = ('_ground_hemisphere', '_sky_hemisphere')
 
-    def __init__(self):
-        self._ground_hemisphere = Ground()
-        self._sky_hemisphere = Hemisphere()
+    def __init__(self, modifier='skyfunc'):
+        self._ground_hemisphere = Ground(modifier)
+        self._sky_hemisphere = Hemisphere(modifier)
 
     @property
     def ground_hemisphere(self):

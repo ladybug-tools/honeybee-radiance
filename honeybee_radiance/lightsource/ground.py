@@ -30,17 +30,23 @@ class Ground(object):
         For more information see Chapter `6.3.4  The Ground "Glow": An "Upside-Down"
         Sky` in Rendering with Radiance. The chapter is also accessible online at the
     link below.
-    https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/\
-Mardaljevic/rwr_ch6.pdf
+    https://www.radiance-online.org/community/workshops/2003-berkeley/presentations/Mardaljevic/rwr_ch6.pdf
 
     Properties:
         * r_emittance
         * g_emittance
         * b_emittance
+        * modifier
     """
 
-    def __init__(self):
-        """Create ground."""
+    def __init__(self, modifier='skyfunc'):
+        """Create ground.
+
+        Args:
+            modifier: Optional input to change the modifier from skyfunc.
+
+        """
+        self.modifier = modifier
         self._r_emittance = 1.0
         self._g_emittance = 1.0
         self._b_emittance = 1.0
@@ -72,6 +78,15 @@ Mardaljevic/rwr_ch6.pdf
     def b_emittance(self, value):
         self._b_emittance = typing.float_in_range(value, 0, 1, 'b_emittance')
 
+    @property
+    def modifier(self):
+        "Ground modifier."
+        return self._modifier
+
+    @modifier.setter
+    def modifier(self, value):
+        self._modifier = str(value)
+
     @classmethod
     def from_dict(cls, input_dict):
         """Create ground from_dict.
@@ -85,7 +100,8 @@ Mardaljevic/rwr_ch6.pdf
                 'type': 'Ground',
                 'r_emittance': r_emittance,
                 'g_emittance': g_emittance,
-                'b_emittance': b_emittance
+                'b_emittance': b_emittance,
+                'modifier': modifier
                 }
         """
         assert 'type' in input_dict, \
@@ -96,6 +112,7 @@ Mardaljevic/rwr_ch6.pdf
         ground.r_emittance = input_dict['r_emittance']
         ground.g_emittance = input_dict['g_emittance']
         ground.b_emittance = input_dict['b_emittance']
+        ground.modifier = input_dict['modifier']
         return ground
 
     def to_file(self, folder='.', name=None, mkdir=False):
@@ -111,9 +128,9 @@ Mardaljevic/rwr_ch6.pdf
     def to_radiance(self):
         """Get ground as a Radiance input string."""
         ground = \
-            'skyfunc glow ground_glow\n0\n0\n4 %.3f %.3f %.3f 0\n' \
+            '%s glow ground_glow\n0\n0\n4 %.3f %.3f %.3f 0\n' \
             'ground_glow source ground\n0\n0\n4 0 0 -1 180' % (
-                self.r_emittance, self.g_emittance, self.b_emittance
+                self._modifier, self.r_emittance, self.g_emittance, self.b_emittance
             )
 
         return ground
@@ -124,14 +141,15 @@ Mardaljevic/rwr_ch6.pdf
             'type': 'Ground',
             'r_emittance': self.r_emittance,
             'g_emittance': self.g_emittance,
-            'b_emittance': self.b_emittance
+            'b_emittance': self.b_emittance,
+            'modifier': self.modifier
         }
 
     def __eq__(self, value):
         if type(value) != type(self):
             return False
-        if (value.r_emittance, value.g_emittance, value.b_emittance) != \
-                (self.r_emittance, self.g_emittance, self.b_emittance):
+        if (value.modifier, value.r_emittance, value.g_emittance, value.b_emittance) != \
+                (self.modifier, self.r_emittance, self.g_emittance, self.b_emittance):
             return False
         return True
 

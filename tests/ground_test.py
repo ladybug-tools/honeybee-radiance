@@ -28,7 +28,8 @@ def test_update_values():
 def test_to_and_from_dict():
     gr = Ground()
     assert gr.to_dict() == {
-        'type': 'Ground', 'r_emittance': 1.0, 'g_emittance': 1.0, 'b_emittance': 1.0
+        'type': 'Ground', 'r_emittance': 1.0, 'g_emittance': 1.0, 'b_emittance': 1.0,
+        'modifier': 'skyfunc'
     }
     assert gr == Ground.from_dict(gr.to_dict())
 
