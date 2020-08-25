@@ -37,6 +37,8 @@ class SkyDome(_SkyDome):
 
     Use this sky to calculate daylight matrix.
     """
+    def __init__(self):
+        _SkyDome.__init__(self, modifier='void')
 
     def to_radiance(self, density=1):
         """Radiance definition for SkyDome.

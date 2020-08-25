@@ -29,7 +29,7 @@ def test_to_and_from_dict():
     hem = Hemisphere()
     assert hem.to_dict() == {
         'type': 'SkyHemisphere',
-        'r_emittance': 1.0, 'g_emittance': 1.0, 'b_emittance': 1.0
+        'r_emittance': 1.0, 'g_emittance': 1.0, 'b_emittance': 1.0, 'modifier': 'skyfunc'
     }
     assert hem == Hemisphere.from_dict(hem.to_dict())
 
