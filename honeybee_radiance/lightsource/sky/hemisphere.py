@@ -30,7 +30,8 @@ class Hemisphere(object):
         * r_emittance
         * g_emittance
         * b_emittance
-"""
+
+    """
     def __init__(self):
         """Create sky hemisphere."""
         self._r_emittance = 1.0
