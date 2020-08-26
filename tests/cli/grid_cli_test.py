@@ -50,3 +50,22 @@ def test_merge_grid():
     assert os.path.isfile(pts_file)
     grid = SensorGrid.from_file(pts_file)
     assert grid.count == 21
+
+
+def test_merge_grid_with_header():
+    base_name = 'grid'
+    input_folder = './tests/assets/grid'
+    output_folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        merge_grid, [input_folder, base_name, '.ill', '--folder', output_folder]
+    )
+    assert result.exit_code == 0
+    # check the file is created
+    res_file = os.path.join(output_folder, base_name + '.ill')
+    assert os.path.isfile(res_file)
+    with open(res_file) as inf:
+        for count, _ in enumerate(inf):
+            pass
+
+    assert count == 160 - 1
