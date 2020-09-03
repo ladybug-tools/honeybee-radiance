@@ -5,7 +5,10 @@ http://radsite.lbl.gov/radiance/refer/ray.html#Mirror
 from __future__ import division
 from .materialbase import Material
 import honeybee.typing as typing
-from ...primitive import Void, VOID
+from ...primitive import Void
+
+
+VOID = Void()
 
 
 class Mirror(Material):
