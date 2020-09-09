@@ -46,7 +46,7 @@ def light_path_from_room(model, room_identifier, static_name='static_apertures')
         >> [['SouthWindow1'], ['static_apertures', 'NorthWindow2']]
     """
     # get the Room object from the Model
-    room = model.get_rooms_by_identifier([room_identifier])[0]
+    room = model.rooms_by_identifier([room_identifier])[0]
 
     # gather all of the dynamic groups that the Room has in its apertures
     grp_ids = set()
@@ -70,7 +70,7 @@ def light_path_from_room(model, room_identifier, static_name='static_apertures')
 
     # loop through adjacent rooms and gather their aperture groups
     # TODO: Make this part recursive to trace the light path more than one room away.
-    room_objs = model.get_rooms_by_identifier([room_tup[1] for room_tup in adj_rooms])
+    room_objs = model.rooms_by_identifier([room_tup[1] for room_tup in adj_rooms])
     for room_obj, room_tup in zip(room_objs, adj_rooms):
         rm_grp_ids = set()
         for face in room_obj.faces:
