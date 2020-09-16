@@ -24,6 +24,7 @@ from .dc import dc
 
 # command group for all radiance extension commands.
 @click.group(help='honeybee radiance commands.')
+@click.version_option()
 def radiance():
     pass
 
