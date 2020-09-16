@@ -7,7 +7,12 @@ except ImportError:
         'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
     )
 
+import sys
+import logging
+import json
+
 from honeybee.cli import main
+from ..config import folders
 from .translate import translate
 from .lib import lib
 from .sky import sky
@@ -21,6 +26,33 @@ from .dc import dc
 @click.group(help='honeybee radiance commands.')
 def radiance():
     pass
+
+
+_logger = logging.getLogger(__name__)
+
+
+@radiance.command('config')
+@click.option('--output-file', help='Optional file to output the JSON string of '
+              'the config object. By default, it will be printed out to stdout',
+              type=click.File('w'), default='-', show_default=True)
+def config(output_file):
+    """Get a JSON object with all configuration information"""
+    try:
+        config_dict = {
+            'radiance_path': folders.radiance_path,
+            'radbin_path': folders.radbin_path,
+            'radlib_path': folders.radlib_path,
+            'radiance_version': folders.radiance_version_str,
+            'standards_data_folder': folders.standards_data_folder,
+            'modifier_lib': folders.modifier_lib,
+            'modifierset_lib': folders.modifierset_lib
+        }
+        output_file.write(json.dumps(config_dict, indent=4))
+    except Exception as e:
+        _logger.exception('Failed to retrieve configurations.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 # add sub-commands to radiance
