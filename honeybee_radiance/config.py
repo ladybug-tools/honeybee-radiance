@@ -15,6 +15,7 @@ import honeybee_standards
 
 import os
 import platform
+import subprocess
 import json
 
 
@@ -33,6 +34,8 @@ class Folders(object):
         * radiance_path
         * radbin_path
         * radlib_path
+        * radiance_version
+        * radiance_version_str
         * standards_data_folder
         * modifier_lib
         * modifierset_lib
@@ -77,6 +80,8 @@ class Folders(object):
         else:
             self._radiance_path = None
             self._radlib_path = None
+        self._radiance_version = None
+        self._radiance_version_str = None
 
     @property
     def radbin_path(self):
@@ -91,6 +96,28 @@ class Folders(object):
     def radlib_path(self):
         """Get the path to Radiance lib folder."""
         return self._radlib_path
+
+    @property
+    def radiance_version(self):
+        """Get a tuple for the version of radiance (eg. (5, 3, '012cb17835')).
+
+        This will be None if the version could not be sensed or if no Radiance
+        installation was found.
+        """
+        if self._radbin_path and self._radiance_version_str is None:
+            self._radiance_version_from_cli()
+        return self._radiance_version
+
+    @property
+    def radiance_version_str(self):
+        """Get text for the full version of radiance (eg."RADIANCE 5.3 official release").
+
+        This will be None if the version could not be sensed or if no Radiance
+        installation was found.
+        """
+        if self._radbin_path and self._radiance_version_str is None:
+            self._radiance_version_from_cli()
+        return self._radiance_version_str
 
     @property
     def standards_data_folder(self):
@@ -191,7 +218,27 @@ class Folders(object):
         # set path for the standards_data_folder
         self.standards_data_folder = default_path["standards_data_folder"]
 
-    def _find_radiance_folder(self):
+    def _radiance_version_from_cli(self):
+        """Set this object's Radiance version by making a call to a Radiance command."""
+        rad_exe = os.path.join(self.radbin_path, 'rtrace.exe') if os.name == 'nt' \
+            else os.path.join(self.radbin_path, 'rtrace')
+        cmds = [rad_exe, '-version']
+        process = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        stdout = process.communicate()
+        base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
+        self._radiance_version_str = base_str
+        try:
+            ver_nums = self._radiance_version_str.split('(')[-1].split(')')[0].split('.')
+            ver_array = []
+            for i in ver_nums:
+                val = int(i) if i.isnumeric() else i
+                ver_array.append(val)
+            self._radiance_version = tuple(ver_array)
+        except Exception:
+            pass  # failed to parse the version into values
+
+    @staticmethod
+    def _find_radiance_folder():
         """Find the Radiance installation in its default location.
 
         This method will first attempt to return the path of a standalone Radiance
