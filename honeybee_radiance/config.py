@@ -223,7 +223,8 @@ class Folders(object):
         rad_exe = os.path.join(self.radbin_path, 'rtrace.exe') if os.name == 'nt' \
             else os.path.join(self.radbin_path, 'rtrace')
         cmds = [rad_exe, '-version']
-        process = subprocess.Popen(cmds, stdout=subprocess.PIPE)
+        use_shell = True if os.name == 'nt' else False
+        process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
         stdout = process.communicate()
         base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
         self._radiance_version_str = base_str
