@@ -55,5 +55,5 @@ class SkyDome(_SkyDome):
         """
         density = typing.int_in_range(density, 1, input_name='Sky subdivision density')
         return '#@rfluxmtx h=u u=Y\n%s\n\n#@rfluxmtx h=r%d u=Y\n%s\n' % (
-            self.sky_hemisphere, density, self.ground_hemisphere
+            self.ground_hemisphere, density, self.sky_hemisphere
         )
