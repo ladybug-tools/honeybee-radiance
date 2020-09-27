@@ -254,7 +254,8 @@ class Folders(object):
         try:  # try to parse the date into a list of integers
             date_pattern = re.compile(r'(\d*\-\d*\-\d*)')
             ver_date = re.search(date_pattern, base_str)
-            self._radiance_version_date = tuple(int(v) for v in ver_date[0].split('-'))
+            self._radiance_version_date = \
+                tuple(int(v) for v in ver_date.group(0).split('-'))
         except Exception:
             pass  # failed to parse the date into values; possibly a custom build
 
