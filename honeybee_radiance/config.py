@@ -17,6 +17,7 @@ import os
 import platform
 import subprocess
 import json
+import re
 
 
 class Folders(object):
@@ -36,6 +37,7 @@ class Folders(object):
         * radlib_path
         * radiance_version
         * radiance_version_str
+        * radiance_version_date
         * standards_data_folder
         * modifier_lib
         * modifierset_lib
@@ -82,6 +84,7 @@ class Folders(object):
             self._radlib_path = None
         self._radiance_version = None
         self._radiance_version_str = None
+        self._radiance_version_date = None
 
     @property
     def radbin_path(self):
@@ -118,6 +121,17 @@ class Folders(object):
         if self._radbin_path and self._radiance_version_str is None:
             self._radiance_version_from_cli()
         return self._radiance_version_str
+
+    @property
+    def radiance_version_date(self):
+        """Get a tuple for the date of the radiance version (eg. (2020, 9, 3)).
+
+        This will be None if the version could not be sensed or if no Radiance
+        installation was found.
+        """
+        if self._radbin_path and self._radiance_version_str is None:
+            self._radiance_version_from_cli()
+        return self._radiance_version_date
 
     @property
     def standards_data_folder(self):
@@ -219,7 +233,7 @@ class Folders(object):
         self.standards_data_folder = default_path["standards_data_folder"]
 
     def _radiance_version_from_cli(self):
-        """Set this object's Radiance version by making a call to a Radiance command."""
+        """Get the Radiance version properties by making a call to a Radiance command."""
         rad_exe = os.path.join(self.radbin_path, 'rtrace.exe') if os.name == 'nt' \
             else os.path.join(self.radbin_path, 'rtrace')
         cmds = [rad_exe, '-version']
@@ -227,16 +241,22 @@ class Folders(object):
         process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
         stdout = process.communicate()
         base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
-        self._radiance_version_str = base_str
-        try:
-            ver_nums = self._radiance_version_str.split('(')[-1].split(')')[0].split('.')
+        self._radiance_version_str = base_str  # set the version string
+        try:  # try to parse the version into a list of integers
+            ver_nums = base_str.split('(')[-1].split(')')[0].split('.')
             ver_array = []
             for i in ver_nums:
                 val = int(i) if i.isnumeric() else i
                 ver_array.append(val)
             self._radiance_version = tuple(ver_array)
         except Exception:
-            pass  # failed to parse the version into values
+            pass  # failed to parse the version into values; possibly a custom build
+        try:  # try to parse the date into a list of integers
+            date_pattern = re.compile(r'(\d*\-\d*\-\d*)')
+            ver_date = re.search(date_pattern, base_str)
+            self._radiance_version_date = tuple(int(v) for v in ver_date[0].split('-'))
+        except Exception:
+            pass  # failed to parse the date into values; possibly a custom build
 
     @staticmethod
     def _find_radiance_folder():
