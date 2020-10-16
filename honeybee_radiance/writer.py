@@ -335,6 +335,7 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
     grid_dir = model_folder.grid_folder(full=True)
     grids = model.properties.radiance.sensor_grids
     if len(grids) != 0:
+        grids_info = []
         preparedir(grid_dir)
         model.properties.radiance.check_duplicate_sensor_grid_display_names()
         for grid in grids:
@@ -342,9 +343,21 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
             info_file = os.path.join(grid_dir, '{}.json'.format(grid.display_name))
             with open(info_file, 'w') as fp:
                 json.dump(grid.info_dict(model), fp, indent=4)
+
+            grid_info = {
+                'name': grid.display_name, 'count': grid.count
+            }
+            grids_info.append(grid_info)
+
+        # write information file for all the grids.
+        grids_info_file = os.path.join(grid_dir, '_info.json')
+        with open(grids_info_file, 'w') as fp:
+            json.dump(grids_info, fp, indent=2)
+
     view_dir = model_folder.view_folder(full=True)
     views = model.properties.radiance.views
     if len(views) != 0:
+        views_info = []
         preparedir(view_dir)
         model.properties.radiance.check_duplicate_view_display_names()
         for view in views:
@@ -352,6 +365,18 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
             info_file = os.path.join(view_dir, '{}.json'.format(view.display_name))
             with open(info_file, 'w') as fp:
                 json.dump(view.info_dict(model), fp, indent=4)
+
+            # TODO: see if it make sense to use to_dict here instead of only taking the
+            # name
+            view_info = {
+                'name': view.display_name
+            }
+            views_info.append(view_info)
+
+        # write information file for all the views.
+        views_info_file = os.path.join(view_dir, '_info.json')
+        with open(views_info_file, 'w') as fp:
+            json.dump(views_info, fp, indent=2)
 
     return folder
 
