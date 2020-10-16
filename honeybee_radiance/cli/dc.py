@@ -84,28 +84,17 @@ def rcontrib_command_with_postprocess(
             raise ValueError('for time-being sensor count must be provided.')
 
         if coeff:
-            options.update_from_string('-aa 0.0 -V- -y {}'.format(sensor_count))
+            options.update_from_string('-aa 0.0 -V- -faf -y {}'.format(sensor_count))
         else:
-            options.update_from_string('-aa 0.0 -V+ -y {}'.format(sensor_count))
+            options.update_from_string('-aa 0.0 -V+ -faf -y {}'.format(sensor_count))
 
         options.M = modifiers
         # create command.
         rcontrib = Rcontrib(
             options=options, octree=octree, sensors=sensor_grid
         )
-
-        # this is a hack until we add rmtxop command
-        if output:
-            cmd_template = '{rcontrib_cmd} | rmtxop -c 47.4 119.9 11.6 -fa - > {output}'
-            cmd = cmd_template.format(
-                rcontrib_cmd=rcontrib.to_radiance().replace('\\', '/'),
-                output=output
-            )
-        else:
-            cmd_template = '{rcontrib_cmd} | rmtxop -c 47.4 119.9 11.6 -fa -'
-            cmd = cmd_template.format(
-                rcontrib_cmd=rcontrib.to_radiance().replace('\\', '/'),
-            )
+        rcontrib.output = output
+        cmd = rcontrib.to_radiance().replace('\\', '/')
         if dry_run:
             click.echo(cmd)
         else:
@@ -179,12 +168,11 @@ def rfluxmtx_command_with_postprocess(
         if not sensor_count:
             raise ValueError('for time-being sensor count must be provided.')
 
-        options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
+        options.update_from_string('-aa 0.0 -faf -y {}'.format(sensor_count))
 
         # create command.
         cmd_template = 'rfluxmtx {rad_params} - {sky_dome} -i {octree} < ' \
-            '{sensors} > flux.dc && dctimestep -of flux.dc {sky_mtx} ' \
-            '| rmtxop -c 47.4 119.9 11.6 -fa -'
+            '{sensors} | rmtxop -ff - {sky_mtx}'
 
         if output:
             cmd_template = cmd_template + ' > {output}'.format(output=output)
