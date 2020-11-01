@@ -30,7 +30,6 @@ For command line interface documentation see `this page <cli.html>`_.
    :caption: Contents:
 
 .. include:: modules.rst
-.. include:: cli.rst
 
 Indices and tables
 ==================
