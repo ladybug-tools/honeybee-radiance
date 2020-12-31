@@ -61,7 +61,8 @@ def split_grid(grid_file, count, folder, log_file):
 @click.argument('base-name', type=str)
 @click.argument('extension', default='.pts', type=str)
 @click.option('--folder', help='Optional output folder.', default='.', show_default=True)
-def merge_grid(input_folder, base_name, extension, folder):
+@click.option('--name', help='Optional output filename. Default is base-name.')
+def merge_grid(input_folder, base_name, extension, folder, name):
     """Merge several radiance files into a single file.
 
     This command removes headers from file if it exist.
@@ -77,7 +78,8 @@ def merge_grid(input_folder, base_name, extension, folder):
         grids = sorted(f for f in os.listdir(input_folder) if re.match(pattern, f))
         if len(grids) == 0:
             raise ValueError('Found no file to merge.')
-        output_file = os.path.join(folder, base_name + extension)
+        name = name or base_name
+        output_file = os.path.join(folder, name + extension)
 
         if not os.path.exists(folder):
             os.makedirs(folder)
