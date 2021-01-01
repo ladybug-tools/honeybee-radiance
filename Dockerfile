@@ -1,17 +1,6 @@
-FROM ubuntu:eoan
+FROM python:3.7
 
 LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
-
-# Install core software deps
-RUN apt-get update && \
-    apt-get install --no-install-recommends -y \
-    curl \
-    ca-certificates \
-    python3.7 \
-    python3-pip \
-    unzip \
-    git \
-    && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
 RUN adduser ladybugbot --uid 1000 --disabled-password --gecos ""
@@ -34,7 +23,7 @@ RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_
 ENV PATH="/home/ladybugbot/.local/bin:${PATH}"
 COPY . honeybee-radiance
 RUN pip3 install setuptools wheel \
-    && pip3 install pydantic==1.5.1 honeybee-schema ./honeybee-radiance[cli]
+    && pip3 install pydantic==1.7.3 honeybee-schema ./honeybee-radiance[cli]
 
 # Set workdir
 RUN mkdir -p /home/ladybugbot/run
