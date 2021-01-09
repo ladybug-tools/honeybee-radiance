@@ -9,6 +9,7 @@ from ..modifier.material import BSDF
 from ..lib.modifiers import black, generic_context
 
 from honeybee.extensionutil import model_extension_dicts
+from honeybee.checkdup import check_duplicate_identifiers
 from honeybee.boundarycondition import Surface
 
 try:
@@ -435,105 +436,22 @@ class ModelRadianceProperties(object):
 
     def check_duplicate_modifier_identifiers(self, raise_exception=True):
         """Check that there are no duplicate Modifier identifiers in the model."""
-        mod_identifiers = set()
-        duplicate_identifiers = set()
-        for mod in self.modifiers:
-            if mod.identifier not in mod_identifiers:
-                mod_identifiers.add(mod.identifier)
-            else:
-                duplicate_identifiers.add(mod.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated modifier '
-                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(
+            self.modifiers, raise_exception, 'Radiance Modifier')
 
     def check_duplicate_modifier_set_identifiers(self, raise_exception=True):
         """Check that there are no duplicate ModifierSet identifiers in the model."""
-        mod_set_identifiers = set()
-        duplicate_identifiers = set()
-        for mod_set in self.modifier_sets:
-            if mod_set.identifier not in mod_set_identifiers:
-                mod_set_identifiers.add(mod_set.identifier)
-            else:
-                duplicate_identifiers.add(mod_set.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated ModifierSet '
-                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(
+            self.modifier_sets, raise_exception, 'ModifierSet')
 
     def check_duplicate_sensor_grid_identifiers(self, raise_exception=True):
         """Check that there are no duplicate SensorGrid identifiers in the model."""
-        grid_identifiers = set()
-        duplicate_identifiers = set()
-        for grid in self.sensor_grids:
-            if grid.identifier not in grid_identifiers:
-                grid_identifiers.add(grid.identifier)
-            else:
-                duplicate_identifiers.add(grid.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated sensor grid '
-                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
+        return check_duplicate_identifiers(
+            self.sensor_grids, raise_exception, 'SensorGrid')
 
     def check_duplicate_view_identifiers(self, raise_exception=True):
         """Check that there are no duplicate View identifiers in the model."""
-        view_identifiers = set()
-        duplicate_identifiers = set()
-        for view in self.views:
-            if view.identifier not in view_identifiers:
-                view_identifiers.add(view.identifier)
-            else:
-                duplicate_identifiers.add(view.identifier)
-        if len(duplicate_identifiers) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated view '
-                    'identifiers:\n{}'.format('\n'.join(duplicate_identifiers)))
-            return False
-        return True
-
-    def check_duplicate_sensor_grid_display_names(self, raise_exception=True):
-        """Check that there are no duplicate SensorGrid display_names in the model."""
-        grid_display_names = set()
-        duplicate_display_names = set()
-        for grid in self.sensor_grids:
-            if grid.display_name not in grid_display_names:
-                grid_display_names.add(grid.display_name)
-            else:
-                duplicate_display_names.add(grid.display_name)
-        if len(duplicate_display_names) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated sensor grid '
-                    'display_names:\n{}'.format('\n'.join(duplicate_display_names)))
-            return False
-        return True
-
-    def check_duplicate_view_display_names(self, raise_exception=True):
-        """Check that there are no duplicate View display_names in the model."""
-        view_display_names = set()
-        duplicate_display_names = set()
-        for view in self.views:
-            if view.display_name not in view_display_names:
-                view_display_names.add(view.display_name)
-            else:
-                duplicate_display_names.add(view.display_name)
-        if len(duplicate_display_names) != 0:
-            if raise_exception:
-                raise ValueError(
-                    'The model has the following duplicated view '
-                    'display_names:\n{}'.format('\n'.join(duplicate_display_names)))
-            return False
-        return True
+        return check_duplicate_identifiers(self.views, raise_exception, 'View')
 
     def check_sensor_grid_rooms_in_model(self, raise_exception=True):
         """Check that the room_identifiers of SenorGrids are in the model."""
@@ -809,4 +727,4 @@ class ModelRadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Model Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Model Radiance Properties: [host: {}]'.format(self.host.display_name)

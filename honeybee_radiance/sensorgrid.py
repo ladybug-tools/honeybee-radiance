@@ -6,9 +6,11 @@ from .lightpath import light_path_from_room
 
 import honeybee.typing as typing
 import ladybug.futil as futil
+from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 
 import os
+import math
 try:
     from itertools import izip as zip
 except ImportError:  # python 3
@@ -33,10 +35,11 @@ class SensorGrid(object):
         * room_identifier
         * light_path
         * mesh
+        * base_geometry
     """
 
     __slots__ = ('_identifier', '_display_name', '_sensors', '_room_identifier',
-                 '_light_path', '_mesh')
+                 '_light_path', '_mesh', '_base_geometry')
 
     def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
@@ -46,6 +49,7 @@ class SensorGrid(object):
         self._room_identifier = None
         self._light_path = None
         self._mesh = None
+        self._base_geometry = None
 
     @classmethod
     def from_dict(cls, ag_dict):
@@ -74,6 +78,9 @@ class SensorGrid(object):
             new_obj.light_path = ag_dict['light_path']
         if 'mesh' in ag_dict and ag_dict['mesh'] is not None:
             new_obj.mesh = Mesh3D.from_dict(ag_dict['mesh'])
+        if 'base_geometry' in ag_dict and ag_dict['base_geometry'] is not None:
+            new_obj.base_geometry = \
+                tuple(Face3D.from_dict(face) for face in ag_dict['base_geometry'])
         return new_obj
 
     @classmethod
@@ -127,6 +134,34 @@ class SensorGrid(object):
         directions = [(vec.x, vec.y, vec.z) for vec in mesh.face_normals]
         s_grid = cls.from_position_and_direction(identifier, positions, directions)
         s_grid.mesh = mesh
+        return s_grid
+
+    @classmethod
+    def from_face3d(cls, identifier, faces, x_dim, y_dim=None, offset=0):
+        """Create a sensor grid from an array of ladybug_geometry Face3D.
+
+        The Face3D will be converted into a gridded mesh using the input x_dim
+        and y_dim. The centroids of the mesh faces will be used to create the
+        sensor positions and the normals of the faces will set the directions.
+        The mesh will be assigned to the resulting SensorGrid's mesh property
+        and the Face3Ds assigned to the base_geometry.
+
+        Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            faces: An array of ladybug_geometry Face3D.
+            x_dim: The x dimension of the grid cells as a number.
+            y_dim: The y dimension of the grid cells as a number. Default is None,
+                which will assume the same cell dimension for y as is set for x.
+            offset: A number for how far to offset the grid from the base face.
+        """
+        meshes = [face.mesh_grid(x_dim, y_dim, offset, True) for face in faces]
+        if len(meshes) == 1:
+            s_grid = cls.from_mesh3d(identifier, meshes[0])
+        elif len(meshes) > 1:
+            s_grid = cls.from_mesh3d(identifier, Mesh3D.join_meshes(meshes))
+        s_grid.base_geometry = faces
         return s_grid
 
     @classmethod
@@ -201,7 +236,10 @@ class SensorGrid(object):
 
     @display_name.setter
     def display_name(self, value):
-        self._display_name = typing.valid_rad_string(value, 'sensor grid display_name')
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def sensors(self):
@@ -262,8 +300,8 @@ class SensorGrid(object):
             assert isinstance(l_path, (tuple, list)), 'Expected list or tuple for ' \
                 'light_path. Got {}.'.format(type(l_path))
             for ap_list in l_path:
-                assert isinstance(ap_list, (tuple, list)), 'Expected list or tuple for ' \
-                    'light_path sub-list. Got {}.'.format(type(ap_list))
+                assert isinstance(ap_list, (tuple, list)), 'Expected list or tuple ' \
+                    'for light_path sub-list. Got {}.'.format(type(ap_list))
                 for ap in ap_list:
                     assert isinstance(ap, str), 'Expected text for light_path ' \
                         'aperture group identifier. Got {}.'.format(type(ap))
@@ -288,6 +326,26 @@ class SensorGrid(object):
                 'nor the number of vertices ({}).'.format(
                     self.count, len(value.faces), len(value.vertices))
         self._mesh = value
+
+    @property
+    def base_geometry(self):
+        """Get or set an optional array of ladybug_geometry Face3D used to make the grid.
+
+        There are no restrictions on how this property relates to the sensors and it
+        is provided only to assist with the display of the grid when the number
+        of sensors or the mesh is too large to be practically visualized.
+        """
+        return self._base_geometry
+
+    @base_geometry.setter
+    def base_geometry(self, value):
+        if value is not None:
+            if not isinstance(value, tuple):
+                value = tuple(value)
+            for face in value:
+                assert isinstance(face, Face3D), 'Expected Face3D for SensorGrid ' \
+                    'base_geometry. Got {}.'.format(type(value))
+        self._base_geometry = value
 
     def info_dict(self, model=None):
         """Get a dictionary with information about the SensorGrid.
@@ -315,18 +373,18 @@ class SensorGrid(object):
 
         Args:
             folder: Target folder.
-            file_name: Optional file name without extension. (Default: self.display_name)
+            file_name: Optional file name without extension. (Default: self.identifier)
             mkdir: A boolean to indicate if the folder should be created in case it
-                doesn't exist already (Default: False).
+                doesn't exist already. (Default: False).
 
         Returns:
             Full path to newly created file.
         """
-        display_name = file_name or self.display_name + '.pts'
-        if not display_name.endswith('.pts'):
-            display_name += '.pts'
+        identifier = file_name or self.identifier + '.pts'
+        if not identifier.endswith('.pts'):
+            identifier += '.pts'
         return futil.write_to_file_by_name(
-            folder, display_name, self.to_radiance() + '\n', mkdir)
+            folder, identifier, self.to_radiance() + '\n', mkdir)
 
     def to_files(self, folder, count, base_name=None, mkdir=False):
         """Split this sensor grid and write them to several files.
@@ -334,8 +392,8 @@ class SensorGrid(object):
         Args:
             folder: Target folder.
             count: Number of files.
-            base_name: Optional text for a unique base_name for sensor files.
-                (Default: self.display_name)
+            base_name: Optional text string for a unique base name for the sensor
+                grid files. (Default: self.identifier)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already (Default: False).
 
@@ -344,7 +402,7 @@ class SensorGrid(object):
             to the grid.
         """
         count = typing.int_in_range(count, 1, input_name='file count')
-        base_name = base_name or self.display_name
+        base_name = base_name or self.identifier
         if count == 1 or self.count == 0:
             name = '%s_0000' % base_name
             full_path = self.to_file(folder, name, mkdir)
@@ -401,6 +459,8 @@ class SensorGrid(object):
             base['light_path'] = self.light_path
         if self._mesh is not None:
             base['mesh'] = self._mesh.to_dict()
+        if self._base_geometry is not None:
+            base['base_geometry'] = [face.to_dict() for face in self._base_geometry]
         return base
 
     def move(self, moving_vec):
@@ -413,7 +473,10 @@ class SensorGrid(object):
         for sens in self._sensors:
             sens.move(moving_vec)
         if self._mesh is not None:
-            self._mesh.move(moving_vec)
+            self._mesh = self._mesh.move(moving_vec)
+        if self._base_geometry is not None:
+            self._base_geometry = \
+                tuple(face.move(moving_vec) for face in self._base_geometry)
 
     def rotate(self, angle, axis, origin):
         """Rotate this sensor grid by a certain angle around an axis and origin.
@@ -426,8 +489,12 @@ class SensorGrid(object):
         """
         for sens in self._sensors:
             sens.rotate(angle, axis, origin)
+        r_angle = math.radians(angle)
         if self._mesh is not None:
-            self._mesh.rotate(angle, axis, origin)
+            self._mesh = self._mesh.rotate(r_angle, axis, origin)
+        if self._base_geometry is not None:
+            self._base_geometry = \
+                tuple(face.rotate(r_angle, axis, origin) for face in self._base_geometry)
 
     def rotate_xy(self, angle, origin):
         """Rotate this sensor grid counterclockwise in the world XY plane by an angle.
@@ -439,8 +506,12 @@ class SensorGrid(object):
         """
         for sens in self._sensors:
             sens.rotate_xy(angle, origin)
+        r_angle = math.radians(angle)
         if self._mesh is not None:
-            self._mesh.rotate_xy(angle, origin)
+            self._mesh = self._mesh.rotate_xy(r_angle, origin)
+        if self._base_geometry is not None:
+            self._base_geometry = \
+                tuple(face.rotate_xy(r_angle, origin) for face in self._base_geometry)
 
     def reflect(self, plane):
         """Reflect this sensor grid across a plane.
@@ -452,7 +523,10 @@ class SensorGrid(object):
         for sens in self._sensors:
             sens.reflect(plane)
         if self._mesh is not None:
-            self._mesh.reflect(plane)
+            self._mesh = self._mesh.reflect(plane.n, plane.o)
+        if self._base_geometry is not None:
+            self._base_geometry = \
+                tuple(face.reflect(plane.n, plane.o) for face in self._base_geometry)
 
     def scale(self, factor, origin=None):
         """Scale this sensor grid by a factor from an origin point.
@@ -465,7 +539,10 @@ class SensorGrid(object):
         for sens in self._sensors:
             sens.scale(factor, origin)
         if self._mesh is not None:
-            self._mesh.scale(factor, origin)
+            self._mesh = self._mesh.scale(factor, origin)
+        if self._base_geometry is not None:
+            self._base_geometry = \
+                tuple(face.scale(factor, origin) for face in self._base_geometry)
 
     def duplicate(self):
         """Get a copy of this object."""
@@ -485,12 +562,13 @@ class SensorGrid(object):
         new_obj._room_identifier = self._room_identifier
         new_obj._light_path = self._light_path
         new_obj._mesh = self._mesh
+        new_obj._base_geometry = self._base_geometry
         return new_obj
 
     def __key(self):
         """A tuple based on the object properties, useful for hashing."""
-        return (self.identifier, self._display_name, self._room_identifier,
-                self._mesh) + tuple(hash(sensor) for sensor in self.sensors)
+        return (self.identifier, self._display_name, self._room_identifier) + \
+            tuple(hash(sensor) for sensor in self.sensors)
 
     def __hash__(self):
         return hash(self.__key())
@@ -516,4 +594,4 @@ class SensorGrid(object):
 
     def __repr__(self):
         """Get the string representation of the sensor grid."""
-        return 'SensorGrid::{}::#{}'.format(self._identifier, len(self.sensors))
+        return 'SensorGrid: {} [{} sensors]'.format(self.display_name, len(self.sensors))

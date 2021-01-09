@@ -625,13 +625,13 @@ class ModifierSet(object):
         return not self.__eq__(other)
 
     def __repr__(self):
-        return 'Radiance Modifier Set: {}'.format(self.identifier)
+        return 'Radiance Modifier Set: {}'.format(self.display_name)
 
 
 @lockable
 class _BaseSet(object):
     """Base class for the sets assigned to Faces.
-    
+
     This includes WallModifierSet, FloorModifierSet, RoofCeilingModifierSet and
     ShadeModifierSet.
 
@@ -726,19 +726,19 @@ class _BaseSet(object):
         attributes = self._slots
         if none_for_defaults:
             if abridged:
-                base = {attr[1:]:getattr(self, attr[1:]).identifier
+                base = {attr[1:]: getattr(self, attr[1:]).identifier
                         if getattr(self, attr) is not None else None
                         for attr in attributes}
             else:
-                base = {attr[1:]:getattr(self, attr[1:]).to_dict()
+                base = {attr[1:]: getattr(self, attr[1:]).to_dict()
                         if getattr(self, attr) is not None else None
                         for attr in attributes}
         else:
             if abridged:
-                base = {attr[1:]:getattr(self, attr[1:]).identifier
+                base = {attr[1:]: getattr(self, attr[1:]).identifier
                         for attr in attributes}
             else:
-                base = {attr[1:]:getattr(self, attr[1:]).to_dict()
+                base = {attr[1:]: getattr(self, attr[1:]).to_dict()
                         for attr in attributes}
 
         base['type'] = self.__class__.__name__ + 'Abridged' if abridged else \
@@ -784,9 +784,9 @@ class _BaseSet(object):
 
     def __repr__(self):
         name = self.__class__.__name__.split('Set')[0]
-        return '{} Modifier Set:\n Exterior: {}\n Interior: {}'.format(
-            name, self.exterior_modifier.identifier, self.interior_modifier.identifier
-        )
+        return '{} Modifier Set: [Exterior: {}] [Interior: {}]'.format(
+            name, self.exterior_modifier.display_name,
+            self.interior_modifier.display_name)
 
 
 @lockable
@@ -966,13 +966,12 @@ class ApertureModifierSet(_BaseSet):
         )
 
     def __repr__(self):
-        return 'Aperture Modifier Set:\n Exterior: {}\n Interior: {}' \
-            '\n Skylight: {}\n Operable: {}'.format(
-            self.window_modifier.identifier,
-            self.interior_modifier.identifier,
-            self.skylight_modifier.identifier,
-            self.operable_modifier.identifier
-        )
+        return 'Aperture Modifier Set: [Exterior: {}] [Interior: {}]' \
+            ' [Skylight: {}] [Operable: {}]'.format(
+                self.window_modifier.display_name,
+                self.interior_modifier.display_name,
+                self.skylight_modifier.display_name,
+                self.operable_modifier.display_name)
 
 
 @lockable
@@ -1087,11 +1086,6 @@ class DoorModifierSet(_BaseSet):
         )
 
     def __repr__(self):
-        return 'Door Modifier Set:\n Exterior: {}\n Interior: {}' \
-            '\n Exterior Glass: {}\n Interior Glass: {}\n Overhead: {}'.format(
-                self.exterior_modifier.identifier,
-                self.interior_modifier.identifier,
-                self.exterior_glass_modifier.identifier,
-                self.interior_glass_modifier.identifier,
-                self.overhead_modifier.identifier
-                )
+        return 'Door Modifier Set: [Exterior: {}] [Interior: {}]'.format(
+                self.exterior_modifier.display_name,
+                self.interior_modifier.display_name)
