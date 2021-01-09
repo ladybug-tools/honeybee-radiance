@@ -195,4 +195,4 @@ class DoorRadianceProperties(_DynamicRadianceProperties):
         return new_prop
 
     def __repr__(self):
-        return 'Door Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Door Radiance Properties: [host: {}]'.format(self.host.display_name)

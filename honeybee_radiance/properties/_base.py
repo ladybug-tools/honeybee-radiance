@@ -162,7 +162,7 @@ class _RadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Base Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Base Radiance Properties: [host: {}]'.format(self.host.display_name)
 
 
 class _DynamicRadianceProperties(_RadianceProperties):

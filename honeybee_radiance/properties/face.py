@@ -120,4 +120,4 @@ class FaceRadianceProperties(_RadianceProperties):
         return self._add_modifiers_to_dict(base, abridged)
 
     def __repr__(self):
-        return 'Face Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Face Radiance Properties: [host: {}]'.format(self.host.display_name)

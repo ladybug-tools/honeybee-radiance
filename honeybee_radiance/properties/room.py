@@ -5,6 +5,8 @@ from ..view import View
 from ..modifierset import ModifierSet
 from ..lib.modifiersets import generic_modifier_set_visible
 
+from honeybee.facetype import Floor
+
 
 class RoomRadianceProperties(object):
     """Radiance Properties for Honeybee Room.
@@ -91,6 +93,10 @@ class RoomRadianceProperties(object):
             return None
         sensor_grid = SensorGrid.from_mesh3d(self.host.identifier, floor_grid)
         sensor_grid.room_identifier = self.host.identifier
+        sensor_grid.display_name = self.host.display_name
+        sensor_grid.base_geometry = \
+            tuple(face.geometry.move(face.normal.reverse() * offset)
+                  for face in self.host.faces if isinstance(face.type, Floor))
         return sensor_grid
 
     def generate_view(self, direction, up_vector=(0, 0, 1), type='v', h_size=60,
@@ -156,6 +162,7 @@ class RoomRadianceProperties(object):
         view = View(self.host.identifier, pos, direction, up_vector, type,
                     h_size, v_size, shift, lift)
         view.room_identifier = self.host.identifier
+        view.display_name = self.host.display_name
         return view
 
     @classmethod
@@ -239,4 +246,4 @@ class RoomRadianceProperties(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'Room Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Room Radiance Properties: [host: {}]'.format(self.host.display_name)

@@ -293,7 +293,8 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
                 raise NotImplementedError('Dynamic interior apertures are not currently'
                                           ' supported by Model.to.rad_folder.')
             else:
-                st_d = _write_dynamic_subface_files(folder, out_subfolder, group, minimal)
+                st_d = _write_dynamic_subface_files(
+                    folder, out_subfolder, group, minimal)
                 _write_mtx_files(folder, out_subfolder, group, st_d, minimal)
                 ext_dict[group.identifier] = st_d
         _write_dynamic_json(folder, out_subfolder, ext_dict)
@@ -337,15 +338,14 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
     if len(grids) != 0:
         grids_info = []
         preparedir(grid_dir)
-        model.properties.radiance.check_duplicate_sensor_grid_display_names()
         for grid in grids:
             grid.to_file(grid_dir)
-            info_file = os.path.join(grid_dir, '{}.json'.format(grid.display_name))
+            info_file = os.path.join(grid_dir, '{}.json'.format(grid.identifier))
             with open(info_file, 'w') as fp:
                 json.dump(grid.info_dict(model), fp, indent=4)
 
             grid_info = {
-                'name': grid.display_name, 'count': grid.count
+                'name': grid.identifier, 'count': grid.count
             }
             grids_info.append(grid_info)
 
@@ -359,17 +359,16 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
     if len(views) != 0:
         views_info = []
         preparedir(view_dir)
-        model.properties.radiance.check_duplicate_view_display_names()
         for view in views:
             view.to_file(view_dir)
-            info_file = os.path.join(view_dir, '{}.json'.format(view.display_name))
+            info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
             with open(info_file, 'w') as fp:
                 json.dump(view.info_dict(model), fp, indent=4)
 
             # TODO: see if it make sense to use to_dict here instead of only taking the
             # name
             view_info = {
-                'name': view.display_name
+                'name': view.identifier
             }
             views_info.append(view_info)
 
@@ -458,7 +457,7 @@ def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False)
 
     # loop through all states and write out the .rad files for them
     tmxt_valid = False
-    for state_i, st_dict in enumerate(states_json_list):
+    for state_i, _ in enumerate(states_json_list):
         tmtx_bsdf = group.tmxt_bsdf(state_i)
         if tmtx_bsdf is not None:  # it's a valid state for 3-phase
             tmxt_valid = True

@@ -194,4 +194,4 @@ class ApertureRadianceProperties(_DynamicRadianceProperties):
         return new_prop
 
     def __repr__(self):
-        return 'Aperture Radiance Properties:\n host: {}'.format(self.host.identifier)
+        return 'Aperture Radiance Properties: [host: {}]'.format(self.host.display_name)
