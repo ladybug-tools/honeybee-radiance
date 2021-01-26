@@ -23,9 +23,7 @@ class SensorGrid(object):
     Args:
         identifier: Text string for a unique SensorGrid ID. Must not contain spaces
             or special characters. This will be used to identify the object in the
-            exported Radiance files. You may use / in name to identify grid groups.
-            For example floor_1/living_room create a sensor grid with living_room
-            identifier and floor_1 group identifier.
+            exported Radiance files.
         sensors: A collection of Sensors.
 
     Properties:
@@ -47,11 +45,11 @@ class SensorGrid(object):
 
     def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
-        self._group_identifier = None
         self.identifier = identifier
         self._display_name = None
         self.sensors = sensors
         self._room_identifier = None
+        self._group_identifier = None
         self._light_path = None
         self._mesh = None
         self._base_geometry = None
@@ -230,11 +228,6 @@ class SensorGrid(object):
 
     @identifier.setter
     def identifier(self, n):
-        segments = n.split('/')
-        n = segments[-1]
-        if len(segments) > 1:
-            group_identifier = '/'.join(segments[:-1])
-            self.group_identifier = group_identifier
         self._identifier = typing.valid_rad_string(n, 'sensor grid identifier')
 
     @property
@@ -303,13 +296,20 @@ class SensorGrid(object):
         This will be used in the write to radiance folder method to write all the grids
         with the same group identifier under the same subfolder.
 
+        You may use / in name to identify nested grid groups. For example
+        floor_1/living_room create a sensor grid under living_room/floor_1 subfolder.
+
         If None, the grid will be written to the root of grids folder.
         """
         return self._group_identifier
 
     @group_identifier.setter
     def group_identifier(self, n):
-        identifier_key = '/'.join(typing.valid_string(key) for key in n.split('/'))
+        identifier_key = \
+            '/'.join(
+                typing.valid_rad_string(key, 'Sensor group identifier')
+                for key in n.split('/')
+            )
         self._group_identifier = identifier_key
 
     @property
