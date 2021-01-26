@@ -35,18 +35,6 @@ def test_invalid_input():
         SensorGrid('sg_1', ((0, 0, 0, 0, 0, 1),))
 
 
-def test_creation_with_group():
-    sg = SensorGrid('floor_1/dining_room/sg_1', sensors)
-    str(sg)  # test string representation
-    hash(sg)  # test hashability
-
-    assert sg.identifier == 'sg_1'
-    assert sg.group_identifier == 'floor_1/dining_room'
-    assert len(sg) == 2
-    assert sg[0] == sensors[0]
-    assert sg[1] == sensors[1]
-
-
 def test_assigning_group():
     sg = SensorGrid('sg_1', sensors)
     sg.group_identifier = 'floor_1/dining_room'
