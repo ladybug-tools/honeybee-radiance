@@ -339,14 +339,19 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
         grids_info = []
         preparedir(grid_dir)
         for grid in grids:
-            grid.to_file(grid_dir)
-            info_file = os.path.join(grid_dir, '{}.json'.format(grid.identifier))
+            fp = grid.to_file(grid_dir)
+            info_dir = os.path.dirname(fp)
+            info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
             with open(info_file, 'w') as fp:
                 json.dump(grid.info_dict(model), fp, indent=4)
 
             grid_info = {
-                'name': grid.identifier, 'count': grid.count
+                'name': grid.identifier,
+                'identifier': grid.identifier,
+                'count': grid.count,
+                'group': grid.group_identifier or ''
             }
+
             grids_info.append(grid_info)
 
         # write information file for all the grids.
