@@ -23,7 +23,9 @@ class SensorGrid(object):
     Args:
         identifier: Text string for a unique SensorGrid ID. Must not contain spaces
             or special characters. This will be used to identify the object in the
-            exported Radiance files.
+            exported Radiance files. You may use / in name to identify grid groups.
+            For example floor_1/living_room create a sensor grid with living_room
+            identifier and floor_1 group identifier.
         sensors: A collection of Sensors.
 
     Properties:
@@ -36,14 +38,17 @@ class SensorGrid(object):
         * light_path
         * mesh
         * base_geometry
+        * group_identifier
+
     """
 
     __slots__ = ('_identifier', '_display_name', '_sensors', '_room_identifier',
-                 '_light_path', '_mesh', '_base_geometry')
+                 '_light_path', '_mesh', '_base_geometry', '_group_identifier')
 
     def __init__(self, identifier, sensors):
         """Initialize a SensorGrid."""
-        self.identifier = typing.valid_rad_string(identifier)
+        self._group_identifier = None
+        self.identifier = identifier
         self._display_name = None
         self.sensors = sensors
         self._room_identifier = None
@@ -63,6 +68,7 @@ class SensorGrid(object):
             "display_name": str,  # SensorGrid display name
             "sensors": [],  # list of Sensor dictionaries
             'room_identifier': str,  # optional room identifier
+            'group_identifier': str,  # optional group identifier
             'light_path':  []  # optional list of lists for light path
             }
         """
@@ -74,6 +80,8 @@ class SensorGrid(object):
             new_obj.display_name = ag_dict['display_name']
         if 'room_identifier' in ag_dict and ag_dict['room_identifier'] is not None:
             new_obj.room_identifier = ag_dict['room_identifier']
+        if 'group_identifier' in ag_dict and ag_dict['group_identifier'] is not None:
+            new_obj.group_identifier = ag_dict['group_identifier']
         if 'light_path' in ag_dict and ag_dict['light_path'] is not None:
             new_obj.light_path = ag_dict['light_path']
         if 'mesh' in ag_dict and ag_dict['mesh'] is not None:
@@ -222,6 +230,11 @@ class SensorGrid(object):
 
     @identifier.setter
     def identifier(self, n):
+        segments = n.split('/')
+        n = segments[-1]
+        if len(segments) > 1:
+            group_identifier = '/'.join(segments[:-1])
+            self.group_identifier = group_identifier
         self._identifier = typing.valid_rad_string(n, 'sensor grid identifier')
 
     @property
@@ -282,6 +295,22 @@ class SensorGrid(object):
     @room_identifier.setter
     def room_identifier(self, n):
         self._room_identifier = typing.valid_string(n)
+
+    @property
+    def group_identifier(self):
+        """Get or set text for the grid group identifier to which this SensorGrid belongs.
+
+        This will be used in the write to radiance folder method to write all the grids
+        with the same group identifier under the same subfolder.
+
+        If None, the grid will be written to the root of grids folder.
+        """
+        return self._group_identifier
+
+    @group_identifier.setter
+    def group_identifier(self, n):
+        identifier_key = '/'.join(typing.valid_string(key) for key in n.split('/'))
+        self._group_identifier = identifier_key
 
     @property
     def light_path(self):
@@ -362,20 +391,27 @@ class SensorGrid(object):
             base['light_path'] = self._light_path
         elif model and self._room_identifier:  # auto-calculate the light path
             base['light_path'] = light_path_from_room(model, self._room_identifier)
+
+        if self._group_identifier:
+            base['group_identifier'] = self._group_identifier
+
         return base
 
     def to_radiance(self):
         """Return sensors grid as a Radiance string."""
         return "\n".join((ap.to_radiance() for ap in self._sensors))
 
-    def to_file(self, folder, file_name=None, mkdir=False):
+    def to_file(self, folder, file_name=None, mkdir=False, ignore_group=False):
         """Write this sensor grid to a Radiance sensors file.
 
         Args:
-            folder: Target folder.
+            folder: Target folder. If grid is part of a sensor group identifier it will
+                be written to a subfolder with group identifier name.
             file_name: Optional file name without extension. (Default: self.identifier)
             mkdir: A boolean to indicate if the folder should be created in case it
                 doesn't exist already. (Default: False).
+            ignore_group: A boolean to indicate if creating a new subfolder for sensor
+                group should be ignored. (Default: False).
 
         Returns:
             Full path to newly created file.
@@ -383,11 +419,19 @@ class SensorGrid(object):
         identifier = file_name or self.identifier + '.pts'
         if not identifier.endswith('.pts'):
             identifier += '.pts'
+        if not ignore_group and self.group_identifier:
+            folder = os.path.normpath(os.path.join(folder, self.group_identifier))
+            mkdir = True  # in most cases the subfolder does not exist already
+
         return futil.write_to_file_by_name(
             folder, identifier, self.to_radiance() + '\n', mkdir)
 
     def to_files(self, folder, count, base_name=None, mkdir=False):
         """Split this sensor grid and write them to several files.
+
+        This method writes the files directly to the folder and doesn't create a
+        subfolder for sensor groups if any. You can add the group subfolder to folder
+        before calling the method.
 
         Args:
             folder: Target folder.
@@ -405,7 +449,7 @@ class SensorGrid(object):
         base_name = base_name or self.identifier
         if count == 1 or self.count == 0:
             name = '%s_0000' % base_name
-            full_path = self.to_file(folder, name, mkdir)
+            full_path = self.to_file(folder, name, mkdir, ignore_group=True)
             return [
                 {'name': name if not name.endswith('.pts') else name.replace('.pts', ''),
                  'path': name + '.pts' if not name.endswith('.pts') else name,
@@ -455,6 +499,8 @@ class SensorGrid(object):
             base['display_name'] = self.display_name
         if self._room_identifier is not None:
             base['room_identifier'] = self.room_identifier
+        if self._group_identifier is not None:
+            base['group_identifier'] = self.group_identifier
         if self._light_path is not None:
             base['light_path'] = self.light_path
         if self._mesh is not None:
@@ -560,6 +606,7 @@ class SensorGrid(object):
         new_obj = SensorGrid(self.identifier, (sen.duplicate() for sen in self.sensors))
         new_obj._display_name = self._display_name
         new_obj._room_identifier = self._room_identifier
+        new_obj.group_identifier = self.group_identifier
         new_obj._light_path = self._light_path
         new_obj._mesh = self._mesh
         new_obj._base_geometry = self._base_geometry
@@ -567,8 +614,9 @@ class SensorGrid(object):
 
     def __key(self):
         """A tuple based on the object properties, useful for hashing."""
-        return (self.identifier, self._display_name, self._room_identifier) + \
-            tuple(hash(sensor) for sensor in self.sensors)
+        return (
+            self.identifier, self._display_name, self._room_identifier,
+            self._room_identifier) + tuple(hash(sensor) for sensor in self.sensors)
 
     def __hash__(self):
         return hash(self.__key())
