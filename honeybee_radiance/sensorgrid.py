@@ -162,7 +162,7 @@ class SensorGrid(object):
                 which will assume the same cell dimension for y as is set for x.
             offset: A number for how far to offset the grid from the base face.
         """
-        meshes = [face.mesh_grid(x_dim, y_dim, offset, True) for face in faces]
+        meshes = [face.mesh_grid(x_dim, y_dim, offset) for face in faces]
         if len(meshes) == 1:
             s_grid = cls.from_mesh3d(identifier, meshes[0])
         elif len(meshes) > 1:
