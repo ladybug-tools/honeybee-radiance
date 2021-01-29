@@ -143,7 +143,7 @@ class SensorGrid(object):
         return s_grid
 
     @classmethod
-    def from_face3d(cls, identifier, faces, x_dim, y_dim=None, offset=0):
+    def from_face3d(cls, identifier, faces, x_dim, y_dim=None, offset=0, flip=False):
         """Create a sensor grid from an array of ladybug_geometry Face3D.
 
         The Face3D will be converted into a gridded mesh using the input x_dim
@@ -161,8 +161,13 @@ class SensorGrid(object):
             y_dim: The y dimension of the grid cells as a number. Default is None,
                 which will assume the same cell dimension for y as is set for x.
             offset: A number for how far to offset the grid from the base face.
+            flip: Set to True to have the mesh normals reversed from the direction of
+                this face and to have the offset input move the mesh in the opposite
+                direction from this face’s normal. Defaults to False, which means the
+                normal direction of the face will be used as the direction of the
+                sensor grids.
         """
-        meshes = [face.mesh_grid(x_dim, y_dim, offset) for face in faces]
+        meshes = [face.mesh_grid(x_dim, y_dim, offset, flip) for face in faces]
         if len(meshes) == 1:
             s_grid = cls.from_mesh3d(identifier, meshes[0])
         elif len(meshes) > 1:
