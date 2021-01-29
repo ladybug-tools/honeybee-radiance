@@ -163,7 +163,7 @@ class SensorGrid(object):
             offset: A number for how far to offset the grid from the base face.
             flip: Set to True to have the mesh normals reversed from the direction of
                 this face and to have the offset input move the mesh in the opposite
-                direction from this face’s normal. Defaults to False, which means the
+                direction from this face normal. Defaults to False, which means the
                 normal direction of the face will be used as the direction of the
                 sensor grids.
         """
