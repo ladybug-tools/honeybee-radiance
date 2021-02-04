@@ -1,19 +1,12 @@
 """honeybee radiance standards library commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
+import click
+import sys
+import logging
+import json
 
 from honeybee_radiance.lib.modifiers import modifier_by_identifier, MODIFIERS
 from honeybee_radiance.lib.modifiersets import modifier_set_by_identifier, \
     MODIFIER_SETS
-
-import sys
-import logging
-import json
 
 _logger = logging.getLogger(__name__)
 

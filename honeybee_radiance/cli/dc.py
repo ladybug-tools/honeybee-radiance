@@ -1,12 +1,5 @@
 """honeybee radiance daylight coefficient / contribution commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
-
+import click
 import sys
 import logging
 

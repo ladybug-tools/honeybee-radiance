@@ -6,8 +6,6 @@ with open("README.md", "r") as fh:
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-with open('cli-requirements.txt') as f:
-    cli_requirements = f.read().splitlines()
 
 setuptools.setup(
     name="honeybee-radiance",
@@ -22,7 +20,6 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
     install_requires=requirements,
-    extras_require={'cli': cli_requirements},
     entry_points={
         "console_scripts": ["honeybee-radiance = honeybee_radiance.cli:radiance"]
     },

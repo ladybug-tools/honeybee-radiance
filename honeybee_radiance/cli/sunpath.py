@@ -1,13 +1,7 @@
 """honeybee radiance sunpath commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
-
+import click
 import sys
+
 from honeybee_radiance.lightsource.sunpath import Sunpath
 from ladybug.location import Location
 from ladybug.dt import DateTime
@@ -243,7 +237,7 @@ def parse_hours_from_suns(suns, folder, name, offset, leap_year):
         # write the new file to hoys
         with open(os.path.join(folder, name), 'w') as hf:
             for h in hours:
-                hf.write('%s\n' % h )
+                hf.write('%s\n' % h)
     except Exception:
         _logger.exception('Failed to parse the hours.')
         sys.exit(1)

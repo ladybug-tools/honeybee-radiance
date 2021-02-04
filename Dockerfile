@@ -19,11 +19,11 @@ RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_
 && rm -rf radiance-5.3.fc2a261076-Linux \
 && rm radiance.zip
 
-# Install honeybee-radiance cli
+# Install honeybee-radiance
 ENV PATH="/home/ladybugbot/.local/bin:${PATH}"
 COPY . honeybee-radiance
 RUN pip3 install setuptools wheel \
-    && pip3 install pydantic==1.7.3 honeybee-schema ./honeybee-radiance[cli]
+    && pip3 install ./honeybee-radiance
 
 # Set workdir
 RUN mkdir -p /home/ladybugbot/run
