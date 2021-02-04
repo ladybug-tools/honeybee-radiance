@@ -1,18 +1,12 @@
 """honeybee radiance grid commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
-
+import click
 import sys
-import honeybee_radiance.sensorgrid as sensorgrid
 import os
 import logging
 import re
 import json
+
+import honeybee_radiance.sensorgrid as sensorgrid
 
 _logger = logging.getLogger(__name__)
 

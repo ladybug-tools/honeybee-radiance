@@ -1,12 +1,5 @@
 """honeybee-radiance commands which will be added to honeybee command line interface."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
-
+import click
 import sys
 import logging
 import json
@@ -22,14 +15,13 @@ from .octree import octree
 from .raytrace import raytrace
 from .dc import dc
 
+_logger = logging.getLogger(__name__)
+
 # command group for all radiance extension commands.
 @click.group(help='honeybee radiance commands.')
 @click.version_option()
 def radiance():
     pass
-
-
-_logger = logging.getLogger(__name__)
 
 
 @radiance.command('config')

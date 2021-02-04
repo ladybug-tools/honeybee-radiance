@@ -19,12 +19,7 @@ Honeybee-radiance adds radiance functionalities to honeybee for daylight simulat
 
 `pip install -U honeybee-radiance`
 
-If you want to also include the command line interface try:
-
-`pip install -U honeybee-radiance[cli]`
-
-To check if the command line is installed correctly try `honeybee radiance --help` or
-`honeybee-radiance --help`.
+To check if the command line interface is installed correctly use `honeybee-radiance --help`.
 
 # Documentation
 

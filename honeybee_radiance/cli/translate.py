@@ -1,21 +1,14 @@
 """honeybee radiance translation commands."""
-
-try:
-    import click
-except ImportError:
-    raise ImportError(
-        'click is not installed. Try `pip install honeybee-radiance[cli]` command.'
-    )
+import click
+import sys
+import os
+import logging
+import json
 
 from honeybee_radiance.reader import string_to_dicts
 from honeybee_radiance.mutil import dict_to_modifier, modifier_class_from_type_string
 
 from honeybee.model import Model
-
-import sys
-import os
-import logging
-import json
 
 _logger = logging.getLogger(__name__)
 

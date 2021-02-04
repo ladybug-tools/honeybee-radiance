@@ -1,3 +1,0 @@
-click==7.1.2
-click_plugins==1.1.1
-honeybee-schema==1.42.0;python_version>='3.6'
