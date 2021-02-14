@@ -979,15 +979,16 @@ class DoorModifierSet(_BaseSet):
     """Set containing all radiance modifiers needed to for an radiance model's Doors.
 
     Args:
-        exterior_modifier: A window modifier object for apertures
-            with an Outdoors boundary condition.
-        interior_modifier: A window modifier object for apertures
-            with a Surface boundary condition.
-        exterior_glass_modifier:
-        interior_glass_modifier:
-        overhead_modifier: : A window modifier object for doors with an
-            Outdoors boundary condition and a RoofCeiling or Floor face type for
-            their parent face.
+        exterior_modifier: A modifier object for doors in walls with an Outdoors
+            boundary condition.
+        interior_modifier: A modifier object for doors with a Surface (or other)
+            boundary condition.
+        exterior_glass_modifier: A modifier object for all glass doors with an
+            Outdoors boundary condition.
+        interior_glass_modifier: A modifier object for all glass doors with a
+            Surface boundary condition.
+        overhead_modifier: : A modifier object for doors with an Outdoors boundary
+            condition and a RoofCeiling or Floor face type for their parent face.
 
     Properties:
         * exterior_modifier
