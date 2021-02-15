@@ -14,6 +14,8 @@ from .sunpath import sunpath
 from .octree import octree
 from .raytrace import raytrace
 from .dc import dc
+from .postprocess import post_process
+
 
 _logger = logging.getLogger(__name__)
 
@@ -57,6 +59,7 @@ radiance.add_command(sunpath)
 radiance.add_command(octree)
 radiance.add_command(raytrace)
 radiance.add_command(dc)
+radiance.add_command(post_process, name='post-process')
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)
