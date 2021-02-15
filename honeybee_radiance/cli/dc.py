@@ -16,6 +16,7 @@ _logger = logging.getLogger(__name__)
 def dc():
     pass
 
+
 # this command includes rmtxop postprocessing
 @dc.command('scontrib')
 @click.argument(
@@ -48,12 +49,17 @@ def dc():
     ' coefficient and values. Default is coeff for calculating coefficient.'
 )
 @click.option(
+    '--conversion', help='conversion as a string which will be passed to rmtxop -c. '
+    'This option is useful to post-process the results from 3 components to one in a '
+    'single command.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, dry_run
+        output, coeff, conversion, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -86,8 +92,15 @@ def rcontrib_command_with_postprocess(
         rcontrib = Rcontrib(
             options=options, octree=octree, sensors=sensor_grid
         )
-        rcontrib.output = output
         cmd = rcontrib.to_radiance().replace('\\', '/')
+        if conversion and conversion.strip():
+            # pass the values to rmtxop
+            cmd = '{command} | rmtxop -fa - -c {conversion}'.format(
+                command=cmd, conversion=conversion
+            )
+        if output:
+            cmd = '{command} > {output}'.format(command=cmd, output=output)
+
         if dry_run:
             click.echo(cmd)
         else:
@@ -100,7 +113,6 @@ def rcontrib_command_with_postprocess(
         sys.exit(0)
 
 
-# this command includes dctimestep for postprocessing
 @dc.command('scoeff')
 @click.argument(
     'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
@@ -138,7 +150,7 @@ def rfluxmtx_command_with_postprocess(
         octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params,
         rad_params_locked, output, dry_run
 ):
-    """Run rtrace command for an input octree and a sensor grid.
+    """Run rfluxmtx command and pass the results to rmtxop.
 
     octree: Path to octree file.
 
@@ -184,6 +196,3 @@ def rfluxmtx_command_with_postprocess(
         sys.exit(1)
     else:
         sys.exit(0)
-
-# TODO: add test
-# rfluxmtx -aa 0.0 -ss 0.0 -st 0.85 -I -fad -y 174 -ab 1 -ad 5000 -lw 2e-06 -as 128 -dc 0.25 -dj 0.0 -dp 64 -ds 0.5 -dr 0 -dt 0.5 -lr 4 - sky.dome -i scene.oct < grid.pts > flux.dc && dctimestep -of flux.dc sky.mtx | rmtxop -c 47.4 119.9 11.6 -fa - > results.ill
