@@ -17,7 +17,6 @@ def dc():
     pass
 
 
-# this command includes rmtxop postprocessing
 @dc.command('scontrib')
 @click.argument(
     'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
@@ -50,8 +49,14 @@ def dc():
 )
 @click.option(
     '--conversion', help='conversion as a string which will be passed to rmtxop -c. '
-    'This option is useful to post-process the results from 3 components to one in a '
-    'single command.'
+    'This option is useful to post-process the results from 3 RGB components into one '
+    'as part of this command.'
+)
+@click.option(
+    '--output-type', help='Output type for converted results. Valid inputs are a, f and '
+    'd for ASCII, float or double. If conversion is not provided you can change the '
+    'output type using rad-params options.', type=click.Choice(['a', 'f', 'd']),
+    default='a', show_default=True, show_choices=True
 )
 @click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
@@ -59,7 +64,7 @@ def dc():
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, conversion, dry_run
+        output, coeff, conversion, output_type, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -83,9 +88,9 @@ def rcontrib_command_with_postprocess(
             raise ValueError('for time-being sensor count must be provided.')
 
         if coeff:
-            options.update_from_string('-aa 0.0 -V- -faf -y {}'.format(sensor_count))
+            options.update_from_string('-aa 0.0 -V- -y {}'.format(sensor_count))
         else:
-            options.update_from_string('-aa 0.0 -V+ -faf -y {}'.format(sensor_count))
+            options.update_from_string('-aa 0.0 -V+ -y {}'.format(sensor_count))
 
         options.M = modifiers
         # create command.
@@ -95,8 +100,8 @@ def rcontrib_command_with_postprocess(
         cmd = rcontrib.to_radiance().replace('\\', '/')
         if conversion and conversion.strip():
             # pass the values to rmtxop
-            cmd = '{command} | rmtxop -fa - -c {conversion}'.format(
-                command=cmd, conversion=conversion
+            cmd = '{command} | rmtxop -f{output_type} - -c {conversion}'.format(
+                command=cmd, output_type=output_type, conversion=conversion
             )
         if output:
             cmd = '{command} > {output}'.format(command=cmd, output=output)
@@ -143,12 +148,22 @@ def rcontrib_command_with_postprocess(
     ' is provided it should be relative to project folder.'
 )
 @click.option(
+    '--conversion', help='conversion as a string which will be passed to rmtxop -c. '
+    'This option is useful to post-process the results from 3 RGB components into one '
+    'as part of this command.'
+)
+@click.option(
+    '--output-type', help='Output type for converted results. Valid inputs are a, f and '
+    'd for ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='f',
+    show_default=True, show_choices=True
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rfluxmtx_command_with_postprocess(
         octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params,
-        rad_params_locked, output, dry_run
+        rad_params_locked, output, conversion, output_type, dry_run
 ):
     """Run rfluxmtx command and pass the results to rmtxop.
 
@@ -158,7 +173,7 @@ def rfluxmtx_command_with_postprocess(
 
     sky-dome: Path to sky dome for coefficient calculation.
 
-    sky-mtx: Path to sky matrix for dctimstep input.
+    sky-mtx: Path to sky matrix.
 
     """
     try:
@@ -171,20 +186,23 @@ def rfluxmtx_command_with_postprocess(
             options.update_from_string(rad_params_locked.strip())
 
         if not sensor_count:
-            raise ValueError('for time-being sensor count must be provided.')
+            raise ValueError('Number of sensors in senor grid must be provided!')
 
         options.update_from_string('-aa 0.0 -faf -y {}'.format(sensor_count))
 
         # create command.
         cmd_template = 'rfluxmtx {rad_params} - {sky_dome} -i {octree} < ' \
-            '{sensors} | rmtxop -ff - {sky_mtx}'
+            '{sensors} | rmtxop -f{output_type} - {sky_mtx}'
+
+        if conversion and conversion.strip():
+            cmd_template = cmd_template + ' -c %s' % conversion
 
         if output:
             cmd_template = cmd_template + ' > {output}'.format(output=output)
 
         cmd = cmd_template.format(
             rad_params=options.to_radiance(), sky_dome=sky_dome, octree=octree,
-            sensors=sensor_grid, sky_mtx=sky_mtx
+            sensors=sensor_grid, output_type=output_type, sky_mtx=sky_mtx
         )
 
         if dry_run:
