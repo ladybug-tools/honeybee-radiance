@@ -9,6 +9,7 @@ from honeybee_radiance.reader import string_to_dicts
 from honeybee_radiance.mutil import dict_to_modifier, modifier_class_from_type_string
 
 from honeybee.model import Model
+from ladybug.futil import preparedir
 
 _logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ def translate():
 @translate.command('model-to-rad-folder')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option('--folder', help='Folder on this computer, into which the Radiance '
+@click.option('--folder', help='Folder into which the model Radiance '
               'folders will be written. If None, the files will be output in the'
               'same location as the model_json.', default=None, show_default=True)
 @click.option('--config-file', help='An optional config file path to modify the '
@@ -35,15 +36,12 @@ def translate():
               'to stdout', type=click.File('w'), default='-')
 def model_to_rad_folder(model_json, folder, config_file, minimal, log_file):
     """Translate a Model JSON file into a Radiance Folder.
-    \n
+
+    \b
     Args:
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the model JSON is there
-        assert os.path.isfile(model_json), \
-            'No Model JSON file found at {}.'.format(model_json)
-
         # set the default folder if it's not specified
         if folder is None:
             folder = os.path.dirname(os.path.abspath(model_json))
@@ -78,20 +76,17 @@ def model_to_rad_folder(model_json, folder, config_file, minimal, log_file):
               type=click.File('w'), default='-', show_default=True)
 def model_to_rad(model_json, blk, minimal, output_file):
     """Translate a Model JSON file to a Radiance string.
-    \n
+
     The resulting strings will include all geometry (Rooms, Faces, Shades, Apertures,
     Doors) and all modifiers. However, it does not include any states for dynamic
     geometry and will only write the default state for each dynamic object. To
     correctly account for dynamic objects, model-to-rad-folder should be used.
-    \n
+
+    \b
     Args:
         model_json: Full path to a Model JSON file.
     """
     try:
-        # check that the model JSON is there
-        assert os.path.isfile(model_json), \
-            'No Model JSON file found at {}.'.format(model_json)
-
         # re-serialize the Model to Python
         with open(model_json) as json_file:
             data = json.load(json_file)
@@ -107,6 +102,77 @@ def model_to_rad(model_json, blk, minimal, output_file):
         output_file.write(rad_str)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@translate.command('model-radiant-enclosure-info')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--folder', help='Folder into which the radiant enclosure info JSONs '
+              'will be written. If None, the files will be output in the'
+              'same location as the model_json.', default=None, show_default=True)
+@click.option('--log-file', help='Optional log file to output the list of generated '
+              'radiant enclosure JSONs. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-')
+def model_radiant_enclosure_info(model_json, folder, log_file):
+    """Translate a Model JSON file to a list of JSONs with radiant enclosure information.
+
+    There will be one radiant enclosure JSON for each Model SensorGrid written to
+    the output folder and each JSON will contain a list of values about which room
+    (or radiant enclosure) each sensor is located. JSONs will also include a mapper
+    that links the integers of each sensor with the identifier(s) of a room.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+    """
+    try:
+        # re-serialize the Model JSON
+        with open(model_json) as json_file:
+            data = json.load(json_file)
+        model = Model.from_dict(data)
+
+         # set the default folder if it's not specified
+        if folder is None:
+            folder = os.path.dirname(os.path.abspath(model_json))
+        enc_folder = os.path.join(folder, 'enclosure')
+        if not os.path.isdir(enc_folder):
+            preparedir(enc_folder)  # create the directory if it's not there
+
+        # loop through sensor grids and build up the radiant enclosure dicts
+        grids_info = []
+        for grid in model.properties.radiance.sensor_grids:
+            # write an enclosure JSON for each grid
+            enc_dict = grid.enclosure_info_dict(model)
+            enclosure_file = os.path.join(enc_folder, '{}.json'.format(grid.identifier))
+            with open(enclosure_file, 'w') as fp:
+                json.dump(enc_dict, fp)
+            # collect information about all of the grids together
+            grid_id = '{}.ill'.format(grid.identifier)
+            ref_grid_id = '{}_ref.ill'.format(grid.identifier)
+            total_rad = os.path.join(folder, 'results', 'total', grid_id)
+            direct_rad = os.path.join(folder, 'results', 'direct', grid_id)
+            ref_rad = os.path.join(folder, 'results', 'total', ref_grid_id)
+            g_info = {
+                'identifier': grid.identifier,
+                'enclosure_path': enclosure_file,
+                'enclosure_full_path': os.path.abspath(enclosure_file),
+                'total_rad_path': total_rad,
+                'total_rad_full_path': os.path.abspath(total_rad),
+                'direct_rad_path': direct_rad,
+                'direct_rad_full_path': os.path.abspath(direct_rad),
+                'reflected_rad_path': ref_rad,
+                'reflected_rad_full_path': os.path.abspath(ref_rad),
+                'count': grid.count
+            }
+            grids_info.append(g_info)
+
+        # write out the list of radiant enclosure JSON info
+        log_file.write(json.dumps(grids_info, indent=4))
+    except Exception as e:
+        _logger.exception('Model translation to radiant enclosure failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
@@ -130,10 +196,6 @@ def modifier_to_rad(modifier_json, minimal, output_file):
             the values are non-abridged Modifiers.
     """
     try:
-        # check that the modifier JSON is there
-        assert os.path.isfile(modifier_json), \
-            'No Modifier JSON file found at {}.'.format(modifier_json)
-
         # re-serialize the Modifiers to Python
         with open(modifier_json) as json_file:
             data = json.load(json_file)
@@ -171,10 +233,6 @@ def modifier_from_rad(modifier_rad, output_file):
             and materials in this file will be extracted.
     """
     try:
-        # check that the modifier file is there
-        assert os.path.isfile(modifier_rad), \
-            'No Modifier file found at {}.'.format(modifier_rad)
-
         # re-serialize the Modifiers to Python
         mod_objs = []
         with open(modifier_rad) as f:

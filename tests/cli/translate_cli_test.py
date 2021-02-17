@@ -5,12 +5,12 @@ from click.testing import CliRunner
 from ladybug.futil import nukedir
 
 from honeybee_radiance.cli.translate import model_to_rad_folder, model_to_rad, \
-    modifier_to_rad, modifier_from_rad
+    modifier_to_rad, modifier_from_rad, model_radiant_enclosure_info
 
 
 def test_model_to_rad_folder():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/model_radiance_dynamic_states.json'
+    input_hb_model = './tests/assets/model/model_radiance_dynamic_states.hbjson'
     output_hb_model = './tests/assets/model/model'
 
     result = runner.invoke(model_to_rad_folder, [input_hb_model])
@@ -21,7 +21,7 @@ def test_model_to_rad_folder():
 
 def test_model_to_rad():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/model_complete_multiroom_radiance.json'
+    input_hb_model = './tests/assets/model/model_complete_multiroom_radiance.hbjson'
 
     result = runner.invoke(model_to_rad, [input_hb_model])
     assert result.exit_code == 0
@@ -31,6 +31,17 @@ def test_model_to_rad():
     assert result.exit_code == 0
     assert os.path.isfile(output_hb_model)
     os.remove(output_hb_model)
+
+
+def test_model_radiant_enclosure_info():
+    runner = CliRunner()
+    input_hb_model = './tests/assets/model/two_rooms.hbjson'
+    output_enclosure_folder = './tests/assets/model/enclosure'
+
+    result = runner.invoke(model_radiant_enclosure_info, [input_hb_model])
+    assert result.exit_code == 0
+    assert os.path.isdir(output_enclosure_folder)
+    nukedir(output_enclosure_folder, True)
 
 
 def test_modifier_to_from_rad():

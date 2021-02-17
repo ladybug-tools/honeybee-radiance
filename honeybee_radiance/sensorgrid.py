@@ -6,6 +6,7 @@ from .lightpath import light_path_from_room
 
 import honeybee.typing as typing
 import ladybug.futil as futil
+from ladybug_geometry.geometry3d.pointvector import Point3D
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 
@@ -309,12 +310,13 @@ class SensorGrid(object):
         return self._group_identifier
 
     @group_identifier.setter
-    def group_identifier(self, n):
-        identifier_key = \
-            '/'.join(
-                typing.valid_rad_string(key, 'Sensor group identifier')
-                for key in n.split('/')
-            )
+    def group_identifier(self, identifier_key):
+        if identifier_key is not None:
+            identifier_key = \
+                '/'.join(
+                    typing.valid_rad_string(key, 'sensor grid group identifier')
+                    for key in identifier_key.split('/')
+                )
         self._group_identifier = identifier_key
 
     @property
@@ -401,6 +403,45 @@ class SensorGrid(object):
             base['group_identifier'] = self._group_identifier
 
         return base
+
+    def enclosure_info_dict(self, model):
+        """Get a dictionary with information about sensor relation to rooms.
+
+        This can be written as a JSON in order to map sensors with appropriate
+        energy simulation results in thermal mapping workflows.
+
+        Args:
+            model: A honeybee Model object which will be used to identify
+                the rooms/enclosure that each sensor in the grid is contained within.
+        """
+        # setup rooms and lists to check enclosure info
+        enclosures, sensor_indices, has_outdoor = {}, [], False
+        rooms = model._rooms
+        if self.room_identifier:  # put the assigned room first for faster calculation
+            rooms = model.rooms_by_identifier([self.room_identifier]) + rooms
+
+        # loop through the sensors and verify the room that they belong to
+        for sensor in self.sensors:
+            sensor_pt = Point3D(*sensor.pos)
+            for room in rooms:
+                if room.geometry.is_point_inside(sensor_pt):
+                    try:
+                        sensor_indices.append(enclosures[room.identifier])
+                    except KeyError:  # the first time that this room is needed
+                        enclosures[room.identifier] = len(enclosures)
+                        sensor_indices.append(enclosures[room.identifier])
+                    break
+            else:  # the sensor is completely outside and not a part of a room
+                sensor_indices.append(-1)
+                has_outdoor = True
+
+        # write out the enclosure info JSON
+        mapper = sorted(enclosures, key=enclosures.__getitem__)
+        return {
+            'has_outdoor': has_outdoor,
+            'mapper': mapper,
+            'sensor_indices': sensor_indices
+        }
 
     def to_radiance(self):
         """Return sensors grid as a Radiance string."""
