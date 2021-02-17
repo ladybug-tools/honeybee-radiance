@@ -2,6 +2,10 @@
 import click
 import sys
 
+from honeybee_radiance.config import folders
+from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
+from honeybee_radiance_command._command_util import run_command
+
 from honeybee_radiance.lightsource.sunpath import Sunpath
 from ladybug.location import Location
 from ladybug.dt import DateTime
@@ -137,6 +141,73 @@ def sunpath_from_wea(wea, north, folder, name, log_file, leap_year, reverse_vect
         files = [
             {'path': os.path.relpath(path, folder), 'full_path': path}
             for path in sp_files['suns']
+        ]
+
+        log_file.write(json.dumps(files))
+    except Exception:
+        _logger.exception('Failed to generate sunpath.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@sunpath.command('radiance')
+@click.argument('wea', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--north', default=0, type=float, show_default=True,
+    help='Angle to north (0-360). 90 is west and 270 is east')
+@click.option('--folder', type=click.Path(
+    exists=False, file_okay=False, dir_okay=True, resolve_path=True), default='.',
+    help='Output folder.')
+@click.option('--name', default='sunpath', help='File name.')
+@click.option(
+    '--visible/--solar', is_flag=True, default=True, help='A flag to indicate the '
+    'output type. Visible is equal to -O0 and solar is -O1 in gendaymtx options. '
+    'Default: visible.'
+    )
+@click.option(
+    '--log-file', help='Optional log file to output the name of the newly'
+    ' created modifier files. By default the list will be printed out to stdout',
+    type=click.File('w'), default='-')
+@click.option(
+    '--dry-run', is_flag=True, default=False, show_default=True,
+    help='A flag to show the command without running it.'
+)
+def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
+    """Generate a climate-based sunpath from a Wea file using radiance's gendaymtx.
+
+    This command also generates a mod file which includes all the modifiers in sunpath.
+    mod file is usually used with rcontrib command to indicate the list of modifiers.
+    Since rcontrib command has a hard limit of 10,000 modifiers in a single run the files
+    will be broken down into multiple files if number of modifiers is more than 10000
+    modifiers.
+
+    \b
+    Args:
+        wea: Path to a wea file.
+
+    """
+    try:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        opt = GendaymtxOptions()
+        opt.n = True
+        opt.D = os.path.join(folder, name + '.mtx').replace('\\', '//')
+        opt.M = os.path.join(folder, name + '.mod').replace('\\', '//')
+        opt.r = north
+        opt.O = '0' if visible else '1'
+
+        cmd = Gendaymtx(wea=wea, options=opt)
+
+        if dry_run:
+            print(cmd.to_radiance())
+            sys.exit(0)
+
+        run_command(cmd.to_radiance(), env=folders.env)
+        files = [
+            {'path': os.path.relpath(path, folder), 'full_path': path}
+            for path in (opt.D.value, opt.M.value)
         ]
 
         log_file.write(json.dumps(files))
