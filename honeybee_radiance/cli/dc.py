@@ -53,7 +53,7 @@ def dc():
     'as part of this command.'
 )
 @click.option(
-    '--output-type', help='Output type for converted results. Valid inputs are a, f and '
+    '--output-format', help='Output type for converted results. Valid inputs are a, f and '
     'd for ASCII, float or double. If conversion is not provided you can change the '
     'output type using rad-params options.', type=click.Choice(['a', 'f', 'd']),
     default='a', show_default=True, show_choices=True
@@ -64,7 +64,7 @@ def dc():
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, conversion, output_type, dry_run
+        output, coeff, conversion, output_format, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -100,8 +100,8 @@ def rcontrib_command_with_postprocess(
         cmd = rcontrib.to_radiance().replace('\\', '/')
         if conversion and conversion.strip():
             # pass the values to rmtxop
-            cmd = '{command} | rmtxop -f{output_type} - -c {conversion}'.format(
-                command=cmd, output_type=output_type, conversion=conversion
+            cmd = '{command} | rmtxop -f{output_format} - -c {conversion}'.format(
+                command=cmd, output_format=output_format, conversion=conversion
             )
         if output:
             cmd = '{command} > {output}'.format(command=cmd, output=output)
@@ -153,7 +153,7 @@ def rcontrib_command_with_postprocess(
     'as part of this command.'
 )
 @click.option(
-    '--output-type', help='Output type for converted results. Valid inputs are a, f and '
+    '--output-format', help='Output type for converted results. Valid inputs are a, f and '
     'd for ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='f',
     show_default=True, show_choices=True
 )
@@ -163,7 +163,7 @@ def rcontrib_command_with_postprocess(
 )
 def rfluxmtx_command_with_postprocess(
         octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params,
-        rad_params_locked, output, conversion, output_type, dry_run
+        rad_params_locked, output, conversion, output_format, dry_run
 ):
     """Run rfluxmtx command and pass the results to rmtxop.
 
@@ -192,7 +192,7 @@ def rfluxmtx_command_with_postprocess(
 
         # create command.
         cmd_template = 'rfluxmtx {rad_params} - {sky_dome} -i {octree} < ' \
-            '{sensors} | rmtxop -f{output_type} - {sky_mtx}'
+            '{sensors} | rmtxop -f{output_format} - {sky_mtx}'
 
         if conversion and conversion.strip():
             cmd_template = cmd_template + ' -c %s' % conversion
@@ -202,7 +202,7 @@ def rfluxmtx_command_with_postprocess(
 
         cmd = cmd_template.format(
             rad_params=options.to_radiance(), sky_dome=sky_dome, octree=octree,
-            sensors=sensor_grid, output_type=output_type, sky_mtx=sky_mtx
+            sensors=sensor_grid, output_format=output_format, sky_mtx=sky_mtx
         )
 
         if dry_run:

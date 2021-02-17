@@ -65,3 +65,17 @@ def get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year):
         return hoys[start_index:]
     else:
         return hoys[start_index: -1 * (end_index + 1)]
+
+
+def handle_operator(operator):
+    """Handle operator for rmtxopt command."""
+    if operator == '+':
+        return '+'
+    elif operator == '-':
+        return '+ -s 1.0'
+    elif operator == '/':
+        return '/'
+    elif operator == '*':
+        return '"*"'
+    else:
+        raise ValueError('Invalid operator: %s' % operator)

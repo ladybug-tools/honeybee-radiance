@@ -64,7 +64,7 @@ def sky_dome(folder, name):
     default='total'
 )
 @click.option(
-    '--output-type', type=click.Choice(['float', 'double', 'ASCII']),
+    '--output-format', type=click.Choice(['float', 'double', 'ASCII']),
     default='ASCII'
 )
 @click.option(
@@ -89,7 +89,7 @@ def sky_dome(folder, name):
     help='A flag to show the command without running it.'
 )
 def sunpath_from_wea_rad(
-    wea, north, sky_type, output_type, hourly, visible, folder, name, log_file, dry_run
+    wea, north, sky_type, output_format, hourly, visible, folder, name, log_file, dry_run
         ):
     """Generate a climate-based sky matrix from a Wea file using radiance's gendaymtx.
 
@@ -112,11 +112,11 @@ def sunpath_from_wea_rad(
         elif sky_type == 'no-sun':
             opt.s = True
 
-        if output_type == 'ASCII':
+        if output_format == 'ASCII':
             pass
-        elif output_type == 'float':
+        elif output_format == 'float':
             opt.o = 'f'
-        elif output_type == 'double':
+        elif output_format == 'double':
             opt.o = 'd'
 
         if not hourly:
