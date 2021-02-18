@@ -11,11 +11,11 @@ _logger = logging.getLogger(__name__)
 
 
 @click.group(help='Commands for translating Honeybee JSON files to/from RAD.')
-def translate():
+def edit():
     pass
 
 
-@translate.command('mirror-model-sensors')
+@edit.command('mirror-model-sensors')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '

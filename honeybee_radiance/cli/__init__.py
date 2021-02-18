@@ -6,6 +6,7 @@ import json
 
 from honeybee.cli import main
 from ..config import folders
+from .edit import edit
 from .translate import translate
 from .lib import lib
 from .sky import sky
@@ -52,6 +53,7 @@ def config(output_file):
 
 
 # add sub-commands to radiance
+radiance.add_command(edit)
 radiance.add_command(translate)
 radiance.add_command(lib)
 radiance.add_command(sky)
