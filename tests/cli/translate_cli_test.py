@@ -19,6 +19,24 @@ def test_model_to_rad_folder():
     nukedir(output_hb_model, True)
 
 
+def test_model_to_rad_folder_grid_filter():
+    runner = CliRunner()
+    input_hb_model = './tests/assets/model/sample_room_with_grid_group.hbjson'
+    output_hb_model = './tests/assets/temp/model'
+
+    result = runner.invoke(
+        model_to_rad_folder,
+        [input_hb_model, '--folder', output_hb_model, '-g', '?pertures/*']
+    )
+    assert result.exit_code == 0
+    assert os.path.isdir(os.path.join(output_hb_model, 'model'))
+    assert os.path.isdir(os.path.join(output_hb_model, 'model', 'grid', 'apertures'))
+    assert not os.path.isdir(
+        os.path.join(output_hb_model, 'model', 'grid', 'occ_regions'))
+
+    nukedir(output_hb_model, True)
+
+
 def test_model_to_rad():
     runner = CliRunner()
     input_hb_model = './tests/assets/model/model_complete_multiroom_radiance.hbjson'

@@ -13,6 +13,7 @@ from .lib.modifiers import black
 import os
 import json
 import shutil
+import re
 
 
 def shade_to_rad(shade, blk=False, minimal=False):
@@ -230,7 +231,9 @@ def model_to_rad(model, blk=False, minimal=False):
     return '\n\n'.join(model_str), '\n\n'.join(modifier_str)
 
 
-def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
+def model_to_rad_folder(
+    model, folder=None, config_file=None, minimal=False, grids=None, views=None
+        ):
     r"""Write a honeybee model to a rad folder.
 
     The rad files in the resulting folders will include all geometry (Rooms, Faces,
@@ -249,6 +252,13 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
             will be used. (Default: None).
         minimal: Boolean to note whether the radiance strings should be written
             in a minimal format (with spaces instead of line breaks). Default: False.
+        sensor_grids: A list of sensor grid names to filter the sensor grids in the
+            model. Use this argument to indicate specific sensor grids that should
+            be included. By default all the sensor grids will be exported. You can use
+            wildcard symbols in names. Use relative path from inside grids folder.
+        views: A list of view files that should be exported to folder. Use this argument
+            to limit what will be written to the radiance folder. You can use wildcard
+            symbols in names. Use relative path from inside views folder.
     """
     # prepare the folder for simulation
     model_id = model.identifier
@@ -334,11 +344,12 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
 
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
-    grids = model.properties.radiance.sensor_grids
-    if len(grids) != 0:
+    model_grids = model.properties.radiance.sensor_grids
+    filtered_grids = _filter_by_pattern(model_grids, grids)
+    if len(filtered_grids) != 0:
         grids_info = []
         preparedir(grid_dir)
-        for grid in grids:
+        for grid in filtered_grids:
             fp = grid.to_file(grid_dir)
             info_dir = os.path.dirname(fp)
             info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
@@ -360,11 +371,12 @@ def model_to_rad_folder(model, folder=None, config_file=None, minimal=False):
             json.dump(grids_info, fp, indent=2)
 
     view_dir = model_folder.view_folder(full=True)
-    views = model.properties.radiance.views
-    if len(views) != 0:
+    model_views = model.properties.radiance.views
+    filtered_views = _filter_by_pattern(model_views, views)
+    if len(filtered_views) != 0:
         views_info = []
         preparedir(view_dir)
-        for view in views:
+        for view in filtered_views:
             view.to_file(view_dir)
             info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
             with open(info_file, 'w') as fp:
@@ -669,3 +681,25 @@ def _instance_in_array(object_instance, object_array):
         if val is object_instance:
             return True
     return False
+
+
+def _filter_by_pattern(input_objects, filter):
+    """Filter model grids and views based on user input."""
+    if not filter:
+        return input_objects
+    patterns = [
+        re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
+        ]
+    filtered_objects = []
+    objects = {}
+    for obj in input_objects:
+        id_ = obj.identifier if not obj.group_identifier \
+            else '%s/%s' % (obj.group_identifier, obj.identifier)
+        objects[id_] = obj
+
+    for id_, obj in objects.items():
+        for pattern in patterns:
+            if re.search(pattern, id_):
+                filtered_objects.append(obj)
+
+    return list(set(filtered_objects))
