@@ -76,6 +76,11 @@ def sky_dome(folder, name):
     'output type. Visible is equal to -O0 and solar is -O1 in gendaymtx options. '
     'Default: visible.'
     )
+@click.option(
+    '--all-hours/--sun-up-hours', is_flag=True, default=True, help='A flag to indicate '
+    'if only sun up hours should be included in the sky. By default all the hours from '
+    'the input wea file will be included.'
+)
 @click.option('--folder', type=click.Path(
     exists=False, file_okay=False, dir_okay=True, resolve_path=True), default='.',
     help='Output folder.')
@@ -89,7 +94,8 @@ def sky_dome(folder, name):
     help='A flag to show the command without running it.'
 )
 def sunpath_from_wea_rad(
-    wea, north, sky_type, output_format, hourly, visible, folder, name, log_file, dry_run
+    wea, north, sky_type, output_format, hourly, visible, all_hours, folder, name,
+    log_file, dry_run
         ):
     """Generate a climate-based sky matrix from a Wea file using radiance's gendaymtx.
 
@@ -121,6 +127,9 @@ def sunpath_from_wea_rad(
 
         if not hourly:
             opt.A = True
+
+        if not all_hours:
+            opt.u = True
 
         cmd = Gendaymtx(wea=wea, options=opt, output=output)
         if dry_run:
