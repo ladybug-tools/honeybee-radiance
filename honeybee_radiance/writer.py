@@ -360,7 +360,8 @@ def model_to_rad_folder(
                 'name': grid.identifier,
                 'identifier': grid.identifier,
                 'count': grid.count,
-                'group': grid.group_identifier or ''
+                'group': grid.group_identifier or '',
+                'full_id': _get_full_id(grid)
             }
 
             grids_info.append(grid_info)
@@ -382,10 +383,11 @@ def model_to_rad_folder(
             with open(info_file, 'w') as fp:
                 json.dump(view.info_dict(model), fp, indent=4)
 
-            # TODO: see if it make sense to use to_dict here instead of only taking the
-            # name
             view_info = {
-                'name': view.identifier
+                'name': view.identifier,
+                'identifier': view.identifier,
+                'group': view.group_identifier or '',
+                'full_id': _get_full_id(view)
             }
             views_info.append(view_info)
 
@@ -683,6 +685,15 @@ def _instance_in_array(object_instance, object_array):
     return False
 
 
+def _get_full_id(view_or_grid):
+    """Get full ID for a grid or view.
+
+    The full is is group_identifier/object_identifier.
+    """
+    return view_or_grid.identifier if not view_or_grid.group_identifier \
+        else '%s/%s' % (view_or_grid.group_identifier, view_or_grid.identifier)
+
+
 def _filter_by_pattern(input_objects, filter):
     """Filter model grids and views based on user input."""
     if not filter:
@@ -692,10 +703,9 @@ def _filter_by_pattern(input_objects, filter):
         ]
     filtered_objects = []
     objects = {}
+
     for obj in input_objects:
-        id_ = obj.identifier if not obj.group_identifier \
-            else '%s/%s' % (obj.group_identifier, obj.identifier)
-        objects[id_] = obj
+        objects[_get_full_id(obj)] = obj
 
     for id_, obj in objects.items():
         for pattern in patterns:
