@@ -73,6 +73,7 @@ class View(object):
         * lift
         * room_identifier
         * light_path
+        * group_identifier
 
     Usage:
 
@@ -106,7 +107,8 @@ class View(object):
 
     __slots__ = ('_identifier', '_display_name', '_position', '_direction',
                  '_up_vector', '_h_size', '_v_size', '_shift', '_lift',
-                 '_type', '_fore_clip', '_aft_clip', '_room_identifier', '_light_path')
+                 '_type', '_fore_clip', '_aft_clip', '_room_identifier',
+                 '_light_path', '_group_identifier')
 
     def __init__(self, identifier, position=None, direction=None, up_vector=None,
                  type='v', h_size=60, v_size=60, shift=None, lift=None):
@@ -134,6 +136,7 @@ class View(object):
         self._aft_clip = NumericOption('va', 'view aft clip')
 
         self._room_identifier = None
+        self._group_identifier = None
         self._light_path = None
 
     @property
@@ -397,6 +400,30 @@ class View(object):
         self._room_identifier = typing.valid_string(n)
 
     @property
+    def group_identifier(self):
+        """Get or set text for the grid group identifier to which this SensorGrid belongs.
+
+        This will be used in the write to radiance folder method to write all the grids
+        with the same group identifier under the same subfolder.
+
+        You may use / in name to identify nested view groups. For example
+        floor_1/living_room create a view under living_room/floor_1 subfolder.
+
+        If None, the view will be written to the root of grids folder.
+        """
+        return self._group_identifier
+
+    @group_identifier.setter
+    def group_identifier(self, identifier_key):
+        if identifier_key is not None:
+            identifier_key = \
+                '/'.join(
+                    typing.valid_rad_string(key, 'view group identifier')
+                    for key in identifier_key.split('/')
+                )
+        self._group_identifier = identifier_key
+
+    @property
     def light_path(self):
         """Get or set list of lists for the light path from the view to the sky.
 
@@ -470,6 +497,8 @@ class View(object):
             view.room_identifier = view_dict['room_identifier']
         if 'light_path' in view_dict and view_dict['light_path'] is not None:
             view.light_path = view_dict['light_path']
+        if 'group_identifier' in view_dict and view_dict['group_identifier'] is not None:
+            view_dict.group_identifier = view_dict['group_identifier']
         return view
 
     @classmethod
@@ -689,7 +718,7 @@ class View(object):
         """Get a dictionary with information about the View.
 
         This can be written as a JSON into a model radiance folder to narrow
-        down the number of aperture groups that have to be run with this sensor grid.
+        down the number of aperture groups that have to be run with this view.
 
         Args:
             model: A honeybee Model object which will be used to identify
@@ -700,6 +729,10 @@ class View(object):
             base['light_path'] = self._light_path
         elif model and self._room_identifier:  # auto-calculate the light path
             base['light_path'] = light_path_from_room(model, self._room_identifier)
+
+        if self._group_identifier:
+            base['group_identifier'] = self._group_identifier
+
         return base
 
     def to_dict(self):
@@ -724,6 +757,8 @@ class View(object):
             base['room_identifier'] = self.room_identifier
         if self._light_path is not None:
             base['light_path'] = self.light_path
+        if self._group_identifier is not None:
+            base['group_identifier'] = self.group_identifier
         return base
 
     def to_file(self, folder, file_name=None, mkdir=False):
