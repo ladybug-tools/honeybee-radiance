@@ -86,7 +86,7 @@ def two_matrix_operations(
 
         run_command(cmd, env=folders.env)
     except Exception:
-        _logger.exception('Failed to run ray-tracing command.')
+        _logger.exception('Operation on two Radiance matrix failed.')
         sys.exit(1)
     else:
         sys.exit(0)
@@ -152,7 +152,7 @@ def three_matrix_operations(
     """
     try:
         cmd = 'rmtxop -f{output_format} "{first_mtx}" {operator_one} "{second_mtx}" ' \
-            ' {operator_three} "{third_mtx}"'.format(
+            ' {operator_two} "{third_mtx}"'.format(
                 output_format=output_format, first_mtx=first_mtx,
                 operator_one=handle_operator(operator_one), second_mtx=second_mtx,
                 operator_two=handle_operator(operator_two), third_mtx=third_mtx
@@ -173,7 +173,7 @@ def three_matrix_operations(
 
         run_command(cmd, env=folders.env)
     except Exception:
-        _logger.exception('Failed to run ray-tracing command.')
+        _logger.exception('Operation on three Radiance matrix failed.')
         sys.exit(1)
     else:
         sys.exit(0)
@@ -206,7 +206,7 @@ def transpose_mtx(input_mtx, output_mtx, dry_run):
             sys.exit(0)
         run_command(cmd, env=folders.env)
     except Exception:
-        _logger.exception('Failed to run ray-tracing command.')
+        _logger.exception('Matrix transpose command failed.')
         sys.exit(1)
     else:
         sys.exit(0)
