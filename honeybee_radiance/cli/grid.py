@@ -73,10 +73,11 @@ def merge_grid(input_folder, base_name, extension, folder, name):
         if len(grids) == 0:
             raise ValueError('Found no file to merge.')
         name = name or base_name
-        output_file = os.path.join(folder, name + extension)
-
-        if not os.path.exists(folder):
-            os.makedirs(folder)
+        output_file = os.path.normpath(os.path.join(folder, name + extension))
+        # get the new dir name as grid name might be group/name
+        dirname = os.path.dirname(output_file)
+        if dirname and not os.path.exists(dirname):
+            os.makedirs(dirname)
 
         with open(output_file, 'w') as outf:
             for f in grids:
