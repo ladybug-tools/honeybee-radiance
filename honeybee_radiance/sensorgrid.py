@@ -553,6 +553,8 @@ class SensorGrid(object):
             base['mesh'] = self._mesh.to_dict()
         if self._base_geometry is not None:
             base['base_geometry'] = [face.to_dict() for face in self._base_geometry]
+        if self._group_identifier is not None:
+            base['group_identifier'] = self.group_identifier
         return base
 
     def move(self, moving_vec):
