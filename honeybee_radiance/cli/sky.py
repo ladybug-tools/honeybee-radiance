@@ -64,6 +64,13 @@ def sky_dome(folder, name):
     default='total'
 )
 @click.option(
+    '--sky-density', type=int, default=1, help='The density of generated sky. This '
+    'input corresponds to gendaymtx -m option. -m 1 generates 146 patch starting with '
+    '0 for the ground and continuing to 145 for the zenith. Increasing the -m parameter '
+    'yields a higher resolution sky using the Reinhart patch subdivision. For example, '
+    'setting -m 4 yields a sky with 2305 patches plus one patch for the ground.'
+)
+@click.option(
     '--output-format', type=click.Choice(['float', 'double', 'ASCII']),
     default='ASCII'
 )
@@ -94,8 +101,8 @@ def sky_dome(folder, name):
     help='A flag to show the command without running it.'
 )
 def sunpath_from_wea_rad(
-    wea, north, sky_type, output_format, hourly, visible, all_hours, folder, name,
-    log_file, dry_run
+    wea, north, sky_type, sky_density, output_format, hourly, visible, all_hours,
+    folder, name, log_file, dry_run
         ):
     """Generate a climate-based sky matrix from a Wea file using radiance's gendaymtx.
 
@@ -130,6 +137,8 @@ def sunpath_from_wea_rad(
 
         if not all_hours:
             opt.u = True
+        if sky_density > 1:
+            opt.m = sky_density
 
         cmd = Gendaymtx(wea=wea, options=opt, output=output)
         if dry_run:
