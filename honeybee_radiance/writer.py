@@ -252,7 +252,7 @@ def model_to_rad_folder(
             will be used. (Default: None).
         minimal: Boolean to note whether the radiance strings should be written
             in a minimal format (with spaces instead of line breaks). Default: False.
-        sensor_grids: A list of sensor grid names to filter the sensor grids in the
+        grids: A list of sensor grid names to filter the sensor grids in the
             model. Use this argument to indicate specific sensor grids that should
             be included. By default all the sensor grids will be exported. You can use
             wildcard symbols in names. Use relative path from inside grids folder.
