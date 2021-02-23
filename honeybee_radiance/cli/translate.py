@@ -126,7 +126,8 @@ def model_to_rad(model_json, blk, minimal, output_file):
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--folder', help='Folder into which the radiant enclosure info JSONs '
               'will be written. If None, the files will be output in the'
-              'same location as the model_json.', default=None, show_default=True)
+              'same location as the model_json in an enclosure subfolder.',
+              default=None, show_default=True)
 @click.option('--log-file', help='Optional log file to output the list of generated '
               'radiant enclosure JSONs. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
@@ -151,34 +152,22 @@ def model_radiant_enclosure_info(model_json, folder, log_file):
         # set the default folder if it's not specified
         if folder is None:
             folder = os.path.dirname(os.path.abspath(model_json))
-        enc_folder = os.path.join(folder, 'enclosure')
-        if not os.path.isdir(enc_folder):
-            preparedir(enc_folder)  # create the directory if it's not there
+            folder = os.path.join(folder, 'enclosure')
+        if not os.path.isdir(folder):
+            preparedir(folder)  # create the directory if it's not there
 
         # loop through sensor grids and build up the radiant enclosure dicts
         grids_info = []
         for grid in model.properties.radiance.sensor_grids:
             # write an enclosure JSON for each grid
             enc_dict = grid.enclosure_info_dict(model)
-            enclosure_file = os.path.join(enc_folder, '{}.json'.format(grid.identifier))
+            enclosure_file = os.path.join(folder, '{}.json'.format(grid.identifier))
             with open(enclosure_file, 'w') as fp:
                 json.dump(enc_dict, fp)
-            # collect information about all of the grids together
-            grid_id = '{}.ill'.format(grid.identifier)
-            ref_grid_id = '{}_ref.ill'.format(grid.identifier)
-            total_rad = os.path.join(folder, 'results', 'total', grid_id)
-            direct_rad = os.path.join(folder, 'results', 'direct', grid_id)
-            ref_rad = os.path.join(folder, 'results', 'total', ref_grid_id)
             g_info = {
-                'identifier': grid.identifier,
+                'id': grid.identifier,
                 'enclosure_path': enclosure_file,
                 'enclosure_full_path': os.path.abspath(enclosure_file),
-                'total_rad_path': total_rad,
-                'total_rad_full_path': os.path.abspath(total_rad),
-                'direct_rad_path': direct_rad,
-                'direct_rad_full_path': os.path.abspath(direct_rad),
-                'reflected_rad_path': ref_rad,
-                'reflected_rad_full_path': os.path.abspath(ref_rad),
                 'count': grid.count
             }
             grids_info.append(g_info)
