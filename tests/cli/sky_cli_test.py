@@ -35,7 +35,9 @@ def test_sky_dome():
     name = str(uuid.uuid4()) + '.sky'
     folder = './tests/assets/temp'
     runner = CliRunner()
-    result = runner.invoke(sky_dome, ['--folder', folder, '--name', name])
+    result = runner.invoke(
+        sky_dome, ['--folder', folder, '--name', name, '--sky-density', 2]
+    )
     assert result.exit_code == 0
     # check the file is created
     assert os.path.isfile(os.path.join(folder, name))
