@@ -40,13 +40,19 @@ def sky_with_certain_illum(illum, folder, name):
 @sky.command('skydome')
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default=None, show_default=True)
-def sky_dome(folder, name):
+@click.option(
+    '--sky-density', type=int, help='Sky patch subdivision density. This values is '
+    'similar to -m option in gendaymtx command. Default is 1 which means 145 sky '
+    'patches and 1 patch for the ground. One can add to the resolution typically by '
+    'factors of two (2, 4, 8, ...) which yields a higher resolution sky using the '
+    'Reinhart patch subdivision', default=1, show_default=True)
+def sky_dome(folder, name, sky_density):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     Use this sky to calculate daylight matrix.
     """
     try:
-        c_sky = hbsky.SkyDome()
+        c_sky = hbsky.SkyDome(sky_density=sky_density)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
