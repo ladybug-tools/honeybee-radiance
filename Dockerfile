@@ -5,7 +5,9 @@ LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
 ARG radiance_version
 
 ENV WORKDIR='/home/ladybugbot'
-ENV RAYPATH='${WORKDIR}/lib'
+ENV RUNDIR="${WORKDIR}/run"
+ENV LIBRARYDIR="${WORKDIR}/honeybee-radiance"
+ENV RAYPATH="${WORKDIR}/lib"
 ENV PATH="${WORKDIR}/.local/bin:${RAYPATH}:${PATH}"
 
 RUN apt-get update \
@@ -23,7 +25,15 @@ COPY radiance-${radiance_version}-Linux/usr/local/radiance/bin ${WORKDIR}/bin
 COPY radiance-${radiance_version}-Linux/usr/local/radiance/lib ${WORKDIR}/lib
 
 # Install honeybee-radiance
-COPY . honeybee-radiance
+COPY honeybee_radiance ${LIBRARYDIR}/honeybee_radiance
+COPY .git ${LIBRARYDIR}/.git
+COPY README.md ${LIBRARYDIR}
+COPY requirements.txt ${LIBRARYDIR}
+COPY setup.py ${LIBRARYDIR}
+COPY setup.cfg ${LIBRARYDIR}
+COPY LICENSE ${LIBRARYDIR}
+
+# Switch user back to modify packages
 USER root
 RUN pip3 install --no-cache-dir setuptools wheel \
     && pip3 install --no-cache-dir ./honeybee-radiance \
@@ -33,5 +43,5 @@ RUN pip3 install --no-cache-dir setuptools wheel \
 
 USER ladybugbot
 # Set workdir
-RUN mkdir -p /home/ladybugbot/run
-WORKDIR /home/ladybugbot/run
+RUN mkdir -p ${RUNDIR}
+WORKDIR ${RUNDIR}
