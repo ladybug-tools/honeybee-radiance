@@ -696,20 +696,26 @@ def _get_full_id(view_or_grid):
 
 def _filter_by_pattern(input_objects, filter):
     """Filter model grids and views based on user input."""
-    if not filter:
+    if not filter or filter == '*':
         return input_objects
+
+    if not isinstance(filter, (list, tuple)):
+        filter = [filter]
     patterns = [
         re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
         ]
-    filtered_objects = []
+
+    indexes = []
     objects = {}
 
-    for obj in input_objects:
-        objects[_get_full_id(obj)] = obj
+    for count, obj in enumerate(input_objects):
+        objects[_get_full_id(obj)] = count
 
-    for id_, obj in objects.items():
+    for id_, count in objects.items():
         for pattern in patterns:
             if re.search(pattern, id_):
-                filtered_objects.append(obj)
+                indexes.append(count)
+    indexes = list(set(indexes))
+    indexes.sort()
 
-    return list(set(filtered_objects))
+    return [input_objects[i] for i in indexes]
