@@ -1,23 +1,20 @@
-FROM python:3.7
+FROM python:3.7-slim
 
 LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
+
+ARG radiance_version
+
+ENV WORKDIR='/home/ladybugbot'
+ENV RAYPATH='${WORKDIR}/lib'
+ENV PATH="${RAYPATH}:${PATH}"
 
 # Create non-root user
 RUN adduser ladybugbot --uid 1000 --disabled-password --gecos ""
 USER ladybugbot
-WORKDIR /home/ladybugbot
+WORKDIR ${WORKDIR}
 
-# Install radiance
-ENV RAYPATH=/home/ladybugbot/lib
-ENV PATH="/home/ladybugbot/bin:${PATH}"
-RUN curl -L https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.3a.fc2a2610_Linux.zip --output radiance.zip \
-&& unzip -p radiance.zip | tar xz \
-&& mkdir bin \
-&& mkdir lib \
-&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/bin/* /home/ladybugbot/bin \
-&& mv ./radiance-5.3.fc2a261076-Linux/usr/local/radiance/lib/* /home/ladybugbot/lib \
-&& rm -rf radiance-5.3.fc2a261076-Linux \
-&& rm radiance.zip
+COPY radiance-${radiance_version}-Linux/usr/local/radiance/bin ${WORKDIR}/bin
+COPY radiance-${radiance_version}-Linux/usr/local/radiance/lib ${WORKDIR}/lib
 
 # Install honeybee-radiance
 ENV PATH="/home/ladybugbot/.local/bin:${PATH}"
