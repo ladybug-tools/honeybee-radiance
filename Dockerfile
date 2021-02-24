@@ -20,7 +20,7 @@ RUN adduser ladybugbot --uid 1000 --disabled-password --gecos ""
 USER ladybugbot
 WORKDIR ${WORKDIR}
 
-# Expects a decomressed radiance folder in the build context
+# Expects a decompressed radiance folder in the build context
 COPY radiance-${radiance_version}-Linux/usr/local/radiance/bin ${WORKDIR}/bin
 COPY radiance-${radiance_version}-Linux/usr/local/radiance/lib ${WORKDIR}/lib
 
