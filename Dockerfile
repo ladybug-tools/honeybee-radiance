@@ -39,7 +39,8 @@ RUN pip3 install --no-cache-dir setuptools wheel \
     && pip3 install --no-cache-dir ./honeybee-radiance \
     && apt-get -y --purge remove git \
     && apt-get -y clean \
-    && apt-get -y autoremove
+    && apt-get -y autoremove \
+    && rm -rf ${LIBRARYDIR}/.git
 
 USER ladybugbot
 # Set workdir
