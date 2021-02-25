@@ -1,8 +1,8 @@
-"""honeybee radiance daylight coefficient / contribution commands."""
+"""honeybee radiance daylight postprocessing commands."""
 import click
 import sys
 import logging
-
+from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 
 _logger = logging.getLogger(__name__)
 
@@ -93,6 +93,76 @@ def sum_matrix_rows(input_matrix, output):
                 output.write('%s\n' % value)
     except Exception:
         _logger.exception('Failed to convert the input file to binary format.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-daylight')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--threshold', '-t', help='Threshold illuminance level for daylight autonomy.',
+    default=300, type=int, show_default=True
+)
+@click.option(
+    '--lower-threshold', '-lt',
+    help='Minimum threshold for useful daylight illuminance.', default=100, type=int,
+    show_default=True
+)
+@click.option(
+    '--upper-threshold', '-ut',
+    help='Maximum threshold for useful daylight illuminance.', default=3000, type=int,
+    show_default=True
+)
+@click.option(
+    '--grids_filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to copy output'
+    'files.', default='metrics'
+)
+def annual_metrics(
+    folder, schedule, threshold, lower_threshold, upper_threshold, grids_filter,
+    sub_folder
+        ):
+    """Compute annual metrics in a folder and write them in a subfolder.
+
+    \b
+    This command generates 5 files for each input grid.
+        {grid-name}.da -> Daylight Autonomy
+        {grid-name}.cda -> Continuos Daylight Autonomy
+        {grid-name}.udi -> Useful Daylight Illuminance
+        {grid-name}_upper.udi -> Upper Useful Daylight Illuminance
+        {grid-name}_lower.udi -> Lower Useful Daylight Illuminance
+
+    \b
+    Args:
+        results_folder: Results folder. This folder is an output folder of annual
+        daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+
+    """
+    if schedule:
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+
+    try:
+        metrics_to_folder(
+            folder, schedule, threshold, lower_threshold, upper_threshold,
+            grids_filter, sub_folder
+        )
+    except Exception:
+        _logger.exception('Failed to calculate annual metrics.')
         sys.exit(1)
     else:
         sys.exit(0)
