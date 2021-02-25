@@ -2,8 +2,6 @@ FROM python:3.7-slim
 
 LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
 
-ARG radiance_version
-
 ENV WORKDIR='/home/ladybugbot'
 ENV RUNDIR="${WORKDIR}/run"
 ENV LIBRARYDIR="${WORKDIR}/honeybee-radiance"
@@ -21,8 +19,8 @@ USER ladybugbot
 WORKDIR ${WORKDIR}
 
 # Expects a decompressed radiance folder in the build context
-COPY radiance-${radiance_version}-Linux/usr/local/radiance/bin ${WORKDIR}/bin
-COPY radiance-${radiance_version}-Linux/usr/local/radiance/lib ${WORKDIR}/lib
+COPY radiance/usr/local/radiance/bin ${WORKDIR}/bin
+COPY radiance/usr/local/radiance/lib ${WORKDIR}/lib
 
 # Install honeybee-radiance
 COPY honeybee_radiance ${LIBRARYDIR}/honeybee_radiance
