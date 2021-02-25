@@ -16,9 +16,6 @@ python setup.py sdist bdist_wheel
 echo "Pushing new version to PyPi"
 twine upload dist/* -u $PYPI_USERNAME -p $PYPI_PASSWORD
 
-export radiance_version='5.3a.fc2a2610'
-
-
 echo "Docker Deployment..."
 echo "Login to Docker"
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
