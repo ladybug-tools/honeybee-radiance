@@ -185,13 +185,17 @@ def metrics_to_files(
         os.makedirs(output_folder)
 
     grid_name = grid_name or os.path.split(ill_file)[-1][-4:]
-    da = os.path.join(output_folder, '%s.da' % grid_name).replace('\\', '/')
-    cda = os.path.join(output_folder, '%s.cda' % grid_name).replace('\\', '/')
-    udi = os.path.join(output_folder, '%s.udi' % grid_name).replace('\\', '/')
+    da = os.path.join(output_folder, 'da', '%s.da' % grid_name).replace('\\', '/')
+    cda = os.path.join(output_folder, 'cda', '%s.cda' % grid_name).replace('\\', '/')
+    udi = os.path.join(output_folder, 'udi', '%s.udi' % grid_name).replace('\\', '/')
     udi_lower = \
-        os.path.join(output_folder, '%s_lower.udi' % grid_name).replace('\\', '/')
+        os.path.join(
+            output_folder, 'udi_lower', '%s_lower.udi' % grid_name
+        ).replace('\\', '/')
     udi_upper = \
-        os.path.join(output_folder, '%s_upper.udi' % grid_name).replace('\\', '/')
+        os.path.join(
+            output_folder, 'udi_upper', '%s_upper.udi' % grid_name
+        ).replace('\\', '/')
 
     for file_path in [da, cda, udi, udi_upper, udi_lower]:
         folder = os.path.dirname(file_path)
@@ -322,5 +326,11 @@ def metrics_to_folder(
             ill_file, occ_pattern, metrics_folder, threshold, min_t,
             max_t, grid['full_id']
         )
+
+    # copy info.json to all results folders
+    for folder_name in ['da', 'cda', 'udi_lower', 'udi', 'udi_upper']:
+        grid_info = os.path.join(metrics_folder, folder_name, 'grids_info.json')
+        with open(grid_info, 'w') as outf:
+            json.dump(grids, outf)
 
     return metrics_folder
