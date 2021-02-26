@@ -5,9 +5,9 @@ LABEL maintainer="Ladybug Tools" email="info@ladybug.tools"
 ENV WORKDIR='/home/ladybugbot'
 ENV RUNDIR="${WORKDIR}/run"
 ENV LIBRARYDIR="${WORKDIR}/honeybee-radiance"
-ENV RAYPATH="${WORKDIR}/lib"
+ENV RAYPATH=".:${WORKDIR}/lib"
 ENV BINPATH="${WORKDIR}/bin"
-ENV PATH="${WORKDIR}/.local/bin:${BINPATH}:${RAYPATH}:${PATH}"
+ENV PATH="${WORKDIR}/.local/bin:${BINPATH}:${PATH}"
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends git \
@@ -21,7 +21,7 @@ WORKDIR ${WORKDIR}
 
 # Expects a decompressed radiance folder in the build context
 COPY radiance/usr/local/radiance/bin ${BINPATH}
-COPY radiance/usr/local/radiance/lib ${RAYPATH}
+COPY radiance/usr/local/radiance/lib ${WORKDIR}/lib
 
 # Install honeybee-radiance
 COPY honeybee_radiance ${LIBRARYDIR}/honeybee_radiance
