@@ -6,7 +6,8 @@ ENV WORKDIR='/home/ladybugbot'
 ENV RUNDIR="${WORKDIR}/run"
 ENV LIBRARYDIR="${WORKDIR}/honeybee-radiance"
 ENV RAYPATH="${WORKDIR}/lib"
-ENV PATH="${WORKDIR}/.local/bin:${RAYPATH}:${PATH}"
+ENV BINPATH="${WORKDIR}/bin"
+ENV PATH="${WORKDIR}/.local/bin:${BINPATH}:${RAYPATH}:${PATH}"
 
 RUN apt-get update \
     && apt-get -y install --no-install-recommends git \
@@ -19,8 +20,8 @@ USER ladybugbot
 WORKDIR ${WORKDIR}
 
 # Expects a decompressed radiance folder in the build context
-COPY radiance/usr/local/radiance/bin ${WORKDIR}/bin
-COPY radiance/usr/local/radiance/lib ${WORKDIR}/lib
+COPY radiance/usr/local/radiance/bin ${BINPATH}
+COPY radiance/usr/local/radiance/lib ${RAYPATH}
 
 # Install honeybee-radiance
 COPY honeybee_radiance ${LIBRARYDIR}/honeybee_radiance
