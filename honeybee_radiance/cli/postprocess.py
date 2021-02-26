@@ -1,6 +1,7 @@
 """honeybee radiance daylight postprocessing commands."""
 import click
 import sys
+import os
 import logging
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 
@@ -106,7 +107,7 @@ def sum_matrix_rows(input_matrix, output):
 @click.option(
     '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
     'separated by new line. If not provided an 8-5 annual schedule will be created.',
-    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--threshold', '-t', help='Threshold illuminance level for daylight autonomy.',
@@ -152,9 +153,12 @@ def annual_metrics(
         sensor grid.
 
     """
-    if schedule:
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
         with open(schedule) as hourly_schedule:
             schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = None
 
     try:
         metrics_to_folder(
