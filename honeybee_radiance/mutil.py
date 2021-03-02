@@ -20,7 +20,8 @@ def modifier_class_from_type_string(type_string):
             usually be lowercase and should be the same as the 'type' key used
             in the dictionary representation of the modifier.
     """
-    _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+    _mapper = {'bsdf': 'BSDF', 'BSDF': 'BSDF',
+               'brtdfunc': 'BRTDfunc', 'BRTDfunc': 'BRTDfunc'}
     if type_string == 'void':
         return Void
     elif type_string in Primitive.MATERIALTYPES:
