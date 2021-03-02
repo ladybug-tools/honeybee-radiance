@@ -6,6 +6,7 @@ from __future__ import division
 
 import os
 from .materialbase import Material
+from honeybee.config import folders
 import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
 
@@ -340,7 +341,7 @@ class BSDF(Material):
         return cls_
 
     @classmethod
-    def from_dict(cls, data, folder='.'):
+    def from_dict(cls, data, folder=None):
         """Initialize a BSDF from a dictionary.
 
         Args:
@@ -371,11 +372,14 @@ class BSDF(Material):
             )
         modifier, dependencies = Material.filter_dict_input(data)
 
+        # check folder and create it if it does not exist
+        folder = os.path.join(folders.default_simulation_folder, 'BSDF') \
+            if folder is None else folder
         if not os.path.isdir(folder):
             os.makedirs(folder)
 
         fp = os.path.join(folder, '%s.xml' % data['identifier'])
-        # write bytes to xml file
+        # write to xml file
         cls.decompress_to_file(data['bsdf_data'], fp)
 
         cls_ = cls(
