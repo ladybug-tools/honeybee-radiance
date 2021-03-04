@@ -51,19 +51,15 @@ def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal, lo
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
         # set the default folder if it's not specified
         if folder is None:
             folder = os.path.dirname(os.path.abspath(model_json))
 
-        # re-serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        model = Model.from_dict(data)
-
-        # translate the model to a radiance folder
+        # re-serialize the Model and translate the model to a radiance folder
+        model = Model.from_file(model_json)
         rad_fold = model.to.rad_folder(
             model, folder, config_file, minimal, views=view, grids=grid
         )
@@ -98,15 +94,11 @@ def model_to_rad(model_json, blk, minimal, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
-        # re-serialize the Model to Python
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        model = Model.from_dict(data)
-
-        # translate the model to a rad string
+        # re-serialize the Model and translate the model to a rad string
+        model = Model.from_file(model_json)
         model_str, modifier_str = model.to.rad(model, blk, minimal)
         rad_str_list = ['# ========  MODEL MODIFIERS ========', modifier_str,
                         '# ========  MODEL GEOMETRY ========', model_str]
@@ -141,13 +133,11 @@ def model_radiant_enclosure_info(model_json, folder, log_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
-        # re-serialize the Model JSON
-        with open(model_json) as json_file:
-            data = json.load(json_file)
-        model = Model.from_dict(data)
+        # re-serialize the Model
+        model = Model.from_file(model_json)
 
         # set the default folder if it's not specified
         if folder is None:
