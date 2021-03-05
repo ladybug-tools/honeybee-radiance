@@ -85,6 +85,7 @@ class _SkyDome(object):
 
     def to_file(self, folder, name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
+
         Args:
             folder: Target folder.
             name: File name.
