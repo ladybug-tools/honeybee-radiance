@@ -22,17 +22,19 @@ class CIE(_PointInTime):
             Radiance convention. In Radiance the azimuth degrees are measured in west of
             South.
         sky_type: An integer between 0..5 to indicate CIE Sky Type.
+
             * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky distribution
-            function, a source description of the sun is generated.
+              function, a source description of the sun is generated.
             * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will
-            correspond to a standard CIE clear day.
+              correspond to a standard CIE clear day.
             * 2 = Intermediate with sun. In addition to the sky distribution, a (somewhat
-            subdued) sun is generated.
+              subdued) sun is generated.
             * 3 = Intermediate without sun. The sky will correspond to a standard CIE
-            intermediate day.
+              intermediate day.
             * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE
-            overcast day.
+              overcast day.
             * 5 = Uniform cloudy sky. The sky distribution will be completely uniform.
+
         ground_reflectance: Average ground reflectance (Default: 0.2).
 
     Properties:
@@ -101,16 +103,17 @@ class CIE(_PointInTime):
         An integer between 0 and 5 to indicate CIE Sky Type.
 
         * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky distribution
-        function, a source description of the sun is generated.
+          function, a source description of the sun is generated.
         * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will
-        correspond to a standard CIE clear day.
+          correspond to a standard CIE clear day.
         * 2 = Intermediate with sun. In addition to the sky distribution, a (somewhat
-        subdued) sun is generated.
+          subdued) sun is generated.
         * 3 = Intermediate without sun. The sky will correspond to a standard CIE
-        intermediate day.
+          intermediate day.
         * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE
-        overcast day.
+          overcast day.
         * 5 = Uniform cloudy sky. The sky distribution will be completely uniform.
+
         """
         return self._sky_type
 
@@ -129,16 +132,17 @@ class CIE(_PointInTime):
         """Sky type in Radiance format.
 
         * +s = Sunny with sun. Sunny sky with sun. In addition to the sky distribution
-        function, a source description of the sun is generated.
+          function, a source description of the sun is generated.
         * -s = Sunny without sun. Sunny sky without sun. The sky distribution will
-        correspond to a standard CIE clear day.
+          correspond to a standard CIE clear day.
         * +i = Intermediate with sun. In addition to the sky distribution, a (somewhat
-        subdued) sun is generated.
+          subdued) sun is generated.
         * -i = Intermediate without sun. The sky will correspond to a standard CIE
-        intermediate day.
+          intermediate day.
         * -c = Cloudy sky. The sky distribution will correspond to a standard CIE
-        overcast day.
+          overcast day.
         * -u = Uniform cloudy sky. The sky distribution will be completely uniform.
+
         """
         return self.SKYTYPES[self.sky_type][0]
 
@@ -156,18 +160,20 @@ class CIE(_PointInTime):
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             sky_type: An integer between 0..5 to indicate CIE Sky Type.
+
                 * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky
-                    distribution function, a source description of the sun is generated.
+                  distribution function, a source description of the sun is generated.
                 * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will
-                    correspond to a standard CIE clear day.
+                  correspond to a standard CIE clear day.
                 * 2 = Intermediate with sun. In addition to the sky distribution, a
-                    (somewhat subdued) sun is generated.
+                  (somewhat subdued) sun is generated.
                 * 3 = Intermediate without sun. The sky will correspond to a standard CIE
-                    intermediate day.
+                  intermediate day.
                 * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE
-                    overcast day.
+                  overcast day.
                 * 5 = Uniform cloudy sky. The sky distribution will be completely
-                    uniform.
+                  uniform.
+
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
@@ -189,18 +195,20 @@ class CIE(_PointInTime):
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             sky_type: An integer between 0..5 to indicate CIE Sky Type.
+
                 * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky
-                    distribution function, a source description of the sun is generated.
+                  distribution function, a source description of the sun is generated.
                 * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will
-                    correspond to a standard CIE clear day.
+                  correspond to a standard CIE clear day.
                 * 2 = Intermediate with sun. In addition to the sky distribution, a
-                    (somewhat subdued) sun is generated.
+                  (somewhat subdued) sun is generated.
                 * 3 = Intermediate without sun. The sky will correspond to a standard CIE
-                    intermediate day.
+                  intermediate day.
                 * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE
-                    overcast day.
+                  overcast day.
                 * 5 = Uniform cloudy sky. The sky distribution will be completely
-                    uniform.
+                  uniform.
+
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
