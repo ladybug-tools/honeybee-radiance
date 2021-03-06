@@ -15,19 +15,29 @@ Installation
 
 To check if the command line interface is installed correctly use ``honeybee-radiance --help``.
 
-CLI Documentation
-==================
 
-For command line interface documentation see `this page <cli.html>`_.
+CLI Docs
+=============
+
+For command line interface documentation and API documentation see the pages below.
+
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-.. include:: modules.rst
+   cli/index
+
+
+honeybee_radiance
+=================
+
+.. toctree::
+   :maxdepth: 4
+
+   modules
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
