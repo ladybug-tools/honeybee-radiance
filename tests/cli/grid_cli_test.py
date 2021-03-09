@@ -1,9 +1,10 @@
 """Test grid subcommands."""
-
-from click.testing import CliRunner
-from honeybee_radiance.cli.grid import split_grid, merge_grid
-from honeybee_radiance.sensorgrid import SensorGrid
 import os
+import json
+from click.testing import CliRunner
+
+from honeybee_radiance.cli.grid import split_grid, merge_grid, from_rooms
+from honeybee_radiance.sensorgrid import SensorGrid
 
 
 def test_split_grid():
@@ -69,3 +70,15 @@ def test_merge_grid_with_header():
             pass
 
     assert count == 160 - 1
+
+
+def test_from_rooms():
+    runner = CliRunner()
+    input_hb_model = './tests/assets/model/model_radiance_dynamic_states.hbjson'
+
+    result = runner.invoke(from_rooms, [input_hb_model])
+    assert result.exit_code == 0
+    sg_dict = json.loads(result.output)
+    new_grids = [SensorGrid.from_dict(sg) for sg in sg_dict]
+    assert len(new_grids) == 2
+    assert all(isinstance(sg, SensorGrid) for sg in new_grids)

@@ -557,6 +557,30 @@ class SensorGrid(object):
             base['group_identifier'] = self.group_identifier
         return base
 
+    def to_json(self, folder, file_name=None, mkdir=False, ignore_group=False):
+        """Write this sensor grid to a JSON file.
+
+        Args:
+            folder: Target folder. If grid is part of a sensor group identifier it will
+                be written to a subfolder with group identifier name.
+            file_name: Optional file name without extension. (Default: self.identifier)
+            mkdir: A boolean to indicate if the folder should be created in case it
+                doesn't exist already. (Default: False).
+            ignore_group: A boolean to indicate if creating a new subfolder for sensor
+                group should be ignored. (Default: False).
+
+        Returns:
+            Full path to newly created file.
+        """
+        identifier = file_name or self.identifier + '.json'
+        if not identifier.endswith('.json'):
+            identifier += '.json'
+        if not ignore_group and self.group_identifier:
+            folder = os.path.normpath(os.path.join(folder, self.group_identifier))
+            mkdir = True  # in most cases the subfolder does not exist already
+        return futil.write_to_file_by_name(
+            folder, identifier, json.dumps(self.to_dict()), mkdir)
+
     def move(self, moving_vec):
         """Move this sensor grid along a vector.
 
