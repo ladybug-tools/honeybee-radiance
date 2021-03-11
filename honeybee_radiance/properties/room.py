@@ -55,7 +55,7 @@ class RoomRadianceProperties(object):
             value.lock()   # lock in case modifier set has multiple references
         self._modifier_set = value
 
-    def generate_sensor_grid(self, x_dim, y_dim=None, offset=1.0):
+    def generate_sensor_grid(self, x_dim, y_dim=None, offset=1.0, remove_out=False):
         """Get a radiance SensorGrid generated from this Room's floors.
 
         The output grid will have this room referenced in their room_identifier
@@ -73,6 +73,11 @@ class RoomRadianceProperties(object):
             offset: A number for how far to offset the grid from the base face.
                 Default is 1.0, which will not offset the grid to be 1 unit above
                 the floor.
+            remove_out: Boolean to note whether an extra check should be run to remove
+                sensor points that lie outside the Room volume. Note that this can
+                add significantly to runtime and this check is not necessary
+                in the case that all walls are vertical and all floors are
+                horizontal (Default: False).
 
         Returns:
             A honeybee_radiance SensorGrid generated from the floors of the room.
@@ -91,6 +96,10 @@ class RoomRadianceProperties(object):
         floor_grid = self.host.generate_grid(x_dim, y_dim, offset)
         if floor_grid is None:
             return None
+        if remove_out:
+            geo = self.host.geometry
+            pattern = [geo.is_point_inside(pt) for pt in floor_grid.face_centroids]
+            floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
         sensor_grid = SensorGrid.from_mesh3d(self.host.identifier, floor_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name

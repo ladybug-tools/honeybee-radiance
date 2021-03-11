@@ -28,13 +28,19 @@ def edit():
               'under the "mesh" property of each grid. Excluding the mesh can greatly '
               'reduce model size but will mean Radiance results cannot be visualized '
               'as colored meshes.', default=True)
+@click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
+              'check should be run to remove sensor points that lie outside the Room '
+              'volume. Note that this can add significantly to the runtime and this '
+              'check is not necessary in the case that all walls are vertical '
+              'and all floors are horizontal.', default=True, show_default=True)
 @click.option('--room', '-r', multiple=True, help='Room identifier(s) to specify the '
               'room(s) for which sensor grids should be generated. By default, all '
               'rooms will get sensor grids.')
 @click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
               'string of the new model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def add_room_sensors(model_json, grid_size, offset, include_mesh, room, output_file):
+def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out,
+                     room, output_file):
     """Add SensorGrids to a honeybee model generated from the Room's floors.
 
     The grids will have the rooms referenced in their room_identifier property.
@@ -47,15 +53,17 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, room, output_f
         # re-serialize the Model and extract rooms and units
         model = Model.from_hbjson(model_json)
         rooms = model.rooms if room is None or len(room) == 0 else \
-            [room for room in model.rooms if room.identifier in room]
+            [r for r in model.rooms if r.identifier in room]
         if model.units != 'Meters':
             grid_size = grid_size / model.conversion_factor_to_meters(model.units)
             offset = offset / model.conversion_factor_to_meters(model.units)
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
+        remove_out = not keep_out
         for room in rooms:
-            sg = room.properties.radiance.generate_sensor_grid(grid_size, offset=offset)
+            sg = room.properties.radiance.generate_sensor_grid(
+                grid_size, offset=offset, remove_out=remove_out)
             sensor_grids.append(sg)
         if not include_mesh:
             for sg in sensor_grids:
