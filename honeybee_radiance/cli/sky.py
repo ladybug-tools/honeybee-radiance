@@ -63,16 +63,16 @@ def sky_dome(folder, name, sky_density):
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default='uniform_sky', show_default=True)
 @click.option(
-    '--ground-emmitance', '-g', type=float, help='Ground emmitance value.', default=0.2,
+    '--ground-emittance', '-g', type=float, help='Ground emittance value.', default=0.2,
     show_default=True
 )
-def uniform_sky(folder, name, ground_emmitance):
+def uniform_sky(folder, name, ground_emittance):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     This sky is usually used to create an octree that is sent to rcontrib command.
     """
     try:
-        c_sky = hbsky.UniformSky(ground_emmitance=ground_emmitance)
+        c_sky = hbsky.UniformSky(ground_emittance=ground_emittance)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
