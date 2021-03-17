@@ -1,32 +1,4 @@
-"""Virtual skydome for daylight coefficient studies with constant radiance.
-
-Here is an example of the output.
-
-.. code-block:: shell
-
-    #@rfluxmtx h=u u=Y
-    void glow grd_glow
-    0
-    0
-    4 1 1 1 0
-
-    grd_glow source ground
-    0
-    0
-    4 0 0 -1 180
-
-    #@rfluxmtx h=r1 u=Y
-    void glow sky_glow
-    0
-    0
-    4 1 1 1 0
-
-    sky_glow source sky
-    0
-    0
-    4 0 0 1 180
-
-"""
+"""Virtual skydome for daylight coefficient studies with constant radiance."""
 
 from ._skybase import _SkyDome
 import honeybee.typing as typing
@@ -36,6 +8,30 @@ class SkyDome(_SkyDome):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     Use this sky to calculate daylight matrix.
+
+    .. code-block:: shell
+
+        #@rfluxmtx h=u u=Y
+        void glow ground_glow
+        0
+        0
+        4 1 1 1 0
+
+        ground_glow source ground
+        0
+        0
+        4 0 0 -1 180
+
+        #@rfluxmtx h=r1 u=Y
+        void glow sky_glow
+        0
+        0
+        4 1 1 1 0
+
+        sky_glow source sky
+        0
+        0
+        4 0 0 1 180
 
     Args:
         density: Sky patch subdivision density. This values is similar to -m option
@@ -69,3 +65,45 @@ class SkyDome(_SkyDome):
         return '#@rfluxmtx h=u u=Y\n%s\n\n#@rfluxmtx h=r%d u=Y\n%s\n' % (
             self.ground_hemisphere, self.sky_density, self.sky_hemisphere
         )
+
+
+class UniformSky(_SkyDome):
+    """Uniform sky is similar to a SkyDome but with no rfluxmtx header.
+
+    .. code-block:: shell
+
+        void glow sky_glow
+        0
+        0
+        4 1 1 1 0
+
+        sky_glow source sky
+        0
+        0
+        4 0 0 1 180
+
+        void glow ground_glow
+        0
+        0
+        4 0.2 0.2 0.2 0
+
+        ground_glow source ground
+        0
+        0
+        4 0 0 -1 180
+
+    Args:
+        ground_emmitance: Ground emmitance value between 0.0 and 1.0 - Default: 0.2
+
+    """
+    __slots__ = ('_ground_emittance',)
+
+    def __init__(self, ground_emmitance=0.2):
+        _SkyDome.__init__(self, modifier='void')
+        self.ground_hemisphere.r_emittance = ground_emmitance
+        self.ground_hemisphere.g_emittance = ground_emmitance
+        self.ground_hemisphere.b_emittance = ground_emmitance
+
+    def to_radiance(self):
+        """Radiance definition for uniform sky."""
+        return '%s\n\n%s\n' % (self.sky_hemisphere, self.ground_hemisphere)
