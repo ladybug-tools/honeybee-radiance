@@ -93,16 +93,16 @@ class UniformSky(_SkyDome):
         4 0 0 -1 180
 
     Args:
-        ground_emmitance: Ground emmitance value between 0.0 and 1.0 - Default: 0.2
+        ground_emittance: Ground emittance value between 0.0 and 1.0 - Default: 0.2
 
     """
     __slots__ = ('_ground_emittance',)
 
-    def __init__(self, ground_emmitance=0.2):
+    def __init__(self, ground_emittance=0.2):
         _SkyDome.__init__(self, modifier='void')
-        self.ground_hemisphere.r_emittance = ground_emmitance
-        self.ground_hemisphere.g_emittance = ground_emmitance
-        self.ground_hemisphere.b_emittance = ground_emmitance
+        self.ground_hemisphere.r_emittance = ground_emittance
+        self.ground_hemisphere.g_emittance = ground_emittance
+        self.ground_hemisphere.b_emittance = ground_emittance
 
     def to_radiance(self):
         """Radiance definition for uniform sky."""
