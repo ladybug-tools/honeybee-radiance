@@ -59,12 +59,19 @@ def dc():
     default='a', show_default=True, show_choices=True
 )
 @click.option(
+    '--order-by-sensor/--order-by-datetime', is_flag=True, default=True,
+    show_default=True, help='An option to change how results are ordered in each row. '
+    'By default each row are the results for a sensor during all the sun-up hours. '
+    'You can change that by using --order-by-datetime flag to get the results for a '
+    'single datetime in each row.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, conversion, output_format, dry_run
+        output, coeff, conversion, output_format, order_by_sensor, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -103,6 +110,8 @@ def rcontrib_command_with_postprocess(
             cmd = '{command} | rmtxop -f{output_format} - -c {conversion}'.format(
                 command=cmd, output_format=output_format, conversion=conversion
             )
+        if order_by_sensor is not True:
+            cmd = cmd + ' -t '
         if output:
             cmd = '{command} > {output}'.format(command=cmd, output=output)
 
@@ -158,12 +167,19 @@ def rcontrib_command_with_postprocess(
     show_default=True, show_choices=True
 )
 @click.option(
+    '--order-by-sensor/--order-by-datetime', is_flag=True, default=True,
+    show_default=True, help='An option to change how results are ordered in each row. '
+    'By default each row are the results for a sensor during all the sun-up hours. '
+    'You can change that by using --order-by-datetime flag to get the results for a '
+    'single datetime in each row.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rfluxmtx_command_with_postprocess(
         octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params,
-        rad_params_locked, output, conversion, output_format, dry_run
+        rad_params_locked, output, conversion, output_format, order_by_sensor, dry_run
 ):
     """Run rfluxmtx command and pass the results to rmtxop.
 
@@ -196,6 +212,9 @@ def rfluxmtx_command_with_postprocess(
 
         if conversion and conversion.strip():
             cmd_template = cmd_template + ' -c %s' % conversion
+
+        if order_by_sensor is not True:
+            cmd_template = cmd_template + ' -t '
 
         if output:
             cmd_template = cmd_template + ' > {output}'.format(output=output)
