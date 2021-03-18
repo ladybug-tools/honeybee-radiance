@@ -1,11 +1,11 @@
 """honeybee radiance model-editing commands."""
 import click
 import sys
-import os
 import logging
 import json
 
 from honeybee.model import Model
+from honeybee.units import parse_distance_string
 
 _logger = logging.getLogger(__name__)
 
@@ -19,10 +19,14 @@ def edit():
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
-              'cells in meters.', type=float, default=0.5, show_default=True)
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
 @click.option('--offset', '-o', help='A number for the distance at which the '
-              'the sensor grid should be offset form the floor in meters.',
-              type=float, default=0.8, show_default=True)
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.8m', show_default=True)
 @click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
               'include a Mesh3D object that aligns with the grid positions '
               'under the "mesh" property of each grid. Excluding the mesh can greatly '
@@ -54,9 +58,8 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out,
         model = Model.from_hbjson(model_json)
         rooms = model.rooms if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
-        if model.units != 'Meters':
-            grid_size = grid_size / model.conversion_factor_to_meters(model.units)
-            offset = offset / model.conversion_factor_to_meters(model.units)
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
