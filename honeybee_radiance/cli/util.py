@@ -79,3 +79,43 @@ def handle_operator(operator):
         return '"*"'
     else:
         raise ValueError('Invalid operator: %s' % operator)
+
+
+def remove_header(input_file):
+    """Remove the header text from a Radiance matrix file."""
+    inf = open(input_file)
+    first_line = next(inf)
+    if first_line[:10] == '#?RADIANCE':
+        for line in inf:
+            if line[:7] == 'FORMAT=':
+                # pass next empty line
+                next(inf)
+                first_line = next(inf)
+                break
+            continue
+    return first_line, inf
+
+
+def get_compare_func(include_min, include_max, comply):
+    if include_max and include_min:
+        if comply:
+            compare = lambda value, minimum, maximum: minimum <= value <= maximum
+        else:
+            compare = lambda value, minimum, maximum: not (minimum <= value <= maximum)
+    elif not include_max and not include_min:
+        if comply:
+            compare = lambda value, minimum, maximum: minimum < value < maximum
+        else:
+            compare = lambda value, minimum, maximum: not (minimum < value < maximum)
+    elif include_max and not include_min:
+        if comply:
+            compare = lambda value, minimum, maximum: minimum < value <= maximum
+        else:
+            compare = lambda value, minimum, maximum: not (minimum < value <= maximum)
+    elif not include_max and include_min:
+        if comply:
+            compare = lambda value, minimum, maximum: minimum <= value < maximum
+        else:
+            compare = lambda value, minimum, maximum: not (minimum <= value < maximum)
+
+    return compare
