@@ -7,6 +7,7 @@ import re
 import json
 
 from honeybee.model import Model
+from honeybee.units import parse_distance_string
 import honeybee_radiance.sensorgrid as sensorgrid
 
 _logger = logging.getLogger(__name__)
@@ -107,10 +108,14 @@ def merge_grid(input_folder, base_name, extension, folder, name):
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
-              'cells in meters.', type=float, default=0.5, show_default=True)
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
 @click.option('--offset', '-o', help='A number for the distance at which the '
-              'the sensor grid should be offset form the floor in meters.',
-              type=float, default=0.8, show_default=True)
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.8m', show_default=True)
 @click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
@@ -130,7 +135,8 @@ def merge_grid(input_folder, base_name, extension, folder, name):
 @click.option('--folder', help='Optional output folder. If specified, the --output-file '
               'will be ignored and each sensor grid will be written into its own '
               '.json or .pts file within the folder.', default=None,
-              type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
 @click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
               'string of the sensor grids. By default this will be printed '
               'to stdout', type=click.File('w'), default='-', show_default=True)
@@ -147,9 +153,8 @@ def from_rooms(model_json, grid_size, offset, include_mesh, keep_out, room,
         model = Model.from_hbjson(model_json)
         rooms = model.rooms if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
-        if model.units != 'Meters':
-            grid_size = grid_size / model.conversion_factor_to_meters(model.units)
-            offset = offset / model.conversion_factor_to_meters(model.units)
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
