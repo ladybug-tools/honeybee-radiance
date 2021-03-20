@@ -53,6 +53,12 @@ def dc():
     'as part of this command.'
 )
 @click.option(
+    '--multiply-by', help='A value to multiply by all the results. This input is '
+    'helpful to adjust the values for runs with different timesteps if required. '
+    'This value will be multiplied by the values provided by converstion input.',
+    type=click.FLOAT, default=1
+)
+@click.option(
     '--output-format', help='Output type for converted results. Valid inputs are a, f and '
     'd for ASCII, float or double. If conversion is not provided you can change the '
     'output type using rad-params options.', type=click.Choice(['a', 'f', 'd']),
@@ -71,7 +77,7 @@ def dc():
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, conversion, output_format, order_by_sensor, dry_run
+        output, coeff, conversion, multiply_by, output_format, order_by_sensor, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -105,11 +111,20 @@ def rcontrib_command_with_postprocess(
             options=options, octree=octree, sensors=sensor_grid
         )
         cmd = rcontrib.to_radiance().replace('\\', '/')
+
         if conversion and conversion.strip():
+            if multiply_by != 1:
+                conversion = ' '.join(str(c * multiply_by) for c in conversion.split())
             # pass the values to rmtxop
             cmd = '{command} | rmtxop -f{output_format} - -c {conversion}'.format(
                 command=cmd, output_format=output_format, conversion=conversion
             )
+        elif multiply_by != 1:
+            conversion = '{mult} {mult} {mult}'.format(mult=multiply_by)
+            cmd = '{command} | rmtxop -f{output_format} - -c {conversion}'.format(
+                command=cmd, output_format=output_format, conversion=conversion
+            )
+
         if order_by_sensor is not True:
             cmd = cmd + ' -t '
         if output:
@@ -162,6 +177,12 @@ def rcontrib_command_with_postprocess(
     'as part of this command.'
 )
 @click.option(
+    '--multiply-by', help='A value to multiply by all the results. This input is '
+    'helpful to adjust the values for runs with different timesteps if required. '
+    'This value will be multiplied by the values provided by converstion input.',
+    type=click.FLOAT, default=1
+)
+@click.option(
     '--output-format', help='Output type for converted results. Valid inputs are a, f and '
     'd for ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='f',
     show_default=True, show_choices=True
@@ -178,9 +199,9 @@ def rcontrib_command_with_postprocess(
     help='A flag to show the command without running it.'
 )
 def rfluxmtx_command_with_postprocess(
-        octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params,
-        rad_params_locked, output, conversion, output_format, order_by_sensor, dry_run
-):
+    octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params, rad_params_locked,
+    output, conversion, multiply_by, output_format, order_by_sensor, dry_run
+        ):
     """Run rfluxmtx command and pass the results to rmtxop.
 
     octree: Path to octree file.
@@ -211,6 +232,11 @@ def rfluxmtx_command_with_postprocess(
             '{sensors} | rmtxop -f{output_format} - {sky_mtx}'
 
         if conversion and conversion.strip():
+            if multiply_by != 1:
+                conversion = ' '.join(str(c * multiply_by) for c in conversion.split())
+            cmd_template = cmd_template + ' -c %s' % conversion
+        elif multiply_by != 1:
+            conversion = '{mult} {mult} {mult}'.format(mult=multiply_by)
             cmd_template = cmd_template + ' -c %s' % conversion
 
         if order_by_sensor is not True:
