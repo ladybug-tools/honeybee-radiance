@@ -189,13 +189,9 @@ def metrics_to_files(
     cda = os.path.join(output_folder, 'cda', '%s.cda' % grid_name).replace('\\', '/')
     udi = os.path.join(output_folder, 'udi', '%s.udi' % grid_name).replace('\\', '/')
     udi_lower = \
-        os.path.join(
-            output_folder, 'udi_lower', '%s_lower.udi' % grid_name
-        ).replace('\\', '/')
+        os.path.join(output_folder, 'udi_lower', '%s.udi' % grid_name).replace('\\', '/')
     udi_upper = \
-        os.path.join(
-            output_folder, 'udi_upper', '%s_upper.udi' % grid_name
-        ).replace('\\', '/')
+        os.path.join(output_folder, 'udi_upper', '%s.udi' % grid_name).replace('\\', '/')
 
     for file_path in [da, cda, udi, udi_upper, udi_lower]:
         folder = os.path.dirname(file_path)
