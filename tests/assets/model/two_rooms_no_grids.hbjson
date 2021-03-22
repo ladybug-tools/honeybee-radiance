@@ -1,0 +1,3858 @@
+{
+    "display_name": "sample_model_no_grid", 
+    "identifier": "sample_model_no_grid", 
+    "tolerance": 0.001, 
+    "angle_tolerance": 1.0, 
+    "rooms": [
+        {
+            "display_name": "TestRoom_1", 
+            "identifier": "TestRoom_1_6506d317", 
+            "faces": [
+                {
+                    "display_name": "TestRoom_1_6506d317..Face0", 
+                    "identifier": "TestRoom_1_6506d317..Face0", 
+                    "apertures": [
+                        {
+                            "display_name": "Aperture_10a8bef4", 
+                            "identifier": "Aperture_10a8bef4", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_10a8bef4_OutBorder0", 
+                                    "identifier": "Aperture_10a8bef4_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                -4.0, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.2999999999999998, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.2999999999999998, 
+                                                0.99999999999999978
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_10a8bef4_OutBorder1", 
+                                    "identifier": "Aperture_10a8bef4_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                -4.2999999999999998, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.2999999999999998, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.0, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_10a8bef4_OutBorder2", 
+                                    "identifier": "Aperture_10a8bef4_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                -4.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.2999999999999998, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -4.2999999999999998, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_10a8bef4_OutBorder3", 
+                                    "identifier": "Aperture_10a8bef4_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                -4.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.0, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.2999999999999998, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -4.2999999999999998, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        -7.0, 
+                                        -4.0, 
+                                        2.0
+                                    ], 
+                                    [
+                                        -7.0, 
+                                        -4.0, 
+                                        0.99999999999999978
+                                    ], 
+                                    [
+                                        -1.0, 
+                                        -4.0, 
+                                        1.0
+                                    ], 
+                                    [
+                                        -1.0, 
+                                        -4.0, 
+                                        2.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }
+                    ], 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                -8.0, 
+                                -4.0, 
+                                3.0
+                            ], 
+                            [
+                                -8.0, 
+                                -4.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                -4.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                -4.0, 
+                                3.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_1_6506d317..Face1", 
+                    "identifier": "TestRoom_1_6506d317..Face1", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                -4.0, 
+                                3.0
+                            ], 
+                            [
+                                0.0, 
+                                -4.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                3.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_1_6506d317..Face2", 
+                    "identifier": "TestRoom_1_6506d317..Face2", 
+                    "apertures": [
+                        {
+                            "display_name": "Aperture_5c31893e", 
+                            "identifier": "Aperture_5c31893e", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_5c31893e_OutBorder0", 
+                                    "identifier": "Aperture_5c31893e_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                9.3000000000000007, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.3000000000000007, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.0, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.0, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_5c31893e_OutBorder1", 
+                                    "identifier": "Aperture_5c31893e_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                9.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.3000000000000007, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.3000000000000007, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_5c31893e_OutBorder2", 
+                                    "identifier": "Aperture_5c31893e_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                9.0, 
+                                                2.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.3000000000000007, 
+                                                2.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_5c31893e_OutBorder3", 
+                                    "identifier": "Aperture_5c31893e_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.0, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                9.3000000000000007, 
+                                                0.99999999999999978
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        -1.0, 
+                                        9.0, 
+                                        2.0
+                                    ], 
+                                    [
+                                        -1.0, 
+                                        9.0, 
+                                        1.0
+                                    ], 
+                                    [
+                                        -7.0, 
+                                        9.0, 
+                                        0.99999999999999978
+                                    ], 
+                                    [
+                                        -7.0, 
+                                        9.0, 
+                                        2.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }
+                    ], 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                9.0, 
+                                3.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                -8.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                -8.0, 
+                                9.0, 
+                                3.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_1_6506d317..Face3", 
+                    "identifier": "TestRoom_1_6506d317..Face3", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                -8.0, 
+                                9.0, 
+                                3.0
+                            ], 
+                            [
+                                -8.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                -8.0, 
+                                -4.0, 
+                                0.0
+                            ], 
+                            [
+                                -8.0, 
+                                -4.0, 
+                                3.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_1_6506d317..Face4", 
+                    "identifier": "TestRoom_1_6506d317..Face4", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                -8.0, 
+                                -4.0, 
+                                0.0
+                            ], 
+                            [
+                                -8.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                -4.0, 
+                                0.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Floor", 
+                    "boundary_condition": {
+                        "type": "Ground"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_1_6506d317..Face5", 
+                    "identifier": "TestRoom_1_6506d317..Face5", 
+                    "apertures": [
+                        {
+                            "display_name": "Aperture_3d742a65", 
+                            "identifier": "Aperture_3d742a65", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_3d742a65_OutBorder0", 
+                                    "identifier": "Aperture_3d742a65_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -6.0, 
+                                                5.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                5.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                5.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                5.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_3d742a65_OutBorder1", 
+                                    "identifier": "Aperture_3d742a65_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -2.0, 
+                                                5.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                5.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                8.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                8.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_3d742a65_OutBorder2", 
+                                    "identifier": "Aperture_3d742a65_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -2.0, 
+                                                8.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -2.0, 
+                                                8.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                8.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                8.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_3d742a65_OutBorder3", 
+                                    "identifier": "Aperture_3d742a65_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -6.0, 
+                                                8.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                8.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                5.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -6.0, 
+                                                5.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        -6.0, 
+                                        5.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -2.0, 
+                                        5.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -2.0, 
+                                        8.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -6.0, 
+                                        8.0, 
+                                        3.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }, 
+                        {
+                            "display_name": "Aperture_f5f7f12c", 
+                            "identifier": "Aperture_f5f7f12c", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_f5f7f12c_OutBorder0", 
+                                    "identifier": "Aperture_f5f7f12c_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                -2.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -2.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -2.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -2.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f5f7f12c_OutBorder1", 
+                                    "identifier": "Aperture_f5f7f12c_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                -2.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                -2.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                1.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                1.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f5f7f12c_OutBorder2", 
+                                    "identifier": "Aperture_f5f7f12c_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -1.0, 
+                                                1.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -1.0, 
+                                                1.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                1.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                1.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f5f7f12c_OutBorder3", 
+                                    "identifier": "Aperture_f5f7f12c_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                -7.0, 
+                                                1.0, 
+                                                3.2999999999999998
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                1.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -2.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                -7.0, 
+                                                -2.0, 
+                                                3.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        -7.0, 
+                                        -2.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -1.0, 
+                                        -2.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -1.0, 
+                                        1.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        -7.0, 
+                                        1.0, 
+                                        3.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }
+                    ], 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                -8.0, 
+                                -4.0, 
+                                3.0
+                            ], 
+                            [
+                                0.0, 
+                                -4.0, 
+                                3.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                3.0
+                            ], 
+                            [
+                                -8.0, 
+                                9.0, 
+                                3.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "RoofCeiling", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }
+            ], 
+            "type": "Room", 
+            "properties": {
+                "radiance": {
+                    "type": "RoomRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "program_type": "Generic Office Program", 
+                    "type": "RoomEnergyPropertiesAbridged", 
+                    "hvac": "TestRoom_1_6506d317 Ideal Loads Air System"
+                }, 
+                "type": "RoomPropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "TestRoom_2", 
+            "identifier": "TestRoom_2_97ec8062", 
+            "faces": [
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face0", 
+                    "identifier": "TestRoom_2_97ec8062..Face0", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                0.0, 
+                                5.0
+                            ], 
+                            [
+                                0.0, 
+                                0.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                0.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                0.0, 
+                                5.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face1", 
+                    "identifier": "TestRoom_2_97ec8062..Face1", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                13.0, 
+                                0.0, 
+                                5.0
+                            ], 
+                            [
+                                13.0, 
+                                0.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                9.0, 
+                                5.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face2", 
+                    "identifier": "TestRoom_2_97ec8062..Face2", 
+                    "apertures": [
+                        {
+                            "display_name": "Aperture_392c5796", 
+                            "identifier": "Aperture_392c5796", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_392c5796_OutBorder0", 
+                                    "identifier": "Aperture_392c5796_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                1.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.0, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_392c5796_OutBorder1", 
+                                    "identifier": "Aperture_392c5796_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                1.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_392c5796_OutBorder2", 
+                                    "identifier": "Aperture_392c5796_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                4.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_392c5796_OutBorder3", 
+                                    "identifier": "Aperture_392c5796_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                4.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.0, 
+                                                1.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ], 
+                                            [
+                                                4.0, 
+                                                9.3000000000000007, 
+                                                1.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        4.0, 
+                                        9.0, 
+                                        4.0
+                                    ], 
+                                    [
+                                        4.0, 
+                                        9.0, 
+                                        1.0
+                                    ], 
+                                    [
+                                        1.0, 
+                                        9.0, 
+                                        1.0
+                                    ], 
+                                    [
+                                        1.0, 
+                                        9.0, 
+                                        4.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }, 
+                        {
+                            "display_name": "Aperture_f03ff147", 
+                            "identifier": "Aperture_f03ff147", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_f03ff147_OutBorder0", 
+                                    "identifier": "Aperture_f03ff147_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                8.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.3000000000000007, 
+                                                3.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.0, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f03ff147_OutBorder1", 
+                                    "identifier": "Aperture_f03ff147_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                8.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f03ff147_OutBorder2", 
+                                    "identifier": "Aperture_f03ff147_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                12.0, 
+                                                9.0, 
+                                                4.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.3000000000000007, 
+                                                3.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.3000000000000007, 
+                                                4.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_f03ff147_OutBorder3", 
+                                    "identifier": "Aperture_f03ff147_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                12.0, 
+                                                9.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.0, 
+                                                3.0
+                                            ], 
+                                            [
+                                                8.0, 
+                                                9.3000000000000007, 
+                                                3.0
+                                            ], 
+                                            [
+                                                12.0, 
+                                                9.3000000000000007, 
+                                                3.0
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        12.0, 
+                                        9.0, 
+                                        4.0
+                                    ], 
+                                    [
+                                        12.0, 
+                                        9.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        8.0, 
+                                        9.0, 
+                                        3.0
+                                    ], 
+                                    [
+                                        8.0, 
+                                        9.0, 
+                                        4.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }
+                    ], 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                13.0, 
+                                9.0, 
+                                5.0
+                            ], 
+                            [
+                                13.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                5.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face3", 
+                    "identifier": "TestRoom_2_97ec8062..Face3", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                9.0, 
+                                5.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                0.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                0.0, 
+                                5.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Wall", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face4", 
+                    "identifier": "TestRoom_2_97ec8062..Face4", 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                0.0, 
+                                0.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                9.0, 
+                                0.0
+                            ], 
+                            [
+                                13.0, 
+                                0.0, 
+                                0.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "Floor", 
+                    "boundary_condition": {
+                        "type": "Ground"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }, 
+                {
+                    "display_name": "TestRoom_2_97ec8062..Face5", 
+                    "identifier": "TestRoom_2_97ec8062..Face5", 
+                    "apertures": [
+                        {
+                            "display_name": "Aperture_1ecf5637", 
+                            "identifier": "Aperture_1ecf5637", 
+                            "outdoor_shades": [
+                                {
+                                    "display_name": "Aperture_1ecf5637_OutBorder0", 
+                                    "identifier": "Aperture_1ecf5637_OutBorder0", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                1.0, 
+                                                1.0, 
+                                                5.2999999999999998
+                                            ], 
+                                            [
+                                                1.0, 
+                                                1.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                11.0, 
+                                                1.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                11.0, 
+                                                1.0, 
+                                                5.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_1ecf5637_OutBorder1", 
+                                    "identifier": "Aperture_1ecf5637_OutBorder1", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                11.0, 
+                                                1.0, 
+                                                5.2999999999999998
+                                            ], 
+                                            [
+                                                11.0, 
+                                                1.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                11.0, 
+                                                3.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                11.0, 
+                                                3.0, 
+                                                5.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_1ecf5637_OutBorder2", 
+                                    "identifier": "Aperture_1ecf5637_OutBorder2", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                11.0, 
+                                                3.0, 
+                                                5.2999999999999998
+                                            ], 
+                                            [
+                                                11.0, 
+                                                3.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                3.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                3.0, 
+                                                5.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }, 
+                                {
+                                    "display_name": "Aperture_1ecf5637_OutBorder3", 
+                                    "identifier": "Aperture_1ecf5637_OutBorder3", 
+                                    "geometry": {
+                                        "type": "Face3D", 
+                                        "boundary": [
+                                            [
+                                                1.0, 
+                                                3.0, 
+                                                5.2999999999999998
+                                            ], 
+                                            [
+                                                1.0, 
+                                                3.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                1.0, 
+                                                5.0
+                                            ], 
+                                            [
+                                                1.0, 
+                                                1.0, 
+                                                5.2999999999999998
+                                            ]
+                                        ]
+                                    }, 
+                                    "type": "Shade", 
+                                    "properties": {
+                                        "radiance": {
+                                            "type": "ShadeRadiancePropertiesAbridged"
+                                        }, 
+                                        "energy": {
+                                            "type": "ShadeEnergyPropertiesAbridged"
+                                        }, 
+                                        "type": "ShadePropertiesAbridged"
+                                    }
+                                }
+                            ], 
+                            "geometry": {
+                                "type": "Face3D", 
+                                "boundary": [
+                                    [
+                                        1.0, 
+                                        1.0, 
+                                        5.0
+                                    ], 
+                                    [
+                                        11.0, 
+                                        1.0, 
+                                        5.0
+                                    ], 
+                                    [
+                                        11.0, 
+                                        3.0, 
+                                        5.0
+                                    ], 
+                                    [
+                                        1.0, 
+                                        3.0, 
+                                        5.0
+                                    ]
+                                ]
+                            }, 
+                            "is_operable": false, 
+                            "boundary_condition": {
+                                "view_factor": {
+                                    "type": "Autocalculate"
+                                }, 
+                                "sun_exposure": true, 
+                                "wind_exposure": true, 
+                                "type": "Outdoors"
+                            }, 
+                            "type": "Aperture", 
+                            "properties": {
+                                "radiance": {
+                                    "type": "ApertureRadiancePropertiesAbridged", 
+                                    "modifier": "g_material"
+                                }, 
+                                "energy": {
+                                    "type": "ApertureEnergyPropertiesAbridged"
+                                }, 
+                                "type": "AperturePropertiesAbridged"
+                            }
+                        }
+                    ], 
+                    "geometry": {
+                        "type": "Face3D", 
+                        "boundary": [
+                            [
+                                0.0, 
+                                0.0, 
+                                5.0
+                            ], 
+                            [
+                                13.0, 
+                                0.0, 
+                                5.0
+                            ], 
+                            [
+                                13.0, 
+                                9.0, 
+                                5.0
+                            ], 
+                            [
+                                0.0, 
+                                9.0, 
+                                5.0
+                            ]
+                        ]
+                    }, 
+                    "face_type": "RoofCeiling", 
+                    "boundary_condition": {
+                        "view_factor": {
+                            "type": "Autocalculate"
+                        }, 
+                        "sun_exposure": true, 
+                        "wind_exposure": true, 
+                        "type": "Outdoors"
+                    }, 
+                    "type": "Face", 
+                    "properties": {
+                        "radiance": {
+                            "type": "FaceRadiancePropertiesAbridged"
+                        }, 
+                        "energy": {
+                            "type": "FaceEnergyPropertiesAbridged"
+                        }, 
+                        "type": "FacePropertiesAbridged"
+                    }
+                }
+            ], 
+            "type": "Room", 
+            "properties": {
+                "radiance": {
+                    "type": "RoomRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "program_type": "Generic Office Program", 
+                    "type": "RoomEnergyPropertiesAbridged", 
+                    "hvac": "TestRoom_2_97ec8062 Ideal Loads Air System"
+                }, 
+                "type": "RoomPropertiesAbridged"
+            }
+        }
+    ], 
+    "type": "Model", 
+    "version": "1.42.0", 
+    "units": "Meters", 
+    "orphaned_shades": [
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_0", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        3.0, 
+                        -7.0, 
+                        15.0
+                    ], 
+                    [
+                        3.0, 
+                        -7.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -7.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -7.0, 
+                        15.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_1", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        9.0, 
+                        -7.0, 
+                        15.0
+                    ], 
+                    [
+                        9.0, 
+                        -7.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -1.0, 
+                        15.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_2", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        9.0, 
+                        -1.0, 
+                        15.0
+                    ], 
+                    [
+                        9.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        3.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        3.0, 
+                        -1.0, 
+                        15.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_3", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        3.0, 
+                        -1.0, 
+                        15.0
+                    ], 
+                    [
+                        3.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        3.0, 
+                        -7.0, 
+                        0.0
+                    ], 
+                    [
+                        3.0, 
+                        -7.0, 
+                        15.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_4", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        3.0, 
+                        -7.0, 
+                        0.0
+                    ], 
+                    [
+                        3.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -1.0, 
+                        0.0
+                    ], 
+                    [
+                        9.0, 
+                        -7.0, 
+                        0.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_af15a568", 
+            "identifier": "Shade_af15a568_5", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        3.0, 
+                        -7.0, 
+                        15.0
+                    ], 
+                    [
+                        9.0, 
+                        -7.0, 
+                        15.0
+                    ], 
+                    [
+                        9.0, 
+                        -1.0, 
+                        15.0
+                    ], 
+                    [
+                        3.0, 
+                        -1.0, 
+                        15.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_0", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        -8.0, 
+                        13.0, 
+                        4.0
+                    ], 
+                    [
+                        -8.0, 
+                        13.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        13.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        13.0, 
+                        4.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_1", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        8.0, 
+                        13.0, 
+                        4.0
+                    ], 
+                    [
+                        8.0, 
+                        13.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        20.0, 
+                        4.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_2", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        8.0, 
+                        20.0, 
+                        4.0
+                    ], 
+                    [
+                        8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        -8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        -8.0, 
+                        20.0, 
+                        4.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_3", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        -8.0, 
+                        20.0, 
+                        4.0
+                    ], 
+                    [
+                        -8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        -8.0, 
+                        13.0, 
+                        0.0
+                    ], 
+                    [
+                        -8.0, 
+                        13.0, 
+                        4.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_4", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        -8.0, 
+                        13.0, 
+                        0.0
+                    ], 
+                    [
+                        -8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        20.0, 
+                        0.0
+                    ], 
+                    [
+                        8.0, 
+                        13.0, 
+                        0.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }, 
+        {
+            "display_name": "Shade_e7e4e8e0", 
+            "identifier": "Shade_e7e4e8e0_5", 
+            "is_detached": true, 
+            "geometry": {
+                "type": "Face3D", 
+                "boundary": [
+                    [
+                        -8.0, 
+                        13.0, 
+                        4.0
+                    ], 
+                    [
+                        8.0, 
+                        13.0, 
+                        4.0
+                    ], 
+                    [
+                        8.0, 
+                        20.0, 
+                        4.0
+                    ], 
+                    [
+                        -8.0, 
+                        20.0, 
+                        4.0
+                    ]
+                ]
+            }, 
+            "type": "Shade", 
+            "properties": {
+                "radiance": {
+                    "type": "ShadeRadiancePropertiesAbridged"
+                }, 
+                "energy": {
+                    "type": "ShadeEnergyPropertiesAbridged"
+                }, 
+                "type": "ShadePropertiesAbridged"
+            }
+        }
+    ], 
+    "properties": {
+        "radiance": {
+            "type": "ModelRadianceProperties", 
+            "modifier_sets": [], 
+            "modifiers": [
+                {
+                    "dependencies": [], 
+                    "modifier": null, 
+                    "g_reflectance": 0.20000000000000001, 
+                    "identifier": "generic_context_0.20", 
+                    "specularity": 0.0, 
+                    "b_reflectance": 0.20000000000000001, 
+                    "r_reflectance": 0.20000000000000001, 
+                    "type": "plastic", 
+                    "roughness": 0.0
+                }, 
+                {
+                    "b_transmissivity": 0.59961775876472001, 
+                    "r_transmissivity": 0.59961775876472001, 
+                    "modifier": null, 
+                    "identifier": "g_material", 
+                    "refraction_index": null, 
+                    "display_name": "g_material", 
+                    "type": "glass", 
+                    "dependencies": [], 
+                    "g_transmissivity": 0.59961775876472001
+                }
+            ]
+        }, 
+        "energy": {
+            "constructions": [], 
+            "ventilation_simulation_control": {
+                "reference_temperature": 20.0, 
+                "vent_control_type": "SingleZone", 
+                "reference_humidity_ratio": 0.0, 
+                "reference_pressure": 101325.0, 
+                "building_type": "LowRise", 
+                "type": "VentilationSimulationControl", 
+                "long_axis_angle": 0.0, 
+                "aspect_ratio": 1.0
+            }, 
+            "materials": [], 
+            "hvacs": [
+                {
+                    "identifier": "TestRoom_1_6506d317 Ideal Loads Air System", 
+                    "economizer_type": "DifferentialDryBulb", 
+                    "cooling_air_temperature": 13.0, 
+                    "sensible_heat_recovery": 0.0, 
+                    "latent_heat_recovery": 0.0, 
+                    "cooling_limit": {
+                        "type": "Autosize"
+                    }, 
+                    "heating_air_temperature": 50.0, 
+                    "heating_limit": {
+                        "type": "Autosize"
+                    }, 
+                    "demand_controlled_ventilation": false, 
+                    "type": "IdealAirSystemAbridged"
+                }, 
+                {
+                    "identifier": "TestRoom_2_97ec8062 Ideal Loads Air System", 
+                    "economizer_type": "DifferentialDryBulb", 
+                    "cooling_air_temperature": 13.0, 
+                    "sensible_heat_recovery": 0.0, 
+                    "latent_heat_recovery": 0.0, 
+                    "cooling_limit": {
+                        "type": "Autosize"
+                    }, 
+                    "heating_air_temperature": 50.0, 
+                    "heating_limit": {
+                        "type": "Autosize"
+                    }, 
+                    "demand_controlled_ventilation": false, 
+                    "type": "IdealAirSystemAbridged"
+                }
+            ], 
+            "schedule_type_limits": [
+                {
+                    "upper_limit": {
+                        "type": "NoLimit"
+                    }, 
+                    "identifier": "Temperature", 
+                    "lower_limit": -273.14999999999998, 
+                    "numeric_type": "Continuous", 
+                    "unit_type": "Temperature", 
+                    "type": "ScheduleTypeLimit"
+                }, 
+                {
+                    "upper_limit": {
+                        "type": "NoLimit"
+                    }, 
+                    "identifier": "Activity Level", 
+                    "lower_limit": 0.0, 
+                    "numeric_type": "Continuous", 
+                    "unit_type": "ActivityLevel", 
+                    "type": "ScheduleTypeLimit"
+                }, 
+                {
+                    "upper_limit": 1.0, 
+                    "identifier": "Fractional", 
+                    "lower_limit": 0.0, 
+                    "numeric_type": "Continuous", 
+                    "unit_type": "Dimensionless", 
+                    "type": "ScheduleTypeLimit"
+                }
+            ], 
+            "type": "ModelEnergyProperties", 
+            "schedules": [
+                {
+                    "identifier": "Generic Office Infiltration", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium INFIL_SCH_PNNL_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium INFIL_SCH_PNNL_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium INFIL_SCH_PNNL_Default", 
+                    "holiday_schedule": "OfficeMedium INFIL_SCH_PNNL_Default", 
+                    "summer_designday_schedule": "OfficeMedium INFIL_SCH_PNNL_Wkdy_SmrDsn", 
+                    "schedule_type_limit": "Fractional", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium INFIL_SCH_PNNL_Sat_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium INFIL_SCH_PNNL_Default", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium INFIL_SCH_PNNL_Wkdy_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0, 
+                                0.25, 
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium INFIL_SCH_PNNL_Sat_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0, 
+                                0.25, 
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium INFIL_SCH_PNNL_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0, 
+                                0.25, 
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium INFIL_SCH_PNNL_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0, 
+                                0.25, 
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Generic Office Heating", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Default", 
+                    "holiday_schedule": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Default", 
+                    "summer_designday_schedule": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Default_SmrDsn", 
+                    "schedule_type_limit": "Temperature", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Default", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                15.6
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Default_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                15.6
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                15.6, 
+                                17.600000000000001, 
+                                19.600000000000001, 
+                                21.0, 
+                                15.6
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                15.6, 
+                                17.800000000000001, 
+                                20.0, 
+                                21.0, 
+                                15.6
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium HTGSETP_SCH_YES_OPTIMUM_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                15.6, 
+                                17.800000000000001, 
+                                20.0, 
+                                21.0, 
+                                15.6
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Generic Office Equipment", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium BLDG_EQUIP_SCH_2013_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium BLDG_EQUIP_SCH_2013_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium BLDG_EQUIP_SCH_2013_Sun", 
+                    "holiday_schedule": "OfficeMedium BLDG_EQUIP_SCH_2013_Sat", 
+                    "summer_designday_schedule": "OfficeMedium BLDG_EQUIP_SCH_2013_SmrDsn", 
+                    "schedule_type_limit": "Fractional", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium BLDG_EQUIP_SCH_2013_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium BLDG_EQUIP_SCH_2013_Sun", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.2307553806, 
+                                0.28810717499999999, 
+                                0.2307553806
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_EQUIP_SCH_2013_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_EQUIP_SCH_2013_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_EQUIP_SCH_2013_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    12, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    19, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.2307553806, 
+                                0.38123479599999999, 
+                                0.47654349499999998, 
+                                0.33358044650000002, 
+                                0.28592609699999999, 
+                                0.2307553806
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_EQUIP_SCH_2013_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    12, 
+                                    0
+                                ], 
+                                [
+                                    13, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.30767384079999999, 
+                                0.38123479599999999, 
+                                0.85777829100000003, 
+                                0.76246959199999997, 
+                                0.85777829100000003, 
+                                0.47654349499999998, 
+                                0.38123479599999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Generic Office Cooling", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Default", 
+                    "holiday_schedule": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Default", 
+                    "summer_designday_schedule": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_SmrDsn", 
+                    "schedule_type_limit": "Temperature", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Default_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Default", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                26.699999999999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                26.699999999999999, 
+                                25.699999999999999, 
+                                25.0, 
+                                24.0, 
+                                26.699999999999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Default_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                26.699999999999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                26.699999999999999, 
+                                25.600000000000001, 
+                                25.0, 
+                                24.0, 
+                                26.699999999999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium CLGSETP_SCH_YES_OPTIMUM_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                26.699999999999999, 
+                                25.699999999999999, 
+                                25.0, 
+                                24.0, 
+                                26.699999999999999
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Seated Adult Activity", 
+                    "default_day_schedule": "Seated Adult Activity_Day Schedule", 
+                    "schedule_type_limit": "Activity Level", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "day_schedules": [
+                        {
+                            "identifier": "Seated Adult Activity_Day Schedule", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                120.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Generic Office Lighting", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium BLDG_LIGHT_SCH_2013_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium BLDG_LIGHT_SCH_2013_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium BLDG_LIGHT_SCH_2013_Sun", 
+                    "holiday_schedule": "OfficeMedium BLDG_LIGHT_SCH_2013_Sat", 
+                    "summer_designday_schedule": "OfficeMedium BLDG_LIGHT_SCH_2013_SmrDsn", 
+                    "schedule_type_limit": "Fractional", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium BLDG_LIGHT_SCH_2013_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium BLDG_LIGHT_SCH_2013_Sun", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.050000000000000003, 
+                                0.04311628, 
+                                0.050000000000000003
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_LIGHT_SCH_2013_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                1.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_LIGHT_SCH_2013_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_LIGHT_SCH_2013_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    12, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    19, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.050000000000000003, 
+                                0.08623256, 
+                                0.25869767999999999, 
+                                0.12934883999999999, 
+                                0.04311628, 
+                                0.050000000000000003
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_LIGHT_SCH_2013_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    5, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ], 
+                                [
+                                    20, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ], 
+                                [
+                                    23, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.050000000000000003, 
+                                0.10000000000000001, 
+                                0.08623256, 
+                                0.25869767999999999, 
+                                0.77609304000000001, 
+                                0.43116280000000001, 
+                                0.25869767999999999, 
+                                0.17246512, 
+                                0.08623256, 
+                                0.04311628
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }, 
+                {
+                    "identifier": "Generic Office Occupancy", 
+                    "schedule_rules": [
+                        {
+                            "apply_tuesday": true, 
+                            "apply_saturday": false, 
+                            "schedule_day": "OfficeMedium BLDG_OCC_SCH_Wkdy", 
+                            "apply_friday": true, 
+                            "apply_monday": true, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": true, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": true, 
+                            "apply_sunday": false
+                        }, 
+                        {
+                            "apply_tuesday": false, 
+                            "apply_saturday": true, 
+                            "schedule_day": "OfficeMedium BLDG_OCC_SCH_Sat", 
+                            "apply_friday": false, 
+                            "apply_monday": false, 
+                            "start_date": [
+                                1, 
+                                1
+                            ], 
+                            "end_date": [
+                                12, 
+                                31
+                            ], 
+                            "apply_wednesday": false, 
+                            "type": "ScheduleRuleAbridged", 
+                            "apply_thursday": false, 
+                            "apply_sunday": false
+                        }
+                    ], 
+                    "default_day_schedule": "OfficeMedium BLDG_OCC_SCH_Default", 
+                    "holiday_schedule": "OfficeMedium BLDG_OCC_SCH_Default", 
+                    "summer_designday_schedule": "OfficeMedium BLDG_OCC_SCH_SmrDsn", 
+                    "schedule_type_limit": "Fractional", 
+                    "type": "ScheduleRulesetAbridged", 
+                    "winter_designday_schedule": "OfficeMedium BLDG_OCC_SCH_WntrDsn", 
+                    "day_schedules": [
+                        {
+                            "identifier": "OfficeMedium BLDG_OCC_SCH_Default", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0, 
+                                0.050000000000000003, 
+                                0.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_OCC_SCH_SmrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0, 
+                                1.0, 
+                                0.050000000000000003
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_OCC_SCH_WntrDsn", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_OCC_SCH_Wkdy", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    7, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    12, 
+                                    0
+                                ], 
+                                [
+                                    13, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    18, 
+                                    0
+                                ], 
+                                [
+                                    22, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0, 
+                                0.10000000000000001, 
+                                0.20000000000000001, 
+                                0.94999999999999996, 
+                                0.5, 
+                                0.94999999999999996, 
+                                0.29999999999999999, 
+                                0.10000000000000001, 
+                                0.050000000000000003
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }, 
+                        {
+                            "identifier": "OfficeMedium BLDG_OCC_SCH_Sat", 
+                            "times": [
+                                [
+                                    0, 
+                                    0
+                                ], 
+                                [
+                                    6, 
+                                    0
+                                ], 
+                                [
+                                    8, 
+                                    0
+                                ], 
+                                [
+                                    12, 
+                                    0
+                                ], 
+                                [
+                                    17, 
+                                    0
+                                ], 
+                                [
+                                    19, 
+                                    0
+                                ]
+                            ], 
+                            "values": [
+                                0.0, 
+                                0.10000000000000001, 
+                                0.29999999999999999, 
+                                0.10000000000000001, 
+                                0.050000000000000003, 
+                                0.0
+                            ], 
+                            "type": "ScheduleDay", 
+                            "interpolate": false
+                        }
+                    ]
+                }
+            ], 
+            "program_types": [
+                {
+                    "identifier": "Generic Office Program", 
+                    "infiltration": {
+                        "flow_per_exterior_area": 0.00022660000000000001, 
+                        "schedule": "Generic Office Infiltration", 
+                        "type": "InfiltrationAbridged", 
+                        "identifier": "Generic Office Infiltration"
+                    }, 
+                    "lighting": {
+                        "identifier": "Generic Office Lighting", 
+                        "radiant_fraction": 0.69999999999999996, 
+                        "visible_fraction": 0.20000000000000001, 
+                        "type": "LightingAbridged", 
+                        "return_air_fraction": 0.0, 
+                        "watts_per_area": 10.550000000000001, 
+                        "schedule": "Generic Office Lighting"
+                    }, 
+                    "electric_equipment": {
+                        "identifier": "Generic Office Equipment", 
+                        "radiant_fraction": 0.5, 
+                        "latent_fraction": 0.0, 
+                        "type": "ElectricEquipmentAbridged", 
+                        "watts_per_area": 10.33, 
+                        "lost_fraction": 0.0, 
+                        "schedule": "Generic Office Equipment"
+                    }, 
+                    "setpoint": {
+                        "heating_schedule": "Generic Office Heating", 
+                        "type": "SetpointAbridged", 
+                        "cooling_schedule": "Generic Office Cooling", 
+                        "identifier": "Generic Office Setpoints"
+                    }, 
+                    "ventilation": {
+                        "flow_per_area": 0.00030499999999999999, 
+                        "type": "VentilationAbridged", 
+                        "flow_per_person": 0.0023600000000000001, 
+                        "identifier": "Generic Office Ventilation"
+                    }, 
+                    "type": "ProgramTypeAbridged", 
+                    "people": {
+                        "identifier": "Generic Office People", 
+                        "radiant_fraction": 0.29999999999999999, 
+                        "people_per_area": 0.056500000000000002, 
+                        "latent_fraction": {
+                            "type": "Autocalculate"
+                        }, 
+                        "occupancy_schedule": "Generic Office Occupancy", 
+                        "type": "PeopleAbridged", 
+                        "activity_schedule": "Seated Adult Activity"
+                    }
+                }
+            ], 
+            "construction_sets": []
+        }, 
+        "type": "ModelProperties"
+    }
+}
