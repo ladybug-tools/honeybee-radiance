@@ -294,8 +294,8 @@ def model_to_rad_folder(
     ext_dict = {}
     out_subfolder = model_folder.aperture_group_folder(full=True)
     dyn_subface = model.properties.radiance.dynamic_subface_groups
+    preparedir(out_subfolder)
     if len(dyn_subface) != 0:
-        preparedir(out_subfolder)
         for group in dyn_subface:
             if group.is_indoor:
                 # TODO: Implement dynamic interior apertures once the radiance folder
@@ -307,7 +307,7 @@ def model_to_rad_folder(
                     folder, out_subfolder, group, minimal)
                 _write_mtx_files(folder, out_subfolder, group, st_d, minimal)
                 ext_dict[group.identifier] = st_d
-        _write_dynamic_json(folder, out_subfolder, ext_dict)
+    _write_dynamic_json(folder, out_subfolder, ext_dict)
 
     # write dynamic shade groups
     out_dict = {}
@@ -315,28 +315,25 @@ def model_to_rad_folder(
     out_subfolder = model_folder.dynamic_scene_folder(full=True, indoor=False)
     in_subfolder = model_folder.dynamic_scene_folder(full=True, indoor=True)
     dyn_shade = model.properties.radiance.dynamic_shade_groups
+    preparedir(out_subfolder)
+    preparedir(in_subfolder)
     if len(dyn_shade) != 0:
-        preparedir(out_subfolder)
-        indoor_created = False
         for group in dyn_shade:
             if group.is_indoor:
-                if not indoor_created:
-                    preparedir(in_subfolder)
-                    indoor_created = True
                 st_d = _write_dynamic_shade_files(folder, in_subfolder, group, minimal)
                 in_dict[group.identifier] = st_d
             else:
                 st_d = _write_dynamic_shade_files(folder, out_subfolder, group, minimal)
                 out_dict[group.identifier] = st_d
-        _write_dynamic_json(folder, out_subfolder, out_dict)
-        if indoor_created:
-            _write_dynamic_json(folder, in_subfolder, in_dict)
+
+    _write_dynamic_json(folder, out_subfolder, out_dict)
+    _write_dynamic_json(folder, in_subfolder, in_dict)
 
     # copy all bsdfs into the bsdf folder
     bsdf_folder = model_folder.bsdf_folder(full=True)
     bsdf_mods = model.properties.radiance.bsdf_modifiers
+    preparedir(bsdf_folder)
     if len(bsdf_mods) != 0:
-        preparedir(bsdf_folder)
         for bdf_mod in bsdf_mods:
             bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
             new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
@@ -374,9 +371,9 @@ def model_to_rad_folder(
     view_dir = model_folder.view_folder(full=True)
     model_views = model.properties.radiance.views
     filtered_views = _filter_by_pattern(model_views, views)
+    views_info = []
+    preparedir(view_dir)
     if len(filtered_views) != 0:
-        views_info = []
-        preparedir(view_dir)
         for view in filtered_views:
             view.to_file(view_dir)
             info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
@@ -390,11 +387,10 @@ def model_to_rad_folder(
                 'full_id': _get_full_id(view)
             }
             views_info.append(view_info)
-
-        # write information file for all the views.
-        views_info_file = os.path.join(view_dir, '_info.json')
-        with open(views_info_file, 'w') as fp:
-            json.dump(views_info, fp, indent=2)
+    # write information file for all the views.
+    views_info_file = os.path.join(view_dir, '_info.json')
+    with open(views_info_file, 'w') as fp:
+        json.dump(views_info, fp, indent=2)
 
     return folder
 
@@ -514,10 +510,9 @@ def _write_dynamic_json(folder, sub_folder, json_dict):
         sub_folder: The sub-folder for the three files (relative to the model folder).
         json_dict: A dictionary to be written into the states.json file.
     """
-    if json_dict != {}:
-        dest_file = os.path.join(folder, sub_folder, 'states.json')
-        with open(dest_file, 'w') as fp:
-            json.dump(json_dict, fp, indent=4)
+    dest_file = os.path.join(folder, sub_folder, 'states.json')
+    with open(dest_file, 'w') as fp:
+        json.dump(json_dict, fp, indent=4)
 
 
 def _write_static_files(
