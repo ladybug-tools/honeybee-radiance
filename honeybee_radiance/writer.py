@@ -346,9 +346,9 @@ def model_to_rad_folder(
     grid_dir = model_folder.grid_folder(full=True)
     model_grids = model.properties.radiance.sensor_grids
     filtered_grids = _filter_by_pattern(model_grids, grids)
+    grids_info = []
+    preparedir(grid_dir)
     if len(filtered_grids) != 0:
-        grids_info = []
-        preparedir(grid_dir)
         for grid in filtered_grids:
             fp = grid.to_file(grid_dir)
             info_dir = os.path.dirname(fp)
@@ -366,10 +366,10 @@ def model_to_rad_folder(
 
             grids_info.append(grid_info)
 
-        # write information file for all the grids.
-        grids_info_file = os.path.join(grid_dir, '_info.json')
-        with open(grids_info_file, 'w') as fp:
-            json.dump(grids_info, fp, indent=2)
+    # write information file for all the grids.
+    grids_info_file = os.path.join(grid_dir, '_info.json')
+    with open(grids_info_file, 'w') as fp:
+        json.dump(grids_info, fp, indent=2)
 
     view_dir = model_folder.view_folder(full=True)
     model_views = model.properties.radiance.views
