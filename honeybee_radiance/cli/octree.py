@@ -53,10 +53,12 @@ def create_octree_from_folder(
     try:
         black_out = False if default else True
         scene_files = model_folder.scene_files(black_out=black_out)
-        if include_aperture:
-            # no black out here
-            aperture_files = model_folder.aperture_files()
-            scene_files += aperture_files
+        if include_aperture:  # no black out here
+            try:
+                aperture_files = model_folder.aperture_files()
+                scene_files += aperture_files
+            except FileNotFoundError:
+                pass  # no apertures available in the model
         if add_after:
             scene_files += list(add_after)
         if add_before:
