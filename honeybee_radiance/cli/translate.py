@@ -43,10 +43,19 @@ def translate():
 @click.option('--minimal/--maximal', help='Flag to note whether the radiance strings '
               'should be written in a minimal format (with spaces instead of line '
               'breaks).', default=False, show_default=True)
+@click.option('--no-grid-check/--grid-check', ' /-gc', help='Flag to note whether the '
+              'model should be checked for the presence of sensor grids. If the check '
+              'is set and the model has no grids, an explicit error will be raised.',
+              default=True, show_default=True)
+@click.option('--no-view-check/--view-check', ' /-vc', help='Flag to note whether the '
+              'model should be checked for the presence of views. If the check '
+              'is set and the model has no views, an explicit error will be raised.',
+              default=True, show_default=True)
 @click.option('--log-file', help='Optional log file to output the path of the radiance '
               'folder generated from the model. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
-def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal, log_file):
+def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal,
+                        no_grid_check, no_view_check, log_file):
     """Translate a Model JSON file into a Radiance Folder.
 
     \b
@@ -58,8 +67,14 @@ def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal, lo
         if folder is None:
             folder = os.path.dirname(os.path.abspath(model_json))
 
-        # re-serialize the Model and translate the model to a radiance folder
+        # re-serialize the Model and perform any checks
         model = Model.from_file(model_json)
+        if not no_grid_check and len(model.properties.radiance.sensor_grids) == 0:
+            raise ValueError('Model contains no sensor grids. These are required.')
+        if not no_view_check and len(model.properties.radiance.sensor_grids) == 0:
+            raise ValueError('Model contains no views These are required.')
+
+        # translate the model to a radiance folder
         rad_fold = model.to.rad_folder(
             model, folder, config_file, minimal, views=view, grids=grid
         )
