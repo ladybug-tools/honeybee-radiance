@@ -1,5 +1,6 @@
 # coding=utf-8
 """Methods to write to rad."""
+from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug.futil import write_to_file_by_name, preparedir
 from honeybee.config import folders
 from honeybee.boundarycondition import Surface
@@ -14,6 +15,7 @@ import os
 import json
 import shutil
 import re
+import itertools
 
 
 def shade_to_rad(shade, blk=False, minimal=False):
@@ -349,7 +351,9 @@ def model_to_rad_folder(
     if len(filtered_grids) != 0:
         grids_info = []
         preparedir(grid_dir)
-        for grid in filtered_grids:
+        # group_by_identifier
+        grouped_grids = _group_by_identifier(filtered_grids)
+        for grid in grouped_grids:
             fp = grid.to_file(grid_dir)
             info_dir = os.path.dirname(fp)
             info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
@@ -706,12 +710,9 @@ def _filter_by_pattern(input_objects, filter):
         ]
 
     indexes = []
-    objects = {}
 
     for count, obj in enumerate(input_objects):
-        objects[_get_full_id(obj)] = count
-
-    for id_, count in objects.items():
+        id_ = _get_full_id(obj)
         for pattern in patterns:
             if re.search(pattern, id_):
                 indexes.append(count)
@@ -719,3 +720,33 @@ def _filter_by_pattern(input_objects, filter):
     indexes.sort()
 
     return [input_objects[i] for i in indexes]
+
+
+def _group_by_identifier(sensor_grids):
+    """Group sensor grids if they have the same identifier."""
+    group_func = lambda grid: grid.identifier  # noqa: E731
+
+    sensor_grids = sorted(sensor_grids, key=group_func)
+    updated_grids = []
+    # for g in sensor_grids:
+    #     print(g.identifier)
+    for identifier, grids in itertools.groupby(sensor_grids, group_func):
+        grids = list(grids)
+        if len(grids) > 1:
+            # merge grids into one
+            sensors = []
+            group_identifiers = []
+            for grid in grids:
+                sensors.extend(grid.sensors)
+                group_identifiers.append(grid.group_identifier)
+            group_identifiers = list(set(group_identifiers))
+            assert len(group_identifiers) == 1, \
+                'Two or more grids with the same identifier "{}" have different ' \
+                'group_identifiers: "{}".'.format(grid.identifier, group_identifiers)
+            joined_grid = SensorGrid(identifier, sensors)
+            joined_grid.group_identifier = grids[0].group_identifier
+            updated_grids.append(joined_grid)
+        else:
+            updated_grids.append(grids[0])
+
+    return updated_grids
