@@ -1,6 +1,5 @@
 """Test cli translate module."""
 import os
-import json
 from click.testing import CliRunner
 
 from ladybug.futil import nukedir
@@ -17,6 +16,25 @@ def test_model_to_rad_folder():
     result = runner.invoke(model_to_rad_folder, [input_hb_model])
     assert result.exit_code == 0
     assert os.path.isdir(output_hb_model)
+    nukedir(output_hb_model, True)
+
+
+def test_model_to_rad_folder_joined_grid():
+    runner = CliRunner()
+    input_hb_model = './tests/assets/model/two_rooms_same_grid_identifier.hbjson'
+    output_hb_model = './tests/assets/model/model'
+
+    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    assert result.exit_code == 0
+    assert os.path.isdir(output_hb_model)
+
+    # TODO: check illuminance file exist
+    # check number of sensors
+    grid_file = './tests/assets/model/model/grid/illuminance_grid.pts'
+    assert os.path.isfile(grid_file)
+    with open(grid_file) as gf:
+        sensors = gf.readlines()
+    assert len(sensors) == 221
     nukedir(output_hb_model, True)
 
 
