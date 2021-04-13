@@ -365,7 +365,7 @@ def model_to_rad_folder(
                 'name': view.identifier,
                 'identifier': view.identifier,
                 'group': view.group_identifier or '',
-                'full_id': _get_full_id(view)
+                'full_id': view.full_identifier
             }
             views_info.append(view_info)
 
@@ -419,7 +419,7 @@ def _write_sensor_grids(folder, model, grids_filter):
                 'identifier': grid.identifier,
                 'count': grid.count,
                 'group': grid.group_identifier or '',
-                'full_id': _get_full_id(grid)
+                'full_id': grid.full_identifier
             }
 
             grids_info.append(grid_info)
@@ -439,7 +439,7 @@ def _write_sensor_grids(folder, model, grids_filter):
                 'identifier': identifier,
                 'count': grid.count,
                 'group': grid.group_identifier or '',
-                'full_id': _get_full_id(grid),
+                'full_id': grid.full_identifier,
                 'start_ln': start_line[identifier]
             }
 
@@ -740,15 +740,6 @@ def _instance_in_array(object_instance, object_array):
     return False
 
 
-def _get_full_id(view_or_grid):
-    """Get full ID for a grid or view.
-
-    The full is is group_identifier/object_identifier.
-    """
-    return view_or_grid.identifier if not view_or_grid.group_identifier \
-        else '%s/%s' % (view_or_grid.group_identifier, view_or_grid.identifier)
-
-
 def _filter_by_pattern(input_objects, filter):
     """Filter model grids and views based on user input."""
     if not filter or filter == '*':
@@ -763,7 +754,7 @@ def _filter_by_pattern(input_objects, filter):
     indexes = []
 
     for count, obj in enumerate(input_objects):
-        id_ = _get_full_id(obj)
+        id_ = obj.full_identifier
         for pattern in patterns:
             if re.search(pattern, id_):
                 indexes.append(count)
@@ -774,32 +765,26 @@ def _filter_by_pattern(input_objects, filter):
 
 
 def _group_by_identifier(sensor_grids):
-    """Group sensor grids if they have the same identifier."""
-    group_func = lambda grid: grid.identifier  # noqa: E731
+    """Group sensor grids if they have the same full identifier."""
+    group_func = lambda grid: grid.full_identifier  # noqa: E731
 
     ordered_sensor_grids = sorted(sensor_grids, key=group_func)
 
     # check if there is any duplicated identifiers
-    ids = {grid.identifier for grid in sensor_grids}
+    ids = {grid.full_identifier for grid in sensor_grids}
     if len(list(ids)) == len(sensor_grids):
         # there is no duplicated identifier - return the original list
         return sensor_grids
 
     updated_grids = []
-    for identifier, grids in itertools.groupby(ordered_sensor_grids, group_func):
+    for group_identifier, grids in itertools.groupby(ordered_sensor_grids, group_func):
         grids = list(grids)
         if len(grids) > 1:
             # merge grids into one
             sensors = []
-            group_identifiers = []
             for grid in grids:
                 sensors.extend(grid.sensors)
-                group_identifiers.append(grid.group_identifier)
-            group_identifiers = list(set(group_identifiers))
-            assert len(group_identifiers) == 1, \
-                'Two or more grids with the same identifier "{}" have different ' \
-                'group_identifiers: "{}".'.format(grid.identifier, group_identifiers)
-            joined_grid = SensorGrid(identifier, sensors)
+            joined_grid = SensorGrid(grids[0].identifier, sensors)
             joined_grid.group_identifier = grids[0].group_identifier
             updated_grids.append(joined_grid)
         else:

@@ -74,6 +74,7 @@ class View(object):
         * room_identifier
         * light_path
         * group_identifier
+        * full_identifier
 
     Usage:
 
@@ -422,6 +423,15 @@ class View(object):
                     for key in identifier_key.split('/')
                 )
         self._group_identifier = identifier_key
+
+    @property
+    def full_identifier(self):
+        """Get full identifier for view.
+
+        For a view with group identifier it will be group_identifier/identifier
+        """
+        return self.identifier if not self.group_identifier \
+            else '%s/%s' % (self.group_identifier, self.identifier)
 
     @property
     def light_path(self):
