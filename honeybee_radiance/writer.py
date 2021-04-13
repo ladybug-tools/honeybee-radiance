@@ -439,7 +439,7 @@ def _write_sensor_grids(folder, model, grids_filter):
                 'identifier': identifier,
                 'count': grid.count,
                 'group': grid.group_identifier or '',
-                'source': _get_full_id(grid),
+                'full_id': _get_full_id(grid),
                 'start_ln': start_line[identifier]
             }
 
@@ -777,11 +777,16 @@ def _group_by_identifier(sensor_grids):
     """Group sensor grids if they have the same identifier."""
     group_func = lambda grid: grid.identifier  # noqa: E731
 
-    sensor_grids = sorted(sensor_grids, key=group_func)
+    ordered_sensor_grids = sorted(sensor_grids, key=group_func)
+
+    # check if there is any duplicated identifiers
+    ids = {grid.identifier for grid in sensor_grids}
+    if len(list(ids)) == len(sensor_grids):
+        # there is no duplicated identifier - return the original list
+        return sensor_grids
+
     updated_grids = []
-    # for g in sensor_grids:
-    #     print(g.identifier)
-    for identifier, grids in itertools.groupby(sensor_grids, group_func):
+    for identifier, grids in itertools.groupby(ordered_sensor_grids, group_func):
         grids = list(grids)
         if len(grids) > 1:
             # merge grids into one

@@ -93,7 +93,7 @@ def test_model_to_rad_folder_model_grid_info():
             "identifier": "perimeter",
             "count": 300,
             "group": "",
-            "source": "perimeter",
+            "full_id": "perimeter",
             "start_ln": 0,
         },
         {
@@ -101,7 +101,7 @@ def test_model_to_rad_folder_model_grid_info():
             "identifier": "perimeter",
             "count": 220,
             "group": "",
-            "source": "perimeter",
+            "full_id": "perimeter",
             "start_ln": 300,
         },
         {
@@ -109,7 +109,7 @@ def test_model_to_rad_folder_model_grid_info():
             "identifier": "core",
             "count": 640,
             "group": "",
-            "source": "core",
+            "full_id": "core",
             "start_ln": 0,
         },
     ]
