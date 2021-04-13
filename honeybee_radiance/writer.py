@@ -1,5 +1,6 @@
 # coding=utf-8
 """Methods to write to rad."""
+from typing import DefaultDict
 from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug.futil import write_to_file_by_name, preparedir
 from honeybee.config import folders
@@ -346,34 +347,7 @@ def model_to_rad_folder(
 
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
-    model_grids = model.properties.radiance.sensor_grids
-    filtered_grids = _filter_by_pattern(model_grids, grids)
-    if len(filtered_grids) != 0:
-        grids_info = []
-        preparedir(grid_dir)
-        # group_by_identifier
-        grouped_grids = _group_by_identifier(filtered_grids)
-        for grid in grouped_grids:
-            fp = grid.to_file(grid_dir)
-            info_dir = os.path.dirname(fp)
-            info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
-            with open(info_file, 'w') as fp:
-                json.dump(grid.info_dict(model), fp, indent=4)
-
-            grid_info = {
-                'name': grid.identifier,
-                'identifier': grid.identifier,
-                'count': grid.count,
-                'group': grid.group_identifier or '',
-                'full_id': _get_full_id(grid)
-            }
-
-            grids_info.append(grid_info)
-
-        # write information file for all the grids.
-        grids_info_file = os.path.join(grid_dir, '_info.json')
-        with open(grids_info_file, 'w') as fp:
-            json.dump(grids_info, fp, indent=2)
+    _write_sensor_grids(grid_dir, model, grids)
 
     view_dir = model_folder.view_folder(full=True)
     model_views = model.properties.radiance.views
@@ -401,6 +375,83 @@ def model_to_rad_folder(
             json.dump(views_info, fp, indent=2)
 
     return folder
+
+
+def _write_sensor_grids(folder, model, grids_filter):
+    """Write out the files that need to go into any dynamic model folder.
+
+    Args:
+        folder: The sensor grids folder.
+        model: A Honeybee model.
+        grids_filter: A list of sensor grid names to filter the sensor grids in the
+            model. Use this argument to indicate specific sensor grids that should
+            be included. By default all the sensor grids will be exported. You can use
+            wildcard symbols in names. Use relative path from inside grids folder.
+
+    Returns:
+        A tuple for path to _info.json and _model_grids_info.json. The first file
+        are the information for the sensor grids that are written to the folder and
+        the second one is the information for the input sensor grids from the model.
+
+        Use ``_info.json`` for access the sensor grid information for running the
+        commands and ``_model_grids_info`` file for loading the results back to match
+        with the model. Model_grids_info has an extra key for `start_ln` which provides
+        the start line for where the sensors for this grid starts in a pts file. Unless
+        there are grids with same identifier this value will be set to 0.
+
+    """
+    sensor_grids = model.properties.radiance.sensor_grids
+    filtered_grids = _filter_by_pattern(sensor_grids, grids_filter)
+    if len(filtered_grids) != 0:
+        grids_info = []
+        preparedir(folder)
+        # group_by_identifier
+        grouped_grids = _group_by_identifier(filtered_grids)
+        for grid in grouped_grids:
+            fp = grid.to_file(folder)
+            info_dir = os.path.dirname(fp)
+            info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
+            with open(info_file, 'w') as fp:
+                json.dump(grid.info_dict(model), fp, indent=4)
+
+            grid_info = {
+                'name': grid.identifier,
+                'identifier': grid.identifier,
+                'count': grid.count,
+                'group': grid.group_identifier or '',
+                'full_id': _get_full_id(grid)
+            }
+
+            grids_info.append(grid_info)
+
+        # write information file for all the grids.
+        grids_info_file = os.path.join(folder, '_info.json')
+        with open(grids_info_file, 'w') as fp:
+            json.dump(grids_info, fp, indent=2)
+
+        # write input grids info
+        model_grids_info = []
+        start_line = DefaultDict(lambda: 0)
+        for grid in filtered_grids:
+            identifier = grid.identifier
+            grid_info = {
+                'name': identifier,
+                'identifier': identifier,
+                'count': grid.count,
+                'group': grid.group_identifier or '',
+                'source': _get_full_id(grid),
+                'start_ln': start_line[identifier]
+            }
+
+            start_line[identifier] += grid.count
+
+            model_grids_info.append(grid_info)
+
+        model_grids_info_file = os.path.join(folder, '_model_grids_info.json')
+        with open(model_grids_info_file, 'w') as fp:
+            json.dump(model_grids_info, fp, indent=2)
+
+        return grids_info_file, model_grids_info_file
 
 
 def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
