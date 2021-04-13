@@ -38,6 +38,7 @@ class SensorGrid(object):
         * mesh
         * base_geometry
         * group_identifier
+        * full_identifier
 
     """
 
@@ -318,6 +319,15 @@ class SensorGrid(object):
                     for key in identifier_key.split('/')
                 )
         self._group_identifier = identifier_key
+
+    @property
+    def full_identifier(self):
+        """Get full identifier for a sensor grid.
+
+        For a sensor grid with group identifier it will be group_identifier/identifier
+        """
+        return self.identifier if not self.group_identifier \
+            else '%s/%s' % (self.group_identifier, self.identifier)
 
     @property
     def light_path(self):
