@@ -1,17 +1,24 @@
 """Test cli translate module."""
 import os
+import json
+
 from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_radiance.cli.translate import model_to_rad_folder, model_to_rad, \
-    modifier_to_rad, modifier_from_rad, model_radiant_enclosure_info
+from honeybee_radiance.cli.translate import (
+    model_to_rad_folder,
+    model_to_rad,
+    modifier_to_rad,
+    modifier_from_rad,
+    model_radiant_enclosure_info,
+)
 
 
 def test_model_to_rad_folder():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/model_radiance_dynamic_states.hbjson'
-    output_hb_model = './tests/assets/model/model'
+    input_hb_model = "./tests/assets/model/model_radiance_dynamic_states.hbjson"
+    output_hb_model = "./tests/assets/model/model"
 
     result = runner.invoke(model_to_rad_folder, [input_hb_model])
     assert result.exit_code == 0
@@ -21,8 +28,8 @@ def test_model_to_rad_folder():
 
 def test_model_to_rad_folder_joined_grid():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/two_rooms_same_grid_identifier.hbjson'
-    output_hb_model = './tests/assets/model/model'
+    input_hb_model = "./tests/assets/model/two_rooms_same_grid_identifier.hbjson"
+    output_hb_model = "./tests/assets/model/model"
 
     result = runner.invoke(model_to_rad_folder, [input_hb_model])
     assert result.exit_code == 0
@@ -30,7 +37,7 @@ def test_model_to_rad_folder_joined_grid():
 
     # TODO: check illuminance file exist
     # check number of sensors
-    grid_file = './tests/assets/model/model/grid/illuminance_grid.pts'
+    grid_file = "./tests/assets/model/model/grid/illuminance_grid.pts"
     assert os.path.isfile(grid_file)
     with open(grid_file) as gf:
         sensors = gf.readlines()
@@ -38,43 +45,117 @@ def test_model_to_rad_folder_joined_grid():
     nukedir(output_hb_model, True)
 
 
+def test_model_to_rad_folder_model_grid_info():
+    runner = CliRunner()
+    input_hb_model = "./tests/assets/model/dup_grid_id.hbjson"
+    output_hb_model = "./tests/assets/model/model"
+
+    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    assert result.exit_code == 0
+    assert os.path.isdir(output_hb_model)
+
+    # check number of sensors
+    grid_file = "./tests/assets/model/model/grid/perimeter.pts"
+    assert os.path.isfile(grid_file)
+    with open(grid_file) as gf:
+        sensors = gf.readlines()
+    assert len(sensors) == 520
+
+    # check _model_grids_info.json
+    info_file = "./tests/assets/model/model/grid/_info.json"
+    with open(info_file) as _info:
+        inf = json.load(_info)
+
+    assert inf == [
+        {
+            "name": "core",
+            "identifier": "core",
+            "count": 640,
+            "group": "",
+            "full_id": "core",
+        },
+        {
+            "name": "perimeter",
+            "identifier": "perimeter",
+            "count": 520,
+            "group": "",
+            "full_id": "perimeter",
+        },
+    ]
+
+    model_info_file = "./tests/assets/model/model/grid/_model_grids_info.json"
+    with open(model_info_file) as _info:
+        inf = json.load(_info)
+
+    assert inf == [
+        {
+            "name": "perimeter",
+            "identifier": "perimeter",
+            "count": 300,
+            "group": "",
+            "source": "perimeter",
+            "start_ln": 0,
+        },
+        {
+            "name": "perimeter",
+            "identifier": "perimeter",
+            "count": 220,
+            "group": "",
+            "source": "perimeter",
+            "start_ln": 300,
+        },
+        {
+            "name": "core",
+            "identifier": "core",
+            "count": 640,
+            "group": "",
+            "source": "core",
+            "start_ln": 0,
+        },
+    ]
+    nukedir(output_hb_model, True)
+
+
 def test_model_to_rad_folder_no_grids():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/two_rooms_no_grids.hbjson'
-    output_hb_model = './tests/assets/model/model'
+    input_hb_model = "./tests/assets/model/two_rooms_no_grids.hbjson"
+    output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model, '--grid-check'])
+    result = runner.invoke(model_to_rad_folder, [input_hb_model, "--grid-check"])
     assert result.exit_code == 1
     nukedir(output_hb_model, True)
 
 
 def test_model_to_rad_folder_grid_filter():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/sample_room_with_grid_group.hbjson'
-    output_hb_model = './tests/assets/temp/model'
+    input_hb_model = "./tests/assets/model/sample_room_with_grid_group.hbjson"
+    output_hb_model = "./tests/assets/temp/model"
 
     result = runner.invoke(
         model_to_rad_folder,
-        [input_hb_model, '--folder', output_hb_model, '-g', '?pertures/*']
+        [input_hb_model, "--folder", output_hb_model, "-g", "?pertures/*"],
     )
     assert result.exit_code == 0
-    assert os.path.isdir(os.path.join(output_hb_model, 'model'))
-    assert os.path.isdir(os.path.join(output_hb_model, 'model', 'grid', 'apertures'))
+    assert os.path.isdir(os.path.join(output_hb_model, "model"))
+    assert os.path.isdir(os.path.join(output_hb_model, "model", "grid", "apertures"))
     assert not os.path.isdir(
-        os.path.join(output_hb_model, 'model', 'grid', 'occ_regions'))
+        os.path.join(output_hb_model, "model", "grid", "occ_regions")
+    )
 
     nukedir(output_hb_model, True)
 
 
 def test_model_to_rad():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/model_complete_multiroom_radiance.hbjson'
+    input_hb_model = "./tests/assets/model/model_complete_multiroom_radiance.hbjson"
 
     result = runner.invoke(model_to_rad, [input_hb_model])
     assert result.exit_code == 0
 
-    output_hb_model = './tests/assets/model/model_complete_multiroom_radiance.rad'
-    result = runner.invoke(model_to_rad, [input_hb_model, '--output-file', output_hb_model])
+    output_hb_model = "./tests/assets/model/model_complete_multiroom_radiance.rad"
+    result = runner.invoke(
+        model_to_rad, [input_hb_model, "--output-file", output_hb_model]
+    )
     assert result.exit_code == 0
     assert os.path.isfile(output_hb_model)
     os.remove(output_hb_model)
@@ -82,8 +163,8 @@ def test_model_to_rad():
 
 def test_model_radiant_enclosure_info():
     runner = CliRunner()
-    input_hb_model = './tests/assets/model/two_rooms.hbjson'
-    output_enclosure_folder = './tests/assets/model/enclosure'
+    input_hb_model = "./tests/assets/model/two_rooms.hbjson"
+    output_enclosure_folder = "./tests/assets/model/enclosure"
 
     result = runner.invoke(model_radiant_enclosure_info, [input_hb_model])
     assert result.exit_code == 0
@@ -93,15 +174,16 @@ def test_model_radiant_enclosure_info():
 
 def test_modifier_to_from_rad():
     runner = CliRunner()
-    input_hb_mod = './tests/assets/modifier/modifier_plastic_generic_wall.json'
-    output_hb_rad = './tests/assets/modifier/modifier_plastic_generic_wall.rad'
+    input_hb_mod = "./tests/assets/modifier/modifier_plastic_generic_wall.json"
+    output_hb_rad = "./tests/assets/modifier/modifier_plastic_generic_wall.rad"
 
-    result = runner.invoke(modifier_to_rad, [input_hb_mod, '--output-file', output_hb_rad])
+    result = runner.invoke(
+        modifier_to_rad, [input_hb_mod, "--output-file", output_hb_rad]
+    )
     assert result.exit_code == 0
     assert os.path.isfile(output_hb_rad)
 
-    result = runner.invoke(
-        modifier_from_rad, [output_hb_rad])
+    result = runner.invoke(modifier_from_rad, [output_hb_rad])
     assert result.exit_code == 0
 
     os.remove(output_hb_rad)
@@ -109,15 +191,16 @@ def test_modifier_to_from_rad():
 
 def test_modifier_to_from_rad_trans():
     runner = CliRunner()
-    input_hb_mod = './tests/assets/modifier/modifier_trans_tree_foliage.json'
-    output_hb_rad = './tests/assets/modifier/modifier_trans_tree_foliage.rad'
+    input_hb_mod = "./tests/assets/modifier/modifier_trans_tree_foliage.json"
+    output_hb_rad = "./tests/assets/modifier/modifier_trans_tree_foliage.rad"
 
-    result = runner.invoke(modifier_to_rad, [input_hb_mod, '--output-file', output_hb_rad])
+    result = runner.invoke(
+        modifier_to_rad, [input_hb_mod, "--output-file", output_hb_rad]
+    )
     assert result.exit_code == 0
     assert os.path.isfile(output_hb_rad)
 
-    result = runner.invoke(
-        modifier_from_rad, [output_hb_rad])
+    result = runner.invoke(modifier_from_rad, [output_hb_rad])
     assert result.exit_code == 0
 
     os.remove(output_hb_rad)
