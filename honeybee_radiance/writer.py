@@ -1,6 +1,5 @@
 # coding=utf-8
 """Methods to write to rad."""
-from typing import DefaultDict
 from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug.futil import write_to_file_by_name, preparedir
 from honeybee.config import folders
@@ -17,6 +16,7 @@ import json
 import shutil
 import re
 import itertools
+from collections import defaultdict
 
 
 def shade_to_rad(shade, blk=False, minimal=False):
@@ -431,7 +431,7 @@ def _write_sensor_grids(folder, model, grids_filter):
 
         # write input grids info
         model_grids_info = []
-        start_line = DefaultDict(lambda: 0)
+        start_line = defaultdict(lambda: 0)
         for grid in filtered_grids:
             identifier = grid.identifier
             grid_info = {
