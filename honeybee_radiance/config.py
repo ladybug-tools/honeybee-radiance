@@ -234,8 +234,8 @@ class Folders(object):
 
     def _radiance_version_from_cli(self):
         """Get the Radiance version properties by making a call to a Radiance command."""
-        rad_exe = os.path.join(self.radbin_path, 'rtrace.exe') if os.name == 'nt' \
-            else os.path.join(self.radbin_path, 'rtrace')
+        rad_exe = os.path.join(self.radbin_path, 'mkpmap.exe') if os.name == 'nt' \
+            else os.path.join(self.radbin_path, 'mkpmap')
         cmds = [rad_exe, '-version']
         use_shell = True if os.name == 'nt' else False
         process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
