@@ -1,0 +1,23 @@
+honeybee\_radiance.properties package
+=====================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.properties.aperture
+   honeybee_radiance.properties.door
+   honeybee_radiance.properties.face
+   honeybee_radiance.properties.model
+   honeybee_radiance.properties.room
+   honeybee_radiance.properties.shade
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.properties
+   :members:
+   :undoc-members:
+   :show-inheritance:

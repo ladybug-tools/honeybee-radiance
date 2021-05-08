@@ -1,0 +1,24 @@
+honeybee\_radiance.lightsource.sky package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.lightsource.sky.certainirradiance
+   honeybee_radiance.lightsource.sky.cie
+   honeybee_radiance.lightsource.sky.climatebased
+   honeybee_radiance.lightsource.sky.hemisphere
+   honeybee_radiance.lightsource.sky.skydome
+   honeybee_radiance.lightsource.sky.skymatrix
+   honeybee_radiance.lightsource.sky.sunmatrix
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.lightsource.sky
+   :members:
+   :undoc-members:
+   :show-inheritance:

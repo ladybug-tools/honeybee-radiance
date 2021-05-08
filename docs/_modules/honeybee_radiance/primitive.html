@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance.primitive &#8212; honeybee radiance  documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          honeybee radiance</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#honeybee-radiance">honeybee-radiance</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/main.html#honeybee-radiance-config">config</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/mtx.html">mtx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/mtx.html#honeybee-radiance-mtxop">honeybee-radiance mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/mtx.html#honeybee-radiance-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/mtx.html#honeybee-radiance-mtxop-operate-two">operate-two</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/mtx.html#honeybee-radiance-mtxop-transpose">transpose</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/sunpath.html">sunpath</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath">honeybee-radiance sunpath</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath-epw">epw</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath-location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath-parse-hours">parse-hours</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath-radiance">radiance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sunpath.html#honeybee-radiance-sunpath-wea">wea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/edit.html">edit</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/edit.html#honeybee-radiance-edit">honeybee-radiance edit</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/edit.html#honeybee-radiance-edit-add-room-sensors">add-room-sensors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/edit.html#honeybee-radiance-edit-mirror-model-sensors">mirror-model-sensors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/raytrace.html">raytrace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/raytrace.html#honeybee-radiance-raytrace">honeybee-radiance raytrace</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/raytrace.html#honeybee-radiance-raytrace-daylight-factor">daylight-factor</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/raytrace.html#honeybee-radiance-raytrace-rtrace">rtrace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-grid">honeybee-radiance grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-grid-from-rooms">from-rooms</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-grid-merge">merge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/grid.html#honeybee-radiance-grid-split">split</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/lib.html">lib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib">honeybee-radiance lib</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifier-by-id">modifier-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifier-set-by-id">modifier-set-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifier-sets">modifier-sets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifier-sets-by-id">modifier-sets-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifiers">modifiers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/lib.html#honeybee-radiance-lib-modifiers-by-id">modifiers-by-id</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/octree.html">octree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/octree.html#honeybee-radiance-octree">honeybee-radiance octree</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/octree.html#honeybee-radiance-octree-from-folder">from-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/dc.html">dc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/dc.html#honeybee-radiance-dc">honeybee-radiance dc</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/dc.html#honeybee-radiance-dc-scoeff">scoeff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/dc.html#honeybee-radiance-dc-scontrib">scontrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process">honeybee-radiance post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process-average-row">average-row</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process-count">count</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/postprocess.html#honeybee-radiance-post-process-sum-row">sum-row</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate">honeybee-radiance translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate-model-radiant-enclosure-info">model-radiant-enclosure-info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate-model-to-rad">model-to-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate-model-to-rad-folder">model-to-rad-folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate-modifiers-from-rad">modifiers-from-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/translate.html#honeybee-radiance-translate-modifiers-to-rad">modifiers-to-rad</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/sky.html">sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/sky.html#honeybee-radiance-sky">honeybee-radiance sky</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sky.html#honeybee-radiance-sky-illuminance">illuminance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sky.html#honeybee-radiance-sky-mtx">mtx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sky.html#honeybee-radiance-sky-skydome">skydome</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/sky.html#honeybee-radiance-sky-uniform-sky">uniform-sky</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../honeybee_radiance.html">honeybee_radiance package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.cli.html">honeybee_radiance.cli package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.dc.html">honeybee_radiance.cli.dc module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.edit.html">honeybee_radiance.cli.edit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.grid.html">honeybee_radiance.cli.grid module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.lib.html">honeybee_radiance.cli.lib module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.mtx.html">honeybee_radiance.cli.mtx module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.octree.html">honeybee_radiance.cli.octree module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.postprocess.html">honeybee_radiance.cli.postprocess module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.raytrace.html">honeybee_radiance.cli.raytrace module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.sky.html">honeybee_radiance.cli.sky module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.sunpath.html">honeybee_radiance.cli.sunpath module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.translate.html">honeybee_radiance.cli.translate module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.cli.util.html">honeybee_radiance.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.cli.html#module-honeybee_radiance.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.dynamic.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.dynamic.group.html">honeybee_radiance.dynamic.group module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.dynamic.state.html">honeybee_radiance.dynamic.state module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.dynamic.stategeo.html">honeybee_radiance.dynamic.stategeo module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.dynamic.html#module-honeybee_radiance.dynamic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.bubble.html">honeybee_radiance.geometry.bubble module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.cone.html">honeybee_radiance.geometry.cone module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.cup.html">honeybee_radiance.geometry.cup module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.cylinder.html">honeybee_radiance.geometry.cylinder module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.geometrybase.html">honeybee_radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.instance.html">honeybee_radiance.geometry.instance module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.mesh.html">honeybee_radiance.geometry.mesh module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.polygon.html">honeybee_radiance.geometry.polygon module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.ring.html">honeybee_radiance.geometry.ring module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.source.html">honeybee_radiance.geometry.source module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.sphere.html">honeybee_radiance.geometry.sphere module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.geometry.tube.html">honeybee_radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.geometry.html#module-honeybee_radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.lib.html">honeybee_radiance.lib package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.lib.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lib.modifiers.html">honeybee_radiance.lib.modifiers module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lib.modifiersets.html">honeybee_radiance.lib.modifiersets module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.lib.html#module-honeybee_radiance.lib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.lightsource.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.html">honeybee_radiance.lightsource.sky package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.certainirradiance.html">honeybee_radiance.lightsource.sky.certainirradiance module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.cie.html">honeybee_radiance.lightsource.sky.cie module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.climatebased.html">honeybee_radiance.lightsource.sky.climatebased module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.hemisphere.html">honeybee_radiance.lightsource.sky.hemisphere module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.skydome.html">honeybee_radiance.lightsource.sky.skydome module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.skymatrix.html">honeybee_radiance.lightsource.sky.skymatrix module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.sunmatrix.html">honeybee_radiance.lightsource.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.lightsource.sky.html#module-honeybee_radiance.lightsource.sky">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.lightsource.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lightsource.dictutil.html">honeybee_radiance.lightsource.dictutil module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lightsource.ground.html">honeybee_radiance.lightsource.ground module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.lightsource.sunpath.html">honeybee_radiance.lightsource.sunpath module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.lightsource.html#module-honeybee_radiance.lightsource">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.antimatter.html">honeybee_radiance.modifier.material.antimatter module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.ashik2.html">honeybee_radiance.modifier.material.ashik2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.brtdfunc.html">honeybee_radiance.modifier.material.brtdfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.bsdf.html">honeybee_radiance.modifier.material.bsdf module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.dielectric.html">honeybee_radiance.modifier.material.dielectric module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.glass.html">honeybee_radiance.modifier.material.glass module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.glow.html">honeybee_radiance.modifier.material.glow module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.illum.html">honeybee_radiance.modifier.material.illum module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.interface.html">honeybee_radiance.modifier.material.interface module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.light.html">honeybee_radiance.modifier.material.light module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.materialbase.html">honeybee_radiance.modifier.material.materialbase module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.metal.html">honeybee_radiance.modifier.material.metal module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.metal2.html">honeybee_radiance.modifier.material.metal2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.metdata.html">honeybee_radiance.modifier.material.metdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.metfunc.html">honeybee_radiance.modifier.material.metfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.mirror.html">honeybee_radiance.modifier.material.mirror module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.mist.html">honeybee_radiance.modifier.material.mist module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.plasdata.html">honeybee_radiance.modifier.material.plasdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.plasfunc.html">honeybee_radiance.modifier.material.plasfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.plastic.html">honeybee_radiance.modifier.material.plastic module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.plastic2.html">honeybee_radiance.modifier.material.plastic2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.prism1.html">honeybee_radiance.modifier.material.prism1 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.prism2.html">honeybee_radiance.modifier.material.prism2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.spotlight.html">honeybee_radiance.modifier.material.spotlight module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.trans.html">honeybee_radiance.modifier.material.trans module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.trans2.html">honeybee_radiance.modifier.material.trans2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.transdata.html">honeybee_radiance.modifier.material.transdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.material.transfunc.html">honeybee_radiance.modifier.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.material.html#module-honeybee_radiance.modifier.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.mixdata.html">honeybee_radiance.modifier.mixture.mixdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.mixfunc.html">honeybee_radiance.modifier.mixture.mixfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.mixpict.html">honeybee_radiance.modifier.mixture.mixpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.mixtext.html">honeybee_radiance.modifier.mixture.mixtext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.mixturebase.html">honeybee_radiance.modifier.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.mixture.html#module-honeybee_radiance.modifier.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.brighttext.html">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.texdata.html">honeybee_radiance.modifier.texture.texdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.texfunc.html">honeybee_radiance.modifier.texture.texfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.texturebase.html">honeybee_radiance.modifier.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../honeybee_radiance.modifier.texture.html#module-honeybee_radiance.modifier.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.modifier.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.modifier.modifierbase.html">honeybee_radiance.modifier.modifierbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.postprocess.annualdaylight.html">honeybee_radiance.postprocess.annualdaylight module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.postprocess.html#module-honeybee_radiance.postprocess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.properties.html">honeybee_radiance.properties package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.properties.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.aperture.html">honeybee_radiance.properties.aperture module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.door.html">honeybee_radiance.properties.door module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.face.html">honeybee_radiance.properties.face module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.model.html">honeybee_radiance.properties.model module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.room.html">honeybee_radiance.properties.room module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../honeybee_radiance.properties.shade.html">honeybee_radiance.properties.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../honeybee_radiance.properties.html#module-honeybee_radiance.properties">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.config.html">honeybee_radiance.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.dictutil.html">honeybee_radiance.dictutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.lightpath.html">honeybee_radiance.lightpath module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.modifierset.html">honeybee_radiance.modifierset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.mutil.html">honeybee_radiance.mutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.primitive.html">honeybee_radiance.primitive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.putil.html">honeybee_radiance.putil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.reader.html">honeybee_radiance.reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.sensor.html">honeybee_radiance.sensor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.sensorgrid.html">honeybee_radiance.sensorgrid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.view.html">honeybee_radiance.view module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../honeybee_radiance.writer.html">honeybee_radiance.writer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">honeybee_radiance</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_radiance.primitive</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Base class for all Radiance Primitives.</span>
+
+<span class="sd">The term &quot;Primitive&quot; can refer to either a geometry object or a modifer that can</span>
+<span class="sd">be applied to geometry in order to change its reflectance, transmittance, etc.</span>
+<span class="sd">All primitives share a similar format for how they are represented within .rad</span>
+<span class="sd">files and the Primitive class provides common code used to serialize/de-serialize</span>
+<span class="sd">such objects from .rad strings among other functionalities.</span>
+
+<span class="sd">Because the Primitive class is so abstract, you most likely want to use one of</span>
+<span class="sd">the sub-classes of Primitive instead of using this class directly. You will find</span>
+<span class="sd">such sub-classes in the honeybee_radiance.modifier and honeybee_radiance.geometry</span>
+<span class="sd">sub-packages. More information on Radiance Primitives can be found at:</span>
+
+<span class="sd">http://radsite.lbl.gov/radiance/refer/ray.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">honeybee.typing</span> <span class="kn">import</span> <span class="n">valid_rad_string</span><span class="p">,</span> <span class="n">list_with_length</span>
+<span class="kn">from</span> <span class="nn">honeybee._lockable</span> <span class="kn">import</span> <span class="n">lockable</span>
+
+<span class="kn">from</span> <span class="nn">honeybee_radiance.reader</span> <span class="kn">import</span> <span class="n">string_to_dicts</span>
+
+
+<div class="viewcode-block" id="Void"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Void">[docs]</a><span class="k">class</span> <span class="nc">Void</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Void modifier.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * is_modifier</span>
+<span class="sd">        * is_opaque</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;void&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">display_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;void&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_opaque</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;False for a void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_void</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;True for a void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="Void.to_radiance"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Void.to_radiance">[docs]</a>    <span class="k">def</span> <span class="nf">to_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full radiance definition.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s1">&#39;void&#39;</span></div>
+
+<div class="viewcode-block" id="Void.to_dict"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Void.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Void.from_dict"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Void.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A tuple based on the object properties, useful for hashing.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Void.ToString"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Void.ToString">[docs]</a>    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_radiance</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_radiance</span><span class="p">()</span></div>
+
+
+<span class="n">VOID</span> <span class="o">=</span> <span class="n">Void</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Primitive"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive">[docs]</a><span class="nd">@lockable</span>
+<span class="k">class</span> <span class="nc">Primitive</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for Radiance Primitives.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        identifier: Text string for a unique Primitive ID. Must not contain spaces</span>
+<span class="sd">            or special characters. This will be used to identify the object across</span>
+<span class="sd">            a model and in the exported Radiance files.</span>
+<span class="sd">        modifier: Modifier. It can be primitive, mixture, texture or pattern.</span>
+<span class="sd">            (Default: None).</span>
+<span class="sd">        values: An array 3 arrays for primitive data. Each of the 3 sub-arrays</span>
+<span class="sd">            refer to a line number in the radiance primitive definitions and the</span>
+<span class="sd">            values in each array correspond to values occurring within each line.</span>
+<span class="sd">            For example, [[], [], [&#39;0.500&#39;, &#39;0.500&#39;, &#39;0.500&#39;, &#39;0.000&#39;, &#39;0.050&#39;]]</span>
+<span class="sd">            corresponds to values one would find for a Plastic material.</span>
+<span class="sd">            (Default: [[], [], []]).</span>
+<span class="sd">        is_opaque: A boolean to indicate whether this primitive is opaque.</span>
+<span class="sd">        dependencies: A list of primitives that this primitive depends on. This</span>
+<span class="sd">            argument is only useful for defining advanced primitives that are</span>
+<span class="sd">            defined based on other primitives. (Default: []).</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * values</span>
+<span class="sd">        * modifier</span>
+<span class="sd">        * dependencies</span>
+<span class="sd">        * is_geometry</span>
+<span class="sd">        * is_modifier</span>
+<span class="sd">        * is_material</span>
+<span class="sd">        * is_texture</span>
+<span class="sd">        * is_pattern</span>
+<span class="sd">        * is_mixture</span>
+<span class="sd">        * is_opaque</span>
+<span class="sd">        * is_void</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;_display_name&#39;</span><span class="p">,</span> <span class="s1">&#39;_modifier&#39;</span><span class="p">,</span> <span class="s1">&#39;_values&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_is_opaque&#39;</span><span class="p">,</span> <span class="s1">&#39;_dependencies&#39;</span><span class="p">,</span> <span class="s1">&#39;_type&#39;</span><span class="p">,</span> <span class="s1">&#39;_locked&#39;</span><span class="p">)</span>
+
+    <span class="c1"># All Radiance geometry types</span>
+    <span class="n">GEOMETRYTYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;source&#39;</span><span class="p">,</span> <span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="s1">&#39;bubble&#39;</span><span class="p">,</span> <span class="s1">&#39;polygon&#39;</span><span class="p">,</span> <span class="s1">&#39;cone&#39;</span><span class="p">,</span> <span class="s1">&#39;cup&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;cylinder&#39;</span><span class="p">,</span> <span class="s1">&#39;tube&#39;</span><span class="p">,</span> <span class="s1">&#39;ring&#39;</span><span class="p">,</span> <span class="s1">&#39;instance&#39;</span><span class="p">,</span> <span class="s1">&#39;mesh&#39;</span><span class="p">))</span>
+
+    <span class="c1"># All Radiance material types</span>
+    <span class="n">MATERIALTYPES</span> <span class="o">=</span> \
+        <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;plastic&#39;</span><span class="p">,</span> <span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;trans&#39;</span><span class="p">,</span> <span class="s1">&#39;metal&#39;</span><span class="p">,</span> <span class="s1">&#39;mirror&#39;</span><span class="p">,</span> <span class="s1">&#39;illum&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;mixedfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;dielectric&#39;</span><span class="p">,</span> <span class="s1">&#39;transdata&#39;</span><span class="p">,</span> <span class="s1">&#39;light&#39;</span><span class="p">,</span> <span class="s1">&#39;glow&#39;</span><span class="p">,</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;spotlight&#39;</span><span class="p">,</span> <span class="s1">&#39;prism1&#39;</span><span class="p">,</span> <span class="s1">&#39;prism2&#39;</span><span class="p">,</span> <span class="s1">&#39;mist&#39;</span><span class="p">,</span> <span class="s1">&#39;plastic2&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;metal2&#39;</span><span class="p">,</span> <span class="s1">&#39;trans2&#39;</span><span class="p">,</span> <span class="s1">&#39;ashik2&#39;</span><span class="p">,</span> <span class="s1">&#39;dielectric&#39;</span><span class="p">,</span> <span class="s1">&#39;interface&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;plasfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;metfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;transfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;BRTDfunc&#39;</span><span class="p">,</span>
+             <span class="s1">&#39;plasdata&#39;</span><span class="p">,</span> <span class="s1">&#39;metdata&#39;</span><span class="p">,</span> <span class="s1">&#39;transdata&#39;</span><span class="p">,</span> <span class="s1">&#39;antimatter&#39;</span><span class="p">))</span>
+
+    <span class="n">TEXTURETYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;texfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;texdata&#39;</span><span class="p">))</span>
+
+    <span class="n">PATTERNTYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;colorfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;brightfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;colordata&#39;</span><span class="p">,</span> <span class="s1">&#39;brightdata&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;colorpict&#39;</span><span class="p">,</span> <span class="s1">&#39;colortext&#39;</span><span class="p">,</span> <span class="s1">&#39;brighttext&#39;</span><span class="p">))</span>
+
+    <span class="n">MIXTURETYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;mixfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;mixdata&#39;</span><span class="p">,</span> <span class="s1">&#39;mixpict&#39;</span><span class="p">,</span> <span class="s1">&#39;mixtext&#39;</span><span class="p">))</span>
+
+    <span class="c1"># All modifier types (everything except geometry)</span>
+    <span class="n">MODIFIERTYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">MATERIALTYPES</span><span class="p">,</span> <span class="n">MIXTURETYPES</span><span class="p">,</span> <span class="n">TEXTURETYPES</span><span class="p">,</span> <span class="n">PATTERNTYPES</span><span class="p">)</span>
+
+    <span class="c1"># All Radiance primitive types</span>
+    <span class="n">TYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">GEOMETRYTYPES</span><span class="p">,</span> <span class="n">MODIFIERTYPES</span><span class="p">)</span>
+
+    <span class="c1"># Modifiers that are not usually opaque. This will be used to set is_opaque property</span>
+    <span class="c1"># if it is not overridded by the user by setting the is_opaque property</span>
+    <span class="n">NONEOPAQUETYPES</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="s1">&#39;glass&#39;</span><span class="p">,</span> <span class="s1">&#39;trans&#39;</span><span class="p">,</span> <span class="s1">&#39;trans2&#39;</span><span class="p">,</span> <span class="s1">&#39;transdata&#39;</span><span class="p">,</span> <span class="s1">&#39;transfunc&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;dielectric&#39;</span><span class="p">,</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">,</span> <span class="s1">&#39;mixfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;BRTDfunc&#39;</span><span class="p">,</span> <span class="s1">&#39;mist&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;prism1&#39;</span><span class="p">,</span> <span class="s1">&#39;prism2&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_opaque</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dependencies</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create primitive base.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span> <span class="o">=</span> <span class="n">modifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span> <span class="ow">or</span> <span class="p">[[],</span> <span class="p">[],</span> <span class="p">[]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_opaque</span> <span class="o">=</span> <span class="n">is_opaque</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="n">dependencies</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">dependencies</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_dependent</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Primitive.from_string"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.from_string">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">primitive_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a Radiance primitive from a string.</span>
+
+<span class="sd">        If the primitive modifier is not void or it has other dependencies,</span>
+<span class="sd">        the modifier and/or dependencies must also be part of the input string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pr_dict</span> <span class="o">=</span> <span class="n">string_to_dicts</span><span class="p">(</span><span class="n">primitive_string</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">pr_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> \
+            <span class="s1">&#39;Input string includes more than one Radiance objects.&#39;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_primitive_dict</span><span class="p">(</span><span class="n">pr_dict</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Primitive.from_primitive_dict"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.from_primitive_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_primitive_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">primitive_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the object from a primitive dict.</span>
+
+<span class="sd">        The primitive_dict is a dictionary following the base Primitive schema</span>
+<span class="sd">        of a Radiance object. This base Primitive schema is the same for all</span>
+<span class="sd">        Radiance Primitives (including Modifiers and Geometry) whereas the</span>
+<span class="sd">        from_dict classmethod accepts a different schema that is customized</span>
+<span class="sd">        to each subclass inheriting from the Radiance Primitive.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary in the format below</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">            &quot;modifier&quot;: {},  # primitive modifier (Default: None)</span>
+<span class="sd">            &quot;type&quot;: &quot;custom&quot;,  # primitive type</span>
+<span class="sd">            &quot;identifier&quot;: &quot;&quot;,  # primitive identifier</span>
+<span class="sd">            &quot;display_name&quot;: &quot;&quot;,  # primitive display name</span>
+<span class="sd">            &quot;values&quot;: [],  # values</span>
+<span class="sd">            &quot;dependencies&quot;: []</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">modifier</span><span class="p">,</span> <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">filter_dict_input</span><span class="p">(</span><span class="n">primitive_dict</span><span class="p">)</span>
+
+        <span class="n">cls_</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span>
+            <span class="n">modifier</span><span class="o">=</span><span class="n">modifier</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">],</span>
+            <span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">primitive_dict</span> <span class="ow">and</span> \
+                <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">cls_</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;primitive&#39;</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">cls_</span></div>
+
+<div class="viewcode-block" id="Primitive.from_dict"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the object from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary in the format below.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">            &quot;modifier&quot;: {},  # primitive modifier (Default: None)</span>
+<span class="sd">            &quot;type&quot;: &quot;custom&quot;,  # primitive type</span>
+<span class="sd">            &quot;identifier&quot;: &quot;&quot;,  # primitive identifier</span>
+<span class="sd">            &quot;display_name&quot;: &quot;&quot;,  # primitive display name</span>
+<span class="sd">            &quot;values&quot;: [],  # values</span>
+<span class="sd">            &quot;dependencies&quot;: []</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_primitive_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a string for the primitive type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_type</span>
+
+    <span class="nd">@type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_str</span><span class="p">):</span>
+        <span class="n">_mapper</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bsdf&#39;</span><span class="p">:</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">,</span> <span class="s1">&#39;brtdfunc&#39;</span><span class="p">:</span> <span class="s1">&#39;BRTDfunc&#39;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">type_str</span> <span class="o">!=</span> <span class="s1">&#39;primitive&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">type_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">:</span>
+                <span class="c1"># try base classes for subclasses</span>
+                <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">_mapper</span><span class="p">:</span>
+                        <span class="n">type_str</span> <span class="o">=</span> <span class="n">_mapper</span><span class="p">[</span><span class="n">base</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+                        <span class="k">break</span>
+                    <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">:</span>
+                        <span class="n">type_str</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                        <span class="k">break</span>
+
+            <span class="k">assert</span> <span class="n">type_str</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">,</span> \
+                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> is not a supported Radiance primitive type.&quot;</span> <span class="o">%</span> <span class="n">type_str</span> <span class="o">+</span> \
+                <span class="s2">&quot;Try one of these primitives:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TYPES</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_type</span> <span class="o">=</span> <span class="n">type_str</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a text string for the unique primitive identifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
+
+    <span class="nd">@identifier</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">identifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span> <span class="o">=</span> <span class="n">valid_rad_string</span><span class="p">(</span><span class="n">identifier</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">display_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a string for the object name without any character restrictions.</span>
+
+<span class="sd">        If not set, this will be equal to the identifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_identifier</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span>
+
+    <span class="nd">@display_name</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">display_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>  <span class="c1"># Python 2 machine lacking the character set</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="n">value</span>  <span class="c1"># keep it as unicode</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set the values of the current primitive as a dictionary.</span>
+
+<span class="sd">        The keys of this dictionary should be integers between 0 and 2.</span>
+
+<span class="sd">        Usage:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # This will erase all values except the first line, which has 9 custom items</span>
+<span class="sd">            primitive.values = [</span>
+<span class="sd">                [0.5, 0.5, 0.5, &quot;/usr/oakfloor.pic&quot;, &quot;.&quot;, &quot;frac(U)&quot;, &quot;frac(V)&quot;,</span>
+<span class="sd">                 &quot;-s&quot;, 1.1667],</span>
+<span class="sd">                [],</span>
+<span class="sd">                []</span>
+<span class="sd">                ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span>
+
+    <span class="nd">@values</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_values</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">list_with_length</span><span class="p">(</span><span class="n">new_values</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="s1">&#39;radiance primitive values&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set an object for the primitive modifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modifier</span>
+
+    <span class="nd">@modifier</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modifier</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">modifier</span> <span class="ow">or</span> <span class="n">modifier</span> <span class="o">==</span> <span class="s1">&#39;void&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_modifier</span> <span class="o">=</span> <span class="n">VOID</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">modifier</span><span class="o">.</span><span class="n">is_modifier</span><span class="p">,</span> \
+                    <span class="s1">&#39;A </span><span class="si">{}</span><span class="s1"> cannot be a modifier. &#39;</span> \
+                    <span class="s1">&#39;Modifiers must be materials, mixtures, &#39;</span> \
+                    <span class="s1">&#39;textures or patterns&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">modifier</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid modifier: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">modifier</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_modifier</span> <span class="o">=</span> <span class="n">modifier</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dependencies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get list of dependencies for this primitive.</span>
+
+<span class="sd">        Additional dependencies can be added with the add_dependent method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this object is a Radiance geometry.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_modifier</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean indicating whether this object is a Radiance modifier.</span>
+
+<span class="sd">        Modifiers include materials, mixtures, textures and patterns.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MODIFIERTYPES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this object is a material modifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MATERIALTYPES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this object is a texture modifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">TEXTURETYPES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this object is a pattern modifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATTERNTYPES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_mixture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a boolean noting whether this object is a mixture modifier.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">MIXTURETYPES</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_opaque</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a boolean to indicate whether this primitive is opaque.</span>
+
+<span class="sd">        This property is used to separate opaque and non-opaque geometries as</span>
+<span class="sd">        well as modifiers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_opaque</span><span class="p">:</span>  <span class="c1"># opaque modifier</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_opaque</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NONEOPAQUETYPES</span><span class="p">:</span>  <span class="c1"># non-opaque modifier</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># it&#39;s a geometry or it has a void modifier; check the modifier</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">is_void</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">is_opaque</span>
+
+    <span class="nd">@is_opaque</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">is_opaque</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_opaque</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_opaque</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">is_opaque</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_void</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Only true for a void.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_update_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;update value dictionaries.</span>
+
+<span class="sd">        _update_values must be implemented in each subclass.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Primitive.add_dependent"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.add_dependent">[docs]</a>    <span class="k">def</span> <span class="nf">add_dependent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dep</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add dependent.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">Primitive</span><span class="p">),</span> \
+            <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid dependent type&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">dep</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_to_radiance</span><span class="p">(</span><span class="n">primitive</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return Radiance representation of primitive.&quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">primitive</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+                               <span class="n">primitive</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">primitive</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">header</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">line_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">primitive</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">line_count</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># line will be displayed as 0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">primitive</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">line_count</span><span class="p">])</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span> <span class="k">if</span> <span class="n">count</span> <span class="k">else</span> <span class="s1">&#39;0&#39;</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="k">if</span> <span class="n">minimal</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Primitive.to_radiance"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.to_radiance">[docs]</a>    <span class="k">def</span> <span class="nf">to_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_modifier</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">include_dependencies</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full radiance definition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            minimal: Boolean to note whether the radiance string should be written</span>
+<span class="sd">                in a minimal format (with spaces instead of line breaks). Default: False.</span>
+<span class="sd">            include_modifier: Boolean to note whether the modifier of this primitive</span>
+<span class="sd">                should be included in the string. Default: True.</span>
+<span class="sd">            include_dependencies: Boolean to note whether the dependencies of this</span>
+<span class="sd">                primitive should be included in the string. Default: True.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">include_dependencies</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">Void</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_radiance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">minimal</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">include_modifier</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">is_void</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_radiance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="p">,</span> <span class="n">minimal</span><span class="p">))</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_to_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimal</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Primitive.to_dict"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Translate this object to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;modifier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+            <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+            <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+        <span class="k">return</span> <span class="n">base</span></div>
+
+<div class="viewcode-block" id="Primitive.duplicate"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.duplicate">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a copy of this object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__copy__</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Primitive.filter_dict_input"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.filter_dict_input">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">filter_dict_input</span><span class="p">(</span><span class="n">input_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Filter a dictionary of a Primitive to get modifier and dependency objects.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># see if the mutil module has already been imported</span>
+            <span class="n">mutil</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="c1"># import the module here (instead of at top) to avoid a circular import</span>
+            <span class="kn">import</span> <span class="nn">honeybee_radiance.mutil</span> <span class="k">as</span> <span class="nn">mutil</span>  <span class="c1"># imports all modifiers classes</span>
+
+        <span class="c1"># try to get modifier</span>
+        <span class="k">if</span> <span class="s1">&#39;modifier&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_dict</span> <span class="ow">or</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;modifier&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> \
+                <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;modifier&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;void&#39;</span><span class="p">:</span>
+            <span class="n">modifier</span> <span class="o">=</span> <span class="n">VOID</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">modifier</span> <span class="o">=</span> <span class="n">mutil</span><span class="o">.</span><span class="n">dict_to_modifier</span><span class="p">(</span><span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;modifier&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s1">&#39;dependencies&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">:</span>
+            <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">mutil</span><span class="o">.</span><span class="n">dict_to_modifier</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">input_dict</span><span class="p">[</span><span class="s1">&#39;dependencies&#39;</span><span class="p">]</span>
+            <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">modifier</span><span class="p">,</span> <span class="n">dependencies</span></div>
+
+    <span class="k">def</span> <span class="nf">__key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A tuple based on the object properties, useful for hashing.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span> <span class="k">for</span> <span class="n">vals</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">)</span> <span class="o">+</span> \
+            <span class="nb">tuple</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="n">dep</span><span class="p">)</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__key</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__key</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mod</span><span class="p">,</span> <span class="n">depend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dup_mod_and_depend</span><span class="p">()</span>
+        <span class="n">values_copy</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">[:]</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">]</span>  <span class="c1"># copy each line</span>
+        <span class="n">new_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span> <span class="n">values_copy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_opaque</span><span class="p">,</span> <span class="n">depend</span><span class="p">)</span>
+        <span class="n">new_obj</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span>
+        <span class="k">return</span> <span class="n">new_obj</span>
+
+    <span class="k">def</span> <span class="nf">_dup_mod_and_depend</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Duplicate this object&#39;s modifer and its dependencies.&quot;&quot;&quot;</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_modifier</span><span class="p">,</span> <span class="n">Void</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modifier</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span>
+        <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">duplicate</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dependencies</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">mod</span><span class="p">,</span> <span class="n">dependencies</span>
+
+<div class="viewcode-block" id="Primitive.ToString"><a class="viewcode-back" href="../../honeybee_radiance.primitive.html#honeybee_radiance.primitive.Primitive.ToString">[docs]</a>    <span class="k">def</span> <span class="nf">ToString</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Overwrite .NET ToString.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return primitive definition.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_radiance</span><span class="p">()</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

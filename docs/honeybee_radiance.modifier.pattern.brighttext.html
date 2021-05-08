@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance.modifier.pattern.brighttext module &#8212; honeybee radiance  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="honeybee_radiance.modifier.pattern.colordata module" href="honeybee_radiance.modifier.pattern.colordata.html" />
+    <link rel="prev" title="honeybee_radiance.modifier.pattern.brightfunc module" href="honeybee_radiance.modifier.pattern.brightfunc.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html">
+          honeybee radiance</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/main.html#honeybee-radiance">honeybee-radiance</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/main.html#honeybee-radiance-config">config</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/mtx.html">mtx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/mtx.html#honeybee-radiance-mtxop">honeybee-radiance mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtx.html#honeybee-radiance-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtx.html#honeybee-radiance-mtxop-operate-two">operate-two</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/mtx.html#honeybee-radiance-mtxop-transpose">transpose</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/sunpath.html">sunpath</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath">honeybee-radiance sunpath</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath-epw">epw</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath-location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath-parse-hours">parse-hours</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath-radiance">radiance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sunpath.html#honeybee-radiance-sunpath-wea">wea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/edit.html">edit</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/edit.html#honeybee-radiance-edit">honeybee-radiance edit</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/edit.html#honeybee-radiance-edit-add-room-sensors">add-room-sensors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/edit.html#honeybee-radiance-edit-mirror-model-sensors">mirror-model-sensors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/raytrace.html">raytrace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/raytrace.html#honeybee-radiance-raytrace">honeybee-radiance raytrace</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/raytrace.html#honeybee-radiance-raytrace-daylight-factor">daylight-factor</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/raytrace.html#honeybee-radiance-raytrace-rtrace">rtrace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/grid.html#honeybee-radiance-grid">honeybee-radiance grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/grid.html#honeybee-radiance-grid-from-rooms">from-rooms</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/grid.html#honeybee-radiance-grid-merge">merge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/grid.html#honeybee-radiance-grid-split">split</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/lib.html">lib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib">honeybee-radiance lib</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifier-by-id">modifier-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifier-set-by-id">modifier-set-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifier-sets">modifier-sets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifier-sets-by-id">modifier-sets-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifiers">modifiers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/lib.html#honeybee-radiance-lib-modifiers-by-id">modifiers-by-id</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/octree.html">octree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/octree.html#honeybee-radiance-octree">honeybee-radiance octree</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/octree.html#honeybee-radiance-octree-from-folder">from-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/dc.html">dc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/dc.html#honeybee-radiance-dc">honeybee-radiance dc</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/dc.html#honeybee-radiance-dc-scoeff">scoeff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/dc.html#honeybee-radiance-dc-scontrib">scontrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process">honeybee-radiance post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process-average-row">average-row</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process-count">count</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/postprocess.html#honeybee-radiance-post-process-sum-row">sum-row</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate">honeybee-radiance translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate-model-radiant-enclosure-info">model-radiant-enclosure-info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate-model-to-rad">model-to-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate-model-to-rad-folder">model-to-rad-folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate-modifiers-from-rad">modifiers-from-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/translate.html#honeybee-radiance-translate-modifiers-to-rad">modifiers-to-rad</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cli/sky.html">sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cli/sky.html#honeybee-radiance-sky">honeybee-radiance sky</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cli/sky.html#honeybee-radiance-sky-illuminance">illuminance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sky.html#honeybee-radiance-sky-mtx">mtx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sky.html#honeybee-radiance-sky-skydome">skydome</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cli/sky.html#honeybee-radiance-sky-uniform-sky">uniform-sky</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance.html">honeybee_radiance package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.cli.html">honeybee_radiance.cli package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.dc.html">honeybee_radiance.cli.dc module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.edit.html">honeybee_radiance.cli.edit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.grid.html">honeybee_radiance.cli.grid module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.lib.html">honeybee_radiance.cli.lib module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.mtx.html">honeybee_radiance.cli.mtx module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.octree.html">honeybee_radiance.cli.octree module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.postprocess.html">honeybee_radiance.cli.postprocess module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.raytrace.html">honeybee_radiance.cli.raytrace module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.sky.html">honeybee_radiance.cli.sky module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.sunpath.html">honeybee_radiance.cli.sunpath module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.translate.html">honeybee_radiance.cli.translate module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.cli.util.html">honeybee_radiance.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.cli.html#module-honeybee_radiance.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.dynamic.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.dynamic.group.html">honeybee_radiance.dynamic.group module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.dynamic.state.html">honeybee_radiance.dynamic.state module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.dynamic.stategeo.html">honeybee_radiance.dynamic.stategeo module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.dynamic.html#module-honeybee_radiance.dynamic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.bubble.html">honeybee_radiance.geometry.bubble module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.cone.html">honeybee_radiance.geometry.cone module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.cup.html">honeybee_radiance.geometry.cup module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.cylinder.html">honeybee_radiance.geometry.cylinder module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.geometrybase.html">honeybee_radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.instance.html">honeybee_radiance.geometry.instance module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.mesh.html">honeybee_radiance.geometry.mesh module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.polygon.html">honeybee_radiance.geometry.polygon module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.ring.html">honeybee_radiance.geometry.ring module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.source.html">honeybee_radiance.geometry.source module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.sphere.html">honeybee_radiance.geometry.sphere module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.geometry.tube.html">honeybee_radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.geometry.html#module-honeybee_radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lib.html">honeybee_radiance.lib package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.lib.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lib.modifiers.html">honeybee_radiance.lib.modifiers module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lib.modifiersets.html">honeybee_radiance.lib.modifiersets module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.lib.html#module-honeybee_radiance.lib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.lightsource.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lightsource.sky.html">honeybee_radiance.lightsource.sky package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.lightsource.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.certainirradiance.html">honeybee_radiance.lightsource.sky.certainirradiance module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.cie.html">honeybee_radiance.lightsource.sky.cie module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.climatebased.html">honeybee_radiance.lightsource.sky.climatebased module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.hemisphere.html">honeybee_radiance.lightsource.sky.hemisphere module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.skydome.html">honeybee_radiance.lightsource.sky.skydome module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.skymatrix.html">honeybee_radiance.lightsource.sky.skymatrix module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.lightsource.sky.sunmatrix.html">honeybee_radiance.lightsource.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.lightsource.sky.html#module-honeybee_radiance.lightsource.sky">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.lightsource.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lightsource.dictutil.html">honeybee_radiance.lightsource.dictutil module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lightsource.ground.html">honeybee_radiance.lightsource.ground module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.lightsource.sunpath.html">honeybee_radiance.lightsource.sunpath module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.lightsource.html#module-honeybee_radiance.lightsource">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4 current"><a class="reference internal" href="honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.antimatter.html">honeybee_radiance.modifier.material.antimatter module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.ashik2.html">honeybee_radiance.modifier.material.ashik2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.brtdfunc.html">honeybee_radiance.modifier.material.brtdfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.bsdf.html">honeybee_radiance.modifier.material.bsdf module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.dielectric.html">honeybee_radiance.modifier.material.dielectric module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.glass.html">honeybee_radiance.modifier.material.glass module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.glow.html">honeybee_radiance.modifier.material.glow module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.illum.html">honeybee_radiance.modifier.material.illum module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.interface.html">honeybee_radiance.modifier.material.interface module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.light.html">honeybee_radiance.modifier.material.light module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.materialbase.html">honeybee_radiance.modifier.material.materialbase module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.metal.html">honeybee_radiance.modifier.material.metal module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.metal2.html">honeybee_radiance.modifier.material.metal2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.metdata.html">honeybee_radiance.modifier.material.metdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.metfunc.html">honeybee_radiance.modifier.material.metfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.mirror.html">honeybee_radiance.modifier.material.mirror module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.mist.html">honeybee_radiance.modifier.material.mist module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.plasdata.html">honeybee_radiance.modifier.material.plasdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.plasfunc.html">honeybee_radiance.modifier.material.plasfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.plastic.html">honeybee_radiance.modifier.material.plastic module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.plastic2.html">honeybee_radiance.modifier.material.plastic2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.prism1.html">honeybee_radiance.modifier.material.prism1 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.prism2.html">honeybee_radiance.modifier.material.prism2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.spotlight.html">honeybee_radiance.modifier.material.spotlight module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.trans.html">honeybee_radiance.modifier.material.trans module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.trans2.html">honeybee_radiance.modifier.material.trans2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.transdata.html">honeybee_radiance.modifier.material.transdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.material.transfunc.html">honeybee_radiance.modifier.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.material.html#module-honeybee_radiance.modifier.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.mixture.mixdata.html">honeybee_radiance.modifier.mixture.mixdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.mixture.mixfunc.html">honeybee_radiance.modifier.mixture.mixfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.mixture.mixpict.html">honeybee_radiance.modifier.mixture.mixpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.mixture.mixtext.html">honeybee_radiance.modifier.mixture.mixtext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.mixture.mixturebase.html">honeybee_radiance.modifier.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.mixture.html#module-honeybee_radiance.modifier.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul class="current">
+<li class="toctree-l7 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8 current"><a class="current reference internal" href="#">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.texture.texdata.html">honeybee_radiance.modifier.texture.texdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.texture.texfunc.html">honeybee_radiance.modifier.texture.texfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.texture.texturebase.html">honeybee_radiance.modifier.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.texture.html#module-honeybee_radiance.modifier.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.modifierbase.html">honeybee_radiance.modifier.modifierbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.postprocess.annualdaylight.html">honeybee_radiance.postprocess.annualdaylight module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.postprocess.html#module-honeybee_radiance.postprocess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.properties.html">honeybee_radiance.properties package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.properties.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.aperture.html">honeybee_radiance.properties.aperture module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.door.html">honeybee_radiance.properties.door module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.face.html">honeybee_radiance.properties.face module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.model.html">honeybee_radiance.properties.model module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.room.html">honeybee_radiance.properties.room module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.properties.shade.html">honeybee_radiance.properties.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.properties.html#module-honeybee_radiance.properties">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.config.html">honeybee_radiance.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.dictutil.html">honeybee_radiance.dictutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lightpath.html">honeybee_radiance.lightpath module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.modifierset.html">honeybee_radiance.modifierset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.mutil.html">honeybee_radiance.mutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.primitive.html">honeybee_radiance.primitive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.putil.html">honeybee_radiance.putil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.reader.html">honeybee_radiance.reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.sensor.html">honeybee_radiance.sensor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.sensorgrid.html">honeybee_radiance.sensorgrid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.view.html">honeybee_radiance.view module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.writer.html">honeybee_radiance.writer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance.html">honeybee_radiance package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.cli.html">honeybee_radiance.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lib.html">honeybee_radiance.lib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a></li>
+<li class="toctree-l6 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul class="current">
+<li class="toctree-l7 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8 current"><a class="current reference internal" href="#">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.properties.html">honeybee_radiance.properties package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="honeybee_radiance.modifier.pattern.brightfunc.html" title="Previous Chapter: honeybee_radiance.modifier.pattern.brightfunc module"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; honeybee_radi...</span>
+    </a>
+  </li>
+  <li>
+    <a href="honeybee_radiance.modifier.pattern.colordata.html" title="Next Chapter: honeybee_radiance.modifier.pattern.colordata module"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">honeybee_radi... &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="_sources/honeybee_radiance.modifier.pattern.brighttext.rst.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Docs</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">honeybee_radiance</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="honeybee_radiance.html">honeybee_radiance package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="honeybee_radiance.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.cli.html">honeybee_radiance.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lib.html">honeybee_radiance.lib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul class="current">
+<li class="toctree-l5 current"><a class="reference internal" href="honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a></li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a></li>
+<li class="toctree-l6 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul class="current">
+<li class="toctree-l7 current"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8 current"><a class="current reference internal" href="#">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#submodules">Submodules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="honeybee_radiance.properties.html">honeybee_radiance.properties package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <div class="section" id="module-honeybee_radiance.modifier.pattern.brighttext">
+<span id="honeybee-radiance-modifier-pattern-brighttext-module"></span><h1>honeybee_radiance.modifier.pattern.brighttext module<a class="headerlink" href="#module-honeybee_radiance.modifier.pattern.brighttext" title="Permalink to this headline">¶</a></h1>
+<p>Radiance Brighttext Pattern.</p>
+<p><a class="reference external" href="http://radsite.lbl.gov/radiance/refer/ray.html#Brighttext">http://radsite.lbl.gov/radiance/refer/ray.html#Brighttext</a></p>
+<dl class="py class">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">honeybee_radiance.modifier.pattern.brighttext.</span></code><code class="sig-name descname"><span class="pre">Brighttext</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_opaque</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/honeybee_radiance/modifier/pattern/brighttext.html#Brighttext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="honeybee_radiance.modifier.pattern.patternbase.html#honeybee_radiance.modifier.pattern.patternbase.Pattern" title="honeybee_radiance.modifier.pattern.patternbase.Pattern"><code class="xref py py-class docutils literal notranslate"><span class="pre">honeybee_radiance.modifier.pattern.patternbase.Pattern</span></code></a></p>
+<p>Radiance Brighttext Pattern.</p>
+<p>Brighttext is like colortext, but the writing is monochromatic.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mod brighttext id
+<span class="m">2</span> fontfile textfile
+<span class="m">0</span>
+<span class="m">11</span>+
+        Ox Oy Oz
+        Rx Ry Rz
+        Dx Dy Dz
+        foreground background
+        <span class="o">[</span>spacing<span class="o">]</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>mod brighttext id
+<span class="m">2</span>+N fontfile . This is a line with N words ...
+<span class="m">0</span>
+<span class="m">11</span>+
+        Ox Oy Oz
+        Rx Ry Rz
+        Dx Dy Dz
+        foreground background
+        <span class="o">[</span>spacing<span class="o">]</span>
+</pre></div>
+</div>
+<p>By default, a uniform spacing algorithm is used that guarantees every character will
+appear in a precisely determined position. Unfortunately, such a scheme results in
+rather unattractive and difficult to read text with most fonts. The optional spacing
+value defines the distance between characters for proportional spacing. A positive
+value selects a spacing algorithm that preserves right margins and indentation, but
+does not provide the ultimate in proportionally spaced text. A negative value insures
+that characters are properly spaced, but the placement of words then varies
+unpredictably. The choice depends on the relative importance of spacing versus
+formatting. When presenting a section of formatted text, a positive spacing value is
+usually preferred. A single line of text will often be accompanied by a negative
+spacing value. A section of text meant to depict a picture, perhaps using a special
+purpose font such as hexbit4x1.fnt, calls for uniform spacing. Reasonable magnitudes
+for proportional spacing are between 0.1 (for tightly spaced characters) and 0.3 (for
+wide spacing).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>identifier</strong> – Text string for a unique Material ID. Must not contain spaces
+or special characters. This will be used to identify the object across
+a model and in the exported Radiance files.</p></li>
+<li><p><strong>modifier</strong> – Modifier. It can be primitive, mixture, texture or pattern.
+(Default: None).</p></li>
+<li><p><strong>values</strong> – An array 3 arrays for primitive data. Each of the 3 sub-arrays
+refer to a line number in the radiance primitve definitions and the
+values in each array correspond to values occurring within each line.</p></li>
+<li><p><strong>is_opaque</strong> – A boolean to indicate whether this primitive is opaque.</p></li>
+<li><p><strong>dependencies</strong> – A list of primitives that this primitive depends on. This
+argument is only useful for defining advanced primitives that are
+defined based on other primitives. (Default: []).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Properties:</dt><dd><ul class="simple">
+<li><p>identifier</p></li>
+<li><p>display_name</p></li>
+<li><p>values</p></li>
+<li><p>modifier</p></li>
+<li><p>dependencies</p></li>
+<li><p>is_modifier</p></li>
+<li><p>is_material</p></li>
+<li><p>is_opaque</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.ToString">
+<code class="sig-name descname"><span class="pre">ToString</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.ToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overwrite .NET ToString.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.add_dependent">
+<code class="sig-name descname"><span class="pre">add_dependent</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.add_dependent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add dependent.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.duplicate">
+<code class="sig-name descname"><span class="pre">duplicate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.duplicate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a copy of this object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.filter_dict_input">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">filter_dict_input</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.filter_dict_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filter a dictionary of a Primitive to get modifier and dependency objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary in the format below.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;modifier&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># primitive modifier (Default: None)</span>
+<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span>  <span class="c1"># primitive type</span>
+<span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># primitive identifier</span>
+<span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># primitive display name</span>
+<span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># values</span>
+<span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_primitive_dict">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_primitive_dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primitive_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_primitive_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the object from a primitive dict.</p>
+<p>The primitive_dict is a dictionary following the base Primitive schema
+of a Radiance object. This base Primitive schema is the same for all
+Radiance Primitives (including Modifiers and Geometry) whereas the
+from_dict classmethod accepts a different schema that is customized
+to each subclass inheriting from the Radiance Primitive.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A dictionary in the format below</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s2">&quot;modifier&quot;</span><span class="p">:</span> <span class="p">{},</span>  <span class="c1"># primitive modifier (Default: None)</span>
+<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;custom&quot;</span><span class="p">,</span>  <span class="c1"># primitive type</span>
+<span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># primitive identifier</span>
+<span class="s2">&quot;display_name&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>  <span class="c1"># primitive display name</span>
+<span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="p">[],</span>  <span class="c1"># values</span>
+<span class="s2">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_string">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primitive_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Radiance primitive from a string.</p>
+<p>If the primitive modifier is not void or it has other dependencies,
+the modifier and/or dependencies must also be part of the input string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.lock">
+<code class="sig-name descname"><span class="pre">lock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.lock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.to_dict">
+<code class="sig-name descname"><span class="pre">to_dict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Translate this object to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.to_radiance">
+<code class="sig-name descname"><span class="pre">to_radiance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">minimal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_modifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dependencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.to_radiance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return full radiance definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minimal</strong> – Boolean to note whether the radiance string should be written
+in a minimal format (with spaces instead of line breaks). Default: False.</p></li>
+<li><p><strong>include_modifier</strong> – Boolean to note whether the modifier of this primitive
+should be included in the string. Default: True.</p></li>
+<li><p><strong>include_dependencies</strong> – Boolean to note whether the dependencies of this
+primitive should be included in the string. Default: True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.unlock">
+<code class="sig-name descname"><span class="pre">unlock</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.unlock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.GEOMETRYTYPES">
+<code class="sig-name descname"><span class="pre">GEOMETRYTYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'bubble',</span> <span class="pre">'cone',</span> <span class="pre">'cup',</span> <span class="pre">'cylinder',</span> <span class="pre">'instance',</span> <span class="pre">'mesh',</span> <span class="pre">'polygon',</span> <span class="pre">'ring',</span> <span class="pre">'source',</span> <span class="pre">'sphere',</span> <span class="pre">'tube'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.GEOMETRYTYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.MATERIALTYPES">
+<code class="sig-name descname"><span class="pre">MATERIALTYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'BRTDfunc',</span> <span class="pre">'BSDF',</span> <span class="pre">'antimatter',</span> <span class="pre">'ashik2',</span> <span class="pre">'dielectric',</span> <span class="pre">'glass',</span> <span class="pre">'glow',</span> <span class="pre">'illum',</span> <span class="pre">'interface',</span> <span class="pre">'light',</span> <span class="pre">'metal',</span> <span class="pre">'metal2',</span> <span class="pre">'metdata',</span> <span class="pre">'metfunc',</span> <span class="pre">'mirror',</span> <span class="pre">'mist',</span> <span class="pre">'mixedfunc',</span> <span class="pre">'plasdata',</span> <span class="pre">'plasfunc',</span> <span class="pre">'plastic',</span> <span class="pre">'plastic2',</span> <span class="pre">'prism1',</span> <span class="pre">'prism2',</span> <span class="pre">'spotlight',</span> <span class="pre">'trans',</span> <span class="pre">'trans2',</span> <span class="pre">'transdata',</span> <span class="pre">'transfunc'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.MATERIALTYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.MIXTURETYPES">
+<code class="sig-name descname"><span class="pre">MIXTURETYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'mixdata',</span> <span class="pre">'mixfunc',</span> <span class="pre">'mixpict',</span> <span class="pre">'mixtext'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.MIXTURETYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.MODIFIERTYPES">
+<code class="sig-name descname"><span class="pre">MODIFIERTYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'BRTDfunc',</span> <span class="pre">'BSDF',</span> <span class="pre">'antimatter',</span> <span class="pre">'ashik2',</span> <span class="pre">'brightdata',</span> <span class="pre">'brightfunc',</span> <span class="pre">'brighttext',</span> <span class="pre">'colordata',</span> <span class="pre">'colorfunc',</span> <span class="pre">'colorpict',</span> <span class="pre">'colortext',</span> <span class="pre">'dielectric',</span> <span class="pre">'glass',</span> <span class="pre">'glow',</span> <span class="pre">'illum',</span> <span class="pre">'interface',</span> <span class="pre">'light',</span> <span class="pre">'metal',</span> <span class="pre">'metal2',</span> <span class="pre">'metdata',</span> <span class="pre">'metfunc',</span> <span class="pre">'mirror',</span> <span class="pre">'mist',</span> <span class="pre">'mixdata',</span> <span class="pre">'mixedfunc',</span> <span class="pre">'mixfunc',</span> <span class="pre">'mixpict',</span> <span class="pre">'mixtext',</span> <span class="pre">'plasdata',</span> <span class="pre">'plasfunc',</span> <span class="pre">'plastic',</span> <span class="pre">'plastic2',</span> <span class="pre">'prism1',</span> <span class="pre">'prism2',</span> <span class="pre">'spotlight',</span> <span class="pre">'texdata',</span> <span class="pre">'texfunc',</span> <span class="pre">'trans',</span> <span class="pre">'trans2',</span> <span class="pre">'transdata',</span> <span class="pre">'transfunc'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.MODIFIERTYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.NONEOPAQUETYPES">
+<code class="sig-name descname"><span class="pre">NONEOPAQUETYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'BRTDfunc',</span> <span class="pre">'BSDF',</span> <span class="pre">'dielectric',</span> <span class="pre">'glass',</span> <span class="pre">'mist',</span> <span class="pre">'mixfunc',</span> <span class="pre">'prism1',</span> <span class="pre">'prism2',</span> <span class="pre">'trans',</span> <span class="pre">'trans2',</span> <span class="pre">'transdata',</span> <span class="pre">'transfunc'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.NONEOPAQUETYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.PATTERNTYPES">
+<code class="sig-name descname"><span class="pre">PATTERNTYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'brightdata',</span> <span class="pre">'brightfunc',</span> <span class="pre">'brighttext',</span> <span class="pre">'colordata',</span> <span class="pre">'colorfunc',</span> <span class="pre">'colorpict',</span> <span class="pre">'colortext'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.PATTERNTYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.TEXTURETYPES">
+<code class="sig-name descname"><span class="pre">TEXTURETYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'texdata',</span> <span class="pre">'texfunc'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.TEXTURETYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.TYPES">
+<code class="sig-name descname"><span class="pre">TYPES</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'BRTDfunc',</span> <span class="pre">'BSDF',</span> <span class="pre">'antimatter',</span> <span class="pre">'ashik2',</span> <span class="pre">'brightdata',</span> <span class="pre">'brightfunc',</span> <span class="pre">'brighttext',</span> <span class="pre">'bubble',</span> <span class="pre">'colordata',</span> <span class="pre">'colorfunc',</span> <span class="pre">'colorpict',</span> <span class="pre">'colortext',</span> <span class="pre">'cone',</span> <span class="pre">'cup',</span> <span class="pre">'cylinder',</span> <span class="pre">'dielectric',</span> <span class="pre">'glass',</span> <span class="pre">'glow',</span> <span class="pre">'illum',</span> <span class="pre">'instance',</span> <span class="pre">'interface',</span> <span class="pre">'light',</span> <span class="pre">'mesh',</span> <span class="pre">'metal',</span> <span class="pre">'metal2',</span> <span class="pre">'metdata',</span> <span class="pre">'metfunc',</span> <span class="pre">'mirror',</span> <span class="pre">'mist',</span> <span class="pre">'mixdata',</span> <span class="pre">'mixedfunc',</span> <span class="pre">'mixfunc',</span> <span class="pre">'mixpict',</span> <span class="pre">'mixtext',</span> <span class="pre">'plasdata',</span> <span class="pre">'plasfunc',</span> <span class="pre">'plastic',</span> <span class="pre">'plastic2',</span> <span class="pre">'polygon',</span> <span class="pre">'prism1',</span> <span class="pre">'prism2',</span> <span class="pre">'ring',</span> <span class="pre">'source',</span> <span class="pre">'sphere',</span> <span class="pre">'spotlight',</span> <span class="pre">'texdata',</span> <span class="pre">'texfunc',</span> <span class="pre">'trans',</span> <span class="pre">'trans2',</span> <span class="pre">'transdata',</span> <span class="pre">'transfunc',</span> <span class="pre">'tube'}</span></em><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.TYPES" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.dependencies">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">dependencies</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of dependencies for this primitive.</p>
+<p>Additional dependencies can be added with the add_dependent method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.display_name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">display_name</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.display_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a string for the object name without any character restrictions.</p>
+<p>If not set, this will be equal to the identifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.identifier">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">identifier</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a text string for the unique primitive identifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_geometry">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_geometry</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether this object is a Radiance geometry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_material">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_material</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether this object is a material modifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_mixture">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_mixture</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_mixture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether this object is a mixture modifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_modifier">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_modifier</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_modifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean indicating whether this object is a Radiance modifier.</p>
+<p>Modifiers include materials, mixtures, textures and patterns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_opaque">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_opaque</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_opaque" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a boolean to indicate whether this primitive is opaque.</p>
+<p>This property is used to separate opaque and non-opaque geometries as
+well as modifiers.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_pattern">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_pattern</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether this object is a pattern modifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_texture">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_texture</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_texture" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a boolean noting whether this object is a texture modifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_void">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">is_void</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.is_void" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only true for a void.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.modifier">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">modifier</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.modifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set an object for the primitive modifier.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.type">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">type</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set a string for the primitive type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="honeybee_radiance.modifier.pattern.brighttext.Brighttext.values">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">values</span></code><a class="headerlink" href="#honeybee_radiance.modifier.pattern.brighttext.Brighttext.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set the values of the current primitive as a dictionary.</p>
+<p>The keys of this dictionary should be integers between 0 and 2.</p>
+<p>Usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will erase all values except the first line, which has 9 custom items</span>
+<span class="n">primitive</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s2">&quot;/usr/oakfloor.pic&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;frac(U)&quot;</span><span class="p">,</span> <span class="s2">&quot;frac(V)&quot;</span><span class="p">,</span>
+     <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="mf">1.1667</span><span class="p">],</span>
+    <span class="p">[],</span>
+    <span class="p">[]</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

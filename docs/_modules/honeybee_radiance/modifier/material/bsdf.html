@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance.modifier.material.bsdf &#8212; honeybee radiance  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          honeybee radiance</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/main.html#honeybee-radiance">honeybee-radiance</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/main.html#honeybee-radiance-config">config</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/mtx.html">mtx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop">honeybee-radiance mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-operate-two">operate-two</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-transpose">transpose</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/sunpath.html">sunpath</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath">honeybee-radiance sunpath</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-epw">epw</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-parse-hours">parse-hours</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-radiance">radiance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-wea">wea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/edit.html">edit</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit">honeybee-radiance edit</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit-add-room-sensors">add-room-sensors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit-mirror-model-sensors">mirror-model-sensors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/raytrace.html">raytrace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace">honeybee-radiance raytrace</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace-daylight-factor">daylight-factor</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace-rtrace">rtrace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid">honeybee-radiance grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-from-rooms">from-rooms</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-merge">merge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-split">split</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/lib.html">lib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib">honeybee-radiance lib</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-by-id">modifier-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-set-by-id">modifier-set-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-sets">modifier-sets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-sets-by-id">modifier-sets-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifiers">modifiers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifiers-by-id">modifiers-by-id</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/octree.html">octree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/octree.html#honeybee-radiance-octree">honeybee-radiance octree</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/octree.html#honeybee-radiance-octree-from-folder">from-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/dc.html">dc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc">honeybee-radiance dc</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc-scoeff">scoeff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc-scontrib">scontrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process">honeybee-radiance post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-average-row">average-row</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-count">count</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-sum-row">sum-row</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate">honeybee-radiance translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-radiant-enclosure-info">model-radiant-enclosure-info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-to-rad">model-to-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-to-rad-folder">model-to-rad-folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-modifiers-from-rad">modifiers-from-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-modifiers-to-rad">modifiers-to-rad</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/sky.html">sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky">honeybee-radiance sky</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-illuminance">illuminance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-mtx">mtx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-skydome">skydome</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-uniform-sky">uniform-sky</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_radiance.html">honeybee_radiance package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.cli.html">honeybee_radiance.cli package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.dc.html">honeybee_radiance.cli.dc module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.edit.html">honeybee_radiance.cli.edit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.grid.html">honeybee_radiance.cli.grid module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.lib.html">honeybee_radiance.cli.lib module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.mtx.html">honeybee_radiance.cli.mtx module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.octree.html">honeybee_radiance.cli.octree module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.postprocess.html">honeybee_radiance.cli.postprocess module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.raytrace.html">honeybee_radiance.cli.raytrace module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.sky.html">honeybee_radiance.cli.sky module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.sunpath.html">honeybee_radiance.cli.sunpath module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.translate.html">honeybee_radiance.cli.translate module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.util.html">honeybee_radiance.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.cli.html#module-honeybee_radiance.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.group.html">honeybee_radiance.dynamic.group module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.state.html">honeybee_radiance.dynamic.state module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.stategeo.html">honeybee_radiance.dynamic.stategeo module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html#module-honeybee_radiance.dynamic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.bubble.html">honeybee_radiance.geometry.bubble module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cone.html">honeybee_radiance.geometry.cone module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cup.html">honeybee_radiance.geometry.cup module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cylinder.html">honeybee_radiance.geometry.cylinder module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.geometrybase.html">honeybee_radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.instance.html">honeybee_radiance.geometry.instance module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.mesh.html">honeybee_radiance.geometry.mesh module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.polygon.html">honeybee_radiance.geometry.polygon module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.ring.html">honeybee_radiance.geometry.ring module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.source.html">honeybee_radiance.geometry.source module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.sphere.html">honeybee_radiance.geometry.sphere module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.tube.html">honeybee_radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html#module-honeybee_radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lib.html">honeybee_radiance.lib package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lib.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lib.modifiers.html">honeybee_radiance.lib.modifiers module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lib.modifiersets.html">honeybee_radiance.lib.modifiersets module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lib.html#module-honeybee_radiance.lib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html">honeybee_radiance.lightsource.sky package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.certainirradiance.html">honeybee_radiance.lightsource.sky.certainirradiance module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.cie.html">honeybee_radiance.lightsource.sky.cie module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.climatebased.html">honeybee_radiance.lightsource.sky.climatebased module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.hemisphere.html">honeybee_radiance.lightsource.sky.hemisphere module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.skydome.html">honeybee_radiance.lightsource.sky.skydome module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.skymatrix.html">honeybee_radiance.lightsource.sky.skymatrix module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.sunmatrix.html">honeybee_radiance.lightsource.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html#module-honeybee_radiance.lightsource.sky">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.dictutil.html">honeybee_radiance.lightsource.dictutil module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.ground.html">honeybee_radiance.lightsource.ground module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sunpath.html">honeybee_radiance.lightsource.sunpath module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#module-honeybee_radiance.lightsource">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.antimatter.html">honeybee_radiance.modifier.material.antimatter module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.ashik2.html">honeybee_radiance.modifier.material.ashik2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.brtdfunc.html">honeybee_radiance.modifier.material.brtdfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.bsdf.html">honeybee_radiance.modifier.material.bsdf module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.dielectric.html">honeybee_radiance.modifier.material.dielectric module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.glass.html">honeybee_radiance.modifier.material.glass module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.glow.html">honeybee_radiance.modifier.material.glow module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.illum.html">honeybee_radiance.modifier.material.illum module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.interface.html">honeybee_radiance.modifier.material.interface module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.light.html">honeybee_radiance.modifier.material.light module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.materialbase.html">honeybee_radiance.modifier.material.materialbase module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metal.html">honeybee_radiance.modifier.material.metal module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metal2.html">honeybee_radiance.modifier.material.metal2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metdata.html">honeybee_radiance.modifier.material.metdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metfunc.html">honeybee_radiance.modifier.material.metfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.mirror.html">honeybee_radiance.modifier.material.mirror module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.mist.html">honeybee_radiance.modifier.material.mist module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plasdata.html">honeybee_radiance.modifier.material.plasdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plasfunc.html">honeybee_radiance.modifier.material.plasfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plastic.html">honeybee_radiance.modifier.material.plastic module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plastic2.html">honeybee_radiance.modifier.material.plastic2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.prism1.html">honeybee_radiance.modifier.material.prism1 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.prism2.html">honeybee_radiance.modifier.material.prism2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.spotlight.html">honeybee_radiance.modifier.material.spotlight module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.trans.html">honeybee_radiance.modifier.material.trans module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.trans2.html">honeybee_radiance.modifier.material.trans2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.transdata.html">honeybee_radiance.modifier.material.transdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.transfunc.html">honeybee_radiance.modifier.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html#module-honeybee_radiance.modifier.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixdata.html">honeybee_radiance.modifier.mixture.mixdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixfunc.html">honeybee_radiance.modifier.mixture.mixfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixpict.html">honeybee_radiance.modifier.mixture.mixpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixtext.html">honeybee_radiance.modifier.mixture.mixtext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixturebase.html">honeybee_radiance.modifier.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html#module-honeybee_radiance.modifier.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brighttext.html">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texdata.html">honeybee_radiance.modifier.texture.texdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texfunc.html">honeybee_radiance.modifier.texture.texfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texturebase.html">honeybee_radiance.modifier.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html#module-honeybee_radiance.modifier.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.modifierbase.html">honeybee_radiance.modifier.modifierbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.annualdaylight.html">honeybee_radiance.postprocess.annualdaylight module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html#module-honeybee_radiance.postprocess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.properties.html">honeybee_radiance.properties package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.properties.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.aperture.html">honeybee_radiance.properties.aperture module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.door.html">honeybee_radiance.properties.door module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.face.html">honeybee_radiance.properties.face module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.model.html">honeybee_radiance.properties.model module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.room.html">honeybee_radiance.properties.room module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.shade.html">honeybee_radiance.properties.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.properties.html#module-honeybee_radiance.properties">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.config.html">honeybee_radiance.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.dictutil.html">honeybee_radiance.dictutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lightpath.html">honeybee_radiance.lightpath module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.modifierset.html">honeybee_radiance.modifierset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.mutil.html">honeybee_radiance.mutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.primitive.html">honeybee_radiance.primitive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.putil.html">honeybee_radiance.putil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.reader.html">honeybee_radiance.reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.sensor.html">honeybee_radiance.sensor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.sensorgrid.html">honeybee_radiance.sensorgrid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.view.html">honeybee_radiance.view module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.writer.html">honeybee_radiance.writer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_radiance.modifier.material.bsdf</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Radiance BSDF Material.</span>
+
+<span class="sd">http://radsite.lbl.gov/radiance/refer/ray.html#Glass</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">.materialbase</span> <span class="kn">import</span> <span class="n">Material</span>
+<span class="kn">from</span> <span class="nn">honeybee.config</span> <span class="kn">import</span> <span class="n">folders</span>
+<span class="kn">import</span> <span class="nn">honeybee.typing</span> <span class="k">as</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">ladybug_geometry.geometry3d.pointvector</span> <span class="k">as</span> <span class="nn">pv</span>
+
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span> <span class="k">as</span> <span class="n">StringIO</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>  <span class="c1"># python 2</span>
+        <span class="kn">from</span> <span class="nn">cStringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># IronPython</span>
+        <span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+
+
+<div class="viewcode-block" id="BSDF"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF">[docs]</a><span class="k">class</span> <span class="nc">BSDF</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Radiance BSDF material.</span>
+
+<span class="sd">    .. code-block:: shell</span>
+
+<span class="sd">        mod BSDF id</span>
+<span class="sd">        6+ thick BSDFfile ux uy uz funcfile transform</span>
+<span class="sd">        0</span>
+<span class="sd">        0|3|6|9</span>
+<span class="sd">            rfdif gfdif bfdif</span>
+<span class="sd">            rbdif gbdif bbdif</span>
+<span class="sd">            rtdif gtdif btdif</span>
+
+<span class="sd">    The __init__ method sets additional diffuse reflectance for front and back as well</span>
+<span class="sd">    as additional diffuse transmittance to 0. You can setup these values by using their</span>
+<span class="sd">    respective property.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bsdf_file: Path to an xml file. Data will NOT be cached in memory.</span>
+<span class="sd">        identifier: Text string for a unique Material ID. Must not contain spaces</span>
+<span class="sd">            or special characters. This will be used to identify the object across</span>
+<span class="sd">            a model and in the exported Radiance files. If None, the identifier</span>
+<span class="sd">            will be derived from the bsdf_file name. (Default: None)</span>
+<span class="sd">        up_orientation: (x, y ,z) vector that sets the hemisphere that the</span>
+<span class="sd">            BSDF material faces.  For materials that are symmetrical about</span>
+<span class="sd">            the face plane (like non-angled venetian blinds), this can be</span>
+<span class="sd">            any vector that is not perfectly normal to the face. For</span>
+<span class="sd">            asymmetrical materials like angled venetian blinds, this variable</span>
+<span class="sd">            should be coordinated with the direction the face are facing.</span>
+<span class="sd">            The default is set to (0.01, 0.01, 1.00), which should hopefully</span>
+<span class="sd">            not be perpendicular to any typical face.</span>
+<span class="sd">        thickness: Optional number to set the thickness of the BSDF material.</span>
+<span class="sd">            (default: 0).</span>
+<span class="sd">        modifier: Material modifier (Default: None).</span>
+<span class="sd">        function_file: Optional input for function file (Default: .).</span>
+<span class="sd">        transform: Optional transform input to to scale the thickness and reorient</span>
+<span class="sd">            the up vector (default: None).</span>
+<span class="sd">        angle_basis: BSDF file angle basis. If not provided by user honeybee tries to</span>
+<span class="sd">            find it by parsing BSDF file itself.</span>
+<span class="sd">        dependencies: A list of primitives that this primitive depends on. This</span>
+<span class="sd">            argument is only useful for defining advanced primitives where the</span>
+<span class="sd">            primitive is defined based on other primitives. (Default: [])</span>
+
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * identifier</span>
+<span class="sd">        * display_name</span>
+<span class="sd">        * bsdf_file</span>
+<span class="sd">        * up_orientation</span>
+<span class="sd">        * thickness</span>
+<span class="sd">        * function_file</span>
+<span class="sd">        * transform</span>
+<span class="sd">        * angle_basis</span>
+<span class="sd">        * front_diffuse_reflectance</span>
+<span class="sd">        * back_diffuse_reflectance</span>
+<span class="sd">        * diffuse_transmittance</span>
+<span class="sd">        * dependencies</span>
+<span class="sd">        * values</span>
+<span class="sd">        * modifier</span>
+<span class="sd">        * dependencies</span>
+<span class="sd">        * is_modifier</span>
+<span class="sd">        * is_material</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_bsdf_file&#39;</span><span class="p">,</span> <span class="s1">&#39;_up_orientation&#39;</span><span class="p">,</span> <span class="s1">&#39;_thickness&#39;</span><span class="p">,</span> <span class="s1">&#39;_function_file&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_transform&#39;</span><span class="p">,</span> <span class="s1">&#39;_angle_basis&#39;</span><span class="p">,</span> <span class="s1">&#39;_front_diffuse_reflectance&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;_back_diffuse_reflectance&#39;</span><span class="p">,</span> <span class="s1">&#39;_diffuse_transmittance&#39;</span><span class="p">)</span>
+
+    <span class="c1"># TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bsdf_file</span><span class="p">,</span> <span class="n">identifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">up_orientation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                 <span class="n">modifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">function_file</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">angle_basis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">dependencies</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create BSDF material.&quot;&quot;&quot;</span>
+        <span class="n">identifier</span> <span class="o">=</span> <span class="n">identifier</span> <span class="ow">or</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">Material</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">modifier</span><span class="o">=</span><span class="n">modifier</span><span class="p">,</span>
+                          <span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bsdf_file</span> <span class="o">=</span> <span class="n">bsdf_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angle_basis</span> <span class="o">=</span> <span class="n">angle_basis</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span> <span class="o">=</span> <span class="n">up_orientation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thickness</span> <span class="o">=</span> <span class="n">thickness</span> <span class="ow">or</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">function_file</span> <span class="o">=</span> <span class="n">function_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_front_diffuse_reflectance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_back_diffuse_reflectance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diffuse_transmittance</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_values</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_update_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="s2">&quot;update value dictionaries.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thickness</span><span class="p">),</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bsdf_file</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">function_file</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_transmittance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_transmittance</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bsdf_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Path to BSDF file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bsdf_file</span>
+
+    <span class="nd">@bsdf_file</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">bsdf_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bsdf_file</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span>
+            <span class="n">bsdf_file</span><span class="p">),</span> <span class="s1">&#39;No such file at: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">bsdf_file</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">),</span> \
+            <span class="s1">&#39;BSDF file must be an xml file: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bsdf_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_angle_basis&#39;</span><span class="p">):</span>
+            <span class="c1"># first time that file is assigned</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">find_angle_basis</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">up_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Up normal vector</span>
+
+<span class="sd">        (x, y ,z) vector that sets the hemisphere that the</span>
+<span class="sd">        BSDF material faces.  For materials that are symmetrical about</span>
+<span class="sd">        the face plane (like non-angled venetian blinds), this can be</span>
+<span class="sd">        any vector that is not perfectly normal to the face. For</span>
+<span class="sd">        asymmetrical materials like angled venetian blinds, this variable</span>
+<span class="sd">        should be coordinated with the direction the face are facing.</span>
+<span class="sd">        The default is set to (0.01, 0.01, 1.00), which should hopefully</span>
+<span class="sd">        not be perpendicular to any typical face.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_up_orientation</span>
+
+    <span class="nd">@up_orientation</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">up_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">vector</span><span class="p">:</span>
+            <span class="n">up_vector</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Vector3D</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vector</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">up_vector</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Vector3D</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_up_orientation</span> <span class="o">=</span> <span class="n">up_vector</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Thickness.</span>
+
+<span class="sd">        Optional number to set the thickness of the BSDF material (default: 0).</span>
+
+<span class="sd">        If a view or shadow ray hits a BSDF proxy with non-zero thickness, it will pass</span>
+<span class="sd">        directly through as if the surface were not there. Similar to the illum type,</span>
+<span class="sd">        this permits direct viewing and shadow testing of complex geometry. The BSDF is</span>
+<span class="sd">        used when a scattered (indirect) ray hits the surface, and any transmitted sample</span>
+<span class="sd">        rays will be offset by the thickness amount to avoid the hidden geometry and</span>
+<span class="sd">        gather samples from the other side. In this manner, BSDF surfaces can improve the</span>
+<span class="sd">        results for indirect scattering from complex systems without sacrificing</span>
+<span class="sd">        appearance or shadow accuracy. If the BSDF has transmission and back-side</span>
+<span class="sd">        reflection data, a parallel BSDF surface may be placed slightly less than the</span>
+<span class="sd">        given thickness away from the front surface to enclose the complex geometry on</span>
+<span class="sd">        both sides. The sign of the thickness is important, as it indicates whether the</span>
+<span class="sd">        proxied geometry is behind the BSDF surface (when thickness is positive) or in</span>
+<span class="sd">        front (when thickness is negative)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thickness</span>
+
+    <span class="nd">@thickness</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_thickness</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">function_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Path to function file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_function_file</span>
+
+    <span class="nd">@function_file</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">function_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_function_file</span> <span class="o">=</span> <span class="n">value</span> <span class="ow">or</span> <span class="s1">&#39;.&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Transform</span>
+
+<span class="sd">        Optional transform input to to scale the thickness and reorient the up vector</span>
+<span class="sd">        (default: None).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span>
+
+    <span class="nd">@transform</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">angle_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;BSDF file angle basis.</span>
+
+<span class="sd">        Valid values are Klems Full, Klems Half, Klems Quarter and TensorTree</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angle_basis</span>
+
+    <span class="nd">@angle_basis</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">angle_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="s1">&#39;Klems Full&#39;</span><span class="p">,</span> <span class="s1">&#39;Klems Half&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Klems Quarter&#39;</span><span class="p">,</span> <span class="s1">&#39;TensorTree&#39;</span><span class="p">),</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid angle basis.&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_angle_basis</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_angle_basis</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_angle_basis</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bsdf_file</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">front_diffuse_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Additional front diffuse reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_front_diffuse_reflectance</span>
+
+    <span class="nd">@front_diffuse_reflectance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">front_diffuse_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">tuple_with_length</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_front_diffuse_reflectance</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">back_diffuse_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Additional back diffuse reflectance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_diffuse_reflectance</span>
+
+    <span class="nd">@back_diffuse_reflectance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">back_diffuse_reflectance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">tuple_with_length</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_back_diffuse_reflectance</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">diffuse_transmittance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Additional diffuse transmittance.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diffuse_transmittance</span>
+
+    <span class="nd">@diffuse_transmittance</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">diffuse_transmittance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">tuple_with_length</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_diffuse_transmittance</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="BSDF.from_primitive_dict"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.from_primitive_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_primitive_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">primitive_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a BSDF from a primitive dict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary in the format below.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">            &quot;modifier&quot;: {},  # primitive modifier (Default: None)</span>
+<span class="sd">            &quot;type&quot;: &quot;BSDF&quot;,  # primitive type</span>
+<span class="sd">            &quot;identifier&quot;: &quot;&quot;,  # primitive identifier</span>
+<span class="sd">            &quot;display_name&quot;: &quot;&quot;,  # primitive display name</span>
+<span class="sd">            &quot;values&quot;: []  # values,</span>
+<span class="sd">            &quot;dependencies&quot;: []</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">primitive_dict</span><span class="p">,</span> <span class="s1">&#39;Input dictionary is missing &quot;type&quot;.&#39;</span>
+        <span class="k">if</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Type must be </span><span class="si">%s</span><span class="s1"> not </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;BSDF&#39;</span><span class="p">,</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="n">modifier</span><span class="p">,</span> <span class="n">dependencies</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">filter_dict_input</span><span class="p">(</span><span class="n">primitive_dict</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">extra_values</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">cls_</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">thickness</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">bsdf_file</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span>
+            <span class="n">up_orientation</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span>
+            <span class="n">modifier</span><span class="o">=</span><span class="n">modifier</span><span class="p">,</span>
+            <span class="n">function_file</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">7</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">angle_basis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">primitive_dict</span> <span class="ow">and</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+
+        <span class="c1"># this might look redundant but it is NOT. see glass for explanation.</span>
+        <span class="n">cls_</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">primitive_dict</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">extra_values</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cls_</span>
+
+        <span class="n">values_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_values</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">values_length</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> \
+            <span class="s1">&#39;Length of real values should be 3, 6 or 9 not </span><span class="si">%d</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">values_length</span>
+
+        <span class="k">if</span> <span class="n">values_length</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span> <span class="o">=</span> <span class="n">extra_values</span>
+        <span class="k">elif</span> <span class="n">values_length</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span> <span class="o">=</span> <span class="n">extra_values</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span> <span class="o">=</span> <span class="n">extra_values</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span> <span class="o">=</span> <span class="n">extra_values</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span> <span class="o">=</span> <span class="n">extra_values</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">diffuse_transmittance</span> <span class="o">=</span> <span class="n">extra_values</span><span class="p">[</span><span class="mi">6</span><span class="p">:]</span>
+
+        <span class="k">return</span> <span class="n">cls_</span></div>
+
+<div class="viewcode-block" id="BSDF.from_dict"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">folder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize a BSDF from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A dictionary in the format below.</span>
+<span class="sd">            folder: Path to a destination folder to save the bsdf file.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">            &quot;modifier&quot;: {},  # material modifier (Default: None)</span>
+<span class="sd">            &quot;type&quot;: &quot;BSDF&quot;,  # Material type</span>
+<span class="sd">            &quot;identifier&quot;: string,  # Material identifer</span>
+<span class="sd">            &quot;display_name&quot;: string  # Material display name</span>
+<span class="sd">            &quot;up_orientation&quot;: [number, number, number],</span>
+<span class="sd">            &quot;thickness&quot;: number,  # default: 0</span>
+<span class="sd">            &quot;function_file&quot;: string,  # default: &#39;.&#39;</span>
+<span class="sd">            &quot;transform&quot;: string,  # default: None</span>
+<span class="sd">            &quot;bsdf_data&quot;: string,  # bsdf file data as string</span>
+<span class="sd">            &quot;front_diffuse_reflectance&quot;: [number, number, number],  # optional</span>
+<span class="sd">            &quot;back_diffuse_reflectance&quot;: [number, number, number],  # optional</span>
+<span class="sd">            &quot;diffuse_transmittance&quot;: [number, number, number]  # optional</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> <span class="s1">&#39;Input dictionary is missing &quot;type&quot;.&#39;</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Type must be </span><span class="si">%s</span><span class="s1"> not </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;BSDF&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="n">modifier</span><span class="p">,</span> <span class="n">dependencies</span> <span class="o">=</span> <span class="n">Material</span><span class="o">.</span><span class="n">filter_dict_input</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># check folder and create it if it does not exist</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folders</span><span class="o">.</span><span class="n">default_simulation_folder</span><span class="p">,</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">)</span> \
+            <span class="k">if</span> <span class="n">folder</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">folder</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span>
+
+        <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.xml&#39;</span> <span class="o">%</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">])</span>
+        <span class="c1"># write to xml file</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">decompress_to_file</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;bsdf_data&#39;</span><span class="p">],</span> <span class="n">fp</span><span class="p">)</span>
+
+        <span class="n">cls_</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">bsdf_file</span><span class="o">=</span><span class="n">fp</span><span class="p">,</span>
+            <span class="n">identifier</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">],</span>
+            <span class="n">up_orientation</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;up_orientation&#39;</span><span class="p">],</span>
+            <span class="n">thickness</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;thickness&#39;</span><span class="p">],</span>
+            <span class="n">modifier</span><span class="o">=</span><span class="n">modifier</span><span class="p">,</span>
+            <span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;display_name&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s1">&#39;front_diffuse_reflectance&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">cls_</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;front_diffuse_reflectance&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s1">&#39;back_diffuse_reflectance&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">cls_</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;back_diffuse_reflectance&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;diffuse_transmittance&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="n">cls_</span><span class="o">.</span><span class="n">diffuse_transmittance</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;diffuse_transmittance&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">cls_</span></div>
+
+<div class="viewcode-block" id="BSDF.to_dict"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert BSDF material to a dictionary.&quot;&quot;&quot;</span>
+        <span class="n">bsdf_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compress_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bsdf_file</span><span class="p">)</span>
+
+        <span class="n">bsdf_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;modifier&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">modifier</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;BSDF&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;identifier&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span>
+            <span class="s1">&#39;up_orientation&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="o">.</span><span class="n">to_array</span><span class="p">(),</span>
+            <span class="s1">&#39;thickness&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span>
+            <span class="s1">&#39;function_file&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function_file</span><span class="p">,</span>
+            <span class="s1">&#39;transform&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>
+            <span class="s1">&#39;bsdf_data&#39;</span><span class="p">:</span> <span class="n">bsdf_data</span><span class="p">,</span>
+            <span class="s1">&#39;dependencies&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">dep</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dependencies</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">bsdf_dict</span><span class="p">[</span><span class="s1">&#39;display_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span><span class="p">:</span>
+            <span class="n">bsdf_dict</span><span class="p">[</span><span class="s1">&#39;front_diffuse_reflectance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">front_diffuse_reflectance</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span><span class="p">:</span>
+                <span class="n">bsdf_dict</span><span class="p">[</span><span class="s1">&#39;back_diffuse_reflectance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">back_diffuse_reflectance</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_transmittance</span><span class="p">:</span>
+                    <span class="n">bsdf_dict</span><span class="p">[</span><span class="s1">&#39;diffuse_transmittance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diffuse_transmittance</span>
+
+        <span class="k">return</span> <span class="n">bsdf_dict</span></div>
+
+<div class="viewcode-block" id="BSDF.find_angle_basis"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.find_angle_basis">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">find_angle_basis</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">,</span> <span class="n">max_ln_count</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find angle basis in an xml file.&quot;&quot;&quot;</span>
+        <span class="c1"># find data structure first</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inf</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&lt;IncidentDataStructure&gt;&#39;</span><span class="p">):</span>
+                    <span class="c1"># get data structure</span>
+                    <span class="n">data_structure</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;IncidentDataStructure&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+                        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/IncidentDataStructure&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">break</span>
+                <span class="k">assert</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">max_ln_count</span><span class="p">,</span> \
+                    <span class="s1">&#39;Failed to find IncidentDataStructure in first </span><span class="si">%d</span><span class="s1"> lines. &#39;</span> \
+                    <span class="s1">&#39;You can check the file by opening the file in a text editor &#39;</span> \
+                    <span class="s1">&#39;and search for &lt;IncidentDataStructure&gt;&#39;</span> <span class="o">%</span> <span class="n">max_ln_count</span>
+
+        <span class="c1"># now find the angle basis</span>
+        <span class="k">if</span> <span class="n">data_structure</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TensorTree&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s1">&#39;TensorTree&#39;</span>
+        <span class="k">elif</span> <span class="n">data_structure</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;columns&#39;</span><span class="p">:</span>
+            <span class="c1"># look for AngleBasisName</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">bsdf_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+                    <span class="nb">next</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">count</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">inf</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&lt;AngleBasisName&gt;&#39;</span><span class="p">):</span>
+                        <span class="n">angle_basis</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;AngleBasisName&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&lt;/AngleBasisName&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;LBNL/&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+                            <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                        <span class="k">return</span> <span class="n">angle_basis</span>
+                    <span class="k">assert</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">max_ln_count</span><span class="p">,</span> \
+                        <span class="s1">&#39;Failed to find AngleBasisName in first </span><span class="si">%d</span><span class="s1"> lines. &#39;</span> \
+                        <span class="s1">&#39;You can check the file by opening the file in a text editor &#39;</span> \
+                        <span class="s1">&#39;and search for &lt;AngleBasisName&gt;&#39;</span> <span class="o">%</span> <span class="n">max_ln_count</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Unknown IncidentDataStructure: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_structure</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BSDF.compress_file"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.compress_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">compress_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Compress bsdf data in an XML file to a string.&quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Research better ways to compress the file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">input_file</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">content</span></div>
+
+<div class="viewcode-block" id="BSDF.decompress_to_file"><a class="viewcode-back" href="../../../../honeybee_radiance.modifier.material.bsdf.html#honeybee_radiance.modifier.material.bsdf.BSDF.decompress_to_file">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">decompress_to_file</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write bsdf data string to a file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+            <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mod</span><span class="p">,</span> <span class="n">depend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dup_mod_and_depend</span><span class="p">()</span>
+        <span class="n">new_bsdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bsdf_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">up_orientation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">thickness</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">function_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_basis</span><span class="p">,</span> <span class="n">depend</span><span class="p">)</span>
+        <span class="n">new_bsdf</span><span class="o">.</span><span class="n">_front_diffuse_reflectance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_front_diffuse_reflectance</span>
+        <span class="n">new_bsdf</span><span class="o">.</span><span class="n">_back_diffuse_reflectance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_back_diffuse_reflectance</span>
+        <span class="n">new_bsdf</span><span class="o">.</span><span class="n">_diffuse_transmittance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_diffuse_transmittance</span>
+        <span class="n">new_bsdf</span><span class="o">.</span><span class="n">_display_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_name</span>
+        <span class="k">return</span> <span class="n">new_bsdf</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>honeybee_radiance.lightsource.sky.cie &#8212; honeybee radiance  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css" />
+    <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script src="../../../../_static/jquery.js"></script>
+    <script src="../../../../_static/underscore.js"></script>
+    <script src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../../../index.html">
+          honeybee radiance</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli/index.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/main.html#honeybee-radiance">honeybee-radiance</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/main.html#honeybee-radiance-config">config</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/mtx.html">mtx</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop">honeybee-radiance mtxop</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-operate-three">operate-three</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-operate-two">operate-two</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/mtx.html#honeybee-radiance-mtxop-transpose">transpose</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/sunpath.html">sunpath</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath">honeybee-radiance sunpath</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-epw">epw</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-parse-hours">parse-hours</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-radiance">radiance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sunpath.html#honeybee-radiance-sunpath-wea">wea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/edit.html">edit</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit">honeybee-radiance edit</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit-add-room-sensors">add-room-sensors</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/edit.html#honeybee-radiance-edit-mirror-model-sensors">mirror-model-sensors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/raytrace.html">raytrace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace">honeybee-radiance raytrace</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace-daylight-factor">daylight-factor</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/raytrace.html#honeybee-radiance-raytrace-rtrace">rtrace</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/grid.html">grid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid">honeybee-radiance grid</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-from-rooms">from-rooms</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-merge">merge</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/grid.html#honeybee-radiance-grid-split">split</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/lib.html">lib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib">honeybee-radiance lib</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-by-id">modifier-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-set-by-id">modifier-set-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-sets">modifier-sets</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifier-sets-by-id">modifier-sets-by-id</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifiers">modifiers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/lib.html#honeybee-radiance-lib-modifiers-by-id">modifiers-by-id</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/octree.html">octree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/octree.html#honeybee-radiance-octree">honeybee-radiance octree</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/octree.html#honeybee-radiance-octree-from-folder">from-folder</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/dc.html">dc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc">honeybee-radiance dc</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc-scoeff">scoeff</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/dc.html#honeybee-radiance-dc-scontrib">scontrib</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/postprocess.html">postprocess</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process">honeybee-radiance post-process</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-annual-daylight">annual-daylight</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-average-row">average-row</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-convert-to-binary">convert-to-binary</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-count">count</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/postprocess.html#honeybee-radiance-post-process-sum-row">sum-row</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/translate.html">translate</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate">honeybee-radiance translate</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-radiant-enclosure-info">model-radiant-enclosure-info</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-to-rad">model-to-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-model-to-rad-folder">model-to-rad-folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-modifiers-from-rad">modifiers-from-rad</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/translate.html#honeybee-radiance-translate-modifiers-to-rad">modifiers-to-rad</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../cli/sky.html">sky</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky">honeybee-radiance sky</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-illuminance">illuminance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-mtx">mtx</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-skydome">skydome</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../cli/sky.html#honeybee-radiance-sky-uniform-sky">uniform-sky</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../honeybee_radiance.html">honeybee_radiance package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.cli.html">honeybee_radiance.cli package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.cli.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.dc.html">honeybee_radiance.cli.dc module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.edit.html">honeybee_radiance.cli.edit module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.grid.html">honeybee_radiance.cli.grid module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.lib.html">honeybee_radiance.cli.lib module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.mtx.html">honeybee_radiance.cli.mtx module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.octree.html">honeybee_radiance.cli.octree module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.postprocess.html">honeybee_radiance.cli.postprocess module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.raytrace.html">honeybee_radiance.cli.raytrace module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.sky.html">honeybee_radiance.cli.sky module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.sunpath.html">honeybee_radiance.cli.sunpath module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.translate.html">honeybee_radiance.cli.translate module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.cli.util.html">honeybee_radiance.cli.util module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.cli.html#module-honeybee_radiance.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html">honeybee_radiance.dynamic package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.group.html">honeybee_radiance.dynamic.group module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.state.html">honeybee_radiance.dynamic.state module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.stategeo.html">honeybee_radiance.dynamic.stategeo module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.dynamic.html#module-honeybee_radiance.dynamic">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html">honeybee_radiance.geometry package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.bubble.html">honeybee_radiance.geometry.bubble module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cone.html">honeybee_radiance.geometry.cone module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cup.html">honeybee_radiance.geometry.cup module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.cylinder.html">honeybee_radiance.geometry.cylinder module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.geometrybase.html">honeybee_radiance.geometry.geometrybase module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.instance.html">honeybee_radiance.geometry.instance module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.mesh.html">honeybee_radiance.geometry.mesh module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.polygon.html">honeybee_radiance.geometry.polygon module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.ring.html">honeybee_radiance.geometry.ring module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.source.html">honeybee_radiance.geometry.source module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.sphere.html">honeybee_radiance.geometry.sphere module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.geometry.tube.html">honeybee_radiance.geometry.tube module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.geometry.html#module-honeybee_radiance.geometry">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lib.html">honeybee_radiance.lib package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lib.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lib.modifiers.html">honeybee_radiance.lib.modifiers module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lib.modifiersets.html">honeybee_radiance.lib.modifiersets module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lib.html#module-honeybee_radiance.lib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html">honeybee_radiance.lightsource package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html">honeybee_radiance.lightsource.sky package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.certainirradiance.html">honeybee_radiance.lightsource.sky.certainirradiance module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.cie.html">honeybee_radiance.lightsource.sky.cie module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.climatebased.html">honeybee_radiance.lightsource.sky.climatebased module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.hemisphere.html">honeybee_radiance.lightsource.sky.hemisphere module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.skydome.html">honeybee_radiance.lightsource.sky.skydome module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.skymatrix.html">honeybee_radiance.lightsource.sky.skymatrix module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.sunmatrix.html">honeybee_radiance.lightsource.sky.sunmatrix module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sky.html#module-honeybee_radiance.lightsource.sky">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.dictutil.html">honeybee_radiance.lightsource.dictutil module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.ground.html">honeybee_radiance.lightsource.ground module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.sunpath.html">honeybee_radiance.lightsource.sunpath module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.lightsource.html#module-honeybee_radiance.lightsource">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html">honeybee_radiance.modifier package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html">honeybee_radiance.modifier.material package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.antimatter.html">honeybee_radiance.modifier.material.antimatter module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.ashik2.html">honeybee_radiance.modifier.material.ashik2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.brtdfunc.html">honeybee_radiance.modifier.material.brtdfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.bsdf.html">honeybee_radiance.modifier.material.bsdf module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.dielectric.html">honeybee_radiance.modifier.material.dielectric module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.glass.html">honeybee_radiance.modifier.material.glass module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.glow.html">honeybee_radiance.modifier.material.glow module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.illum.html">honeybee_radiance.modifier.material.illum module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.interface.html">honeybee_radiance.modifier.material.interface module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.light.html">honeybee_radiance.modifier.material.light module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.materialbase.html">honeybee_radiance.modifier.material.materialbase module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metal.html">honeybee_radiance.modifier.material.metal module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metal2.html">honeybee_radiance.modifier.material.metal2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metdata.html">honeybee_radiance.modifier.material.metdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.metfunc.html">honeybee_radiance.modifier.material.metfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.mirror.html">honeybee_radiance.modifier.material.mirror module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.mist.html">honeybee_radiance.modifier.material.mist module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plasdata.html">honeybee_radiance.modifier.material.plasdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plasfunc.html">honeybee_radiance.modifier.material.plasfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plastic.html">honeybee_radiance.modifier.material.plastic module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.plastic2.html">honeybee_radiance.modifier.material.plastic2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.prism1.html">honeybee_radiance.modifier.material.prism1 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.prism2.html">honeybee_radiance.modifier.material.prism2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.spotlight.html">honeybee_radiance.modifier.material.spotlight module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.trans.html">honeybee_radiance.modifier.material.trans module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.trans2.html">honeybee_radiance.modifier.material.trans2 module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.transdata.html">honeybee_radiance.modifier.material.transdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.transfunc.html">honeybee_radiance.modifier.material.transfunc module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.material.html#module-honeybee_radiance.modifier.material">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html">honeybee_radiance.modifier.mixture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixdata.html">honeybee_radiance.modifier.mixture.mixdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixfunc.html">honeybee_radiance.modifier.mixture.mixfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixpict.html">honeybee_radiance.modifier.mixture.mixpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixtext.html">honeybee_radiance.modifier.mixture.mixtext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.mixturebase.html">honeybee_radiance.modifier.mixture.mixturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.mixture.html#module-honeybee_radiance.modifier.mixture">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html">honeybee_radiance.modifier.pattern package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brightdata.html">honeybee_radiance.modifier.pattern.brightdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brightfunc.html">honeybee_radiance.modifier.pattern.brightfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.brighttext.html">honeybee_radiance.modifier.pattern.brighttext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colordata.html">honeybee_radiance.modifier.pattern.colordata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colorfunc.html">honeybee_radiance.modifier.pattern.colorfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colorpict.html">honeybee_radiance.modifier.pattern.colorpict module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.colortext.html">honeybee_radiance.modifier.pattern.colortext module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.patternbase.html">honeybee_radiance.modifier.pattern.patternbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.pattern.html#module-honeybee_radiance.modifier.pattern">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html">honeybee_radiance.modifier.texture package</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html#submodules">Submodules</a><ul>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texdata.html">honeybee_radiance.modifier.texture.texdata module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texfunc.html">honeybee_radiance.modifier.texture.texfunc module</a></li>
+<li class="toctree-l8"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.texturebase.html">honeybee_radiance.modifier.texture.texturebase module</a></li>
+</ul>
+</li>
+<li class="toctree-l7"><a class="reference internal" href="../../../../honeybee_radiance.modifier.texture.html#module-honeybee_radiance.modifier.texture">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.modifier.modifierbase.html">honeybee_radiance.modifier.modifierbase module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.modifier.html#module-honeybee_radiance.modifier">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html">honeybee_radiance.postprocess package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.annualdaylight.html">honeybee_radiance.postprocess.annualdaylight module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.postprocess.html#module-honeybee_radiance.postprocess">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.properties.html">honeybee_radiance.properties package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.properties.html#submodules">Submodules</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.aperture.html">honeybee_radiance.properties.aperture module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.door.html">honeybee_radiance.properties.door module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.face.html">honeybee_radiance.properties.face module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.model.html">honeybee_radiance.properties.model module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.room.html">honeybee_radiance.properties.room module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../../../../honeybee_radiance.properties.shade.html">honeybee_radiance.properties.shade module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../honeybee_radiance.properties.html#module-honeybee_radiance.properties">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.config.html">honeybee_radiance.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.dictutil.html">honeybee_radiance.dictutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.lightpath.html">honeybee_radiance.lightpath module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.modifierset.html">honeybee_radiance.modifierset module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.mutil.html">honeybee_radiance.mutil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.primitive.html">honeybee_radiance.primitive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.putil.html">honeybee_radiance.putil module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.reader.html">honeybee_radiance.reader module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.sensor.html">honeybee_radiance.sensor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.sensorgrid.html">honeybee_radiance.sensorgrid module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.view.html">honeybee_radiance.view module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../honeybee_radiance.writer.html">honeybee_radiance.writer module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../honeybee_radiance.html#module-honeybee_radiance">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cli/index.html">CLI Docs</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules.html">honeybee_radiance</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for honeybee_radiance.lightsource.sky.cie</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Generate CIE standard sky.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">._skybase</span> <span class="kn">import</span> <span class="n">_PointInTime</span>
+<span class="kn">from</span> <span class="nn">.hemisphere</span> <span class="kn">import</span> <span class="n">Hemisphere</span>
+<span class="kn">from</span> <span class="nn">..ground</span> <span class="kn">import</span> <span class="n">Ground</span>
+<span class="kn">import</span> <span class="nn">honeybee.typing</span> <span class="k">as</span> <span class="nn">typing</span>
+<span class="kn">import</span> <span class="nn">ladybug.futil</span> <span class="k">as</span> <span class="nn">futil</span>
+<span class="kn">from</span> <span class="nn">ladybug.location</span> <span class="kn">import</span> <span class="n">Location</span>
+<span class="kn">from</span> <span class="nn">ladybug.sunpath</span> <span class="kn">import</span> <span class="n">Sunpath</span>
+
+
+<div class="viewcode-block" id="CIE"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE">[docs]</a><span class="k">class</span> <span class="nc">CIE</span><span class="p">(</span><span class="n">_PointInTime</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CIE sky.</span>
+
+<span class="sd">    The output of CIE sky is similar to using Radiance&#39;s gensky command. For more</span>
+<span class="sd">    information see gensky documentation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        altitude: Solar altitude. The altitude is measured in degrees above the horizon.</span>
+<span class="sd">        azimuth: Solar azimuth. The azimuth is measured in degrees east of North. East is</span>
+<span class="sd">            90, South is 180 and West is 270. Note that this input is different from</span>
+<span class="sd">            Radiance convention. In Radiance the azimuth degrees are measured in west of</span>
+<span class="sd">            South.</span>
+<span class="sd">        sky_type: An integer between 0..5 to indicate CIE Sky Type.</span>
+
+<span class="sd">            * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky distribution</span>
+<span class="sd">              function, a source description of the sun is generated.</span>
+<span class="sd">            * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will</span>
+<span class="sd">              correspond to a standard CIE clear day.</span>
+<span class="sd">            * 2 = Intermediate with sun. In addition to the sky distribution, a (somewhat</span>
+<span class="sd">              subdued) sun is generated.</span>
+<span class="sd">            * 3 = Intermediate without sun. The sky will correspond to a standard CIE</span>
+<span class="sd">              intermediate day.</span>
+<span class="sd">            * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE</span>
+<span class="sd">              overcast day.</span>
+<span class="sd">            * 5 = Uniform cloudy sky. The sky distribution will be completely uniform.</span>
+
+<span class="sd">        ground_reflectance: Average ground reflectance (Default: 0.2).</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * altitude</span>
+<span class="sd">        * azimuth</span>
+<span class="sd">        * sky_type</span>
+<span class="sd">        * sky_type_radiance</span>
+<span class="sd">        * sky_type_human_readable</span>
+<span class="sd">        * ground_hemisphere</span>
+<span class="sd">        * sky_hemisphere</span>
+<span class="sd">        * ground_reflectance</span>
+<span class="sd">        * is_point_in_time</span>
+<span class="sd">        * is_climate_based</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">SKYTYPES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;+s&#39;</span><span class="p">,</span> <span class="s1">&#39;Sunny sky with sun&#39;</span><span class="p">),</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;Sunny sky without sun&#39;</span><span class="p">),</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;+i&#39;</span><span class="p">,</span> <span class="s1">&#39;intermediate sky with sun&#39;</span><span class="p">),</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;intermediate sky without sun&#39;</span><span class="p">),</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;Cloudy sky&#39;</span><span class="p">),</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;-u&#39;</span><span class="p">,</span> <span class="s1">&#39;Uniform cloudy sky&#39;</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;_altitude&#39;</span><span class="p">,</span> <span class="s1">&#39;_azimuth&#39;</span><span class="p">,</span> <span class="s1">&#39;_sky_type&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">altitude</span><span class="p">,</span> <span class="n">azimuth</span><span class="p">,</span> <span class="n">sky_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a CIE standard sky.&quot;&quot;&quot;</span>
+        <span class="n">_PointInTime</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span> <span class="o">=</span> <span class="n">altitude</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">=</span> <span class="n">azimuth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span> <span class="o">=</span> <span class="n">sky_type</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">altitude</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a number between -90 and 90 for the solar altitude.</span>
+
+<span class="sd">        The altitude is measured in degrees above the horizon.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_altitude</span>
+
+    <span class="nd">@altitude</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">altitude</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">float_in_range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">-</span><span class="mi">90</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;Solar altitude&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_altitude</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">azimuth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get or set a number between 0 and 360 for the solar azimuth.</span>
+
+<span class="sd">        The azimuth is measured in degrees east of North. East is 90, South is 180 and</span>
+<span class="sd">        West is 270. Note that this input is different from Radiance convention. In</span>
+<span class="sd">        Radiance the azimuth degrees are measured in west of South.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span>
+
+    <span class="nd">@azimuth</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">azimuth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">float_in_range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">360</span><span class="p">,</span> <span class="s1">&#39;Solar azimuth&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_azimuth</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sky_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get and set sky type.</span>
+
+<span class="sd">        An integer between 0 and 5 to indicate CIE Sky Type.</span>
+
+<span class="sd">        * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky distribution</span>
+<span class="sd">          function, a source description of the sun is generated.</span>
+<span class="sd">        * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will</span>
+<span class="sd">          correspond to a standard CIE clear day.</span>
+<span class="sd">        * 2 = Intermediate with sun. In addition to the sky distribution, a (somewhat</span>
+<span class="sd">          subdued) sun is generated.</span>
+<span class="sd">        * 3 = Intermediate without sun. The sky will correspond to a standard CIE</span>
+<span class="sd">          intermediate day.</span>
+<span class="sd">        * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE</span>
+<span class="sd">          overcast day.</span>
+<span class="sd">        * 5 = Uniform cloudy sky. The sky distribution will be completely uniform.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sky_type</span>
+
+    <span class="nd">@sky_type</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">sky_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">int_in_range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;CIE sky type&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sky_type</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sky_type_human_readable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A human readable description of sky type.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SKYTYPES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sky_type_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sky type in Radiance format.</span>
+
+<span class="sd">        * +s = Sunny with sun. Sunny sky with sun. In addition to the sky distribution</span>
+<span class="sd">          function, a source description of the sun is generated.</span>
+<span class="sd">        * -s = Sunny without sun. Sunny sky without sun. The sky distribution will</span>
+<span class="sd">          correspond to a standard CIE clear day.</span>
+<span class="sd">        * +i = Intermediate with sun. In addition to the sky distribution, a (somewhat</span>
+<span class="sd">          subdued) sun is generated.</span>
+<span class="sd">        * -i = Intermediate without sun. The sky will correspond to a standard CIE</span>
+<span class="sd">          intermediate day.</span>
+<span class="sd">        * -c = Cloudy sky. The sky distribution will correspond to a standard CIE</span>
+<span class="sd">          overcast day.</span>
+<span class="sd">        * -u = Uniform cloudy sky. The sky distribution will be completely uniform.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">SKYTYPES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CIE.from_lat_long"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.from_lat_long">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_lat_long</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">time_zone</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">sky_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">north_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create sky with certain illuminance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            latitude: Location latitude between -90 and 90.</span>
+<span class="sd">            longitude:Location longitude between -180 (west) and 180 (east).</span>
+<span class="sd">            timezone: Time zone between -12 hours (west) and +14 hours (east).</span>
+<span class="sd">            month: An intger between 1-12 for month.</span>
+<span class="sd">            day: An intger between 1 to 28-31 depending on the input month.</span>
+<span class="sd">            hour: A float number larger or equal to 0 and smaller than 24.</span>
+<span class="sd">            sky_type: An integer between 0..5 to indicate CIE Sky Type.</span>
+
+<span class="sd">                * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky</span>
+<span class="sd">                  distribution function, a source description of the sun is generated.</span>
+<span class="sd">                * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will</span>
+<span class="sd">                  correspond to a standard CIE clear day.</span>
+<span class="sd">                * 2 = Intermediate with sun. In addition to the sky distribution, a</span>
+<span class="sd">                  (somewhat subdued) sun is generated.</span>
+<span class="sd">                * 3 = Intermediate without sun. The sky will correspond to a standard CIE</span>
+<span class="sd">                  intermediate day.</span>
+<span class="sd">                * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE</span>
+<span class="sd">                  overcast day.</span>
+<span class="sd">                * 5 = Uniform cloudy sky. The sky distribution will be completely</span>
+<span class="sd">                  uniform.</span>
+
+<span class="sd">            north_angle: North angle in degrees. A number between -360 and 360 for the</span>
+<span class="sd">                counterclockwise difference between the North and the positive Y-axis in</span>
+<span class="sd">                degrees. 90 is West and 270 is East (Default: 0).</span>
+<span class="sd">            ground_reflectance: Average ground reflectance (Default: 0.2).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#  calculate altitude and azimuth using ladybug&#39;s sunpath</span>
+        <span class="n">sp</span> <span class="o">=</span> <span class="n">Sunpath</span><span class="p">(</span><span class="n">latitude</span><span class="p">,</span> <span class="n">longitude</span><span class="p">,</span> <span class="n">time_zone</span><span class="p">,</span> <span class="n">north_angle</span><span class="p">)</span>
+        <span class="n">sun</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">calculate_sun</span><span class="p">(</span><span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">sun</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span> <span class="n">sun</span><span class="o">.</span><span class="n">azimuth_from_y_axis</span><span class="p">,</span> <span class="n">sky_type</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CIE.from_location"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.from_location">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_location</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">sky_type</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                      <span class="n">north_angle</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="o">=</span><span class="mf">0.2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a standard CIE sky for a location.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            location: A Ladybug location.</span>
+<span class="sd">            month: An intger between 1-12 for month.</span>
+<span class="sd">            day: An intger between 1 to 28-31 depending on the input month.</span>
+<span class="sd">            hour: A float number larger or equal to 0 and smaller than 24.</span>
+<span class="sd">            sky_type: An integer between 0..5 to indicate CIE Sky Type.</span>
+
+<span class="sd">                * 0 = Sunny with sun. Sunny sky with sun. In addition to the sky</span>
+<span class="sd">                  distribution function, a source description of the sun is generated.</span>
+<span class="sd">                * 1 = Sunny without sun. Sunny sky without sun. The sky distribution will</span>
+<span class="sd">                  correspond to a standard CIE clear day.</span>
+<span class="sd">                * 2 = Intermediate with sun. In addition to the sky distribution, a</span>
+<span class="sd">                  (somewhat subdued) sun is generated.</span>
+<span class="sd">                * 3 = Intermediate without sun. The sky will correspond to a standard CIE</span>
+<span class="sd">                  intermediate day.</span>
+<span class="sd">                * 4 = Cloudy sky. The sky distribution will correspond to a standard CIE</span>
+<span class="sd">                  overcast day.</span>
+<span class="sd">                * 5 = Uniform cloudy sky. The sky distribution will be completely</span>
+<span class="sd">                  uniform.</span>
+
+<span class="sd">            north_angle: North angle in degrees. A number between -360 and 360 for the</span>
+<span class="sd">                counterclockwise difference between the North and the positive Y-axis in</span>
+<span class="sd">                degrees. 90 is West and 270 is East (Default: 0).</span>
+<span class="sd">            ground_reflectance: Average ground reflectance (Default: 0.2).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">Location</span><span class="p">),</span> \
+            <span class="s1">&#39;location must be from type Location not </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">location</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_lat_long</span><span class="p">(</span>
+            <span class="n">location</span><span class="o">.</span><span class="n">latitude</span><span class="p">,</span> <span class="n">location</span><span class="o">.</span><span class="n">longitude</span><span class="p">,</span> <span class="n">location</span><span class="o">.</span><span class="n">time_zone</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span>
+            <span class="n">sky_type</span><span class="p">,</span> <span class="n">north_angle</span><span class="p">,</span> <span class="n">ground_reflectance</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CIE.from_dict"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.from_dict">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the sky from a dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A python dictionary in the following format</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &#39;type&#39;: &#39;CIE&#39;,</span>
+<span class="sd">                &#39;altitude&#39;: 0.0,</span>
+<span class="sd">                &#39;azimuth&#39;: 0.0,</span>
+<span class="sd">                &#39;sky_type&#39;: 0,</span>
+<span class="sd">                &#39;ground_reflectance&#39;: 0.2,</span>
+<span class="sd">                &#39;ground_hemisphere&#39;: {},  # see ground.Ground class [optional],</span>
+<span class="sd">                &#39;sky_hemisphere&#39;: {}  # see hemisphere.Hemisphere class [optional]</span>
+<span class="sd">            }</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">,</span> \
+            <span class="s1">&#39;Input dict is missing type. Not a valid CIE dictionary.&#39;</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CIE&#39;</span><span class="p">,</span> \
+            <span class="s1">&#39;Input type must be CIE not </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+
+        <span class="n">sky</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;altitude&#39;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;azimuth&#39;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sky_type&#39;</span><span class="p">],</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ground_reflectance&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;ground_hemisphere&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;ground_hemisphere&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sky</span><span class="o">.</span><span class="n">_ground_hemisphere</span> <span class="o">=</span> <span class="n">Ground</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;ground_hemisphere&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s1">&#39;sky_hemisphere&#39;</span> <span class="ow">in</span> <span class="n">data</span> <span class="ow">and</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sky_hemisphere&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sky</span><span class="o">.</span><span class="n">_sky_hemisphere</span> <span class="o">=</span> <span class="n">Hemisphere</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;sky_hemisphere&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">sky</span></div>
+
+    <span class="c1"># TODO: add support for additional parameters</span>
+    <span class="c1"># TODO: add gensky to radiance-command and use it for validating inputs</span>
+<div class="viewcode-block" id="CIE.to_radiance"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.to_radiance">[docs]</a>    <span class="k">def</span> <span class="nf">to_radiance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return radiance definition as a string.&quot;&quot;&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s1">&#39;!gensky -ang </span><span class="si">%.6f</span><span class="s1"> </span><span class="si">%.6f</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> -g </span><span class="si">%.3f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">-</span> <span class="mf">180.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_type_radiance</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ground_reflectance</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n\n</span><span class="si">%s</span><span class="se">\n\n</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">command</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_hemisphere</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_hemisphere</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CIE.to_dict"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Translate sky to a dictionary.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;CIE&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;altitude&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span>
+            <span class="s1">&#39;azimuth&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span>
+            <span class="s1">&#39;sky_type&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span><span class="p">,</span>
+            <span class="s1">&#39;ground_reflectance&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_reflectance</span><span class="p">,</span>
+            <span class="s1">&#39;ground_hemisphere&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_hemisphere</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s1">&#39;sky_hemisphere&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_hemisphere</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="CIE.to_file"><a class="viewcode-back" href="../../../../honeybee_radiance.lightsource.sky.cie.html#honeybee_radiance.lightsource.sky.cie.CIE.to_file">[docs]</a>    <span class="k">def</span> <span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mkdir</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write sky hemisphere to a sky_hemisphere.rad Radiance file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            folder: Target folder.</span>
+<span class="sd">            name: File name.</span>
+<span class="sd">            mkdir: A boolean to note if the directory should be created if doesn&#39;t</span>
+<span class="sd">                exist (default: False).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Full path to the newly created file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_radiance</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">valid_string</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="n">name</span> \
+            <span class="k">else</span> <span class="s1">&#39;</span><span class="si">%.3f</span><span class="s1">_</span><span class="si">%.3f</span><span class="s1">_</span><span class="si">%s</span><span class="s1">.sky&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sky_type_human_readable</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">futil</span><span class="o">.</span><span class="n">write_to_file_by_name</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">content</span><span class="p">,</span> <span class="n">mkdir</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> \
+            <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">altitude</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">altitude</span> \
+            <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">azimuth</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">azimuth</span> \
+            <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">sky_type</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_type</span> \
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_reflectance</span> <span class="o">!=</span> <span class="n">value</span><span class="o">.</span><span class="n">ground_reflectance</span> \
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">ground_hemisphere</span> <span class="o">!=</span> <span class="n">value</span><span class="o">.</span><span class="n">ground_hemisphere</span> \
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sky_hemisphere</span> <span class="o">!=</span> <span class="n">value</span><span class="o">.</span><span class="n">sky_hemisphere</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

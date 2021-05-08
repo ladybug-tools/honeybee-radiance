@@ -1,0 +1,20 @@
+honeybee\_radiance.dynamic package
+==================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.dynamic.group
+   honeybee_radiance.dynamic.state
+   honeybee_radiance.dynamic.stategeo
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.dynamic
+   :members:
+   :undoc-members:
+   :show-inheritance:

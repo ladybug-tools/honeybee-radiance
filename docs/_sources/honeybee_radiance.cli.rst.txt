@@ -1,0 +1,29 @@
+honeybee\_radiance.cli package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.cli.dc
+   honeybee_radiance.cli.edit
+   honeybee_radiance.cli.grid
+   honeybee_radiance.cli.lib
+   honeybee_radiance.cli.mtx
+   honeybee_radiance.cli.octree
+   honeybee_radiance.cli.postprocess
+   honeybee_radiance.cli.raytrace
+   honeybee_radiance.cli.sky
+   honeybee_radiance.cli.sunpath
+   honeybee_radiance.cli.translate
+   honeybee_radiance.cli.util
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
