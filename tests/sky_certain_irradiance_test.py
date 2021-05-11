@@ -1,5 +1,6 @@
 from honeybee_radiance.lightsource.sky.certainirradiance import CertainIrradiance
 import os
+import sys
 
 
 def test_check_defaults():
@@ -45,6 +46,18 @@ def test_to_and_from_dict():
     sky_from_dict = CertainIrradiance.from_dict(sky.to_dict())
 
     assert sky == sky_from_dict
+
+
+def test_to_and_from_string():
+    sky_string = 'irradiance 800'
+    sky = CertainIrradiance.from_string(sky_string)
+
+    sky_from_str = CertainIrradiance.from_string(str(sky))
+    if (sys.version_info >= (3, 7)):
+        assert sky == sky_from_str
+
+    sky_string = 'illuminance 100000'
+    sky = CertainIrradiance.from_string(sky_string)
 
 
 def test_to_file():

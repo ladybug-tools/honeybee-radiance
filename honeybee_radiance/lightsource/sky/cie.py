@@ -1,12 +1,17 @@
 """Generate CIE standard sky."""
 from __future__ import division
+import argparse
+import shlex
+
+import ladybug.futil as futil
+from ladybug.dt import DateTime
+from ladybug.location import Location
+from ladybug.sunpath import Sunpath
+import honeybee.typing as typing
+
 from ._skybase import _PointInTime
 from .hemisphere import Hemisphere
 from ..ground import Ground
-import honeybee.typing as typing
-import ladybug.futil as futil
-from ladybug.location import Location
-from ladybug.sunpath import Sunpath
 
 
 class CIE(_PointInTime):
@@ -153,9 +158,10 @@ class CIE(_PointInTime):
         """Create sky with certain illuminance.
 
         Args:
-            latitude: Location latitude between -90 and 90.
-            longitude:Location longitude between -180 (west) and 180 (east).
-            timezone: Time zone between -12 hours (west) and +14 hours (east).
+            latitude: Location latitude between -90 (south) and 90 (north).
+            longitude: Location longitude between -180 (west) and 180 (east).
+            time_zone: Time zone between -12 hours (west) and +14 hours (east). If
+                None, the time will be interpreted as solar time at the given longitude.
             month: An intger between 1-12 for month.
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
@@ -260,6 +266,70 @@ class CIE(_PointInTime):
 
         return sky
 
+    @classmethod
+    def from_string(cls, sky_string):
+        """Create a CIE sky from a string.
+
+        Args:
+            sky_string: A text string representing a CIE sky. This can be a minimal
+                representation of the sky (eg. "cie -alt 71.6 -az 185.2 -type 0").
+                Or it can be a detailed specification of time and location (eg.
+                "cie 21 Jun 12:00 -lat 41.78 -lon -87.75 -type 0"). The "-type"
+                property of CIE skies is optional and, if unspecified, it
+                defaults to 0 (Sunny with Sun).
+                Any sky string can optionally have a "-g" property of a fractional
+                number, which sets the reflectance of the ground. If unspecified,
+                the ground will have a reflectance of 0.2. The detailed string can
+                optionally have a "-tz" property with an integer between -12 and +14
+                to denote the time zone. If unspecified, the time will be interpreted
+                as solar time at the given longitude. The detailed string can also
+                have a "-n" property between 0 and 360 to set the counterclockwise
+                difference between the North and the positive Y-axis in degrees.
+                All other properties specified in the string are required.
+
+        Usage:
+
+        .. code-block:: python
+
+            # minimal string representation of the sky
+            sky_string = "cie -alt 71.6 -az 185.2 -type 2"
+            sky = CIE.from_string(sky_string)
+
+            # detailed location-specific representation of the sky
+            sky_string = "cie 21 Jun 12:00 -lat 41.78 -lon -87.75 -tz -6"
+            sky = CIE.from_string(sky_string)
+        """
+        # check the input and parse the datetime if it exists
+        lower_str = sky_string.lower()
+        assert lower_str.startswith('cie'), 'Expected string representation ' \
+            'of CIE sky "{}" to start with "cie".'.format(sky_string)
+        split_str = shlex.split(lower_str)
+        try:
+            dtime = DateTime.from_date_time_string(' '.join(split_str[1:4]))
+        except (ValueError, IndexError):  # simpler sky representation
+            dtime = None
+
+        # make a parser for all of the other sky properties
+        pars = argparse.ArgumentParser()
+        pars.add_argument('-type', action='store', dest='type', type=int, default=0)
+        pars.add_argument('-g', action='store', dest='g', type=float, default=0.2)
+
+        # create the sky object
+        if dtime is None:
+            pars.add_argument('-alt', action='store', dest='alt', type=float, default=90)
+            pars.add_argument('-az', action='store', dest='az', type=float, default=0)
+            props = pars.parse_args(split_str[1:])
+            return cls(props.alt, props.az, props.type, props.g)
+        else:
+            pars.add_argument('-lat', action='store', dest='lat', type=float, default=0)
+            pars.add_argument('-lon', action='store', dest='lon', type=float, default=0)
+            pars.add_argument('-tz', action='store', dest='tz', type=int, default=0)
+            pars.add_argument('-n', action='store', dest='n', type=float, default=0)
+            props = pars.parse_args(split_str[4:])
+            return cls.from_lat_long(
+                props.lat, props.lon, props.tz, dtime.month, dtime.day,
+                dtime.float_hour, props.type, props.n, props.g)
+
     # TODO: add support for additional parameters
     # TODO: add gensky to radiance-command and use it for validating inputs
     def to_radiance(self):
@@ -318,3 +388,8 @@ class CIE(_PointInTime):
 
     def __ne__(self, value):
         return not self.__eq__(value)
+
+    def __repr__(self):
+        """Sky representation."""
+        return 'cie -alt {} -az {} -type {} -g {}'.format(
+            self.altitude, self.azimuth, self.sky_type, self.ground_reflectance)

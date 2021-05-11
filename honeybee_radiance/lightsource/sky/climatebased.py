@@ -1,15 +1,20 @@
 """Generate a point-in-time climate-based sky."""
 from __future__ import division
-from ._skybase import _PointInTime
-from .hemisphere import Hemisphere
-from ..ground import Ground
-import honeybee.typing as typing
+import argparse
+import shlex
+
 import ladybug.futil as futil
+from ladybug.dt import DateTime
+from ladybug.analysisperiod import AnalysisPeriod
 from ladybug.location import Location
 from ladybug.sunpath import Sunpath
 from ladybug.wea import Wea
 from ladybug.epw import EPW
-from ladybug.dt import DateTime
+import honeybee.typing as typing
+
+from ._skybase import _PointInTime
+from .hemisphere import Hemisphere
+from ..ground import Ground
 
 
 class ClimateBased(_PointInTime):
@@ -20,10 +25,10 @@ class ClimateBased(_PointInTime):
 
     Args:
         altitude: Solar altitude. The altitude is measured in degrees above the horizon.
-        azimuth: Solar azimuth. The azimuth is measured in degrees east of North. East is
-            90, South is 180 and West is 270. Note that this input is different from
-            Radiance convention. In Radiance the azimuth degrees are measured in west of
-            South.
+        azimuth: Solar azimuth. The azimuth is measured in degrees east of North.
+            East is 90, South is 180 and West is 270. Note that this input is
+            different from the Radiance convention. In Radiance the azimuth degrees
+            are measured in west of South.
         direct_normal_irradiance: Direct normal irradiance (W/m2).
         diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
         ground_reflectance: Average ground reflectance (Default: 0.2).
@@ -45,9 +50,8 @@ class ClimateBased(_PointInTime):
         '_direct_normal_irradiance'
     )
 
-    def __init__(
-        self, altitude, azimuth, direct_normal_irradiance, diffuse_horizontal_irradiance,
-            ground_reflectance=0.2):
+    def __init__(self, altitude, azimuth, direct_normal_irradiance,
+                 diffuse_horizontal_irradiance, ground_reflectance=0.2):
         """Create a climate-based standard sky."""
         _PointInTime.__init__(self, ground_reflectance)
         self.altitude = altitude
@@ -118,8 +122,9 @@ class ClimateBased(_PointInTime):
 
         Args:
             latitude: Location latitude between -90 and 90.
-            longitude:Location longitude between -180 (west) and 180 (east).
-            timezone: Time zone between -12 hours (west) and +14 hours (east).
+            longitude: Location longitude between -180 (west) and 180 (east).
+            time_zone: Time zone between -12 hours (west) and +14 hours (east). If
+                None, the time will be interpreted as solar time at the given longitude.
             month: An intger between 1-12 for month.
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
@@ -171,8 +176,6 @@ class ClimateBased(_PointInTime):
             month: An intger between 1-12 for month.
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
-            direct_normal_irradiance: Direct normal irradiance (W/m2).
-            diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
@@ -189,6 +192,34 @@ class ClimateBased(_PointInTime):
             ground_reflectance)
 
     @classmethod
+    def from_wea_monthly_average(cls, wea, month, hour, north_angle=0,
+                                 ground_reflectance=0.2):
+        """Create a monthly averaged climate-based sky from a Wea and a hour of the day.
+
+        Args:
+            wea: A Ladybug wea object.
+            month: An intger between 1-12 for month.
+            hour: A float number larger or equal to 0 and smaller than 24.
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
+            ground_reflectance: Average ground reflectance (Default: 0.2).
+        """
+        assert isinstance(wea, Wea), \
+            'wea must be from type Wea not {}'.format(type(wea))
+        a_period = AnalysisPeriod(
+            st_month=month, st_hour=hour, end_month=month, end_hour=hour,
+            timestep=wea.timestep, is_leap_year=wea.is_leap_year)
+        filtered_wea = wea.filter_by_analysis_period(a_period)
+        location = wea.location
+        dir_normal_irradiance = filtered_wea.direct_normal_irradiance.average
+        dif_horizontal_irradiance = filtered_wea.diffuse_horizontal_irradiance.average
+        return cls.from_lat_long(
+            location.latitude, location.longitude, location.time_zone, month, 15, hour,
+            dir_normal_irradiance, dif_horizontal_irradiance, north_angle,
+            ground_reflectance)
+
+    @classmethod
     def from_epw(cls, epw, month, day, hour, north_angle=0, ground_reflectance=0.2):
         """Create a standard climate-based sky from a EPW.
 
@@ -197,8 +228,6 @@ class ClimateBased(_PointInTime):
             month: An intger between 1-12 for month.
             day: An intger between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
-            direct_normal_irradiance: Direct normal irradiance (W/m2).
-            diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
@@ -210,15 +239,40 @@ class ClimateBased(_PointInTime):
         hoy = int(DateTime(month, day, hour).hoy)
         direct_normal_irradiance = epw.direct_normal_radiation[hoy]
         diffuse_horizontal_irradiance = epw.diffuse_horizontal_radiation[hoy]
-
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, day, hour,
             direct_normal_irradiance, diffuse_horizontal_irradiance, north_angle,
             ground_reflectance)
 
     @classmethod
+    def from_epw_monthly_average(cls, epw, month, hour, north_angle=0,
+                                 ground_reflectance=0.2):
+        """Create a monthly averaged climate-based sky from an EWP and a hour of the day.
+
+        Args:
+            epw: A Ladybug EPW objects.
+            month: An intger between 1-12 for month.
+            hour: A float number larger or equal to 0 and smaller than 24.
+            north_angle: North angle in degrees. A number between -360 and 360 for the
+                counterclockwise difference between the North and the positive Y-axis in
+                degrees. 90 is West and 270 is East (Default: 0).
+            ground_reflectance: Average ground reflectance (Default: 0.2).
+        """
+        assert isinstance(epw, EPW), \
+            'epw must be from type EPW not {}'.format(type(epw))
+        location = epw.location
+        a_period = AnalysisPeriod(
+            st_month=month, st_hour=hour, end_month=month, end_hour=hour,
+            is_leap_year=epw.is_leap_year)
+        dn = epw.direct_normal_radiation.filter_by_analysis_period(a_period).average
+        dh = epw.diffuse_horizontal_radiation.filter_by_analysis_period(a_period).average
+        return cls.from_lat_long(
+            location.latitude, location.longitude, location.time_zone, month, 15, hour,
+            dn, dh, north_angle, ground_reflectance)
+
+    @classmethod
     def from_dict(cls, data):
-        """Create the sky from a dictionary.
+        """Create a ClimateBased sky from a dictionary.
 
         Args:
             data: A python dictionary in the following format
@@ -257,6 +311,71 @@ class ClimateBased(_PointInTime):
             sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
 
         return sky
+
+    @classmethod
+    def from_string(cls, sky_string):
+        """Create a ClimateBased sky from a string.
+
+        Args:
+            sky_string: A text string representing a ClimateBased sky. This can
+                either be a minimal string representation of the sky (eg.
+                "climate-based -alt 71.6 -az 185.2 -dni 800 -dhi 120").
+                Or it can be a detailed specification of time and location (eg.
+                "climate-based 21 Jun 12:00 -lat 41.78 -lon -87.75 -dni 800 -dhi 120").
+                Any sky string can optionally have a "-g" property of a fractional
+                number, which sets the reflectance of the ground. If unspecified,
+                the ground will have a reflectance of 0.2. The detailed string can
+                optionally have a "-tz" property with an integer between -12 and +14
+                to denote the time zone. If unspecified, the time will be interpreted
+                as solar time at the given longitude. The detailed string can also
+                have a "-n" property between 0 and 360 to set the counterclockwise
+                difference between the North and the positive Y-axis in degrees.
+                All other properties specified in the string are required.
+
+        Usage:
+
+        .. code-block:: python
+
+            # minimal string representation of the sky
+            sky_string = "climate-based -alt 71.6 -az 185.2 -dni 800 -dhi 120"
+            sky = ClimateBased.from_string(sky_string)
+
+            # detailed location-specific representation of the sky
+            sky_string = "climate-based 21 Jun 12:00 -lat 41.78 -lon -87.75 -tz -6 " \
+                " -dni 800 -dhi 120 -n 0 -g 0.2"
+            sky = ClimateBased.from_string(sky_string)
+        """
+        # check the input and parse the datetime if it exists
+        lower_str = sky_string.lower()
+        assert lower_str.startswith('climate-based'), 'Expected string representation ' \
+            'of ClimateBased sky "{}" to start with "climate-based".'.format(sky_string)
+        split_str = shlex.split(lower_str)
+        try:
+            dtime = DateTime.from_date_time_string(' '.join(split_str[1:4]))
+        except (ValueError, IndexError):  # simpler sky representation
+            dtime = None
+
+        # make a parser for all of the other sky properties
+        pars = argparse.ArgumentParser()
+        pars.add_argument('-dni', action='store', dest='dni', type=float, default=0)
+        pars.add_argument('-dhi', action='store', dest='dhi', type=float, default=0)
+        pars.add_argument('-g', action='store', dest='g', type=float, default=0.2)
+
+        # create the sky object
+        if dtime is None:
+            pars.add_argument('-alt', action='store', dest='alt', type=float, default=90)
+            pars.add_argument('-az', action='store', dest='az', type=float, default=0)
+            props = pars.parse_args(split_str[1:])
+            return cls(props.alt, props.az, props.dni, props.dhi, props.g)
+        else:
+            pars.add_argument('-lat', action='store', dest='lat', type=float, default=0)
+            pars.add_argument('-lon', action='store', dest='lon', type=float, default=0)
+            pars.add_argument('-tz', action='store', dest='tz', type=int, default=0)
+            pars.add_argument('-n', action='store', dest='n', type=float, default=0)
+            props = pars.parse_args(split_str[4:])
+            return cls.from_lat_long(
+                props.lat, props.lon, props.tz, dtime.month, dtime.day,
+                dtime.float_hour, props.dni, props.dhi, props.n, props.g)
 
     # TODO: add support for additional parameters
     # TODO: add gendaylit to radiance-command and use it for validating inputs
@@ -327,3 +446,11 @@ class ClimateBased(_PointInTime):
 
     def __ne__(self, value):
         return not self.__eq__(value)
+
+    def __repr__(self):
+        """Sky representation."""
+        return 'climate-based -alt {} -az {} -dni {} -dhi {} -g {}'.format(
+            self.altitude, self.azimuth,
+            self.direct_normal_irradiance, self.diffuse_horizontal_irradiance,
+            self.ground_reflectance
+        )

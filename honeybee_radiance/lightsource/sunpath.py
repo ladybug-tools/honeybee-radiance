@@ -70,7 +70,7 @@ class Sunpath(object):
 
     def _solar_calc(self, hoys, wea, output_type, leap_year=False,
                     reverse_vectors=False):
-        """Calculate ."""
+        """Calculate sun vectors and radiance values from the properties."""
         solar_calc = LBSunpath.from_location(self.location, self.north)
         solar_calc.is_leap_year = leap_year
 
