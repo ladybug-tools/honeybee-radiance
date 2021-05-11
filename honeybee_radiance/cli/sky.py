@@ -5,11 +5,12 @@ import os
 import logging
 import json
 
-import honeybee_radiance.lightsource.sky as hbsky
-
-from honeybee_radiance.config import folders
+from ladybug.dt import DateTime
 from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
 from honeybee_radiance_command._command_util import run_command
+
+import honeybee_radiance.lightsource.sky as hbsky
+from honeybee_radiance.config import folders
 
 
 _logger = logging.getLogger(__name__)
@@ -20,17 +21,164 @@ def sky():
     pass
 
 
-@sky.command('illuminance')
-@click.argument('illum', default=100000, type=float)
+@sky.command('cie')
+@click.argument('day', type=int, default=21)
+@click.argument('month', type=str, default='Jun')
+@click.argument('time', type=str, default='12:00')
+@click.option('--latitude', '-lat', type=float, default=0, show_default=True,
+              help='Location latitude between -90 (south) and 90 (north).')
+@click.option('--longitude', '-lon', type=float, default=0, show_default=True,
+              help='Location longitude between -180 (west) and 180 (east).')
+@click.option('--time-zone', '-tz', type=int, default=None, help='Time zone between -12 hours '
+              '(west) and +14 hours (east). If unspecified, the time will be '
+              'interpreted as solar time at the given longitude.')
+@click.option('--sky-type', '-type', type=int, default=0, show_default=True, help='An '
+              'integer from 0..5 to indicate CIE Sky Type. 0 = Sunny with sun, 1 = Sunny'
+              ' without sun, 2 = Intermediate with sun, 3 = Intermediate without sun, '
+              '4 = Cloudy sky, 5 = Uniform cloudy sky.')
+@click.option('--north', '-n', type=float, default=0, show_default=True, help='A '
+              'number between -360 and 360 for the counterclockwise difference between '
+              'the North and the positive Y-axis in degrees. 90 is West; 270 is East')
+@click.option('--ground', '-g', type=float, default=0.2, show_default=True,
+              help='Fractional value for ground reflectance.')
+@click.option('--altitude', '-alt', type=float, default=None,
+              help='Solar altitude measured in degrees above the horizon.')
+@click.option('--azimuth', '-az', type=float, default=None,
+              help='Solar azimuth measured in degrees east of North. East is 90, South '
+              'is 180 and West is 270. Note that this is different from Radiance '
+              'convention where the azimuth degrees are measured in west of South.')
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default=None, show_default=True)
-def sky_with_certain_illum(illum, folder, name):
-    """Generate an overcast / cloudy sky with certain illuminance value.
+def sky_cie(day, month, time, latitude, longitude, time_zone, sky_type,
+            north, ground, altitude, azimuth, folder, name):
+    """Get a CIE sky file from parameters.
 
-    illum: Desired illuminance value in lux. [default: 100000].
+    These can be a minimal representation of the sky through altitude and azimuth (eg.
+    "cie -alt 71.6 -az 185.2 -type 0"). Or it can be a detailed specification of
+    time and location (eg. "cie 21 Jun 12:00 -lat 41.78 -lon -87.75 -type 0").
+    Both the altitude and azimuth must be specified for the minimal representation
+    to be used. Otherwise, this command defaults to the detailed specification
+    of time and location.
+
+    \b
+    Args:
+        day: An intger for the day of the month (between 1 and 28-31).
+        month: Text for the 3-letter abbreviation of the month of the year (eg. "Mar").
+        time: Text for the time of day (from 0:00 to 23:59).
     """
     try:
-        c_sky = hbsky.CertainIrradiance.from_illuminance(illum)
+        if altitude is not None and azimuth is not None:
+            sky_obj = hbsky.CIE(altitude, azimuth, sky_type, ground)
+        else:
+            dtime = DateTime.from_date_time_string('{} {} {}'.format(day, month, time))
+            sky_obj = hbsky.CIE.from_lat_long(
+                latitude, longitude, time_zone, dtime.month, dtime.day, dtime.float_hour,
+                sky_type, north, ground)
+        sky_obj.to_file(folder, name, True)
+    except Exception:
+        _logger.exception('Failed to generate sky.')
+        sys.exit(1)
+
+
+@sky.command('climate-based')
+@click.argument('day', type=int, default=21)
+@click.argument('month', type=str, default='Jun')
+@click.argument('time', type=str, default='12:00')
+@click.option('--latitude', '-lat', type=float, default=0, show_default=True,
+              help='Location latitude between -90 (south) and 90 (north).')
+@click.option('--longitude', '-lon', type=float, default=0, show_default=True,
+              help='Location longitude between -180 (west) and 180 (east).')
+@click.option('--time-zone', '-tz', type=int, default=None, help='Time zone between -12 hours '
+              '(west) and +14 hours (east). If unspecified, the time will be '
+              'interpreted as solar time at the given longitude.')
+@click.option('--direct-normal-irradiance', '-dni', type=float, default=0,
+              show_default=True, help='Direct normal irradiance (W/m2).')
+@click.option('--diffuse_horizontal_irradiance', '-dhi', type=float, default=0,
+              show_default=True, help='Diffuse horizontal irradiance (W/m2).')
+@click.option('--north', '-n', type=float, default=0, show_default=True, help='A '
+              'number between -360 and 360 for the counterclockwise difference between '
+              'the North and the positive Y-axis in degrees. 90 is West; 270 is East')
+@click.option('--ground', '-g', type=float, default=0.2, show_default=True,
+              help='Fractional value for ground reflectance.')
+@click.option('--altitude', '-alt', type=float, default=None,
+              help='Solar altitude measured in degrees above the horizon.')
+@click.option('--azimuth', '-az', type=float, default=None,
+              help='Solar azimuth measured in degrees east of North. East is 90, South '
+              'is 180 and West is 270. Note that this is different from Radiance '
+              'convention where the azimuth degrees are measured in west of South.')
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default=None, show_default=True)
+def sky_climate_based(
+        day, month, time, latitude, longitude, time_zone, direct_normal_irradiance,
+        diffuse_horizontal_irradiance, north, ground, altitude, azimuth, folder, name):
+    """Get a ClimateBased sky file from parameters.
+
+    These can be a minimal representation of the sky through altitude and azimuth (eg.
+    "climate-based -alt 71.6 -az 185.2 -dni 800 -dhi 120"). Or it can be a detailed 
+    specification of time and location (eg. "climate-based 21 Jun 12:00 -lat 41.78
+    -lon -87.75 -dni 800 -dhi 120"). Both the altitude and azimuth must be specified
+    for the minimal representation to be used. Otherwise, this command defaults
+    to the detailed specification of time and location.
+
+    \b
+    Args:
+        day: An intger for the day of the month (between 1 and 28-31).
+        month: Text for the 3-letter abbreviation of the month of the year (eg. "Mar").
+        time: Text for the time of day (from 0:00 to 23:59).
+    """
+    try:
+        if altitude is not None and azimuth is not None:
+            sky_obj = hbsky.ClimateBased(
+                altitude, azimuth, direct_normal_irradiance,
+                diffuse_horizontal_irradiance, ground)
+        else:
+            dtime = DateTime.from_date_time_string('{} {} {}'.format(day, month, time))
+            sky_obj = hbsky.ClimateBased.from_lat_long(
+                latitude, longitude, time_zone, dtime.month, dtime.day, dtime.float_hour,
+                direct_normal_irradiance, diffuse_horizontal_irradiance,
+                north, ground)
+        sky_obj.to_file(folder, name, True)
+    except Exception:
+        _logger.exception('Failed to generate sky.')
+        sys.exit(1)
+
+
+@sky.command('irradiance')
+@click.argument('irrad', default=558.659, type=float)
+@click.option('--ground', '-g', type=float, default=0.2, show_default=True,
+              help='Fractional value for ground reflectance.')
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default=None, show_default=True)
+def sky_with_certain_irrad(irrad, ground, folder, name):
+    """Generate an overcast / cloudy sky with certain irradiance value.
+
+    \b
+    Args:
+        irrad: Desired irradiance value in W/m2. (Default: 558.659).
+    """
+    try:
+        c_sky = hbsky.CertainIrradiance(irrad, ground)
+        c_sky.to_file(folder, name, True)
+    except Exception:
+        _logger.exception('Failed to generate sky.')
+        sys.exit(1)
+
+
+@sky.command('illuminance')
+@click.argument('illum', default=100000, type=float)
+@click.option('--ground', '-g', type=float, default=0.2, show_default=True,
+              help='Fractional value for ground reflectance.')
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default=None, show_default=True)
+def sky_with_certain_illum(illum, ground, folder, name):
+    """Generate an overcast / cloudy sky with certain illuminance value.
+
+    \b
+    Args:
+        illum: Desired illuminance value in lux. (Default: 100000).
+    """
+    try:
+        c_sky = hbsky.CertainIrradiance.from_illuminance(illum, ground)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
@@ -38,15 +186,15 @@ def sky_with_certain_illum(illum, folder, name):
 
 
 @sky.command('skydome')
-@click.option('--folder', help='Output folder.', default='.', show_default=True)
-@click.option('--name', help='Sky file name.', default=None, show_default=True)
 @click.option(
     '--sky-density', type=int, help='Sky patch subdivision density. This values is '
     'similar to -m option in gendaymtx command. Default is 1 which means 145 sky '
     'patches and 1 patch for the ground. One can add to the resolution typically by '
     'factors of two (2, 4, 8, ...) which yields a higher resolution sky using the '
     'Reinhart patch subdivision', default=1, show_default=True)
-def sky_dome(folder, name, sky_density):
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default=None, show_default=True)
+def sky_dome(sky_density, folder, name):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     Use this sky to calculate daylight matrix.
@@ -60,13 +208,11 @@ def sky_dome(folder, name, sky_density):
 
 
 @sky.command('uniform-sky')
+@click.option('--ground-emittance', '-g', type=float, help='Ground emittance value.',
+              default=0.2, show_default=True)
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default='uniform_sky', show_default=True)
-@click.option(
-    '--ground-emittance', '-g', type=float, help='Ground emittance value.', default=0.2,
-    show_default=True
-)
-def uniform_sky(folder, name, ground_emittance):
+def uniform_sky(ground_emittance, folder, name):
     """Virtual skydome for daylight coefficient studies with constant radiance.
 
     This sky is usually used to create an octree that is sent to rcontrib command.
@@ -135,7 +281,6 @@ def sunpath_from_wea_rad(
     \b
     Args:
         wea: Path to a wea file.
-
     """
     try:
         if not os.path.exists(folder):

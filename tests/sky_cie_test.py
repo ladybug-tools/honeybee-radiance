@@ -1,6 +1,7 @@
 from honeybee_radiance.lightsource.sky import CIE
 from ladybug.location import Location
 import os
+import sys
 
 
 def test_check_defaults():
@@ -75,6 +76,18 @@ def test_to_and_from_dict():
     sky_from_dict = CIE.from_dict(sky.to_dict())
 
     assert sky == sky_from_dict
+
+
+def test_to_and_from_string():
+    sky_string = 'cie 21 Jun 12:00 -lat 41.78 -lon -87.75 -type 2'
+    sky = CIE.from_string(sky_string)
+
+    sky_from_str = CIE.from_string(str(sky))
+    if (sys.version_info >= (3, 7)):
+        assert sky == sky_from_str
+
+    sky_string = 'cie -alt 35 -az 185 -type 0'
+    sky = CIE.from_string(sky_string)
 
 
 def test_to_file():

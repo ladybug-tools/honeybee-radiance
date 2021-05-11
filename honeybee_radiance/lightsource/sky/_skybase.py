@@ -175,7 +175,3 @@ class _PointInTime(_SkyDome):
             'ground_hemisphere': self.ground_hemisphere.to_dict(),
             'sky_hemisphere': self.sky_hemisphere.to_dict()
         }
-
-    def ToString(self):
-        """Overwrite .NET ToString."""
-        return self.__repr__()

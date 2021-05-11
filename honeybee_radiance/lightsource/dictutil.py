@@ -28,18 +28,18 @@ def dict_to_light_source(light_source_dict, raise_exception=True):
     """Get a Python object of any light source from a dictionary.
 
     Args:
-        load_dict: A dictionary of any Honeybee energy load. Note
+        light_source_dict: A dictionary of any Honeybee Radiance light source. Note
             that this should be a non-abridged dictionary to be valid.
         raise_exception: Boolean to note whether an excpetion should be raised
-            if the object is not identified as a load. Default: True.
+            if the object is not identified as a light source. Default: True.
 
     Returns:
-        A Python object derived from the input load_dict.
+        A Python object derived from the input light_source_dict.
     """
     try:  # get the type key from the dictionary
         light_type = light_source_dict['type']
     except KeyError:
-        raise ValueError('Load dictionary lacks required "type" key.')
+        raise ValueError('Light source dictionary lacks required "type" key.')
 
     try:
         return LIGHT_SOURCE_TYPES[light_type].from_dict(light_source_dict)

@@ -1,10 +1,14 @@
 """Generate sky with certain irradiance."""
 from __future__ import division
+import argparse
+import shlex
+
+import honeybee.typing as typing
+import ladybug.futil as futil
+
 from ._skybase import _PointInTime
 from .hemisphere import Hemisphere
 from honeybee_radiance.lightsource.ground import Ground
-import honeybee.typing as typing
-import ladybug.futil as futil
 
 
 class CertainIrradiance(_PointInTime):
@@ -125,6 +129,49 @@ class CertainIrradiance(_PointInTime):
 
         return sky
 
+    @classmethod
+    def from_string(cls, sky_string):
+        """Create a CertainIrradiance sky from a string.
+
+        Args:
+            sky_string: A text string representing a CertainIrradiance sky. This
+                can be either a string with a certain irradiance (eg.
+                "irradiance 558.659") or with a certain illuminance (eg.
+                "illuminance 100000"). Any sky string can optionally
+                have a "-g" property of a fractional number, which sets the
+                reflectance of the ground. If unspecified, the ground will have
+                a reflectance of 0.2.
+
+        Usage:
+
+        .. code-block:: python
+
+            # irradiance string representation of the sky
+            sky_string = "irradiance 558.659"
+            sky = CertainIrradiance.from_string(sky_string)
+
+            # illuminance string representation of the sky
+            sky_string = "illuminance 100000 -g 0.3"
+            sky = CertainIrradiance.from_string(sky_string)
+        """
+        # check the input
+        lower_str = sky_string.lower()
+        assert lower_str.startswith(('irradiance', 'illuminance')), \
+            'Expected string representation of CertainIrradiance sky "{}" to ' \
+            'start with "irradiance" or "illuminance".'.format(sky_string)
+        split_str = shlex.split(lower_str)
+        # make a parser for all of the other sky properties
+        pars = argparse.ArgumentParser()
+        pars.add_argument('value', action='store', type=float)
+        pars.add_argument('-g', action='store', dest='g', type=float, default=0.2)
+        props = pars.parse_args(split_str[1:])
+
+        # create the sky object
+        if split_str[0] == 'irradiance':
+            return cls(props.value, props.g)
+        else:
+            return cls.from_illuminance(props.value, props.g)
+
     def to_radiance(self):
         """Return radiance definition as a string."""
         command = '!gensky -ang 45 0 -c -B %.6f -g %.3f' % (
@@ -173,3 +220,7 @@ class CertainIrradiance(_PointInTime):
 
     def __ne__(self, value):
         return not self.__eq__(value)
+
+    def __repr__(self):
+        """Sky representation."""
+        return 'irradiance {} -g {}'.format(self.irradiance, self.ground_reflectance)
