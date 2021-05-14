@@ -8,7 +8,7 @@
       "type": "ModelRadianceProperties",
       "modifiers": [
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.2,
           "g_reflectance": 0.2,
@@ -18,7 +18,7 @@
           "identifier": "generic_floor_0.20"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.5,
           "g_reflectance": 0.5,
@@ -28,7 +28,7 @@
           "identifier": "generic_wall_0.50"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.8,
           "g_reflectance": 0.8,
@@ -38,7 +38,7 @@
           "identifier": "generic_ceiling_0.80"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.5,
           "g_reflectance": 0.5,
@@ -48,7 +48,7 @@
           "identifier": "generic_opaque_door_0.50"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.5,
           "g_reflectance": 0.5,
@@ -58,7 +58,7 @@
           "identifier": "generic_interior_shade_0.50"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.35,
           "g_reflectance": 0.35,
@@ -68,7 +68,7 @@
           "identifier": "generic_exterior_shade_0.35"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.2,
           "g_reflectance": 0.2,
@@ -78,7 +78,7 @@
           "identifier": "generic_context_0.20"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.95841543286105957,
           "g_transmissivity": 0.95841543286105957,
@@ -87,7 +87,7 @@
           "identifier": "generic_interior_window_vis_0.88"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.69757618153843315,
           "g_transmissivity": 0.69757618153843315,
@@ -96,7 +96,7 @@
           "identifier": "generic_exterior_window_vis_0.64"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.34901895091031854,
           "g_transmissivity": 0.34901895091031854,
@@ -105,7 +105,7 @@
           "identifier": "generic_exterior_screened_window_vis_0.32"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.83894054472517565,
           "g_transmissivity": 0.83894054472517565,
@@ -114,7 +114,7 @@
           "identifier": "generic_interior_window_sol_0.77"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.40352315728851818,
           "g_transmissivity": 0.40352315728851818,
@@ -123,7 +123,7 @@
           "identifier": "generic_exterior_window_sol_0.37"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 0.20725959062340979,
           "g_transmissivity": 0.20725959062340979,
@@ -132,7 +132,7 @@
           "identifier": "generic_exterior_screened_window_sol_0.19"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.5,
           "g_reflectance": 0.5,
@@ -142,7 +142,7 @@
           "identifier": "generic_floor_exterior_side_0.50"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.35,
           "g_reflectance": 0.35,
@@ -152,7 +152,7 @@
           "identifier": "generic_wall_exterior_side_0.35"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.35,
           "g_reflectance": 0.35,
@@ -162,7 +162,7 @@
           "identifier": "generic_ceiling_exterior_side_0.35"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "dependencies": [],
           "r_transmissivity": 1.0,
           "g_transmissivity": 1.0,
@@ -171,7 +171,7 @@
           "identifier": "air_boundary"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "dependencies": [],
           "r_reflectance": 0.0,
           "g_reflectance": 0.0,
@@ -190,7 +190,7 @@
           "identifier": "white_glow"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "r_reflectance": 0.35,
           "g_reflectance": 0.35,
           "b_reflectance": 0.35,
@@ -206,7 +206,7 @@
           "identifier": "reflective_context"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "r_transmissivity": 1.0,
           "g_transmissivity": 1.0,
           "b_transmissivity": 1.0,
@@ -214,7 +214,7 @@
           "identifier": "dynamic_context"
         },
         {
-          "type": "plastic",
+          "type": "Plastic",
           "r_reflectance": 0.35,
           "g_reflectance": 0.35,
           "b_reflectance": 0.35,
@@ -230,7 +230,7 @@
           "identifier": "reflective_context"
         },
         {
-          "type": "glass",
+          "type": "Glass",
           "r_transmissivity": 1.0,
           "g_transmissivity": 1.0,
           "b_transmissivity": 1.0,
