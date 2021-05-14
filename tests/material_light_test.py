@@ -53,7 +53,7 @@ def test_from_string():
 def test_from_dict_w_modifier():
     glass_mod = {
         "identifier": "test_glass_mod",
-        "type": "glass",
+        "type": "Glass",
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
         "b_transmissivity": 0.6,
@@ -64,7 +64,7 @@ def test_from_dict_w_modifier():
 
     light_dict = {
         "identifier": "test_light",
-        "type": "light",
+        "type": "Light",
         "r_emittance": 0.1,
         "g_emittance": 0.2,
         "b_emittance": 0.3,
@@ -92,6 +92,6 @@ def test_to_dict():
     assert mdict['r_emittance'] == 100000
     assert mdict['b_emittance'] == 100000
     assert mdict['g_emittance'] == 100000
-    assert mdict['type'] == 'light'
+    assert mdict['type'] == 'Light'
     assert 'modifier' not in mdict or mdict['modifier'] is None
 

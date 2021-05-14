@@ -263,8 +263,7 @@ class Trans(Material):
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
-        transmitted_diff=0.0, transmitted_spec=0.0, modifier=None,
-            dependencies=None):
+        transmitted_diff=0.0, transmitted_spec=0.0, modifier=None, dependencies=None):
         """Create trans material with single reflectance value.
 
         Args:
@@ -288,11 +287,11 @@ class Trans(Material):
                 argument is only useful for defining advanced primitives where the
                 primitive is defined based on other primitives. (Default: [])
         """
-        return cls(identifier, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
-                   b_reflectance=rgb_reflectance, specularity=specularity,
-                   roughness=roughness, transmitted_diff=transmitted_diff,
-                   transmitted_spec=transmitted_spec, modifier=modifier,
-                   dependencies=dependencies)
+        return cls(
+            identifier, r_reflectance=rgb_reflectance, g_reflectance=rgb_reflectance,
+            b_reflectance=rgb_reflectance, specularity=specularity, roughness=roughness,
+            transmitted_diff=transmitted_diff, transmitted_spec=transmitted_spec,
+            modifier=modifier, dependencies=dependencies)
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
@@ -312,15 +311,8 @@ class Trans(Material):
             "dependencies": []
             }
         """
-        assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
-        if primitive_dict['type'] != cls.__name__.lower():
-            raise ValueError(
-                'Type must be %s not %s.' % (
-                    cls.__name__.lower(), primitive_dict['type'])
-            )
-
+        cls._dict_type_check(cls.__name__, primitive_dict)
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
-
         values = primitive_dict['values'][2]
 
         cls_ = cls(
@@ -351,9 +343,9 @@ class Trans(Material):
         .. code-block:: python
 
             {
-            "type": "trans",  # Material type
-            "identifier": "", // Material identifier
-            "display_name": string  # Material display name
+            "type": "Trans",  # Material type
+            "identifier": "", # Material identifier
+            "display_name": "",  # Material display name
             "r_reflectance": float,  # Reflectance for red
             "g_reflectance": float,  # Reflectance for green
             "b_reflectance": float,  # Reflectance for blue
@@ -365,13 +357,8 @@ class Trans(Material):
             "modifier": {},  # Material modifier (Default: None)
             }
         """
-        assert 'type' in data, 'Input dictionary is missing "type".'
-        if data['type'] != cls.__name__.lower():
-            raise ValueError(
-                'Type must be %s not %s.' % (cls.__name__.lower(),
-                                             data['type'])
-            )
-        modifier, dependencies = Material.filter_dict_input(data)
+        cls._dict_type_check(cls.__name__, data)
+        modifier, dependencies = cls.filter_dict_input(data)
 
         new_obj = cls(
             identifier=data["identifier"],
@@ -392,7 +379,7 @@ class Trans(Material):
         """Translate this object to a dictionary."""
         base = {
             'modifier': self.modifier.to_dict(),
-            'type': self.__class__.__name__.lower(),
+            'type': 'Trans',
             'identifier': self.identifier,
             'r_reflectance': self.r_reflectance,
             'g_reflectance': self.g_reflectance,

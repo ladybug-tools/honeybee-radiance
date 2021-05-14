@@ -294,12 +294,7 @@ class BSDF(Material):
             "dependencies": []
             }
         """
-        assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
-        if primitive_dict['type'] != 'BSDF':
-            raise ValueError(
-                'Type must be %s not %s.' % ('BSDF', primitive_dict['type'])
-            )
-
+        cls._dict_type_check(cls.__name__, primitive_dict)
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
         values = primitive_dict['values'][0]
         extra_values = primitive_dict['values'][2]
@@ -353,10 +348,10 @@ class BSDF(Material):
             {
             "modifier": {},  # material modifier (Default: None)
             "type": "BSDF",  # Material type
-            "identifier": string,  # Material identifer
-            "display_name": string  # Material display name
+            "identifier": "",  # Material identifer
+            "display_name": ""  # Material display name
             "up_orientation": [number, number, number],
-            "thickness": number,  # default: 0
+            "thickness": float,  # default: 0
             "function_file": string,  # default: '.'
             "transform": string,  # default: None
             "bsdf_data": string,  # bsdf file data as string
@@ -365,12 +360,8 @@ class BSDF(Material):
             "diffuse_transmittance": [number, number, number]  # optional
             }
         """
-        assert 'type' in data, 'Input dictionary is missing "type".'
-        if data['type'] != 'BSDF':
-            raise ValueError(
-                'Type must be %s not %s.' % ('BSDF', data['type'])
-            )
-        modifier, dependencies = Material.filter_dict_input(data)
+        cls._dict_type_check(cls.__name__, data)
+        modifier, dependencies = cls.filter_dict_input(data)
 
         # check folder and create it if it does not exist
         folder = os.path.join(folders.default_simulation_folder, 'BSDF') \

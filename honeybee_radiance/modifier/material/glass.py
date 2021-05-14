@@ -266,10 +266,7 @@ class Glass(Material):
             "dependencies": []
             }
         """
-        assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
-        if primitive_dict['type'] != 'glass':
-            raise ValueError('Type must be glass not %s.' % primitive_dict['type'])
-
+        cls._dict_type_check(cls.__name__, primitive_dict)
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
         values = primitive_dict['values'][2]
         refraction_index = values[3] if len(values) == 4 else None
@@ -301,9 +298,9 @@ class Glass(Material):
         .. code-block:: python
 
             {
-            "type": "glass",
+            "type": "Glass",
             "identifier": "",  # Material identifier
-            "display_name": string  # Material display name
+            "display_name": "",  # Material display name
             "r_transmissivity": float,  # Transmissivity for red
             "g_transmissivity": float,  # Transmissivity for green
             "b_transmissivity": float,  # Transmissivity for blue
@@ -312,11 +309,8 @@ class Glass(Material):
             "dependencies": []
             }
         """
-        assert 'type' in data, 'Input dictionary is missing "type".'
-        if data['type'] != 'glass':
-            raise ValueError('Type must be glass not %s.' % data['type'])
-
-        modifier, dependencies = Material.filter_dict_input(data)
+        cls._dict_type_check(cls.__name__, data)
+        modifier, dependencies = cls.filter_dict_input(data)
 
         new_obj = cls(identifier=data["identifier"],
                       r_transmissivity=data["r_transmissivity"],
@@ -332,14 +326,14 @@ class Glass(Material):
     def to_dict(self):
         """Translate this object to a dictionary."""
         base = {
-            "modifier": self.modifier.to_dict(),
-            "type": "glass",
-            "identifier": self.identifier,
-            "r_transmissivity": self.r_transmissivity,
-            "g_transmissivity": self.g_transmissivity,
-            "b_transmissivity": self.b_transmissivity,
-            "refraction_index": self.refraction_index,
-            "dependencies": [dp.to_dict() for dp in self.dependencies]
+            'modifier': self.modifier.to_dict(),
+            'type': 'Glass',
+            'identifier': self.identifier,
+            'r_transmissivity': self.r_transmissivity,
+            'g_transmissivity': self.g_transmissivity,
+            'b_transmissivity': self.b_transmissivity,
+            'refraction_index': self.refraction_index,
+            'dependencies': [dp.to_dict() for dp in self.dependencies]
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
