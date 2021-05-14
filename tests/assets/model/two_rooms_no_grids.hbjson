@@ -2564,7 +2564,7 @@
                     "specularity": 0.0, 
                     "b_reflectance": 0.20000000000000001, 
                     "r_reflectance": 0.20000000000000001, 
-                    "type": "plastic", 
+                    "type": "Plastic", 
                     "roughness": 0.0
                 }, 
                 {
@@ -2574,7 +2574,7 @@
                     "identifier": "g_material", 
                     "refraction_index": null, 
                     "display_name": "g_material", 
-                    "type": "glass", 
+                    "type": "Glass", 
                     "dependencies": [], 
                     "g_transmissivity": 0.59961775876472001
                 }
