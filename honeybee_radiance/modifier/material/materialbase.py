@@ -27,3 +27,10 @@ class Material(Modifier):
     def is_material(self):
         """Get a boolean noting whether this object is a material modifier."""
         return True
+
+    @staticmethod
+    def _dict_type_check(class_name, data):
+        """Check that the 'type' key of a material dict suits the class."""
+        assert 'type' in data, 'Input dictionary is missing "type".'
+        if data['type'].lower() != class_name.lower():
+            raise ValueError('Type must be %s not %s.' % (class_name, data['type']))

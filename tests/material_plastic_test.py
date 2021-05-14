@@ -90,7 +90,7 @@ def test_from_string():
 def test_from_dict_w_modifier():
     glass_mod = {
         "identifier": "test_glass_mod",
-        "type": "glass",
+        "type": "Glass",
         "r_transmissivity": 0.4,
         "g_transmissivity": 0.5,
         "b_transmissivity": 0.6,
@@ -101,7 +101,7 @@ def test_from_dict_w_modifier():
 
     plastic_dict = {
         "identifier": "test_plastic",
-        "type": "plastic",
+        "type": "Plastic",
         "r_reflectance": 0.1,
         "g_reflectance": 0.2,
         "b_reflectance": 0.3,

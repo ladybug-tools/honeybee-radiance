@@ -27,7 +27,7 @@ class Mixdata(Mixture):
         modifier: Modifier. It can be primitive, mixture, texture or pattern.
             (Default: None).
         values: An array 3 arrays for primitive data. Each of the 3 sub-arrays
-            refer to a line number in the radiance primitve definitions and the
+            refer to a line number in the radiance primitive definitions and the
             values in each array correspond to values occurring within each line.
         is_opaque: A boolean to indicate whether this primitive is opaque.
         dependencies: A list of primitives that this primitive depends on. This

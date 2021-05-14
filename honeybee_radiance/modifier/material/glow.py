@@ -167,13 +167,7 @@ class Glow(Material):
             "dependencies": []
             }
         """
-        assert 'type' in primitive_dict, 'Input dictionary is missing "type".'
-        if primitive_dict['type'] != cls.__name__.lower():
-            raise ValueError(
-                'Type must be %s not %s.' % (
-                    cls.__name__.lower(), primitive_dict['type'])
-            )
-
+        cls._dict_type_check(cls.__name__, primitive_dict)
         modifier, dependencies = cls.filter_dict_input(primitive_dict)
         values = primitive_dict['values'][2]
 
@@ -189,7 +183,7 @@ class Glow(Material):
         if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
-        # this might look r_emittanceundant but it is NOT. see glass for explanation.
+        # this might look redundant but it is NOT. see glass for explanation.
         cls_.values = primitive_dict['values']
         return cls_
 
@@ -203,9 +197,9 @@ class Glow(Material):
         .. code-block:: python
 
             {
-            "type": "glow",  # primitive type
+            "type": "Glow",  # primitive type
             "identifier": "",  # Material identifier
-            "display_name": string  # Material display name
+            "display_name": "",  # Material display name
             "r_emittance": float,  # A positive value for the Red channel of the glow
             "g_emittance": float,  # A positive value for the Green channel of the glow
             "b_emittance": float,  # A positive value for the Blue channel of the glow
@@ -214,13 +208,8 @@ class Glow(Material):
             "dependencies: []
             }
         """
-        assert 'type' in data, 'Input dictionary is missing "type".'
-        if data['type'] != cls.__name__.lower():
-            raise ValueError(
-                'Type must be %s not %s.' % (cls.__name__.lower(),
-                                             data['type'])
-            )
-        modifier, dependencies = Material.filter_dict_input(data)
+        cls._dict_type_check(cls.__name__, data)
+        modifier, dependencies = cls.filter_dict_input(data)
 
         new_obj = cls(identifier=data['identifier'],
                       r_emittance=data['r_emittance'],
@@ -237,7 +226,7 @@ class Glow(Material):
         """Translate this object to a dictionary."""
         base = {
             'modifier': self.modifier.to_dict(),
-            'type': self.__class__.__name__.lower(),
+            'type': 'Glow',
             'identifier': self.identifier,
             'r_emittance': self.r_emittance,
             'g_emittance': self.g_emittance,

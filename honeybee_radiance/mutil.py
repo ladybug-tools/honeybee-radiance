@@ -17,26 +17,27 @@ def modifier_class_from_type_string(type_string):
 
     Args:
         type_string: Text for the name of a modifier module/class. This should
-            usually be lowercase and should be the same as the 'type' key used
-            in the dictionary representation of the modifier.
+            be the same as the 'type' key used in the dictionary representation
+            of the modifier.
     """
     _mapper = {'bsdf': 'BSDF', 'BSDF': 'BSDF',
                'brtdfunc': 'BRTDfunc', 'BRTDfunc': 'BRTDfunc'}
-    if type_string == 'void':
+    lower_str = type_string.lower()
+    if lower_str == 'void':
         return Void
-    elif type_string in Primitive.MATERIALTYPES:
+    elif lower_str in Primitive.MATERIALTYPES:
         target_module = material
-    elif type_string in Primitive.MIXTURETYPES:
+    elif lower_str in Primitive.MIXTURETYPES:
         target_module = mixture
-    elif type_string in Primitive.PATTERNTYPES:
+    elif lower_str in Primitive.PATTERNTYPES:
         target_module = pattern
-    elif type_string in Primitive.TEXTURETYPES:
+    elif lower_str in Primitive.TEXTURETYPES:
         target_module = texture
     else:
         raise ValueError('%s is not a Radiance modifier.' % type_string)
 
-    class_name = type_string.capitalize() if type_string not in _mapper \
-        else _mapper[type_string]
+    class_name = lower_str.capitalize() if lower_str not in _mapper \
+        else _mapper[lower_str]
 
     return getattr(target_module, class_name)
 

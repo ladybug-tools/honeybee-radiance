@@ -206,7 +206,7 @@ class Primitive(object):
 
             {
             "modifier": {},  # primitive modifier (Default: None)
-            "type": "custom",  # primitive type
+            "type": "",  # lowercase string for the primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
             "values": [],  # values
@@ -241,7 +241,7 @@ class Primitive(object):
 
             {
             "modifier": {},  # primitive modifier (Default: None)
-            "type": "custom",  # primitive type
+            "type": "",  # lowercase string for the primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
             "values": [],  # values
@@ -252,7 +252,10 @@ class Primitive(object):
 
     @property
     def type(self):
-        """Get or set a string for the primitive type."""
+        """Get or set a string for the primitive type.
+
+        This should always be lower case in order to match the radiance convention.
+        """
         return self._type
 
     @type.setter
@@ -304,9 +307,10 @@ class Primitive(object):
 
     @property
     def values(self):
-        """Get or set the values of the current primitive as a dictionary.
+        """Get or set the values of the current primitive as a list of three lists.
 
-        The keys of this dictionary should be integers between 0 and 2.
+        Each sub-list represents a line of the primitive's radiance representation
+        and contain the properties that define the primitive.
 
         Usage:
 
@@ -314,11 +318,10 @@ class Primitive(object):
 
             # This will erase all values except the first line, which has 9 custom items
             primitive.values = [
-                [0.5, 0.5, 0.5, "/usr/oakfloor.pic", ".", "frac(U)", "frac(V)",
-                 "-s", 1.1667],
+                [0.5, 0.5, 0.5, "/usr/oak.pic", ".", "frac(U)", "frac(V)", "-s", 1.1667],
                 [],
                 []
-                ]
+            ]
         """
         self._update_values()
         return self._values

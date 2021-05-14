@@ -15,7 +15,7 @@ _loaded_modifiers = {}
 with open(folders.defaults_file) as json_file:
     default_data = json.load(json_file)['modifiers']
 for mod_dict in default_data:
-    m_class = modifier_class_from_type_string(mod_dict['type'].lower())
+    m_class = modifier_class_from_type_string(mod_dict['type'])
     mod = m_class.from_dict(mod_dict)
     mod.lock()
     _loaded_modifiers[mod_dict['identifier']] = mod
@@ -26,7 +26,7 @@ _default_mods = set(list(_loaded_modifiers.keys()))
 def load_modifier_object(mod_dict):
     """Load a modifier object from a dictionary and add it to the library dict."""
     try:
-        m_class = modifier_class_from_type_string(mod_dict['type'].lower())
+        m_class = modifier_class_from_type_string(mod_dict['type'])
         mod = m_class.from_dict(mod_dict)
         mod.lock()
         assert mod_dict['identifier'] not in _default_mods, 'Cannot overwrite ' \
