@@ -42,8 +42,10 @@ def rtrace_command(
         octree, sensor_grid, rad_params, rad_params_locked, output, dry_run):
     """Run rtrace command for an input octree and a sensor grid.
 
-    octree: Path to octree file.
-    sensor-grid: Path to sensor grid file.
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor_grid: Path to sensor grid file.
     """
     try:
         options = RtraceOptions()
@@ -89,7 +91,7 @@ def rtrace_command(
     'These values will overwrite user input rad parameters.'
 )
 @click.option(
-    '--sky-illum', '-i', default=100000, show_default=True, help='Sky illumincance value'
+    '--sky-illum', '-i', default=100000, show_default=True, help='Sky illuminance value'
     '. The post-processed results will be divided by this number.'
 )
 @click.option(
@@ -100,12 +102,14 @@ def rtrace_command(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
-def rtrace_with_post_process(
+def rtrace_with_df_post_process(
         octree, sensor_grid, rad_params, rad_params_locked, sky_illum, output, dry_run):
-    """Run rtrace command with rcalc post-processing.
+    """Run rtrace command with rcalc post-processing for daylight factor studies.
 
-    octree: Path to octree file.
-    sensor-grid: Path to sensor grid file.
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor_grid: Path to sensor grid file.
     """
     try:
         options = RtraceOptions()
@@ -119,7 +123,7 @@ def rtrace_with_post_process(
         # create command.
         rtrace = Rtrace(options=options, octree=octree, sensors=sensor_grid)
 
-        # add post-procing to rcalc
+        # add rcalc post-procing
         rcalc = Rcalc(output=output)
         rcalc.options.e = '$1=(0.265*$1+0.67*$2+0.065*$3)*17900/{}'.format(sky_illum)
         rtrace.pipe_to = rcalc
@@ -138,5 +142,78 @@ def rtrace_with_post_process(
     else:
         sys.exit(0)
 
-# TODO: add test
-# honeybee-radiance raytrace daylight-factor .\tests\assets\octree\scene.oct .\tests\assets\grid\sensor_grid_merge_0000.pts --rad-params "-ab 10 -ad 1433 -I" --rad-params-locked "-I-" --output grid.res --sky-illum 1000 --dry-run
+
+@raytrace.command('point-in-time')
+@click.argument(
+    'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    'sensor-grid', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--rad-params', show_default=True, help='Radiance parameters.'
+)
+@click.option(
+    '--rad-params-locked', show_default=True, help='Protected Radiance parameters. '
+    'These values will overwrite user input rad parameters.'
+)
+@click.option(
+    '--metric', '-m', default='illuminance', show_default=True,
+    help='Text for the type of metric to be output from the calculation. Choose from: '
+    'illuminance, irradiance, luminance, radiance.'
+)
+@click.option(
+    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    ' is provided it should be relative to project folder.'
+)
+@click.option(
+    '--dry-run', is_flag=True, default=False, show_default=True,
+    help='A flag to show the command without running it.'
+)
+def rtrace_with_pit_post_process(
+        octree, sensor_grid, rad_params, rad_params_locked, metric, output, dry_run):
+    """Run rtrace command with rcalc post-processing for point-in-time studies.
+
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor_grid: Path to sensor grid file.
+    """
+    try:
+        options = RtraceOptions()
+        # parse input radiance parameters
+        if rad_params:
+            options.update_from_string(rad_params.strip())
+        # overwrite input values with protected ones
+        if rad_params_locked:
+            options.update_from_string(rad_params_locked.strip())
+        # overwrite the -I attribute depending on the metric to be calculated
+        if metric in ('illuminance', 'irradiance'):
+            options.I = True
+        elif metric in ('luminance', 'radiance'):
+            options.I = False
+        else:
+            raise ValueError('Metric "{}" is not recognized.'.format(metric))
+
+        # create command.
+        rtrace = Rtrace(options=options, octree=octree, sensors=sensor_grid)
+
+        # add rcalc post-procing
+        rcalc = Rcalc(output=output)
+        rcalc.options.e = '$1=(0.265*$1+0.67*$2+0.065*$3)*179' if metric in \
+            ('illuminance', 'luminance') else '$1=(0.265*$1+0.67*$2+0.065*$3)'
+        rtrace.pipe_to = rcalc
+
+        if dry_run:
+            click.echo(rtrace)
+        else:
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+            rtrace.run(env=env)
+    except Exception:
+        _logger.exception('Failed to run point-in-time ray-tracing.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
