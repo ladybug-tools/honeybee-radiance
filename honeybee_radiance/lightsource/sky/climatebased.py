@@ -386,10 +386,10 @@ class ClimateBased(_PointInTime):
             output_type: An integer between 0 to 2 for output type.
                 * 0 = output in W/m2/sr visible (default)
                 * 1 = output in W/m2/sr solar
-                * 2 = outputin lm/m2/sr luminance
+                * 2 = output in lm/m2/sr luminance
         """
         output = typing.int_in_range(output_type, 0, 2, 'Sky output type')
-        command = '!gendaylit -ang %.6f %.6f -O%d -W %d %d -g %.3f' % (
+        command = '!gendaylit -ang %.6f %.6f -O %d -W %d %d -g %.3f' % (
             self.altitude, self.azimuth - 180.0, output, self.direct_normal_irradiance,
             self._diffuse_horizontal_irradiance, self.ground_reflectance
         )

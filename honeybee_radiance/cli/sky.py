@@ -6,6 +6,7 @@ import logging
 import json
 
 from ladybug.dt import DateTime
+from ladybug.futil import write_to_file_by_name
 from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
 from honeybee_radiance_command._command_util import run_command
 
@@ -325,3 +326,39 @@ def sunpath_from_wea_rad(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@sky.command('adjust-for-metric')
+@click.argument('sky', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--metric', '-m', default='illuminance', show_default=True,
+    help='Text for the type of metric to be output from the calculation. Choose from: '
+    'illuminance, irradiance, luminance, radiance.'
+)
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default=None, show_default=True)
+def uniform_sky(sky, metric, folder, name):
+    """Adjust a sky file to ensure it is suitable for a given metric.
+
+    Specifcally, this ensures that skies being created with gendaylit have a -O
+    option that aligns with visible vs. solar energy.
+
+    \b
+    Args:
+        sky: Path to a .sky file to be adjusted based on the metric.
+    """
+    try:
+        with open(sky) as inf:
+            content = inf.read()
+        if content.startswith('!gendaylit'):
+            split_content = content.split('\n')
+            first_line = split_content[0].replace('-O 0', '-O 1') if metric in \
+                ('irradiance', 'radiance') else split_content[0].replace('-O 1', '-O 0')
+            split_content[0] = first_line
+            content = '\n'.join(split_content)
+        name = os.path.basename(sky) if name is None else name
+        write_to_file_by_name(folder, name, content, True)
+    except Exception:
+        _logger.exception('Failed to adjust sky.')
+        sys.exit(1)
