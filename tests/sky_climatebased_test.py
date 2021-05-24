@@ -12,7 +12,7 @@ def test_check_defaults():
     assert sky.azimuth == 270.410387
     assert sky.ground_reflectance == 0.2
     sky_radiance = sky.to_radiance()
-    assert '!gendaylit -ang 38.186734 90.410387 -O0 -W 702 225 -g 0.200' in sky_radiance
+    assert '!gendaylit -ang 38.186734 90.410387 -O 0 -W 702 225 -g 0.200' in sky_radiance
     assert sky.ground_hemisphere.to_radiance() in sky_radiance
     assert sky.sky_hemisphere.to_radiance() in sky_radiance
     assert sky.is_climate_based is True
@@ -33,7 +33,7 @@ def test_from_lat_long():
     assert round(sky.azimuth - 180) == 73  # ladybug's sun position is more accurate
     assert sky.ground_reflectance == 0.2
     sky_radiance = sky.to_radiance()
-    assert '!gendaylit -ang 57.042579 72.808289 -O0 -W 702 225 -g 0.200' in sky_radiance
+    assert '!gendaylit -ang 57.042579 72.808289 -O 0 -W 702 225 -g 0.200' in sky_radiance
     assert sky.ground_hemisphere.to_radiance() in sky_radiance
     assert sky.sky_hemisphere.to_radiance() in sky_radiance
 
@@ -48,7 +48,7 @@ def test_from_location():
     assert round(sky.azimuth - 180) == 73  # ladybug's sun position is more accurate
     assert sky.ground_reflectance == 0.2
     sky_radiance = sky.to_radiance()
-    assert '!gendaylit -ang 57.042579 72.808289 -O0 -W 702 225 -g 0.200' in sky_radiance
+    assert '!gendaylit -ang 57.042579 72.808289 -O 0 -W 702 225 -g 0.200' in sky_radiance
     assert sky.ground_hemisphere.to_radiance() in sky_radiance
     assert sky.sky_hemisphere.to_radiance() in sky_radiance
 

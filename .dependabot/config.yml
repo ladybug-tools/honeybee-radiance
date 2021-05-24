@@ -8,6 +8,8 @@ update_configs:
           dependency_name: "Sphinx"
       - match:
           dependency_name: "sphinx-click"
+      - match:
+          dependency_name: "coveralls"
     automerged_updates:
       - match:
           dependency_type: "all"
