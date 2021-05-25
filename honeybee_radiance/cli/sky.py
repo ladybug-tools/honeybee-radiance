@@ -338,7 +338,7 @@ def sunpath_from_wea_rad(
 )
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default=None, show_default=True)
-def uniform_sky(sky, metric, folder, name):
+def adjust_sky_for_metric(sky, metric, folder, name):
     """Adjust a sky file to ensure it is suitable for a given metric.
 
     Specifcally, this ensures that skies being created with gendaylit have a -O
