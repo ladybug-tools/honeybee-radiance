@@ -267,8 +267,8 @@ class View(object):
     def h_size(self):
         """Set the view horizontal size (-vh).
 
-        For a perspective projection (including fisheye views), val is the horizontal
-        field of view (in degrees). For a parallel projection, val is the view
+        For a perspective projection (including fisheye views), this is the horizontal
+        field of view (in degrees). For a parallel projection, this is the view
         width in world coordinates.
         """
         return self._h_size
@@ -286,8 +286,8 @@ class View(object):
     def v_size(self):
         """Set the view vertical size (-vv).
 
-        For a perspective projection (including fisheye views), val is the horizontal
-        field of view (in degrees). For a parallel projection, val is the view width in
+        For a perspective projection (including fisheye views), this is the horizontal
+        field of view (in degrees). For a parallel projection, this is the view width in
         world coordinates.
         """
         return self._v_size
