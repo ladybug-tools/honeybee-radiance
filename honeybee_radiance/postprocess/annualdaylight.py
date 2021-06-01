@@ -92,7 +92,7 @@ def _metrics(values, occ_pattern, threshold, min_t, max_t, total_hours):
     udi_upper = 0
 
     for is_occ, value in zip(occ_pattern, values):
-        if is_occ < 0.5:
+        if is_occ == 0:
             continue
         if value > threshold:
             da += 1
