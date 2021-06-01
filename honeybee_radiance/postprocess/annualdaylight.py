@@ -54,19 +54,19 @@ def filter_schedule_by_hours(sun_up_hours, schedule=None):
         schedule: A list of 8760 values for the occupancy schedule.
 
     Returns:
-        List - A filtered version of the annual schedule that only includes the
-            sun-up-hours.
+        A tuple with two values.
 
+        occ_pattern -- A filtered version of the annual schedule that only
+            includes the sun-up-hours.
+        
+        total_hours -- A number for the total occupied hours of the schedule.
     """
     schedule = schedule or generate_default_schedule()
     occ_pattern = [schedule[int(h)] for h in sun_up_hours]
+    return occ_pattern, sum(schedule)
 
-    return occ_pattern
 
-
-def _metrics(
-    values, occ_pattern, threshold=300, min_t=0, max_t=3000, total_occupied_hours=None
-        ):
+def _metrics(values, occ_pattern, threshold, min_t, max_t, total_hours):
     """Calculate annual metrics for a sensor.
 
     Args:
@@ -75,6 +75,8 @@ def _metrics(
         threshold: Threshold value for daylight autonomy. Default: 300.
         min_t: Minimum threshold for useful daylight illuminance. Default: 100.
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
+        total_occupied_hours: An integer for the total number of occupied hours,
+            which can be used to avoid having to sum occ pattern each time.
 
     Returns:
         Tuple -- daylight autonomy, continuous daylight autonomy, lower useful daylight
@@ -83,7 +85,6 @@ def _metrics(
     def _percentage(in_v, occ_hours):
         return round(100.0 * in_v / occ_hours, 2)
 
-    total_hours = total_occupied_hours or sum(occ_pattern)
     da = 0
     cda = 0
     udi_lower = 0
@@ -91,7 +92,7 @@ def _metrics(
     udi_upper = 0
 
     for is_occ, value in zip(occ_pattern, values):
-        if is_occ == 0:
+        if is_occ < 0.5:
             continue
         if value > threshold:
             da += 1
@@ -111,7 +112,8 @@ def _metrics(
         _percentage(udi_upper, total_hours)
 
 
-def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000):
+def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000,
+            total_hours=None):
     """Compute annual metrics for a given result file.
 
     Args:
@@ -124,6 +126,10 @@ def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000):
         threshold: Threshold illuminance level for daylight autonomy. Default: 300.
         min_t: Minimum threshold for useful daylight illuminance. Default: 100.
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
+        total_hours: An integer for the total number of occupied hours in the
+            occupancy schedule. If None, it will be assumed that all of the
+            occupied hours are sun-up hours and are already accounted for
+            in the the occ_pattern.
 
     Returns:
         Tuple(List, List, List, List, List) -- 5 lists for daylight autonomy,
@@ -137,11 +143,13 @@ def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000):
     udi = []
     udi_lower = []
     udi_upper = []
+    total_occupied_hours = sum(occ_pattern) if total_hours is None else total_hours
     with open(ill_file) as results:
         for pt_res in results:
             values = (float(res) for res in pt_res.split())
             da_v, cda_v, udi_lower_v, udi_v, udi_upper_v = _metrics(
-                values, occ_pattern, threshold, min_t, max_t
+                values, occ_pattern, threshold, min_t, max_t,
+                total_occupied_hours
             )
             da.append(da_v)
             cda.append(cda_v)
@@ -152,10 +160,8 @@ def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000):
     return da, cda, udi_lower, udi, udi_upper
 
 
-def metrics_to_files(
-    ill_file, occ_pattern, output_folder, threshold=300, min_t=100, max_t=3000,
-    grid_name=None
-        ):
+def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
+                     min_t=100, max_t=3000, grid_name=None, total_hours=None):
     """Compute annual metrics for an ill file and write the results to a folder.
 
     This function generates 5 different files or daylight autonomy, continuous daylight
@@ -176,6 +182,10 @@ def metrics_to_files(
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
         grid_name: An optional name for grid name which will be used to name the output
             files. If None the name of the input file will be used.
+        total_hours: An integer for the total number of occupied hours in the
+            occupancy schedule. If None, it will be assumed that all of the
+            occupied hours are sun-up hours and are already accounted for
+            in the the occ_pattern.
 
     Returns:
         Tuple(file.da, file.cda, file.luid, file.uid, file.hudi)
@@ -204,7 +214,7 @@ def metrics_to_files(
         for pt_res in results:
             values = (float(res) for res in pt_res.split())
             dar, cdar, udi_lowerr, udir, udi_upperr = _metrics(
-                values, occ_pattern, threshold, min_t, max_t
+                values, occ_pattern, threshold, min_t, max_t, total_hours
             )
             daf.write(str(dar) + '\n')
             cdaf.write(str(cdar) + '\n')
@@ -235,9 +245,8 @@ def _process_input_folder(folder, filter_pattern):
 
 
 # TODO - support a list of schedules/schedule folder to match the input grids
-def metrics_from_folder(
-    results_folder, schedule=None, threshold=300, min_t=100, max_t=3000, grids_filter='*'
-        ):
+def metrics_from_folder(results_folder, schedule=None, threshold=300,
+                        min_t=100, max_t=3000, grids_filter='*'):
     """Compute annual metrics for a folder.
 
     This folder is an output folder of annual daylight recipe. Folder should include
@@ -268,12 +277,13 @@ def metrics_from_folder(
     udi_upper = []
 
     grids, sun_up_hours = _process_input_folder(results_folder, grids_filter)
-    occ_pattern = filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
+    occ_pattern, total_occ = \
+        filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
 
     for grid in grids:
         ill_file = os.path.join(results_folder, '%s.ill' % grid['full_id'])
         da_r, cda_r, udi_lower_r, udi_r, udi_upper_r = \
-            metrics(ill_file, occ_pattern, threshold, min_t, max_t)
+            metrics(ill_file, occ_pattern, threshold, min_t, max_t, total_occ)
         da.append(da_r)
         cda.append(cda_r)
         udi_lower.append(udi_lower_r)
@@ -310,7 +320,8 @@ def metrics_to_folder(
 
     """
     grids, sun_up_hours = _process_input_folder(results_folder, grids_filter)
-    occ_pattern = filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
+    occ_pattern, total_occ = \
+        filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
 
     metrics_folder = os.path.join(results_folder, sub_folder)
     if not os.path.isdir(metrics_folder):
@@ -320,7 +331,7 @@ def metrics_to_folder(
         ill_file = os.path.join(results_folder, '%s.ill' % grid['full_id'])
         metrics_to_files(
             ill_file, occ_pattern, metrics_folder, threshold, min_t,
-            max_t, grid['full_id']
+            max_t, grid['full_id'], total_occ
         )
 
     # copy info.json to all results folders
