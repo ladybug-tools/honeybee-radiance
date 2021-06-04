@@ -11,6 +11,7 @@ from .translate import translate
 from .lib import lib
 from .sky import sky
 from .grid import grid
+from .view import view
 from .sunpath import sunpath
 from .octree import octree
 from .raytrace import raytrace
@@ -58,6 +59,7 @@ radiance.add_command(translate)
 radiance.add_command(lib)
 radiance.add_command(sky)
 radiance.add_command(grid)
+radiance.add_command(view)
 radiance.add_command(sunpath)
 radiance.add_command(octree)
 radiance.add_command(raytrace)

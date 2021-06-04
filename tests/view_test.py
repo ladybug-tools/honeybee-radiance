@@ -14,8 +14,8 @@ def test_default_values():
     assert v.type == 'v'
     assert v.h_size == 60
     assert v.v_size == 60
-    assert v.fore_clip.to_radiance() == ''
-    assert v.aft_clip.to_radiance() == ''
+    assert v.vo == ''
+    assert v.va == ''
     assert v.to_radiance() == '-vtv -vp 0.0 0.0 0.0 -vd 0.0 0.0 1.0' \
         ' -vu 0.0 1.0 0.0 -vh 60.0 -vv 60.0'
 
@@ -32,7 +32,7 @@ def test_value_assignment():
     assert v.v_size == 300
     assert v.shift == -10
     assert v.lift == -25
-    assert v.fore_clip.to_radiance() == ''
+    assert v.vo == ''
     assert v.to_radiance() == '-vtl -vp 0.0 0.0 10.0 -vd 0.0 1.0 0.0' \
         ' -vu 0.0 0.0 1.0 -vh 240.0 -vv 300.0 -vs -10.0 -vl -25.0'
 

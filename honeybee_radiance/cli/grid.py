@@ -62,6 +62,7 @@ def merge_grid(input_folder, base_name, extension, folder, name):
     """Merge several radiance files into a single file.
 
     This command removes headers from file if it exist.
+
     \b
     Args:
         input_folder: Input folder.

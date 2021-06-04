@@ -182,7 +182,7 @@ class View(object):
             * a - Angular fisheye (a)
             * s - Planisphere [stereographic] projection (s)
         """
-        return self._type
+        return self._type.value
 
     @property
     def vt(self):
@@ -217,7 +217,7 @@ class View(object):
         This is the focal point of a perspective view or the center of a parallel
         projection. Default: (0, 0, 0)
         """
-        return self._position
+        return self._position.value
 
     @property
     def vp(self):
@@ -235,7 +235,7 @@ class View(object):
         The length of this vector indicates the focal distance as needed by
         the pixel depth of field (-pd) in rpict. Default: (0, 0, 1)
         """
-        return self._direction
+        return self._direction.value
 
     @property
     def vd(self):
@@ -252,7 +252,7 @@ class View(object):
 
         Default: (0, 1, 0).
         """
-        return self._up_vector
+        return self._up_vector.value
 
     @property
     def vu(self):
@@ -271,7 +271,7 @@ class View(object):
         field of view (in degrees). For a parallel projection, this is the view
         width in world coordinates.
         """
-        return self._h_size
+        return self._h_size.value
 
     @property
     def vh(self):
@@ -290,12 +290,12 @@ class View(object):
         field of view (in degrees). For a parallel projection, this is the view width in
         world coordinates.
         """
-        return self._v_size
+        return self._v_size.value
 
     @property
     def vv(self):
         """View vertical size as a string in radiance format."""
-        return self.v_size.to_radiance()
+        return self._v_size.to_radiance()
 
     @v_size.setter
     def v_size(self, value):
@@ -311,7 +311,7 @@ class View(object):
         to the right of the normal view. A value of -1 would be to the left. Larger or
         fractional values are permitted as well.
         """
-        return self._shift
+        return self._shift.value
 
     @property
     def vs(self):
@@ -328,12 +328,12 @@ class View(object):
 
         This is the amount the actual image will be lifted up from the specified view.
         """
-        return self._lift
+        return self._lift.value
 
     @property
     def vl(self):
         """View lift as a string in radiance format."""
-        return self.lift.to_radiance()
+        return self._lift.to_radiance()
 
     @lift.setter
     def lift(self, value):
@@ -352,7 +352,7 @@ class View(object):
         no foreground clipping. A negative value produces some interesting effects,
         since it creates an inverted image for objects behind the viewpoint.
         """
-        return self._fore_clip
+        return self._fore_clip.value
 
     @property
     def vo(self):
@@ -375,7 +375,7 @@ class View(object):
         no aft clipping, and is the only way to see infinitely distant objects such as
         the sky.
         """
-        return self._aft_clip
+        return self._aft_clip.value
 
     @property
     def va(self):
@@ -582,11 +582,7 @@ class View(object):
         match Radiance defaults.
         """
         x, y = self.dimension_x_y(x_res, y_res)
-        return '-x %d -y %d -ld%s' % (
-            x, y,
-            '-' if (self.fore_clip.to_radiance() + self.aft_clip.to_radiance() == '')
-            else '+'
-        )
+        return '-x %d -y %d -ld%s' % (x, y,'-' if (self.vo + self.va == '') else '+')
 
     def dimension_x_y(self, x_res=None, y_res=None):
         """Get dimensions for this view as x, y.
@@ -600,8 +596,8 @@ class View(object):
         if self.is_fisheye:
             return min(x_res, y_res), min(x_res, y_res)
 
-        vh = self.h_size.value
-        vv = self.v_size.value
+        vh = self.h_size
+        vv = self.v_size
 
         if self.type == 'v':
             hv_ratio = math.tan(math.radians(vh) / 2.0) / \
@@ -688,21 +684,17 @@ class View(object):
             if y_div_count == 1:
                 _vl = 0
             else:
-                _vl = ((int(view_count / y_div_count) / (y_div_count - 1)) - 0.5) \
+                _vl = ((int(view_count % y_div_count) / (y_div_count - 1)) - 0.5) \
                     * (y_div_count - 1)
 
-            # create a copy from the current copy
-            _n_view = View('%s_%d' % (self.identifier, view_count))
-
+            # create a copy from the current view
+            _n_view = self.duplicate()
+            _n_view.identifier = '%s_%d' % (self.identifier, view_count)
             # update parameters
             _n_view.h_size = _vh
             _n_view.v_size = _vv
             _n_view.shift = _vs
             _n_view.lift = _vl
-            _n_view._fore_clip = self._fore_clip
-            _n_view._aft_clip = self._aft_clip
-            _n_view._room_identifier = self._room_identifier
-            _n_view._light_path = self._light_path
             try:
                 _n_view.display_name = '%s_%d' % (self.display_name, view_count)
             except UnicodeEncodeError:  # character no found on machine
@@ -750,16 +742,16 @@ class View(object):
         base = {
             'type': 'View',
             'identifier': self.identifier,
-            'position': self.position.value,
-            'direction': self.direction.value,
-            'up_vector': self.up_vector.value,
-            'h_size': self.h_size.value,
-            'v_size': self.v_size.value,
-            'shift': self.shift.value,
-            'lift': self.lift.value,
-            'view_type': self.type.value,
-            'fore_clip': self.fore_clip.value,
-            'aft_clip': self.aft_clip.value
+            'position': self.position,
+            'direction': self.direction,
+            'up_vector': self.up_vector,
+            'h_size': self.h_size,
+            'v_size': self.v_size,
+            'shift': self.shift,
+            'lift': self.lift,
+            'view_type': self.type,
+            'fore_clip': self.fore_clip,
+            'aft_clip': self.aft_clip
         }
         if self._display_name is not None:
             base['display_name'] = self.display_name
@@ -771,7 +763,7 @@ class View(object):
             base['group_identifier'] = self.group_identifier
         return base
 
-    def to_file(self, folder, file_name=None, mkdir=False):
+    def to_file(self, folder, file_name=None, mkdir=False): 
         """Save view to a file.
 
         Args:
@@ -785,6 +777,8 @@ class View(object):
         """
 
         identifier = file_name or self.identifier + '.vf'
+        if not (identifier.endswith('.vf') or identifier.endswith('.unf')):
+            identifier += '.vf'
         # add rvu before the view itself
         content = 'rvu ' + self.to_radiance()
         return futil.write_to_file_by_name(folder, identifier, content, mkdir)
@@ -894,9 +888,9 @@ class View(object):
 
     def __key(self):
         """A tuple based on the object properties, useful for hashing."""
-        return (self.identifier, hash(self.position.value), hash(self.direction.value),
-                hash(self.up_vector.value), self.type.value, self.h_size.value,
-                self.v_size.value, self.shift.value, self.lift.value, self._display_name,
+        return (self.identifier, hash(self.position), hash(self.direction),
+                hash(self.up_vector), self.type, self.h_size,
+                self.v_size, self.shift, self.lift, self._display_name,
                 self._room_identifier)
 
     def __hash__(self):

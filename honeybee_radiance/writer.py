@@ -348,37 +348,14 @@ def model_to_rad_folder(
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
     _write_sensor_grids(grid_dir, model, grids)
-
     view_dir = model_folder.view_folder(full=True)
-    model_views = model.properties.radiance.views
-    filtered_views = _filter_by_pattern(model_views, views)
-    if len(filtered_views) != 0:
-        views_info = []
-        preparedir(view_dir)
-        for view in filtered_views:
-            view.to_file(view_dir)
-            info_file = os.path.join(view_dir, '{}.json'.format(view.identifier))
-            with open(info_file, 'w') as fp:
-                json.dump(view.info_dict(model), fp, indent=4)
-
-            view_info = {
-                'name': view.identifier,
-                'identifier': view.identifier,
-                'group': view.group_identifier or '',
-                'full_id': view.full_identifier
-            }
-            views_info.append(view_info)
-
-        # write information file for all the views.
-        views_info_file = os.path.join(view_dir, '_info.json')
-        with open(views_info_file, 'w') as fp:
-            json.dump(views_info, fp, indent=2)
+    _write_views(view_dir, model, views)
 
     return folder
 
 
 def _write_sensor_grids(folder, model, grids_filter):
-    """Write out the files that need to go into any dynamic model folder.
+    """Write out the sensor grid files.
 
     Args:
         folder: The sensor grids folder.
@@ -390,7 +367,7 @@ def _write_sensor_grids(folder, model, grids_filter):
 
     Returns:
         A tuple for path to _info.json and _model_grids_info.json. The first file
-        are the information for the sensor grids that are written to the folder and
+        includes the information for the sensor grids that are written to the folder and
         the second one is the information for the input sensor grids from the model.
 
         Use ``_info.json`` for access the sensor grid information for running the
@@ -452,6 +429,49 @@ def _write_sensor_grids(folder, model, grids_filter):
             json.dump(model_grids_info, fp, indent=2)
 
         return grids_info_file, model_grids_info_file
+
+
+def _write_views(folder, model, views_filter):
+    """Write out the view files.
+
+    Args:
+        folder: The views folder.
+        model: A Honeybee model.
+        views_filter: A list of view names to filter the views in the model. Use this
+            argument to indicate specific views that should be included. By default,
+            all the views will be exported. You can use wildcard symbols in names.
+            Use relative path from inside views folder.
+
+    Returns:
+        The path to _info.json, which includes the information for the views that
+        are written to the folder.
+    """
+    model_views = model.properties.radiance.views
+    filtered_views = _filter_by_pattern(model_views, views_filter)
+    if len(filtered_views) != 0:
+        preparedir(folder)
+        # group_by_identifier
+        views_info = []
+        for view in filtered_views:
+            view.to_file(folder)
+            info_file = os.path.join(folder, '{}.json'.format(view.identifier))
+            with open(info_file, 'w') as fp:
+                json.dump(view.info_dict(model), fp, indent=4)
+
+            view_info = {
+                'name': view.identifier,
+                'identifier': view.identifier,
+                'group': view.group_identifier or '',
+                'full_id': view.full_identifier
+            }
+            views_info.append(view_info)
+
+        # write information file for all the views.
+        views_info_file = os.path.join(folder, '_info.json')
+        with open(views_info_file, 'w') as fp:
+            json.dump(views_info, fp, indent=2)
+
+        return views_info_file
 
 
 def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
@@ -765,7 +785,7 @@ def _filter_by_pattern(input_objects, filter):
 
 
 def _group_by_identifier(sensor_grids):
-    """Group sensor grids if they have the same full identifier."""
+    """Group sensor grids or views if they have the same full identifier."""
     group_func = lambda grid: grid.full_identifier  # noqa: E731
 
     ordered_sensor_grids = sorted(sensor_grids, key=group_func)
