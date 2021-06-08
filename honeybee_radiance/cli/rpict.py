@@ -61,9 +61,8 @@ def rpict_command(
         output, dry_run):
     """Run rpict command for an input octree and a view file.
 
-    Note that, if an ambient cache file (.amd) is found with the same name as the
-    view file and is next to the view file, it will be automatically used within
-    the rpict command.
+    Note that, if an ambient cache file (.amd) is found next to the view file,
+    it will be automatically used within the rpict command.
 
     \b
     Args:
@@ -91,7 +90,6 @@ def rpict_command(
             options.x = int(resolution * scale_factor)
             options.y = int(resolution * scale_factor)
         # sense wether there is an ambient cache file next to the view
-        amb_file = os.path.basename(view).replace('.vf', '.amb')
         for base_file in os.listdir(os.path.dirname(view)):
             if base_file.endswith('.amb'):
                 options.af = os.path.join(os.path.dirname(view), base_file)
