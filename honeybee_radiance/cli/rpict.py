@@ -61,7 +61,7 @@ def rpict_command(
         output, dry_run):
     """Run rpict command for an input octree and a view file.
 
-    Note that, if an ambient cache file (.amd) is found next to the view file,
+    Note that, if an ambient cache file (.amb) is found next to the view file,
     it will be automatically used within the rpict command.
 
     \b

@@ -357,7 +357,7 @@ def adjust_sky_for_metric(sky, metric, folder, name):
                 ('irradiance', 'radiance') else split_content[0].replace('-O 1', '-O 0')
             split_content[0] = first_line
             content = '\n'.join(split_content)
-        name = os.path.basename(sky) if name is None else name
+        name = '{}.sky'.format(metric) if name is None else name
         write_to_file_by_name(folder, name, content, True)
     except Exception:
         _logger.exception('Failed to adjust sky.')

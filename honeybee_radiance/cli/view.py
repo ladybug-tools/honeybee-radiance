@@ -74,8 +74,17 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
         # split the view into smaller views
         view_obj = View.from_file(view)
         views = view_obj.grid(y_div_count=count)
-        files = [v.to_file(folder, '{}_{}.vf'.format(view_obj.identifier, i), mkdir=True)
-                 for i, v in enumerate(views)]
+        views_info = []
+        for c, v in enumerate(views):
+            name = '%s_%04d' % (view_obj.identifier, c)
+            path = '%s.vf' % name
+            full_path = os.path.join(folder, path)
+            v.to_file(folder, path, mkdir=True)
+            views_info.append({
+                'name': name,
+                'path': path,
+                'full_path': full_path
+            })
 
         # create the ambient cache file if specified
         if not skip_overture:
@@ -100,7 +109,7 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             os.remove(os.path.join(folder, out_file))
 
         # record all of the view files that were generated
-        log_file.write(json.dumps(files))
+        log_file.write(json.dumps(views_info))
     except Exception:
         _logger.exception('Failed to split view file.')
         sys.exit(1)
