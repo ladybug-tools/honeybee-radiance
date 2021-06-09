@@ -3,6 +3,7 @@ import click
 import sys
 import logging
 import os
+import shutil
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rpict import Rpict, RpictOptions
@@ -95,9 +96,14 @@ def rpict_command(
                 options.af = os.path.join(os.path.dirname(view), base_file)
                 break
 
+        # write the metric type into the view name such that it's in the HDR header
+        metric_view = os.path.basename(view).replace('.vf', '_{}.vf'.format(metric))
+        full_metric_view = os.path.join(os.path.dirname(view), metric_view)
+        shutil.copyfile(view, full_metric_view)
+
         # create command.
         rpict = Rpict(
-            options=options, output=output, octree=octree, view=view
+            options=options, output=output, octree=octree, view=full_metric_view
         )
 
         if dry_run:
@@ -108,6 +114,7 @@ def rpict_command(
                 env = folders.env
             env = dict(os.environ, **env) if env else None
             rpict.run(env=env)
+        os.remove(full_metric_view)
     except Exception:
         _logger.exception('Failed to run rpict command.')
         sys.exit(1)
