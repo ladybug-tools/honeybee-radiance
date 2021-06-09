@@ -63,7 +63,8 @@ def rpict_command(
     """Run rpict command for an input octree and a view file.
 
     Note that, if an ambient cache file (.amb) is found next to the view file,
-    it will be automatically used within the rpict command.
+    and it is determined to be valid (with a non-zero size) it will be
+    automatically used within the rpict command.
 
     \b
     Args:
@@ -93,8 +94,10 @@ def rpict_command(
         # sense wether there is an ambient cache file next to the view
         for base_file in os.listdir(os.path.dirname(view)):
             if base_file.endswith('.amb'):
-                options.af = os.path.join(os.path.dirname(view), base_file)
-                break
+                full_amb_path = os.path.join(os.path.dirname(view), base_file)
+                if os.stat(full_amb_path).st_size != 0:
+                    options.af = os.path.join(os.path.dirname(view), base_file)
+                    break
 
         # write the metric type into the view name such that it's in the HDR header
         metric_view = os.path.basename(view).replace('.vf', '_{}.vf'.format(metric))

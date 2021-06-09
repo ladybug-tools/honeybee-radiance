@@ -6,6 +6,7 @@ import logging
 import re
 import json
 
+from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
 from honeybee_radiance_command.rpict import Rpict, RpictOptions
 from honeybee_radiance_command.pcompos import Pcompos
@@ -87,6 +88,7 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             })
 
         # create the ambient cache file if specified
+        amb_file = os.path.basename(view).replace('.vf', '.amb')
         if not skip_overture:
             options = RpictOptions()
             if rad_params:
@@ -94,7 +96,7 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             # overwrite default image size to be small for the ambient cache (64 x 64)
             options.x = 64
             options.y = 64
-            options.af = os.path.basename(view).replace('.vf', '.amb')
+            options.af = amb_file
 
             # create command and run it to get the .amb file
             assert octree is not None, \
@@ -107,6 +109,8 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             env = dict(os.environ, **env) if env else None
             rpict.run(env=env, cwd=folder)
             os.remove(os.path.join(folder, out_file))
+        else:  # write a dummy ambient file so that queenbee does not crash
+            write_to_file_by_name(folder, amb_file, '')
 
         # record all of the view files that were generated
         log_file.write(json.dumps(views_info))
