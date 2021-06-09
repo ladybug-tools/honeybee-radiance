@@ -71,7 +71,7 @@ def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal,
         model = Model.from_file(model_json)
         if not no_grid_check and len(model.properties.radiance.sensor_grids) == 0:
             raise ValueError('Model contains no sensor grids. These are required.')
-        if not no_view_check and len(model.properties.radiance.sensor_grids) == 0:
+        if not no_view_check and len(model.properties.radiance.views) == 0:
             raise ValueError('Model contains no views These are required.')
 
         # translate the model to a radiance folder
