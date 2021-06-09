@@ -15,6 +15,7 @@ from .view import view
 from .sunpath import sunpath
 from .octree import octree
 from .raytrace import raytrace
+from .rpict import rpict
 from .dc import dc
 from .postprocess import post_process
 from .mtx import mtxop
@@ -63,6 +64,7 @@ radiance.add_command(view)
 radiance.add_command(sunpath)
 radiance.add_command(octree)
 radiance.add_command(raytrace)
+radiance.add_command(rpict)
 radiance.add_command(dc)
 radiance.add_command(post_process, name='post-process')
 radiance.add_command(mtxop)
