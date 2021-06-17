@@ -2,9 +2,12 @@
 
 from click.testing import CliRunner
 from honeybee_radiance.cli.sky import sky_cie, sky_climate_based, \
-    sky_with_certain_irrad, sky_with_certain_illum, sky_dome
+    sky_with_certain_irrad, sky_with_certain_illum, sky_dome, leed_illuminance
+from ladybug.futil import nukedir
+
 import uuid
 import os
+import json
 
 
 def test_sky_cie():
@@ -87,3 +90,18 @@ def test_sky_dome():
     assert result.exit_code == 0
     # check the file is created
     assert os.path.isfile(os.path.join(folder, name))
+
+
+def test_leed_illuminance():
+    wea_file = './tests/assets/wea/denver.wea'
+    folder = './tests/assets/temp/leed'
+    runner = CliRunner()
+    result = runner.invoke(
+        leed_illuminance, [wea_file, '--folder', folder]
+    )
+    assert result.exit_code == 0
+    out_files = json.loads(result.output)
+    # check the files are created
+    for sky in out_files:
+        assert os.path.isfile(sky['full_path'])
+    nukedir(folder)

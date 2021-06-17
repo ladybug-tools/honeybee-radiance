@@ -58,7 +58,7 @@ def filter_schedule_by_hours(sun_up_hours, schedule=None):
 
         occ_pattern -- A filtered version of the annual schedule that only
             includes the sun-up-hours.
-        
+
         total_hours -- A number for the total occupied hours of the schedule.
     """
     schedule = schedule or generate_default_schedule()
