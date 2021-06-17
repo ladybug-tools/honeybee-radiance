@@ -2,8 +2,11 @@
 import click
 import sys
 import os
+import json
 import logging
+
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.cli.util import get_compare_func, remove_header
 
 _logger = logging.getLogger(__name__)
@@ -116,7 +119,7 @@ def count_values(
     """Count values in a row that meet a certain criteria.
 
     \b
-    This command is useful for post processing results like the number of sensors 
+    This command is useful for post processing results like the number of sensors
     which receive more than X lux at any timestep.
 
     """
@@ -245,12 +248,12 @@ def average_matrix_rows(input_matrix, output):
     show_default=True
 )
 @click.option(
-    '--grids_filter', '-gf', help='A pattern to filter the grids.', default='*',
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
     show_default=True
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to copy output'
-    'files.', default='metrics'
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output'
+    'metric files.', default='metrics'
 )
 def annual_metrics(
     folder, schedule, threshold, lower_threshold, upper_threshold, grids_filter,
@@ -268,7 +271,7 @@ def annual_metrics(
 
     \b
     Args:
-        results_folder: Results folder. This folder is an output folder of annual
+        folder: Results folder. This folder is an output folder of annual
         daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
         The command uses the list in grids_info.json to find the result files for each
         sensor grid.
@@ -288,6 +291,56 @@ def annual_metrics(
         )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('leed-illuminance')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--glare-control/--no-glare-control', ' /-ngc', help='Flag to note whether '
+    'the model has "view-preserving automatic (with manual override) glare-control '
+    'devices," which means that illuminance only needs to be above 300 lux and not '
+    'between 300 and 3000 lux.', default=True, show_default=True
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids for just the '
+    'regularly occupied spaces.', default='*', show_default=True
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for a subfolder to write the '
+    'pass/fail files for each sensor grid.', default=None
+)
+@click.option(
+    '--output-file', help='Optional JSON file to output a summary of the number '
+    'of LEED credits and the percentage of sensor area that meets the criteria. '
+    'By default this will be printed out to stdout',
+    type=click.File('w'), default='-', show_default=True
+)
+def leed_illuminance(folder, glare_control, grids_filter, sub_folder, output_file):
+    """Estimate LEED daylight credits from two point-in-time illuminance folders.
+
+    \b
+    Args:
+        folder: Project folder for a LEED illuminance simulation. It should contain
+            a HBJSON model and two sub-folders of complete point-in-time illuminance
+            simulations labeled "9AM" and "3PM". These two sub-folders should each
+            have results folders that include a grids_info.json and .res files with
+            illuminance values for each sensor. If Meshes are found for the sensor
+            grids in the HBJSON file, they will be used to compute percentages
+            of occupied floor area that pass vs. fail. Otherwise, all sensors will
+            be assumed to represent an equal amount of floor area.
+    """
+    try:
+        credit_summary = leed_illuminance_to_folder(
+            folder, glare_control, grids_filter, sub_folder)
+        output_file.write(json.dumps(credit_summary, indent=4))
+    except Exception:
+        _logger.exception('Failed to calculate LEED daylight metrics.')
         sys.exit(1)
     else:
         sys.exit(0)

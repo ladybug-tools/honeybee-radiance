@@ -7,6 +7,7 @@ import json
 
 from ladybug.dt import DateTime
 from ladybug.futil import write_to_file_by_name
+from ladybug.wea import Wea
 from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
 from honeybee_radiance_command._command_util import run_command
 
@@ -30,9 +31,10 @@ def sky():
               help='Location latitude between -90 (south) and 90 (north).')
 @click.option('--longitude', '-lon', type=float, default=0, show_default=True,
               help='Location longitude between -180 (west) and 180 (east).')
-@click.option('--time-zone', '-tz', type=int, default=None, help='Time zone between -12 hours '
-              '(west) and +14 hours (east). If unspecified, the time will be '
-              'interpreted as solar time at the given longitude.')
+@click.option('--time-zone', '-tz', type=int, default=None,
+              help='Time zone between -12 hours (west) and +14 hours (east). If '
+              'unspecified, the time will be interpreted as solar time at the '
+              'given longitude.')
 @click.option('--sky-type', '-type', type=int, default=0, show_default=True, help='An '
               'integer from 0..5 to indicate CIE Sky Type. 0 = Sunny with sun, 1 = Sunny'
               ' without sun, 2 = Intermediate with sun, 3 = Intermediate without sun, '
@@ -89,9 +91,10 @@ def sky_cie(day, month, time, latitude, longitude, time_zone, sky_type,
               help='Location latitude between -90 (south) and 90 (north).')
 @click.option('--longitude', '-lon', type=float, default=0, show_default=True,
               help='Location longitude between -180 (west) and 180 (east).')
-@click.option('--time-zone', '-tz', type=int, default=None, help='Time zone between -12 hours '
-              '(west) and +14 hours (east). If unspecified, the time will be '
-              'interpreted as solar time at the given longitude.')
+@click.option('--time-zone', '-tz', type=int, default=None,
+              help='Time zone between -12 hours (west) and +14 hours (east). If '
+              'unspecified, the time will be interpreted as solar time at the '
+              'given longitude.')
 @click.option('--direct-normal-irradiance', '-dni', type=float, default=0,
               show_default=True, help='Direct normal irradiance (W/m2).')
 @click.option('--diffuse_horizontal_irradiance', '-dhi', type=float, default=0,
@@ -115,7 +118,7 @@ def sky_climate_based(
     """Get a ClimateBased sky file from parameters.
 
     These can be a minimal representation of the sky through altitude and azimuth (eg.
-    "climate-based -alt 71.6 -az 185.2 -dni 800 -dhi 120"). Or it can be a detailed 
+    "climate-based -alt 71.6 -az 185.2 -dni 800 -dhi 120"). Or it can be a detailed
     specification of time and location (eg. "climate-based 21 Jun 12:00 -lat 41.78
     -lon -87.75 -dni 800 -dhi 120"). Both the altitude and azimuth must be specified
     for the minimal representation to be used. Otherwise, this command defaults
@@ -361,4 +364,73 @@ def adjust_sky_for_metric(sky, metric, folder, name):
         write_to_file_by_name(folder, name, content, True)
     except Exception:
         _logger.exception('Failed to adjust sky.')
+        sys.exit(1)
+
+
+@sky.command('leed-illuminance')
+@click.argument('wea', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--north', '-n', type=float, default=0, show_default=True, help='A '
+    'number between -360 and 360 for the counterclockwise difference between '
+    'the North and the positive Y-axis in degrees. 90 is West; 270 is East')
+@click.option('--folder', type=click.Path(
+    exists=False, file_okay=False, dir_okay=True, resolve_path=True), default='.',
+    help='Output folder for the two generated .sky files.')
+@click.option(
+    '--name', help='Sky file base name. Each of the two output skies will have this '
+    'base name concatenated with _9AM or _3PM', default='clear_sky', show_default=True)
+@click.option(
+    '--log-file', help='Optional log file to output the information about the two '
+    'generated sky files. By default the list will be printed out to stdout',
+    type=click.File('w'), default='-')
+def leed_illuminance(wea, north, folder, name, log_file):
+    """Generate two climate-based lear skies for LEED v4.1 Daylight Option 2.
+
+    This involves evaluating the input TMY Wea, finding the clearest day within
+    15 days of September and March, and using that to generate skies at 9AM and 3PM.
+
+    \b
+    Args:
+        wea: Path to a Typical Meteorological Year (TMY) .wea file. The file must
+            be annual with a timestep of 1 for a non-leap year.
+    """
+    try:
+        # get HOYs for the time around the equinoxes
+        mar_9, sep_9 = DateTime(3, 21, 9).hoy, DateTime(9, 21, 9).hoy
+        mar_3, sep_3 = DateTime(3, 21, 15).hoy, DateTime(9, 21, 15).hoy
+        hoys_mar9 = list(range(int(mar_9 - (15 * 24)), int(mar_9 + (15 * 24)), 24))
+        hoys_sep9 = list(range(int(sep_9 - (15 * 24)), int(sep_9 + (15 * 24)), 24))
+        hoys_mar3 = list(range(int(mar_3 - (15 * 24)), int(mar_3 + (15 * 24)), 24))
+        hoys_sep3 = list(range(int(sep_3 - (15 * 24)), int(sep_3 + (15 * 24)), 24))
+
+        # analyze the Wea file to get the sunniest days around the equinoxes
+        wea_obj = Wea.from_file(wea)
+        dni = wea_obj.direct_normal_irradiance
+        dhi = wea_obj.diffuse_horizontal_irradiance
+        irr_mar9 = [x for _, x in sorted(zip([dni[h] for h in hoys_mar9], hoys_mar9))]
+        irr_sep9 = [x for _, x in sorted(zip([dni[h] for h in hoys_sep9], hoys_sep9))]
+        irr_mar3 = [x for _, x in sorted(zip([dni[h] for h in hoys_mar3], hoys_mar3))]
+        irr_sep3 = [x for _, x in sorted(zip([dni[h] for h in hoys_sep3], hoys_sep3))]
+
+        # create the clear sky objects from the averaged irradiance
+        dni_9 = (dni[irr_mar9[-1]] + dni[irr_sep9[-1]]) / 2
+        dhi_9 = (dhi[irr_mar9[-1]] + dhi[irr_sep9[-1]]) / 2
+        dni_3 = (dni[irr_mar3[-1]] + dni[irr_sep3[-1]]) / 2
+        dhi_3 = (dhi[irr_mar3[-1]] + dhi[irr_sep3[-1]]) / 2
+        sky_obj_9 = hbsky.ClimateBased.from_location(
+            wea_obj.location, 3, 21, 9, dni_9, dhi_9, north)
+        sky_obj_3 = hbsky.ClimateBased.from_location(
+            wea_obj.location, 3, 21, 15, dni_3, dhi_3, north)
+
+        # write out the sky files and the log file
+        output_9 = sky_obj_9.to_file(folder, '{}_9AM'.format(name), True)
+        output_3 = sky_obj_3.to_file(folder, '{}_3PM'.format(name), True)
+        files = [
+            {'path': os.path.relpath(output_9, folder), 'full_path': output_9},
+            {'path': os.path.relpath(output_3, folder), 'full_path': output_3}
+        ]
+        log_file.write(json.dumps(files))
+    except Exception:
+        _logger.exception('Failed to create LEED skies.')
         sys.exit(1)

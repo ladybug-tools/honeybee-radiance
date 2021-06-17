@@ -774,7 +774,10 @@ def _filter_by_pattern(input_objects, filter):
     indexes = []
 
     for count, obj in enumerate(input_objects):
-        id_ = obj.full_identifier
+        try:
+            id_ = obj.full_identifier
+        except AttributeError:
+            id_ = obj['full_id']
         for pattern in patterns:
             if re.search(pattern, id_):
                 indexes.append(count)
