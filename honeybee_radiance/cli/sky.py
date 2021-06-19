@@ -379,7 +379,7 @@ def adjust_sky_for_metric(sky, metric, folder, name):
     help='Output folder for the two generated .sky files.')
 @click.option(
     '--name', help='Sky file base name. Each of the two output skies will have this '
-    'base name concatenated with _9AM or _3PM', default='clear_sky', show_default=True)
+    'base name concatenated with 9AM or 3PM', default='', show_default=True)
 @click.option(
     '--log-file', help='Optional log file to output the information about the two '
     'generated sky files. By default the list will be printed out to stdout',
@@ -424,8 +424,8 @@ def leed_illuminance(wea, north, folder, name, log_file):
             wea_obj.location, 3, 21, 15, dni_3, dhi_3, north)
 
         # write out the sky files and the log file
-        output_9 = sky_obj_9.to_file(folder, '{}_9AM'.format(name), True)
-        output_3 = sky_obj_3.to_file(folder, '{}_3PM'.format(name), True)
+        output_9 = sky_obj_9.to_file(folder, '{}9AM'.format(name), True)
+        output_3 = sky_obj_3.to_file(folder, '{}3PM'.format(name), True)
         files = [
             {'path': os.path.relpath(output_9, folder), 'full_path': output_9},
             {'path': os.path.relpath(output_3, folder), 'full_path': output_3}
