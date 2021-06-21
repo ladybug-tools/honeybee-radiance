@@ -424,11 +424,19 @@ def leed_illuminance(wea, north, folder, name, log_file):
             wea_obj.location, 3, 21, 15, dni_3, dhi_3, north)
 
         # write out the sky files and the log file
-        output_9 = sky_obj_9.to_file(folder, '{}9AM'.format(name), True)
-        output_3 = sky_obj_3.to_file(folder, '{}3PM'.format(name), True)
+        output_9 = sky_obj_9.to_file(folder, '{}9AM.sky'.format(name), True)
+        output_3 = sky_obj_3.to_file(folder, '{}3PM.sky'.format(name), True)
         files = [
-            {'path': os.path.relpath(output_9, folder), 'full_path': output_9},
-            {'path': os.path.relpath(output_3, folder), 'full_path': output_3}
+            {
+                'id': '{}9AM'.format(name),
+                'path': os.path.relpath(output_9, folder),
+                'full_path': output_9
+            },
+            {
+                'id': '{}3PM'.format(name),
+                'path': os.path.relpath(output_3, folder),
+                'full_path': output_3
+            }
         ]
         log_file.write(json.dumps(files))
     except Exception:
