@@ -65,7 +65,7 @@ def _pass_fail_to_files(
         filter_pattern: Pattern used to filter the grids.
     """
     # get the grids_info.json and determine which grids we are working with
-    res_folder_9 = os.path.join(folder, '9AM')
+    res_folder_9 = os.path.join(folder, '9AM', 'results')
     info_json = os.path.join(res_folder_9, 'grids_info.json')
     with open(info_json) as data_f:
         data = json.load(data_f)
@@ -154,8 +154,8 @@ def leed_illuminance_to_folder(
         }
     """
     # first load the results into pass/fail matrices of ones/zeros
-    res_folder_9 = os.path.join(folder, '9AM')
-    res_folder_3 = os.path.join(folder, '3PM')
+    res_folder_9 = os.path.join(folder, '9AM', 'results')
+    res_folder_3 = os.path.join(folder, '3PM', 'results')
     pass_fail_9 = ill_pass_fail_from_folder(res_folder_9, glare_control, grids_filter)
     pass_fail_3 = ill_pass_fail_from_folder(res_folder_3, glare_control, grids_filter)
 
