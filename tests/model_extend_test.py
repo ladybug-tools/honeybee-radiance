@@ -82,11 +82,11 @@ def test_check_duplicate_modifier_set_identifiers():
 
     model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor, attic])
 
-    assert model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
+    assert model.properties.radiance.check_duplicate_modifier_set_identifiers(False) == ''
     mod_set.unlock()
     mod_set.identifier = 'Lower_Floor_Modifier_Set'
     mod_set.lock()
-    assert not model.properties.radiance.check_duplicate_modifier_set_identifiers(False)
+    assert model.properties.radiance.check_duplicate_modifier_set_identifiers(False) != ''
     with pytest.raises(ValueError):
         model.properties.radiance.check_duplicate_modifier_set_identifiers(True)
 
@@ -109,11 +109,11 @@ def test_check_duplicate_modifier_identifiers():
 
     model = Model('Tiny_House', [room])
 
-    assert model.properties.radiance.check_duplicate_modifier_identifiers(False)
+    assert model.properties.radiance.check_duplicate_modifier_identifiers(False) == ''
     triple_pane.unlock()
     triple_pane.identifier = 'CustomModifier'
     triple_pane.lock()
-    assert not model.properties.radiance.check_duplicate_modifier_identifiers(False)
+    assert model.properties.radiance.check_duplicate_modifier_identifiers(False) != ''
     with pytest.raises(ValueError):
         model.properties.radiance.check_duplicate_modifier_identifiers(True)
 
