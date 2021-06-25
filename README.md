@@ -2,7 +2,7 @@
 
 ![Honeybee](https://www.ladybug.tools/assets/img/honeybee.png) :zap:
 
-[![Build Status](https://travis-ci.com/ladybug-tools/honeybee-radiance.svg?branch=master)](https://travis-ci.com/ladybug-tools/honeybee-radiance)
+[![Build Status](https://github.com/ladybug-tools/honeybee-radiance/workflows/CI/badge.svg)](https://github.com/ladybug-tools/honeybee-radiance/actions)
 [![Coverage Status](https://coveralls.io/repos/github/ladybug-tools/honeybee-radiance/badge.svg?branch=master)](https://coveralls.io/github/ladybug-tools/honeybee-radiance)
 
 [![Python
