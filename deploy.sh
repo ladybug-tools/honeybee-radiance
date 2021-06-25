@@ -20,7 +20,7 @@ echo "Docker Deployment..."
 echo "Login to Docker"
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
-curl -L "https://ladybug-tools-releases.nyc3.digitaloceanspaces.com/Radiance_5.3a.fc2a2610_Linux.zip" --output radiance.zip
+curl -L "https://github.com/LBNL-ETA/Radiance/releases/download/947ea88a/Radiance_947ea88a_Linux.zip" --output radiance.zip
 unzip -p radiance.zip | tar xz
 mv radiance-*-Linux radiance
 
