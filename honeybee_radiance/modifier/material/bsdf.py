@@ -10,15 +10,6 @@ from honeybee.config import folders
 import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
 
-import gzip
-try:
-    from io import BytesIO as StringIO
-except ImportError:
-    try:  # python 2
-        from cStringIO import StringIO
-    except ImportError:  # IronPython
-        from StringIO import StringIO
-
 
 class BSDF(Material):
     """Radiance BSDF material.
@@ -310,7 +301,8 @@ class BSDF(Material):
             angle_basis=None,
             dependencies=dependencies
         )
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict and \
+                primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
