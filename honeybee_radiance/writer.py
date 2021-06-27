@@ -338,8 +338,8 @@ def model_to_rad_folder(
     # copy all bsdfs into the bsdf folder
     bsdf_folder = model_folder.bsdf_folder(full=True)
     bsdf_mods = model.properties.radiance.bsdf_modifiers
+    preparedir(bsdf_folder)
     if len(bsdf_mods) != 0:
-        preparedir(bsdf_folder)
         for bdf_mod in bsdf_mods:
             bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
             new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
