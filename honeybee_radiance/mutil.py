@@ -5,6 +5,8 @@ import honeybee_radiance.modifier.pattern as pattern
 import honeybee_radiance.modifier.texture as texture
 from honeybee_radiance.primitive import Primitive, Void
 
+_MAPPER = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+
 
 def modifier_class_from_type_string(type_string):
     """Get the class of any modifier using its 'type' string.
@@ -20,8 +22,6 @@ def modifier_class_from_type_string(type_string):
             be the same as the 'type' key used in the dictionary representation
             of the modifier.
     """
-    _mapper = {'bsdf': 'BSDF', 'BSDF': 'BSDF',
-               'brtdfunc': 'BRTDfunc', 'BRTDfunc': 'BRTDfunc'}
     lower_str = type_string.lower()
     if lower_str == 'void':
         return Void
@@ -34,12 +34,12 @@ def modifier_class_from_type_string(type_string):
     elif lower_str in Primitive.TEXTURETYPES:
         target_module = texture
     else:
-        raise ValueError('%s is not a Radiance modifier.' % type_string)
+        if lower_str in _MAPPER:
+            return getattr(material, _MAPPER[lower_str])
+        else:
+            raise ValueError('%s is not a Radiance modifier.' % type_string)
 
-    class_name = lower_str.capitalize() if lower_str not in _mapper \
-        else _mapper[lower_str]
-
-    return getattr(target_module, class_name)
+    return getattr(target_module, lower_str.capitalize())
 
 
 def dict_to_modifier(mdict):
