@@ -101,9 +101,11 @@ class BSDF(Material):
 
     def _update_values(self):
         "update value dictionaries."
+        n_path = os.path.normpath(self.bsdf_file)
+        f_path = n_path if os.path.isabs(n_path) else './{}'.format(n_path)
         self._values[0] = [
             float(self.thickness),
-            os.path.normpath(self.bsdf_file),
+            f_path,
             self.up_orientation.x,
             self.up_orientation.y,
             self.up_orientation.z,
