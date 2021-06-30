@@ -339,11 +339,21 @@ def model_to_rad_folder(
     bsdf_folder = model_folder.bsdf_folder(full=True)
     bsdf_mods = model.properties.radiance.bsdf_modifiers
     preparedir(bsdf_folder)
+    bsdfs_info = []
     if len(bsdf_mods) != 0:
         for bdf_mod in bsdf_mods:
             bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
             new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
             shutil.copy(bdf_mod.bsdf_file, new_bsdf_path)
+            bsdfs_info.append(
+                {
+                    'name': bdf_mod.display_name,
+                    'identifier': bdf_mod.identifier,
+                    'path': os.path.join(model_folder.bsdf_folder(full=False), bsdf_name)
+                })
+    bsdf_info_file = os.path.join(bsdf_folder, '_info.json')
+    with open(bsdf_info_file, 'w') as fp:
+        json.dump(bsdfs_info, fp, indent=2)
 
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
