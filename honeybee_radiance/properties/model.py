@@ -482,7 +482,8 @@ class ModelRadianceProperties(object):
 
     def check_sensor_grid_rooms_in_model(self, raise_exception=True):
         """Check that the room_identifiers of SenorGrids are in the model."""
-        grid_ids = [grid.room_identifier for grid in self.sensor_grids]
+        grid_ids = [grid.room_identifier for grid in self.sensor_grids
+                    if grid.room_identifier is not None]
         room_ids = set(room.identifier for room in self.host.rooms)
         missing_rooms = set()
         for grid in grid_ids:
@@ -498,7 +499,8 @@ class ModelRadianceProperties(object):
 
     def check_view_rooms_in_model(self, raise_exception=True):
         """Check that the room_identifiers of Views are in the model."""
-        view_ids = [view.room_identifier for view in self.views]
+        view_ids = [view.room_identifier for view in self.views
+                    if view.room_identifier is not None]
         room_ids = set(room.identifier for room in self.host.rooms)
         missing_rooms = set()
         for view in view_ids:
