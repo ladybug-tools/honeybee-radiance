@@ -252,9 +252,9 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
 
     \b
     This command generates 3 files for each input grid.
-        average_irradiance/{grid-name}.res -> Average Irradiance
-        peak_irradiance/{grid-name}.res -> Peak Irradiance
-        cumulative_radiation/{grid-name}.res -> Cumulative Radiation
+        average_irradiance/{grid-name}.res -> Average Irradiance (W/m2)
+        peak_irradiance/{grid-name}.res -> Peak Irradiance (W/m2)
+        cumulative_radiation/{grid-name}.res -> Cumulative Radiation (kWh/m2)
 
     \b
     Args:
@@ -293,7 +293,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
                 total_val = sum(values)
                 avg_i.write('{}\n'.format(total_val / wea_len))
                 pk_i.write('{}\n'.format(max(values)))
-                cml_r.write('{}\n'.format(total_val / timestep))
+                cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
 
                 # write rest of the lines
                 for line in input_file:
@@ -302,7 +302,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
                         total_val = sum(values)
                         pk_i.write('{}\n'.format(max(values)))
                         avg_i.write('{}\n'.format(total_val / wea_len))
-                        cml_r.write('{}\n'.format(total_val / timestep))
+                        cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
                     except ValueError:
                         pass # last line of the file
     except Exception:
