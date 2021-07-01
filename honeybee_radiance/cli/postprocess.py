@@ -5,6 +5,8 @@ import os
 import json
 import logging
 
+from ladybug.wea import Wea
+
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.cli.util import get_compare_func, remove_header
@@ -48,7 +50,7 @@ def post_process():
 )
 def convert_matrix_to_binary(
     input_matrix, output, minimum, maximum, include_max, include_min, comply
-        ):
+):
     """Postprocess a Radiance matrix and convert it to 0-1 values.
 
     \b
@@ -115,7 +117,7 @@ def convert_matrix_to_binary(
 )
 def count_values(
     input_matrix, output, minimum, maximum, include_max, include_min, comply
-        ):
+):
     """Count values in a row that meet a certain criteria.
 
     \b
@@ -154,25 +156,30 @@ def count_values(
     'input-matrix', type=click.Path(exists=True, file_okay=True, resolve_path=True)
 )
 @click.option(
+    '--divisor', type=float, default=1, help='An optional number, that the summed '
+    'row will be divided by. For example, this can be a timestep, which can be used '
+    'to ensure that a summed row of irradiance yields cumulative radiation over '
+    'the entire time period of the matrix.'
+)
+@click.option(
     '--output', '-o', help='Optional path to output file to output the name of the newly'
     ' created matrix. By default the list will be printed out to stdout',
     type=click.File('w'), default='-')
-def sum_matrix_rows(input_matrix, output):
+def sum_matrix_rows(input_matrix, divisor, output):
     """Postprocess a Radiance matrix and add all the numbers in each row.
 
     \b
     This command is useful for translating Radiance results to outputs like radiation
     to total radiation. Input matrix must be in ASCII format. The header in the input
     file will be ignored.
-
     """
     try:
         first_line, input_file = remove_header(input_matrix)
-        value = sum(float(v) for v in first_line.split())
+        value = sum(float(v) / divisor for v in first_line.split())
         output.write('%s\n' % value)
         for line in input_file:
             # write sum to a new file
-            value = sum(float(v) for v in line.split())
+            value = sum(float(v) / divisor for v in line.split())
             output.write('%s\n' % value)
     except Exception:
         _logger.exception('Failed to sum numbers in each row.')
@@ -198,7 +205,6 @@ def average_matrix_rows(input_matrix, output):
     This command is useful for translating Radiance results to outputs like radiation
     to average radiation. Input matrix must be in ASCII format. The header in the input
     file will be ignored.
-
     """
     try:
         first_line, input_file = remove_header(input_matrix)
@@ -221,6 +227,81 @@ def average_matrix_rows(input_matrix, output):
         sys.exit(0)
     finally:
         input_file.close()
+
+
+@post_process.command('annual-irradiance')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument(
+    'wea', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--timestep', type=int, default=1, help='The timestep of the Wea file, which '
+    'is used to ensure the summed row of irradiance yields cumulative radiation over '
+    'the time period of the Wea.'
+)
+@click.option(
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_irradiance(folder, wea, timestep, sub_folder):
+    """Compute irradiance metrics in a folder and write them in a subfolder.
+
+    \b
+    This command generates 3 files for each input grid.
+        {grid-name}_avg.irr -> Average Irradiance
+        {grid-name}_peak.irr -> Peak Irradiance
+        {grid-name}.res -> Cumulative Radiation
+
+    \b
+    Args:
+        folder: Results folder from an annual irradiance recipe.
+        wea: The .wea file that was used in the annual irradiance simulation. This
+            will be used to determine the duration of the analysis for computing
+            cumulative radiation.
+    """
+    try:
+        # get the time length of the Wea and the list of grids
+        wea_len = Wea.count_timesteps(wea) * timestep
+        grids = [g.replace('.ill', '') for g in os.listdir(folder) if g.endswith('.ill')]
+
+        # setup the folder into which the metrics will be written
+        metrics_folder = os.path.join(folder, sub_folder)
+        if not os.path.isdir(metrics_folder):
+            os.makedirs(metrics_folder)
+
+        # loop through the grids and compute metrics
+        for grid in grids:
+            input_matrix = os.path.join(folder, '{}.ill'.format(grid))
+            first_line, input_file = remove_header(input_matrix)
+            avg = os.path.join(metrics_folder, '{}_avg.irr'.format(grid))
+            pk = os.path.join(metrics_folder, '{}_peak.irr'.format(grid))
+            cml = os.path.join(metrics_folder, '{}.res'.format(grid))
+            with open(avg, 'w') as avg_i, open(pk, 'w') as pk_i, open(cml, 'w') as cml_r:
+                # calculate the values for the first line
+                values = [float(v) for v in first_line.split()]
+                total_val = sum(values)
+                avg_i.write('{}\n'.format(total_val / wea_len))
+                pk_i.write('{}\n'.format(max(values)))
+                cml_r.write('{}\n'.format(total_val / timestep))
+
+                # write rest of the lines
+                for line in input_file:
+                    try:
+                        values = [float(v) for v in line.split()]
+                        total_val = sum(values)
+                        pk_i.write('{}\n'.format(max(values)))
+                        avg_i.write('{}\n'.format(total_val / wea_len))
+                        cml_r.write('{}\n'.format(total_val / timestep))
+                    except ValueError:
+                        pass # last line of the file
+    except Exception:
+        _logger.exception('Failed to compute irradiance metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 @post_process.command('annual-daylight')
@@ -252,13 +333,13 @@ def average_matrix_rows(input_matrix, output):
     show_default=True
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output'
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
     'metric files.', default='metrics'
 )
 def annual_metrics(
     folder, schedule, threshold, lower_threshold, upper_threshold, grids_filter,
     sub_folder
-        ):
+):
     """Compute annual metrics in a folder and write them in a subfolder.
 
     \b
@@ -275,7 +356,6 @@ def annual_metrics(
         daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
         The command uses the list in grids_info.json to find the result files for each
         sensor grid.
-
     """
     # optional input - only check if the file exist otherwise ignore
     if schedule and os.path.isfile(schedule):
