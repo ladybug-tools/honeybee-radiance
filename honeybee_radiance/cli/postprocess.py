@@ -3,6 +3,7 @@ import click
 import sys
 import os
 import json
+import shutil
 import logging
 
 from ladybug.wea import Wea
@@ -251,9 +252,9 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
 
     \b
     This command generates 3 files for each input grid.
-        {grid-name}_avg.irr -> Average Irradiance
-        {grid-name}_peak.irr -> Peak Irradiance
-        {grid-name}.res -> Cumulative Radiation
+        average_irradiance/{grid-name}.res -> Average Irradiance
+        peak_irradiance/{grid-name}.res -> Peak Irradiance
+        cumulative_radiation/{grid-name}.res -> Cumulative Radiation
 
     \b
     Args:
@@ -266,19 +267,26 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
         # get the time length of the Wea and the list of grids
         wea_len = Wea.count_timesteps(wea) * timestep
         grids = [g.replace('.ill', '') for g in os.listdir(folder) if g.endswith('.ill')]
+        grid_info = os.path.join(folder, 'grids_info.json')
 
         # setup the folder into which the metrics will be written
         metrics_folder = os.path.join(folder, sub_folder)
-        if not os.path.isdir(metrics_folder):
-            os.makedirs(metrics_folder)
+        metrics_folders = []
+        for sub_f in ('average_irradiance', 'peak_irradiance', 'cumulative_radiation'):
+            m_path = os.path.join(metrics_folder, sub_f)
+            metrics_folders.append(m_path)
+            if not os.path.isdir(m_path):
+                os.makedirs(m_path)
+            grid_info_copy = os.path.join(m_path, 'grids_info.json')
+            shutil.copyfile(grid_info, grid_info_copy)
 
         # loop through the grids and compute metrics
         for grid in grids:
             input_matrix = os.path.join(folder, '{}.ill'.format(grid))
             first_line, input_file = remove_header(input_matrix)
-            avg = os.path.join(metrics_folder, '{}_avg.irr'.format(grid))
-            pk = os.path.join(metrics_folder, '{}_peak.irr'.format(grid))
-            cml = os.path.join(metrics_folder, '{}.res'.format(grid))
+            avg = os.path.join(metrics_folders[0], '{}.res'.format(grid))
+            pk = os.path.join(metrics_folders[1], '{}.res'.format(grid))
+            cml = os.path.join(metrics_folders[2], '{}.res'.format(grid))
             with open(avg, 'w') as avg_i, open(pk, 'w') as pk_i, open(cml, 'w') as cml_r:
                 # calculate the values for the first line
                 values = [float(v) for v in first_line.split()]
@@ -344,11 +352,11 @@ def annual_metrics(
 
     \b
     This command generates 5 files for each input grid.
-        {grid-name}.da -> Daylight Autonomy
-        {grid-name}.cda -> Continuos Daylight Autonomy
-        {grid-name}.udi -> Useful Daylight Illuminance
-        {grid-name}_upper.udi -> Upper Useful Daylight Illuminance
-        {grid-name}_lower.udi -> Lower Useful Daylight Illuminance
+        da/{grid-name}.da -> Daylight Autonomy
+        cda/{grid-name}.cda -> Continuos Daylight Autonomy
+        udi/{grid-name}.udi -> Useful Daylight Illuminance
+        udi_lower/{grid-name}_upper.udi -> Upper Useful Daylight Illuminance
+        udi_upper/{grid-name}_lower.udi -> Lower Useful Daylight Illuminance
 
     \b
     Args:
