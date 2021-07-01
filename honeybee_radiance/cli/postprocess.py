@@ -176,11 +176,11 @@ def sum_matrix_rows(input_matrix, divisor, output):
     """
     try:
         first_line, input_file = remove_header(input_matrix)
-        value = sum(float(v) / divisor for v in first_line.split())
+        value = sum(float(v) for v in first_line.split()) / divisor
         output.write('%s\n' % value)
         for line in input_file:
             # write sum to a new file
-            value = sum(float(v) / divisor for v in line.split())
+            value = sum(float(v) for v in line.split()) / divisor
             output.write('%s\n' % value)
     except Exception:
         _logger.exception('Failed to sum numbers in each row.')
