@@ -108,6 +108,6 @@ def test_sunpath_hours():
     ]
 
     with open(os.path.join(folder, name)) as inf:
-        values = [float(i) for i in inf]
+        values = [int(float(i)) for i in inf]
 
     assert values == expected_results
