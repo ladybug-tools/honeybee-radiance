@@ -230,6 +230,50 @@ def average_matrix_rows(input_matrix, output):
         input_file.close()
 
 
+@post_process.command('cumulative-radiation')
+@click.argument(
+    'average-irradiance', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    'wea', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--timestep', type=int, default=1, help='The timestep of the Wea file, which '
+    'is used to to compute cumulative radiation over the time period of the Wea.'
+)
+@click.option(
+    '--output', '-o', help='Optional path to output file to output the name of the newly'
+    ' created matrix. By default the list will be printed out to stdout',
+    type=click.File('w'), default='-')
+def cumulative_radiation(average_irradiance, wea, timestep, output):
+    """Postprocess average irradiance (W/m2) into cumulative radiation (kWh/m2).
+
+    \b
+    Args:
+        average_irradiance: A single-column matrix of average irradiance values.
+            This input matrix must be in ASCII format.
+        wea: The .wea file that was used in the irradiance simulation. This
+            will be used to determine the duration of the analysis for computing
+            cumulative radiation.
+    """
+    try:
+        # parse the Wea and the average_irradiance matrix
+        conversion = Wea.count_timesteps(wea) / (timestep * 1000)
+        first_line, input_file = remove_header(average_irradiance)
+        # calculate the value for the first line
+        output.write('%s\n' % (float(first_line) * conversion))
+        # write rest of the lines
+        for line in input_file:
+            output.write('%s\n' % (float(line) * conversion))
+    except Exception:
+        _logger.exception('Failed to compute cumulative radiation.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+    finally:
+        input_file.close()
+
+
 @post_process.command('annual-irradiance')
 @click.argument(
     'folder',
