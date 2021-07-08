@@ -57,7 +57,8 @@ def sunpath():
     '--timestep', default=1, type=int, show_default=True,
     help='An optional integer to set the number of time steps per hour. Default is 1'
     ' for one value per hour.')
-@click.option('--leap-year', is_flag=True, help='Flag for whether to use a leap year.')
+@click.option('--leap-year/--full-year', ' /-fy',
+              help='Flag for whether to use a leap year.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
 @click.option(
@@ -113,7 +114,9 @@ def sunpath_from_location(
     help='An integer to set the number of time steps per hour in the wea. Default is 1'
     ' for one value per hour.')
 @click.option(
-    '--leap-year', is_flag=True, help='Flag for whether input wea is for a leap year.')
+    '--leap-year/--full-year', ' /-fy',
+    help='Flag for whether input wea is for a leap year.'
+)
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.')
 @click.option(
@@ -247,7 +250,9 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
     help='An optional integer to set the number of time steps per hour. Default is 1'
     ' for one value per hour.')
 @click.option(
-    '--leap-year', is_flag=True, help='Flag for whether input epw is for a leap year.')
+    '--leap-year/--full-year', ' /-fy', 
+    help='Flag for whether input epw is for a leap year.'
+)
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='sunpath', help='File name.', type=str)
 @click.option(
@@ -296,7 +301,7 @@ def sunpath_from_epw(
 @click.argument('suns', type=click.File(mode='r'))
 @click.option('--timestep', default=1, type=int, show_default=True,
               help='This input is not used and is deprecated.')
-@click.option('--leap-year', is_flag=True,
+@click.option('--leap-year/--full-year', ' /-fy',
               help='This input is not used and is deprecated.')
 @click.option('--folder', default='.', help='Output folder.')
 @click.option('--name', default='hours.txt', help='Output file name.')
