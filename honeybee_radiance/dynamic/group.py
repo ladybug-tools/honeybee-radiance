@@ -206,7 +206,7 @@ class DynamicShadeGroup(object):
         mod_dup = modifier.duplicate()  # duplicate to avoid editing the original
         # the hidden _bsdf_file property is edited since the file has not yet been copied
         mod_dup._bsdf_file = os.path.join('model', 'bsdf', bsdf_name)
-        mod_strs.append(mod_dup.to_radiance(minimal))
+        mod_strs.insert(1, mod_dup.to_radiance(minimal))
 
     @staticmethod
     def _instance_in_array(object_instance, object_array):
@@ -343,7 +343,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
             if isinstance(mod, BSDF):
                 self._process_bsdf_modifier(mod, blk_str, minimal)
             else:
-                blk_str.append(mod.to_radiance(minimal))
+                blk_str.insert(1, mod.to_radiance(minimal))
         return '\n\n'.join(blk_str)
 
     def tmxt_bsdf(self, state_index):
