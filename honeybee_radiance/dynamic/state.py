@@ -579,8 +579,7 @@ class RadianceSubFaceState(_RadianceState):
         The resulting string lacks modifiers and only includes the vmtx_geometry.
 
         Args:
-            modifier: A modifier (only identifier) assigned to the vmtx_geometry.
-                Default: white_glow.
+            modifier: A modifier object assigned to the vmtx_geometry. Default: white_glow.
             minimal: Boolean to note whether the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
         """
