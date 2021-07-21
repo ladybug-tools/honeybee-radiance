@@ -381,11 +381,14 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 in a minimal format (with spaces instead of line breaks). Default: False.
         """
         states = self.states_by_index(state_index)
+        # create unique glow modifier for aperture group
+        unique_glow = white_glow.duplicate()
+        unique_glow.identifier = 'white_glow_{}'.format(self.identifier)
         # get rad strings for the white_glow modifier and geometry.
         state_str = ['# VMTX representation for "{}"'.format(self.identifier),
-                     white_glow.to_radiance(minimal)]
+                     unique_glow.to_radiance(minimal)]
         for state in states:
-            state_str.append(state.vmtx_to_radiance(minimal))
+            state_str.append(state.vmtx_to_radiance(unique_glow, minimal))
         return '\n\n'.join(state_str)
 
     def dmtx_to_radiance(self, state_index, minimal=False):
