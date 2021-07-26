@@ -573,18 +573,19 @@ class RadianceSubFaceState(_RadianceState):
         if self._dmtx_geometry:
             self._dmtx_geometry = self._dmtx_geometry.scale(factor, origin)
 
-    def vmtx_to_radiance(self, minimal=False):
+    def vmtx_to_radiance(self, modifier=white_glow, minimal=False):
         """Generate a RAD string representation of this state's vmtx.
 
         The resulting string lacks modifiers and only includes the vmtx_geometry.
 
         Args:
+            modifier: A modifier object assigned to the vmtx_geometry. Default: white_glow.
             minimal: Boolean to note whether the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
         """
         assert self.has_parent, 'State must have a parent to use vmtx_to_radiance.'
         vmtx_poly = Polygon(self.parent.identifier,
-                            self.vmtx_geometry.vertices, white_glow)
+                            self.vmtx_geometry.vertices, modifier)
         return vmtx_poly.to_radiance(minimal, False, False)
 
     def dmtx_to_radiance(self, minimal=False):
