@@ -232,6 +232,29 @@ class BSDF(Material):
             self._angle_basis = self.find_angle_basis(self.bsdf_file)
 
     @property
+    def sampling_type(self):
+        """Return rfluxmtx parameters sampling type based on the angle basis.
+
+        Values are:
+
+            * kf for klems full.
+            * kh for klems half.
+            * kq for klems quarter.
+
+        For other angle basis a None value will be returned.
+        """
+        _mapper = {
+            'Klems Full': 'kf', 'Klems Half': 'kh', 'Klems Quarter': 'kq'
+        }
+
+        try:
+            sampling = _mapper[self.angle_basis]
+        except KeyError:
+            sampling = None
+
+        return sampling
+
+    @property
     def front_diffuse_reflectance(self):
         """Get or set the additional front diffuse reflectance."""
         return self._front_diffuse_reflectance
@@ -284,6 +307,7 @@ class BSDF(Material):
             "values": []  # values,
             "dependencies": []
             }
+
         """
         cls._dict_type_check(cls.__name__, primitive_dict)
         modifier, dependencies = cls.filter_dict_input(primitive_dict)

@@ -13,6 +13,8 @@ from honeybee.aperture import Aperture
 from honeybee.door import Door
 from honeybee.boundarycondition import Surface
 
+from honeybee_radiance_command.options.rfluxmtx import RfluxmtxControlParameters
+
 import os
 
 
@@ -246,6 +248,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         * is_opaque
         * is_indoor
         * states_json_list
+
     """
     __slots__ = ()
 
@@ -288,6 +291,51 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 'black': './{}..black.rad'.format(ident)
                 })
         return states_list
+
+    def rfluxmtx_control_params(self, sampling=None, up_direction=None):
+        """Create a formatted Rfluxmtx control parameters string.
+
+        The optional values are sampling and up_direction. If these values are not
+        provided they will be assigned based on the first State of the dynamic object.
+
+        The control params are only meaningful for BSDF modifiers with one of the
+        sampling types listed below.
+
+        Args:
+            sampling: Set hemisphere sampling type. Acceptable inputs for hemisphere
+                sampling type are:
+
+                    * u for uniform.(Usually applicable for ground).
+                    * kf for klems full.
+                    * kh for klems half.
+                    * kq for klems quarter.
+                    * rN for Reinhart - Tregenza type skies. N stands for subdivisions
+                        and defaults to 1.
+                    * scN for shirley-chiu subdivisions.
+
+                Add a ``-`` in front of the input for left-handed coordinates. For more
+                information see rfluxmtx docs.
+                https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rfluxmtx.pdf/at_download/file
+            up_direction: Orient the "up" direction for the hemisphere using the indicated
+                axis or direction vector. Valid inputs are [-]{X|Y|Z|ux,uy,uz}. Default: Y
+
+        Returns:
+            RfluxmtxControlParameters
+
+        """
+        state = self.states_by_index(0)[0]
+        if up_direction is None:
+            up_direction = state.vmtx_geometry.plane.y
+        if sampling is None:
+            sampling = state.modifier.sampling_type
+            if sampling is None:
+                raise ValueError(
+                    'Rfluxmtx control parameters can only be generated for states '
+                    'with BSDF modifier. Current modifier: %s is a %s.' % (
+                    state.modifier, self.modifier.__class__.__name__)
+                )
+        up_direction = tuple(up_direction)
+        return RfluxmtxControlParameters(sampling, up_direction)
 
     def states_by_index(self, state_index):
         """Get an array of state objects representing a single state for this group.
@@ -387,6 +435,11 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         # get rad strings for the white_glow modifier and geometry.
         state_str = ['# VMTX representation for "{}"'.format(self.identifier),
                      unique_glow.to_radiance(minimal)]
+
+        # use first state to add the header
+        header = self.rfluxmtx_control_params()
+        state_str.append(header.to_radiance())
+
         for state in states:
             state_str.append(state.vmtx_to_radiance(unique_glow, minimal))
         return '\n\n'.join(state_str)
@@ -406,6 +459,11 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         # get rad strings for the white_glow modifier and geometry.
         state_str = ['# DMTX representation for "{}"'.format(self.identifier),
                      white_glow.to_radiance(minimal)]
+
+        # use first state to add the header
+        header = self.rfluxmtx_control_params()
+        state_str.append(header.to_radiance())
+
         for state in states:
             state_str.append(state.dmtx_to_radiance(minimal))
         return '\n\n'.join(state_str)

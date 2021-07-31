@@ -26,6 +26,23 @@ def test_model_to_rad_folder():
     nukedir(output_hb_model, True)
 
 
+def test_rfluxmtx_control_params():
+    runner = CliRunner()
+    input_hb_model = "./tests/assets/model/room_w_dynamic_skylight.hbjson"
+    output_hb_model = "./tests/assets/model/model"
+
+    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    assert result.exit_code == 0
+    assert os.path.isdir(output_hb_model)
+    skylight_file = os.path.join(output_hb_model, 'aperture_group', 'skylight..mtx.rad')
+    assert os.path.isfile(skylight_file)
+    with open(skylight_file) as s_file:
+        content = s_file.read()
+        assert '#@rfluxmtx h=kf u=0.0,1.0,0.0' in content \
+            or '#@rfluxmtx h=kf u=0.0,-1.0,0.0' in content
+    nukedir(output_hb_model)
+
+
 def test_model_to_rad_folder_joined_grid():
     runner = CliRunner()
     input_hb_model = "./tests/assets/model/two_rooms_same_grid_identifier.hbjson"
