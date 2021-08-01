@@ -77,6 +77,10 @@ jobs:
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      - name: sleep for 5 minutes for PyPI update
+        if: contains(steps.new_release.outputs.tag, '.')
+        run: sleep 300s
+        shell: bash
       - name: Update lbt-honeybee
         if: contains(steps.new_release.outputs.tag, '.')
         env:
