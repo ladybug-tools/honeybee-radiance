@@ -338,9 +338,9 @@ def model_to_rad_folder(
     # copy all bsdfs into the bsdf folder
     bsdf_folder = model_folder.bsdf_folder(full=True)
     bsdf_mods = model.properties.radiance.bsdf_modifiers
-    preparedir(bsdf_folder)
-    bsdfs_info = []
     if len(bsdf_mods) != 0:
+        preparedir(bsdf_folder)
+        bsdfs_info = []
         for bdf_mod in bsdf_mods:
             bsdf_name = os.path.split(bdf_mod.bsdf_file)[-1]
             new_bsdf_path = os.path.join(bsdf_folder, bsdf_name)
@@ -351,9 +351,9 @@ def model_to_rad_folder(
                     'identifier': bdf_mod.identifier,
                     'path': os.path.join(model_folder.bsdf_folder(full=False), bsdf_name)
                 })
-    bsdf_info_file = os.path.join(bsdf_folder, '_info.json')
-    with open(bsdf_info_file, 'w') as fp:
-        json.dump(bsdfs_info, fp, indent=2)
+        bsdf_info_file = os.path.join(bsdf_folder, '_info.json')
+        with open(bsdf_info_file, 'w') as fp:
+            json.dump(bsdfs_info, fp, indent=2)
 
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
@@ -439,6 +439,8 @@ def _write_sensor_grids(folder, model, grids_filter):
             json.dump(model_grids_info, fp, indent=2)
 
         return grids_info_file, model_grids_info_file
+    elif len(sensor_grids) != 0:
+        raise ValueError('All sensor grids were filtered out of the model folder!')
 
 
 def _write_views(folder, model, views_filter):
@@ -482,6 +484,8 @@ def _write_views(folder, model, views_filter):
             json.dump(views_info, fp, indent=2)
 
         return views_info_file
+    elif len(model_views) != 0:
+        raise ValueError('All views were filtered out of the model folder!')
 
 
 def _write_dynamic_shade_files(folder, sub_folder, group, minimal=False):
