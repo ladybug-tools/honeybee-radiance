@@ -109,8 +109,6 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             env = dict(os.environ, **env) if env else None
             rpict.run(env=env, cwd=folder)
             os.remove(os.path.join(folder, out_file))
-        else:  # write a dummy ambient file so that queenbee does not crash
-            write_to_file_by_name(folder, amb_file, '')
 
         # record all of the view files that were generated
         log_file.write(json.dumps(views_info))
