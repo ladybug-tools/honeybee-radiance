@@ -408,7 +408,10 @@ class SensorGrid(object):
         if self._light_path:
             base['light_path'] = self._light_path
         elif model and self._room_identifier:  # auto-calculate the light path
-            base['light_path'] = light_path_from_room(model, self._room_identifier)
+            try:
+                base['light_path'] = light_path_from_room(model, self._room_identifier)
+            except ValueError:  # room is not in the model; just ignore light path
+                pass
 
         if self._group_identifier:
             base['group_identifier'] = self._group_identifier

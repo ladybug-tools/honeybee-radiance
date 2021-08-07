@@ -217,11 +217,29 @@ def sky_dome(sky_density, folder, name):
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default='uniform_sky', show_default=True)
 def uniform_sky(ground_emittance, folder, name):
-    """Virtual skydome for daylight coefficient studies with constant radiance.
+    """Virtual skydome with uniform characteristics.
 
     This sky is usually used to create an octree that is sent to rcontrib command.
     """
     try:
+        c_sky = hbsky.UniformSky(ground_emittance=ground_emittance)
+        c_sky.to_file(folder, name, True)
+    except Exception:
+        _logger.exception('Failed to generate sky.')
+        sys.exit(1)
+
+
+@sky.command('uniform-by-metric')
+@click.option(
+    '--metric', '-m', default='sky-view', show_default=True,
+    help='Text for the type of metric to be output from the view percent '
+    'calculation. Choose from: sky-view, sky-exposure, spherical.')
+@click.option('--folder', help='Output folder.', default='.', show_default=True)
+@click.option('--name', help='Sky file name.', default='uniform_sky', show_default=True)
+def uniform_by_metric(metric, folder, name):
+    """Uniform sky for various view percent metrics."""
+    try:
+        ground_emittance = 1 if metric == 'spherical' else 0
         c_sky = hbsky.UniformSky(ground_emittance=ground_emittance)
         c_sky.to_file(folder, name, True)
     except Exception:
