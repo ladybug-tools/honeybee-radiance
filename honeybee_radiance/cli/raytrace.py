@@ -217,3 +217,74 @@ def rtrace_with_pit_post_process(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@raytrace.command('view-percent')
+@click.argument(
+    'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    'sensor-grid', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--rad-params', show_default=True, help='Radiance parameters.'
+)
+@click.option(
+    '--rad-params-locked', show_default=True, help='Protected Radiance parameters. '
+    'These values will overwrite user input rad parameters.'
+)
+@click.option(
+    '--metric', '-m', default='sky-view', show_default=True,
+    help='Text for the type of metric to be output from the view percent '
+    'calculation. Choose from: sky-view, sky-exposure, spherical.'
+    )
+@click.option(
+    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    ' is provided it should be relative to project folder.'
+)
+@click.option(
+    '--dry-run', is_flag=True, default=False, show_default=True,
+    help='A flag to show the command without running it.'
+)
+def rtrace_with_view_pct_post_process(
+        octree, sensor_grid, rad_params, rad_params_locked, metric, output, dry_run):
+    """Run rtrace command with rcalc post-processing for point-in-time studies.
+
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor_grid: Path to sensor grid file.
+    """
+    try:
+        options = RtraceOptions()
+        # parse input radiance parameters
+        if rad_params:
+            options.update_from_string(rad_params.strip())
+        # overwrite input values with protected ones
+        if rad_params_locked:
+            options.update_from_string(rad_params_locked.strip())
+        # overwrite the -I attribute depending on the metric to be calculated
+        if metric == 'sky-view':
+            options.I = True
+        elif metric in ('sky-exposure', 'spherical'):
+            options.I = False
+        else:
+            raise ValueError('Metric "{}" is not recognized.'.format(metric))
+
+        # create command and run it
+        rtrace = Rtrace(
+            options=options, output=output, octree=octree, sensors=sensor_grid
+        )
+        if dry_run:
+            click.echo(rtrace)
+        else:
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+            rtrace.run(env=env)
+    except Exception:
+        _logger.exception('Failed to run view-percent ray-tracing.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
