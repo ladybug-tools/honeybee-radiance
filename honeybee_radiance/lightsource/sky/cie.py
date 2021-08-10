@@ -10,8 +10,6 @@ from ladybug.sunpath import Sunpath
 import honeybee.typing as typing
 
 from ._skybase import _PointInTime
-from .hemisphere import Hemisphere
-from ..ground import Ground
 
 
 class CIE(_PointInTime):
@@ -239,10 +237,8 @@ class CIE(_PointInTime):
                 'type': 'CIE',
                 'altitude': 0.0,
                 'azimuth': 0.0,
-                'sky_type': 0,
-                'ground_reflectance': 0.2,
-                'ground_hemisphere': {},  # see ground.Ground class [optional],
-                'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
+                'sky_type': 0,  # optional integer for sky type
+                'ground_reflectance': 0.2  # optional fraction for ground reflectance
             }
 
         """
@@ -251,20 +247,9 @@ class CIE(_PointInTime):
         assert data['type'] == 'CIE', \
             'Input type must be CIE not %s' % data['type']
 
-        sky = cls(
-            data['altitude'],
-            data['azimuth'],
-            data['sky_type'],
-            data['ground_reflectance']
-        )
-
-        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
-            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
-
-        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
-            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
-
-        return sky
+        st = data['sky_type'] if 'sky_type' in data else 0
+        gr = data['ground_reflectance'] if 'ground_reflectance' in data else 0.2
+        return cls(data['altitude'], data['azimuth'], st, gr)
 
     @classmethod
     def from_string(cls, sky_string):
@@ -350,9 +335,7 @@ class CIE(_PointInTime):
             'altitude': self.altitude,
             'azimuth': self.azimuth,
             'sky_type': self.sky_type,
-            'ground_reflectance': self.ground_reflectance,
-            'ground_hemisphere': self.ground_hemisphere.to_dict(),
-            'sky_hemisphere': self.sky_hemisphere.to_dict()
+            'ground_reflectance': self.ground_reflectance
         }
 
     def to_file(self, folder, name=None, mkdir=False):
