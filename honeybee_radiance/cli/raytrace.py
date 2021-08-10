@@ -3,6 +3,7 @@ import click
 import sys
 import logging
 import os
+import math
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rtrace import Rtrace, RtraceOptions
@@ -219,7 +220,7 @@ def rtrace_with_pit_post_process(
         sys.exit(0)
 
 
-@raytrace.command('view-percent')
+@raytrace.command('sky-view')
 @click.argument(
     'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
 )
@@ -234,10 +235,13 @@ def rtrace_with_pit_post_process(
     'These values will overwrite user input rad parameters.'
 )
 @click.option(
-    '--metric', '-m', default='sky-view', show_default=True,
-    help='Text for the type of metric to be output from the view percent '
-    'calculation. Choose from: sky-view, sky-exposure, spherical.'
-    )
+    '--sky-view/--sky-exposure', ' /-se', default=True, help='Flag to note whether '
+    'to compute sky view (from a surface) or sky exposure (from a point).'
+)
+@click.option(
+    '--sky-illum', '-i', default=100000, show_default=True, help='Sky illuminance value'
+    '. The post-processed results will be divided by this number.'
+)
 @click.option(
     '--output', '-o', show_default=True, help='Path to output file. If a relative path'
     ' is provided it should be relative to project folder.'
@@ -246,8 +250,9 @@ def rtrace_with_pit_post_process(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
-def rtrace_with_view_pct_post_process(
-        octree, sensor_grid, rad_params, rad_params_locked, metric, output, dry_run):
+def rtrace_with_sky_view_post_process(
+        octree, sensor_grid, rad_params, rad_params_locked, sky_view, sky_illum,
+        output, dry_run):
     """Run rtrace command with rcalc post-processing for point-in-time studies.
 
     \b
@@ -264,17 +269,18 @@ def rtrace_with_view_pct_post_process(
         if rad_params_locked:
             options.update_from_string(rad_params_locked.strip())
         # overwrite the -I attribute depending on the metric to be calculated
-        if metric == 'sky-view':
-            options.I = True
-        elif metric in ('sky-exposure', 'spherical'):
-            options.I = False
-        else:
-            raise ValueError('Metric "{}" is not recognized.'.format(metric))
+        options.I = True if sky_view else False
 
         # create command and run it
-        rtrace = Rtrace(
-            options=options, output=output, octree=octree, sensors=sensor_grid
-        )
+        rtrace = Rtrace(options=options, octree=octree, sensors=sensor_grid)
+
+        # add rcalc post-processing
+        rcalc = Rcalc(output=output)
+        rcalc.options.e = '$1=(0.265*$1+0.67*$2+0.065*$3)*17900/{}'.format(sky_illum) \
+            if sky_view else \
+            '$1=(0.265*$1+0.67*$2+0.065*$3)*17900*{}/{}'.format(2 * math.pi, sky_illum)
+        rtrace.pipe_to = rcalc
+
         if dry_run:
             click.echo(rtrace)
         else:

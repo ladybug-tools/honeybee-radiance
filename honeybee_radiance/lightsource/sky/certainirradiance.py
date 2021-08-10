@@ -7,8 +7,6 @@ import honeybee.typing as typing
 import ladybug.futil as futil
 
 from ._skybase import _PointInTime
-from .hemisphere import Hemisphere
-from honeybee_radiance.lightsource.ground import Ground
 
 
 class CertainIrradiance(_PointInTime):
@@ -47,6 +45,8 @@ class CertainIrradiance(_PointInTime):
         irradiance: Desired horizontal diffuse irradiance value in watts/meter2
             (Default: 558.659).
         ground_reflectance: Average ground reflectance (Default: 0.2).
+        uniform: Boolean to note whether the sky is uniform instead of
+            cloudy. (Default: False)
 
     Properties:
         * irradiance
@@ -54,25 +54,29 @@ class CertainIrradiance(_PointInTime):
         * ground_hemisphere
         * sky_hemisphere
         * ground_reflectance
+        * uniform
         * is_point_in_time
         * is_climate_based
     """
-    __slots__ = ('_irradiance',)
+    __slots__ = ('_irradiance', '_uniform')
 
-    def __init__(self, irradiance=558.659, ground_reflectance=0.2):
+    def __init__(self, irradiance=558.659, ground_reflectance=0.2, uniform=False):
         """Create sky with certain irradiance."""
         _PointInTime.__init__(self, ground_reflectance)
         self.irradiance = irradiance
+        self.uniform = uniform
 
     @classmethod
-    def from_illuminance(cls, illuminance=100000, ground_reflectance=0.2):
+    def from_illuminance(cls, illuminance=100000, ground_reflectance=0.2, uniform=False):
         """Create sky with certain illuminance.
 
         Args:
             illuminance: Desired horizontal illuminance value in lux (Default: 100000).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            uniform: Boolean to note whether the sky is uniform instead of
+                cloudy. (Default: False)
         """
-        return cls(illuminance / 179.0, ground_reflectance)
+        return cls(illuminance / 179.0, ground_reflectance, uniform)
 
     @property
     def irradiance(self):
@@ -88,6 +92,15 @@ class CertainIrradiance(_PointInTime):
     def illuminance(self):
         """Sky illuminance value."""
         return round(self._irradiance * 179.0, 2)
+
+    @property
+    def uniform(self):
+        """Boolean to note whether the sky is uniform instead of cloudy."""
+        return self._uniform
+
+    @uniform.setter
+    def uniform(self, value):
+        self._uniform = bool(value)
 
     @property
     def is_point_in_time(self):
@@ -107,8 +120,7 @@ class CertainIrradiance(_PointInTime):
                 'type': 'CertainIrradiance',
                 'irradiance': 558.659,
                 'ground_reflectance': 0.2,
-                'ground_hemisphere': {},  # see ground.Ground class [optional],
-                'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
+                'uniform': False
             }
         """
         assert 'type' in data, \
@@ -116,18 +128,9 @@ class CertainIrradiance(_PointInTime):
         assert data['type'] == 'CertainIrradiance', \
             'Input type must be CertainIrradiance not %s' % data['type']
 
-        sky = cls(
-            data['irradiance'],
-            data['ground_reflectance']
-        )
-
-        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
-            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
-
-        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
-            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
-
-        return sky
+        uniform = data['uniform'] if 'uniform' in data else False
+        gr = data['ground_reflectance'] if 'ground_reflectance' in data else 0.2
+        return cls(data['irradiance'], gr, uniform)
 
     @classmethod
     def from_string(cls, sky_string):
@@ -140,7 +143,8 @@ class CertainIrradiance(_PointInTime):
                 "illuminance 100000"). Any sky string can optionally
                 have a "-g" property of a fractional number, which sets the
                 reflectance of the ground. If unspecified, the ground will have
-                a reflectance of 0.2.
+                a reflectance of 0.2. This sky can also have a "-u" property to
+                set the sky as uniform instead of the default cloudy.
 
         Usage:
 
@@ -151,7 +155,7 @@ class CertainIrradiance(_PointInTime):
             sky = CertainIrradiance.from_string(sky_string)
 
             # illuminance string representation of the sky
-            sky_string = "illuminance 100000 -g 0.3"
+            sky_string = "illuminance 100000 -g 0.3 -u"
             sky = CertainIrradiance.from_string(sky_string)
         """
         # check the input
@@ -164,18 +168,20 @@ class CertainIrradiance(_PointInTime):
         pars = argparse.ArgumentParser()
         pars.add_argument('value', action='store', type=float)
         pars.add_argument('-g', action='store', dest='g', type=float, default=0.2)
+        pars.add_argument('-u', action='store_true', dest='u', default=False)
         props = pars.parse_args(split_str[1:])
 
         # create the sky object
         if split_str[0] == 'irradiance':
-            return cls(props.value, props.g)
+            return cls(props.value, props.g, props.u)
         else:
-            return cls.from_illuminance(props.value, props.g)
+            return cls.from_illuminance(props.value, props.g, props.u)
 
     def to_radiance(self):
         """Return radiance definition as a string."""
-        command = '!gensky -ang 45 0 -c -B %.6f -g %.3f' % (
-            self.irradiance, self.ground_reflectance
+        sky_type = '-u' if self.uniform else '-c'
+        command = '!gensky -ang 45 0 %s -B %.6f -g %.3f' % (
+            sky_type, self.irradiance, self.ground_reflectance
         )
 
         return '%s\n\n%s\n\n%s\n' % (
@@ -188,8 +194,7 @@ class CertainIrradiance(_PointInTime):
             'type': 'CertainIrradiance',
             'irradiance': self.irradiance,
             'ground_reflectance': self.ground_reflectance,
-            'ground_hemisphere': self.ground_hemisphere.to_dict(),
-            'sky_hemisphere': self.sky_hemisphere.to_dict()
+            'uniform': self.uniform
         }
 
     def to_file(self, folder, name=None, mkdir=False):
@@ -223,4 +228,5 @@ class CertainIrradiance(_PointInTime):
 
     def __repr__(self):
         """Sky representation."""
-        return 'irradiance {} -g {}'.format(self.irradiance, self.ground_reflectance)
+        base_str = 'irradiance {} -g {}'.format(self.irradiance, self.ground_reflectance)
+        return base_str + ' -u' if self.uniform else base_str

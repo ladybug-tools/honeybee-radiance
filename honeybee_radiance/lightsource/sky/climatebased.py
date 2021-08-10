@@ -13,8 +13,6 @@ from ladybug.epw import EPW
 import honeybee.typing as typing
 
 from ._skybase import _PointInTime
-from .hemisphere import Hemisphere
-from ..ground import Ground
 
 
 class ClimateBased(_PointInTime):
@@ -283,11 +281,9 @@ class ClimateBased(_PointInTime):
                 'type': 'ClimateBased',
                 'altitude': 0.0,
                 'azimuth': 0.0,
-                'direct_normal_irradiance': 0,
-                'diffuse_horizontal_irradiance': 0,
-                'ground_reflectance': 0.2,
-                'ground_hemisphere': {},  # see ground.Ground class [optional],
-                'sky_hemisphere': {}  # see hemisphere.Hemisphere class [optional]
+                'direct_normal_irradiance': 800,
+                'diffuse_horizontal_irradiance': 120,
+                'ground_reflectance': 0.2  # optional float for ground reflectance
             }
 
         """
@@ -296,21 +292,11 @@ class ClimateBased(_PointInTime):
         assert data['type'] == 'ClimateBased', \
             'Input type must be ClimateBased not %s' % data['type']
 
-        sky = cls(
-            data['altitude'],
-            data['azimuth'],
-            data['direct_normal_irradiance'],
-            data['diffuse_horizontal_irradiance'],
-            data['ground_reflectance']
+        gr = data['ground_reflectance'] if 'ground_reflectance' in data else 0.2
+        return cls(
+            data['altitude'], data['azimuth'],
+            data['direct_normal_irradiance'], data['diffuse_horizontal_irradiance'], gr
         )
-
-        if 'ground_hemisphere' in data and data['ground_hemisphere'] is not None:
-            sky._ground_hemisphere = Ground.from_dict(data['ground_hemisphere'])
-
-        if 'sky_hemisphere' in data and data['sky_hemisphere'] is not None:
-            sky._sky_hemisphere = Hemisphere.from_dict(data['sky_hemisphere'])
-
-        return sky
 
     @classmethod
     def from_string(cls, sky_string):

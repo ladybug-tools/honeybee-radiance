@@ -58,6 +58,11 @@ def test_to_and_from_string():
 
     sky_string = 'illuminance 100000'
     sky = CertainIrradiance.from_string(sky_string)
+    assert not sky.uniform
+
+    sky_string = 'illuminance 100000 -u'
+    sky = CertainIrradiance.from_string(sky_string)
+    assert sky.uniform
 
 
 def test_to_file():

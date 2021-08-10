@@ -151,9 +151,11 @@ def sky_climate_based(
 @click.argument('irrad', default=558.659, type=float)
 @click.option('--ground', '-g', type=float, default=0.2, show_default=True,
               help='Fractional value for ground reflectance.')
+@click.option('--cloudy/--uniform', '-u', default=True,
+              help='Flag to note whether the sky is uniform instead of cloudy.')
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default=None, show_default=True)
-def sky_with_certain_irrad(irrad, ground, folder, name):
+def sky_with_certain_irrad(irrad, ground, cloudy, folder, name):
     """Generate an overcast / cloudy sky with certain irradiance value.
 
     \b
@@ -161,7 +163,8 @@ def sky_with_certain_irrad(irrad, ground, folder, name):
         irrad: Desired irradiance value in W/m2. (Default: 558.659).
     """
     try:
-        c_sky = hbsky.CertainIrradiance(irrad, ground)
+        uniform = not cloudy
+        c_sky = hbsky.CertainIrradiance(irrad, ground, uniform)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
@@ -172,9 +175,11 @@ def sky_with_certain_irrad(irrad, ground, folder, name):
 @click.argument('illum', default=100000, type=float)
 @click.option('--ground', '-g', type=float, default=0.2, show_default=True,
               help='Fractional value for ground reflectance.')
+@click.option('--cloudy/--uniform', '-u', default=True,
+              help='Flag to note whether the sky is uniform instead of cloudy.')
 @click.option('--folder', help='Output folder.', default='.', show_default=True)
 @click.option('--name', help='Sky file name.', default=None, show_default=True)
-def sky_with_certain_illum(illum, ground, folder, name):
+def sky_with_certain_illum(illum, ground, cloudy, folder, name):
     """Generate an overcast / cloudy sky with certain illuminance value.
 
     \b
@@ -182,7 +187,8 @@ def sky_with_certain_illum(illum, ground, folder, name):
         illum: Desired illuminance value in lux. (Default: 100000).
     """
     try:
-        c_sky = hbsky.CertainIrradiance.from_illuminance(illum, ground)
+        uniform = not cloudy
+        c_sky = hbsky.CertainIrradiance.from_illuminance(illum, ground, uniform)
         c_sky.to_file(folder, name, True)
     except Exception:
         _logger.exception('Failed to generate sky.')
@@ -222,24 +228,6 @@ def uniform_sky(ground_emittance, folder, name):
     This sky is usually used to create an octree that is sent to rcontrib command.
     """
     try:
-        c_sky = hbsky.UniformSky(ground_emittance=ground_emittance)
-        c_sky.to_file(folder, name, True)
-    except Exception:
-        _logger.exception('Failed to generate sky.')
-        sys.exit(1)
-
-
-@sky.command('uniform-by-metric')
-@click.option(
-    '--metric', '-m', default='sky-view', show_default=True,
-    help='Text for the type of metric to be output from the view percent '
-    'calculation. Choose from: sky-view, sky-exposure, spherical.')
-@click.option('--folder', help='Output folder.', default='.', show_default=True)
-@click.option('--name', help='Sky file name.', default='uniform_sky', show_default=True)
-def uniform_by_metric(metric, folder, name):
-    """Uniform sky for various view percent metrics."""
-    try:
-        ground_emittance = 1 if metric == 'spherical' else 0
         c_sky = hbsky.UniformSky(ground_emittance=ground_emittance)
         c_sky.to_file(folder, name, True)
     except Exception:
