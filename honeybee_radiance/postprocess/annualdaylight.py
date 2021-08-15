@@ -226,9 +226,9 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
 
 
 def _process_input_folder(folder, filter_pattern):
-    """Process and input annual daylight results folder.
+    """Process an annual daylight results folder.
 
-    This functions returns grids_info and sun-up-hours.
+    This returns grids_info and sun-up-hours.
     """
     suh_fp = os.path.join(folder, 'sun-up-hours.txt')
     with open(suh_fp) as suh_file:
