@@ -313,6 +313,11 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
         grids = [g.replace('.ill', '') for g in os.listdir(folder) if g.endswith('.ill')]
         grid_info = os.path.join(folder, 'grids_info.json')
 
+        # write a record of the timestep into the result folder for result processing
+        t_step_f = os.path.join(folder, 'timestep.txt')
+        with open(t_step_f, 'w') as t_f:
+            t_f.write(str(timestep))
+
         # setup the folder into which the metrics will be written
         metrics_folder = os.path.join(folder, sub_folder)
         metrics_folders = []
@@ -348,7 +353,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
                         avg_i.write('{}\n'.format(total_val / wea_len))
                         cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
                     except ValueError:
-                        pass # last line of the file
+                        pass  # last line of the file
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')
         sys.exit(1)

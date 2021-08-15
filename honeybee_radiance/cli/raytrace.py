@@ -3,7 +3,6 @@ import click
 import sys
 import logging
 import os
-import math
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rtrace import Rtrace, RtraceOptions
