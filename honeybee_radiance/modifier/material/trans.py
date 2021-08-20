@@ -81,7 +81,7 @@ class Trans(Material):
 
     @property
     def r_reflectance(self):
-        """Reflectance for red channel.
+        """Get or set the reflectance for red channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -94,7 +94,7 @@ class Trans(Material):
 
     @property
     def g_reflectance(self):
-        """Reflectance for green channel.
+        """Get or set the reflectance for green channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -107,7 +107,7 @@ class Trans(Material):
 
     @property
     def b_reflectance(self):
-        """Reflectance for blue channel.
+        """Get or set the reflectance for blue channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -120,7 +120,7 @@ class Trans(Material):
 
     @property
     def specularity(self):
-        """Fraction of specularity.
+        """Get or set the fraction of specularity.
 
         In most cases specularity fractions greater than 0.1 are not common in
         non-metallic materials (Default: 0).
@@ -133,7 +133,7 @@ class Trans(Material):
 
     @property
     def roughness(self):
-        """Roughness is specified as the rms slope of surface facets.
+        """Get or set the roughness as the rms slope of surface facets.
 
         A value of 0 corresponds to a perfectly smooth surface, and a value of 1
         would be a very rough surface. Roughness values greater than 0.2 are not
@@ -147,7 +147,7 @@ class Trans(Material):
 
     @property
     def transmitted_diff(self):
-        """Transmitted diffuse.
+        """Get or set the transmitted diffuse.
 
         The transmitted diffuse component is the fraction of transmitted light that is
         transmitted diffusely in as scattering fashion.
@@ -161,7 +161,7 @@ class Trans(Material):
 
     @property
     def transmitted_spec(self):
-        """Transmitted specular.
+        """Get or set the transmitted specular.
 
         The transmitted specular component is the fraction of transmitted light that is
         not diffusely scattered.
@@ -175,13 +175,18 @@ class Trans(Material):
 
     @property
     def average_reflectance(self):
-        """Calculate average reflectance of trans material."""
+        """Get the average reflectance of over the RGB values of the material."""
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 
     @property
+    def average_transmittance(self):
+        """Get the average between the transmitted diffuse and specular components."""
+        return (self._transmitted_diff + self._transmitted_spec) / 2
+
+    @property
     def specular_sampling_threshold(self):
-        """Suggested specular sampling threshold (-st)."""
+        """Get the suggested specular sampling threshold (-st)."""
         return self.transmitted_diff * self.transmitted_spec * \
             (1 - (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                   0.065 * self.b_reflectance)) * self.specularity
