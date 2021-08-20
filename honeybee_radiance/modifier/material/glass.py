@@ -3,10 +3,12 @@
 http://radsite.lbl.gov/radiance/refer/ray.html#Glass
 """
 from __future__ import division
-
 import math
+
 from .materialbase import Material
+
 import honeybee.typing as typing
+from ladybug.rootfinding import secant
 
 
 class Glass(Material):
@@ -120,7 +122,7 @@ class Glass(Material):
     @property
     def refraction_index(self):
         """Get or set the index of refraction.
-        
+
         Typical values are 1.52 for float glass and 1.4 for ETFE. If None, Radiance
         will default to using 1.52 for glass.
         """
@@ -132,6 +134,33 @@ class Glass(Material):
             else None
 
     @property
+    def r_transmittance(self):
+        """Get or set the transmittance for red channel."""
+        return self.transmittance_from_transmissivity(self.r_transmissivity)
+
+    @r_transmittance.setter
+    def r_transmittance(self, value):
+        self.r_transmissivity = self.transmissivity_from_transmittance(value)
+
+    @property
+    def g_transmittance(self):
+        """Get or set the transmittance for green channel."""
+        return self.transmittance_from_transmissivity(self.g_transmissivity)
+
+    @g_transmittance.setter
+    def g_transmittance(self, value):
+        self.g_transmissivity = self.transmissivity_from_transmittance(value)
+
+    @property
+    def b_transmittance(self):
+        """Get or set the transmittance for blue channel."""
+        return self.transmittance_from_transmissivity(self.b_transmissivity)
+
+    @b_transmittance.setter
+    def b_transmittance(self, value):
+        self.b_transmissivity = self.transmissivity_from_transmittance(value)
+
+    @property
     def average_transmissivity(self):
         """Get the average transmissivity.
 
@@ -139,6 +168,14 @@ class Glass(Material):
         """
         return 0.265 * self.r_transmissivity + \
             0.670 * self.g_transmissivity + 0.065 * self.b_transmissivity
+
+    @property
+    def average_transmittance(self):
+        """Get the average transmittance.
+
+        The value is calculated by multiplying the r, g, b values by v-lambda.
+        """
+        return self.transmittance_from_transmissivity(self.average_transmissivity)
 
     @classmethod
     def from_transmittance(cls, identifier, r_transmittance=0.0, g_transmittance=0.0,
@@ -175,9 +212,9 @@ class Glass(Material):
             glass_material = Glass.from_transmittance("generic_glass", .60, .60, .60)
             print(glass_material)
         """
-        rt = cls.get_transmissivity(r_transmittance)
-        gt = cls.get_transmissivity(g_transmittance)
-        bt = cls.get_transmissivity(b_transmittance)
+        rt = cls.transmissivity_from_transmittance(r_transmittance)
+        gt = cls.transmissivity_from_transmittance(g_transmittance)
+        bt = cls.transmissivity_from_transmittance(b_transmittance)
         return cls(identifier, rt, gt, bt, refraction_index, modifier,
                    dependencies=dependencies)
 
@@ -241,7 +278,7 @@ class Glass(Material):
             glassMaterial = Glass.from_single_transmittance("generic glass", .65)
             print(glassMaterial)
         """
-        rgb_transmissivity = cls.get_transmissivity(rgb_transmittance)
+        rgb_transmissivity = cls.transmissivity_from_transmittance(rgb_transmittance)
         return cls(
             identifier,
             r_transmissivity=rgb_transmissivity, g_transmissivity=rgb_transmissivity,
@@ -340,18 +377,45 @@ class Glass(Material):
         return base
 
     @staticmethod
-    def get_transmissivity(transmittance):
+    def transmissivity_from_transmittance(transmittance):
         """Calculate transmissivity based on transmittance value.
 
-        "Transmissivity is the amount of light not absorbed in one traversal of
-        the material. Transmittance -- the value usually measured - is the total
-        light transmitted through the pane including multiple reflections."
+        Transmissivity is the amount of light not absorbed in one traversal of
+        the material.
+
+        Transmittance (the value usually measured) is the total light transmitted
+        through the material pane including multiple reflections inside of the
+        glass pane.
         """
         transmittance = float(transmittance)
-        if transmittance == 0:
+        return Glass._transmissivity_from_transmittance(transmittance)
+
+    @staticmethod
+    def transmittance_from_transmissivity(transmissivity):
+        """Calculate transmittance based on transmissivity value.
+
+        Transmittance (the value usually measured) is the total light transmitted
+        through the material pane including multiple reflections inside of the
+        glass pane.
+
+        Transmissivity is the amount of light not absorbed in one traversal of
+        the material.
+        """
+        transmissivity = float(transmissivity)
+        if transmissivity == 0:
             return 0
-        return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
+        def fn(x):
+            return Glass._transmissivity_from_transmittance(x) - transmissivity
+        return secant(0.01, 1, fn, 0.01)
+
+    @staticmethod
+    def _transmissivity_from_transmittance(transmittance):
+        """Get transmissivity from a transmittance value"""
+        try:
+            return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
                 0.9166530661) / 0.0036261119 / transmittance
+        except ZeroDivisionError:
+            return 0
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()

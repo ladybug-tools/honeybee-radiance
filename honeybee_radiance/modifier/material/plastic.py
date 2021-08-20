@@ -84,7 +84,7 @@ class Plastic(Material):
 
     @property
     def r_reflectance(self):
-        """Reflectance for red channel.
+        """Get or set the reflectance for red channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -97,7 +97,7 @@ class Plastic(Material):
 
     @property
     def g_reflectance(self):
-        """Reflectance for green channel.
+        """Get or set the reflectance for green channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -110,7 +110,7 @@ class Plastic(Material):
 
     @property
     def b_reflectance(self):
-        """Reflectance for blue channel.
+        """Get or set the reflectance for blue channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -123,7 +123,7 @@ class Plastic(Material):
 
     @property
     def specularity(self):
-        """Fraction of specularity.
+        """Get or set the fraction of specularity.
 
         Specularity fractions greater than 0.1 are not common for non-metallic
         materials. Specularity fractions smaller than 0.9 are not common for
@@ -137,7 +137,7 @@ class Plastic(Material):
 
     @property
     def roughness(self):
-        """Roughness is specified as the rms slope of surface facets.
+        """Get or set the roughness as the rms slope of surface facets.
 
         A value of 0 corresponds to a perfectly smooth surface, and a value of 1
         would be a very rough surface. Roughness values greater than 0.2 are not
@@ -151,7 +151,7 @@ class Plastic(Material):
 
     @property
     def average_reflectance(self):
-        """Calculate average reflectance of the material."""
+        """Get the average reflectance of the material."""
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
                 0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
 

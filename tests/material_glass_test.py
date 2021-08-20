@@ -115,6 +115,10 @@ def test_from_transmittance():
     assert round(gl.g_transmissivity, 2) == 0.76
     assert round(gl.b_transmissivity, 2) == 0.87
 
+    assert round(gl.r_transmittance, 2) == 0.6
+    assert round(gl.g_transmittance, 2) == 0.7
+    assert round(gl.b_transmittance, 2) == 0.8
+
 
 def test_from_single_value():
     gl = Glass.from_single_transmissivity('gl_test', 0.6)
@@ -122,9 +126,25 @@ def test_from_single_value():
     assert gl.g_transmissivity == 0.6
     assert gl.b_transmissivity == 0.6
 
+    assert round(gl.average_transmissivity, 2) == 0.6
+
 
 def test_from_single_transmittance():
     gl = Glass.from_single_transmittance('gl_65', 0.6)
     assert round(gl.r_transmissivity, 2) == 0.65
     assert round(gl.g_transmissivity, 2) == 0.65
     assert round(gl.b_transmissivity, 2) == 0.65
+
+    assert round(gl.average_transmittance, 2) == 0.6
+
+    assert round(gl.r_transmittance, 2) == 0.6
+    assert round(gl.g_transmittance, 2) == 0.6
+    assert round(gl.b_transmittance, 2) == 0.6
+
+    gl.r_transmittance = 0.4
+    gl.g_transmittance = 0.4
+    gl.b_transmittance = 0.4
+
+    assert round(gl.r_transmittance, 2) == 0.4
+    assert round(gl.g_transmittance, 2) == 0.4
+    assert round(gl.b_transmittance, 2) == 0.4

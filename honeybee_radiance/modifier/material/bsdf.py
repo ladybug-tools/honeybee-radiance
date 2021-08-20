@@ -145,7 +145,7 @@ class BSDF(Material):
 
     @property
     def up_orientation(self):
-        """Up normal vector
+        """Get or set the up normal vector.
 
         (x, y ,z) vector that sets the hemisphere that the
         BSDF material faces.  For materials that are symmetrical about
@@ -169,9 +169,7 @@ class BSDF(Material):
 
     @property
     def thickness(self):
-        """Thickness.
-
-        Optional number to set the thickness of the BSDF material (default: 0).
+        """Get or set a number for the thickness of the BSDF material (default: 0).
 
         If a view or shadow ray hits a BSDF proxy with non-zero thickness, it will pass
         directly through as if the surface were not there. Similar to the illum type,
@@ -195,7 +193,7 @@ class BSDF(Material):
 
     @property
     def function_file(self):
-        """Path to function file."""
+        """Get or set the path to function file."""
         return self._function_file
 
     @function_file.setter
@@ -204,10 +202,10 @@ class BSDF(Material):
 
     @property
     def transform(self):
-        """Transform
+        """Get or set the transform.
 
-        Optional transform input to to scale the thickness and reorient the up vector
-        (default: None).
+        This is optional and is used to scale the thickness and reorient the
+        up vector. (Default: None).
         """
         return self._transform
 
@@ -217,7 +215,7 @@ class BSDF(Material):
 
     @property
     def angle_basis(self):
-        """BSDF file angle basis.
+        """Get or set a string for the BSDF file angle basis.
 
         Valid values are Klems Full, Klems Half, Klems Quarter and TensorTree
         """
@@ -235,7 +233,7 @@ class BSDF(Material):
 
     @property
     def front_diffuse_reflectance(self):
-        """Additional front diffuse reflectance."""
+        """Get or set the additional front diffuse reflectance."""
         return self._front_diffuse_reflectance
 
     @front_diffuse_reflectance.setter
@@ -247,7 +245,7 @@ class BSDF(Material):
 
     @property
     def back_diffuse_reflectance(self):
-        """Additional back diffuse reflectance."""
+        """Get or set the additional back diffuse reflectance."""
         return self._back_diffuse_reflectance
 
     @back_diffuse_reflectance.setter
@@ -259,7 +257,7 @@ class BSDF(Material):
 
     @property
     def diffuse_transmittance(self):
-        """Additional diffuse transmittance."""
+        """Get or set the additional diffuse transmittance."""
         return self._diffuse_transmittance
 
     @diffuse_transmittance.setter

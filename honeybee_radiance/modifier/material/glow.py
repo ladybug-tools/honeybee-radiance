@@ -65,7 +65,7 @@ class Glow(Material):
 
     @property
     def r_emittance(self):
-        """A positive value for the Red channel of the glow.
+        """Get or set a positive value for the Red channel of the glow.
 
         The value must be positive (Default: 0).
         """
@@ -77,7 +77,7 @@ class Glow(Material):
 
     @property
     def g_emittance(self):
-        """A positive value for the Green channel of the glow.
+        """Get or set a positive value for the Green channel of the glow.
 
         The value must be positive (Default: 0).
         """
@@ -89,7 +89,7 @@ class Glow(Material):
 
     @property
     def b_emittance(self):
-        """A positive value for the Blue channel of the glow.
+        """Get or set a positive value for the Blue channel of the glow.
 
         The value must be positive (Default: 0).
         """
@@ -101,7 +101,7 @@ class Glow(Material):
 
     @property
     def max_radius(self):
-        """Maximum radius for shadow testing (default is 0).
+        """Get or set the maximum radius for shadow testing. (Default: 0).
 
         If maxrad is zero, then the surface will never be tested for shadow, although
         it may participate in an interreflection calculation. If maxrad is negative, then

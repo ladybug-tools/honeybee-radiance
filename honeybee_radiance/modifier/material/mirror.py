@@ -95,7 +95,7 @@ class Mirror(Material):
 
     @property
     def r_reflectance(self):
-        """Get or set reflectance for red channel.
+        """Get or set the reflectance for red channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -108,7 +108,7 @@ class Mirror(Material):
 
     @property
     def g_reflectance(self):
-        """Get or set reflectance for green channel.
+        """Get or set the reflectance for green channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
@@ -121,7 +121,7 @@ class Mirror(Material):
 
     @property
     def b_reflectance(self):
-        """Get or set reflectance for blue channel.
+        """Get or set the reflectance for blue channel.
 
         The value should be between 0 and 1 (Default: 0).
         """
