@@ -444,25 +444,23 @@ class View(object):
                         'aperture group identifier. Got {}.'.format(type(ap))
         self._light_path = l_path
 
-    def _check_size_and_type(self):
-        """Check to be sure the view size and type are compatible.
-
-        In the case of fisheye view types, the view size is automatically set to 180.
-        """
-        # set view size to 180 degrees for fisheye views
+    def standardize_fisheye(self):
+        """Automatically set view size to 180 degrees if the view type is a fisheye."""
         if self.type in ('h', 'a', 's'):
             if self.h_size != 180:
                 self.h_size = 180
             if self.v_size != 180:
                 self.v_size = 180
 
-        elif self.type == 'v':
-            assert self.h_size < 180, ValueError(
-                '\n{} is an invalid horizontal view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.h_size))
-            assert self.v_size < 180, ValueError(
-                '\n{} is an invalid vertical view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.v_size))
+    def _check_size_and_type(self):
+        """Check to be sure the view size and type are compatible."""
+        if self.type == 'v':
+            assert self.h_size < 180, \
+                '\n{} is an invalid horizontal view size for Perspective view.\n' \
+                'The size should be smaller than 180.'.format(self.h_size)
+            assert self.v_size < 180, \
+                '\n{} is an invalid vertical view size for Perspective view.\n' \
+                'The size should be smaller than 180.'.format(self.v_size)
 
     @classmethod
     def from_dict(cls, view_dict):
