@@ -139,6 +139,7 @@ class View(object):
         self._room_identifier = None
         self._group_identifier = None
         self._light_path = None
+        self._check_size_and_type()
 
     @property
     def identifier(self):
@@ -192,23 +193,7 @@ class View(object):
     @type.setter
     def type(self, value):
         self._type.value = value[-1:]  # this will handle both vtv and v inputs
-
-        # set view size to 180 degrees for fisheye views
-        if self.type in ('h', 'a', 's'):
-            if self.h_size != 180:
-                self.h_size = 180
-                print("Changed h_size to 180 for fisheye view type.")
-            if self.v_size != 180:
-                self.v_size = 180
-                print("Changed v_size to 180 for fisheye view type.")
-
-        elif self.type == 'v':
-            assert self.h_size < 180, ValueError(
-                '\n{} is an invalid horizontal view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.h_size))
-            assert self.v_size < 180, ValueError(
-                '\n{} is an invalid vertical view size for Perspective view.\n'
-                'The size should be smaller than 180.'.format(self.v_size))
+        self._check_size_and_type()
 
     @property
     def position(self):
@@ -281,6 +266,7 @@ class View(object):
     @h_size.setter
     def h_size(self, value):
         self._h_size.value = value if value is not None else 60
+        self._check_size_and_type()
 
     @property
     def v_size(self):
@@ -300,6 +286,7 @@ class View(object):
     @v_size.setter
     def v_size(self, value):
         self._v_size.value = value if value is not None else 60
+        self._check_size_and_type()
 
     @property
     def shift(self):
@@ -457,6 +444,26 @@ class View(object):
                         'aperture group identifier. Got {}.'.format(type(ap))
         self._light_path = l_path
 
+    def _check_size_and_type(self):
+        """Check to be sure the view size and type are compatible.
+
+        In the case of fisheye view types, the view size is automatically set to 180.
+        """
+        # set view size to 180 degrees for fisheye views
+        if self.type in ('h', 'a', 's'):
+            if self.h_size != 180:
+                self.h_size = 180
+            if self.v_size != 180:
+                self.v_size = 180
+
+        elif self.type == 'v':
+            assert self.h_size < 180, ValueError(
+                '\n{} is an invalid horizontal view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.h_size))
+            assert self.v_size < 180, ValueError(
+                '\n{} is an invalid vertical view size for Perspective view.\n'
+                'The size should be smaller than 180.'.format(self.v_size))
+
     @classmethod
     def from_dict(cls, view_dict):
         """Create a view from a dictionary in the following format.
@@ -484,19 +491,19 @@ class View(object):
         assert view_dict['type'] == 'View', \
             'Expected View dictionary. Got {}.'.format(view_dict['type'])
 
+        view_type = view_dict['view_type'][-1:] if 'view_type' in view_dict else 'v'
         view = cls(
             identifier=view_dict['identifier'],
             position=view_dict['position'],
             direction=view_dict['direction'],
             up_vector=view_dict['up_vector'],
+            type=view_type,
             h_size=view_dict['h_size'],
             v_size=view_dict['v_size'],
             shift=view_dict['shift'],
             lift=view_dict['lift'],
         )
 
-        if 'view_type' in view_dict:
-            view.type = view_dict['view_type']
         if 'fore_clip' in view_dict:
             view.fore_clip = view_dict['fore_clip']
         if 'aft_clip' in view_dict:
