@@ -43,6 +43,14 @@ def view():
     default=True, show_default=True
 )
 @click.option(
+    '--resolution', '-r', default=None, type=int, show_default=True,
+    help='An optional integer for the maximum dimension of the image in pixels. '
+    'Specifying a value here will automatically lower the input --count to ensure '
+    'the resulting images can be combined to meet this dimension. If unspecified, '
+    'the --count will always be respected and the resulting images might not be '
+    'combine-able to meet a specific target dimension.'
+)
+@click.option(
     '--octree', '-oct', help='Octree file for the overture calculation. This must be '
     'specified when the overture is not skipped.', default=None, show_default=True,
     type=click.Path(file_okay=True, dir_okay=False, resolve_path=True)
@@ -60,7 +68,8 @@ def view():
     ' created views. By default the list will be printed out to stdout',
     type=click.File('w'), default='-'
 )
-def split_view(view, count, skip_overture, octree, rad_params, folder, log_file):
+def split_view(view, count, resolution, skip_overture, octree, rad_params,
+               folder, log_file):
     """Split a radiance view file into smaller views based on count.
 
     \b
@@ -72,6 +81,11 @@ def split_view(view, count, skip_overture, octree, rad_params, folder, log_file)
             the first three files will have 5 sensors and the last file will have 6.
     """
     try:
+        # correct the count to meet the target resolution
+        if resolution is not None and resolution % count != 0:
+            while resolution % count != 0:
+                count =  count - 1
+
         # split the view into smaller views
         view_obj = View.from_file(view)
         views = view_obj.grid(y_div_count=count)
