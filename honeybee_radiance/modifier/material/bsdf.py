@@ -101,7 +101,7 @@ class BSDF(Material):
 
     def _update_values(self):
         "update value dictionaries."
-        n_path = os.path.normpath(self.bsdf_file)
+        n_path = os.path.normpath(self.bsdf_file).replace('\\', '/')
         f_path = n_path if os.path.isabs(n_path) else './{}'.format(n_path)
         self._values[0] = [
             float(self.thickness),
@@ -136,7 +136,7 @@ class BSDF(Material):
             bsdf_file), 'No such file at: {}'.format(bsdf_file)
         assert bsdf_file.lower().endswith('.xml'), \
             'BSDF file must be an xml file: {}'.format(bsdf_file)
-        self._bsdf_file = os.path.normpath(bsdf_file)
+        self._bsdf_file = os.path.normpath(bsdf_file).replace('\\', '/')
         if not hasattr(self, '_angle_basis'):
             # first time that file is assigned
             pass
