@@ -102,7 +102,7 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
             })
 
         # create the ambient cache file if specified
-        amb_file = os.path.basename(view).replace('.vf', '.amb')
+        amb_file = os.path.join(folder, os.path.basename(view).replace('.vf', '.amb'))
         if not skip_overture:
             options = RpictOptions()
             if rad_params:
@@ -115,14 +115,15 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
             # create command and run it to get the .amb file
             assert octree is not None, \
                 'Octree  must be specified for an overture calculation.'
-            out_file = os.path.basename(view).replace('.vf', '.unf')
+            out_file = os.path.join(
+                folder, os.path.basename(view).replace('.vf', '.unf'))
             rpict = Rpict(options=options, output=out_file, octree=octree, view=view)
             env = None
             if folders.env != {}:
                 env = folders.env
             env = dict(os.environ, **env) if env else None
-            rpict.run(env=env, cwd=folder)
-            os.remove(os.path.join(folder, out_file))
+            rpict.run(env=env)
+            os.remove(out_file)
 
         # record all of the view files that were generated
         log_file.write(json.dumps(views_info))
