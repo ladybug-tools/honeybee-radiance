@@ -2,6 +2,7 @@
 import click
 import sys
 import logging
+import os
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rcontrib import Rcontrib, RcontribOptions
@@ -228,8 +229,8 @@ def rfluxmtx_command_with_postprocess(
         options.update_from_string('-aa 0.0 -faf -y {}'.format(sensor_count))
 
         # create command.
-        cmd_template = 'rfluxmtx {rad_params} - {sky_dome} -i {octree} < ' \
-            '{sensors} | rmtxop -f{output_format} - {sky_mtx}'
+        cmd_template = 'rfluxmtx {rad_params} - {w}{sky_dome}{w} -i {w}{octree}{w} < ' \
+            '{w}{sensors}{w} | rmtxop -f{output_format} - {w}{sky_mtx}{w}'
 
         if conversion and conversion.strip():
             if multiply_by != 1:
@@ -245,9 +246,10 @@ def rfluxmtx_command_with_postprocess(
         if output:
             cmd_template = cmd_template + ' > {output}'.format(output=output)
 
+        wrapper = '"' if os.name == 'nt' else '\''
         cmd = cmd_template.format(
             rad_params=options.to_radiance(), sky_dome=sky_dome, octree=octree,
-            sensors=sensor_grid, output_format=output_format, sky_mtx=sky_mtx
+            sensors=sensor_grid, output_format=output_format, sky_mtx=sky_mtx, w=wrapper
         )
 
         if dry_run:
