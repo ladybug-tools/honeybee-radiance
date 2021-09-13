@@ -315,7 +315,8 @@ class Glass(Material):
             refraction_index=refraction_index,
             modifier=modifier,
             dependencies=dependencies)
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict and \
+                primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         # update the values from values dictionary.
@@ -404,6 +405,7 @@ class Glass(Material):
         transmissivity = float(transmissivity)
         if transmissivity == 0:
             return 0
+
         def fn(x):
             return Glass._transmissivity_from_transmittance(x) - transmissivity
         return secant(0.01, 1, fn, 0.01)
@@ -413,7 +415,7 @@ class Glass(Material):
         """Get transmissivity from a transmittance value"""
         try:
             return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
-                0.9166530661) / 0.0036261119 / transmittance
+                    0.9166530661) / 0.0036261119 / transmittance
         except ZeroDivisionError:
             return 0
 

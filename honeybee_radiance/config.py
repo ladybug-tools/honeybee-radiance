@@ -264,8 +264,7 @@ class Folders(object):
         """Find the Radiance installation in its default location.
 
         This method will first attempt to return the path of a standalone Radiance
-        installation and, if none are found, it will search for one that is
-        installed with OpenStudio.
+        installation.
 
         Returns:
             File directory and full path to executable in case of success.
