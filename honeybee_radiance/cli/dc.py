@@ -144,16 +144,16 @@ def rcontrib_command_with_postprocess(
 
 @dc.command('scoeff')
 @click.argument(
-    'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'octree', type=click.Path(exists=True, file_okay=True)
 )
 @click.argument(
-    'sensor-grid', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'sensor-grid', type=click.Path(exists=True, file_okay=True)
 )
 @click.argument(
-    'sky-dome', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'sky-dome', type=click.Path(exists=True, file_okay=True)
 )
 @click.argument(
-    'sky-mtx', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'sky-mtx', type=click.Path(exists=True, file_okay=True)
 )
 @click.option(
     '--sensor-count', type=click.INT, show_default=True,
@@ -228,8 +228,8 @@ def rfluxmtx_command_with_postprocess(
         options.update_from_string('-aa 0.0 -faf -y {}'.format(sensor_count))
 
         # create command.
-        cmd_template = 'rfluxmtx {rad_params} - """{sky_dome}""" -i """{octree}""" < ' \
-            '"""{sensors}""" | rmtxop -f{output_format} - """{sky_mtx}"""'
+        cmd_template = 'rfluxmtx {rad_params} - "{sky_dome}" -i """{octree}""" < ' \
+            '"{sensors}" | rmtxop -f{output_format} - "{sky_mtx}"'
 
         if conversion and conversion.strip():
             if multiply_by != 1:
@@ -243,7 +243,7 @@ def rfluxmtx_command_with_postprocess(
             cmd_template = cmd_template + ' -t '
 
         if output:
-            cmd_template = cmd_template + ' > """{output}"""'.format(output=output)
+            cmd_template = cmd_template + ' > "{output}"'.format(output=output)
 
         cmd = cmd_template.format(
             rad_params=options.to_radiance(), sky_dome=sky_dome, octree=octree,
