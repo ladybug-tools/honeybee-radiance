@@ -4,7 +4,6 @@ from __future__ import division
 
 from .lightpath import light_path_from_room
 
-from honeybee_radiance_command.cutil import parse_radiance_options
 from honeybee_radiance_command.options import TupleOption, \
     StringOptionJoined, NumericOption
 import honeybee.typing as typing
@@ -14,6 +13,8 @@ import ladybug.futil as futil
 
 import math
 import os
+import re
+import collections
 
 
 class View(object):
@@ -545,7 +546,7 @@ class View(object):
         }
 
         # parse the string here
-        options = parse_radiance_options(view_string)
+        options = cls._parse_radiance_options(view_string)
 
         for opt, value in options.items():
             if opt in mapper:
@@ -872,6 +873,40 @@ class View(object):
         self.position = plane.o
         self.direction = plane.x * view_direction.magnitude
         self.up_vector = plane.n * view_up_vector.magnitude
+
+    @staticmethod
+    def _parse_radiance_options(string):
+        """Parse a radiance option string (e.g. '-ab 4 -ad 256').
+
+        The string should start with a '-' otherwise it will be trimmed to the
+        first '-' in the string.
+        """
+        try:
+            index = string.index('-')
+        except ValueError:
+            if not ' '.join(string.split()).replace('"', '').replace("'", '').strip():
+                return {}
+            raise ValueError(
+                'Invalid Radiance options string input. Failed to find - in input string.'
+            )
+
+        _rad_opt_pattern = r'-[a-zA-Z]+'
+        _rad_opt_compiled_pattern = re.compile(_rad_opt_pattern)
+        sub_string = ' '.join(string[index:].split())
+        value = re.split(_rad_opt_compiled_pattern, sub_string)[1:]
+        key = re.findall(_rad_opt_pattern, sub_string)
+
+        options = collections.OrderedDict()
+        for k, v in zip(key, value):
+            values = v.split()
+            count = len(values)
+            if count == 0:
+                values = ''
+            elif count == 1:
+                values = values[0]
+            options[k[1:]] = values
+
+        return options
 
     def duplicate(self):
         """Get a copy of this object."""
