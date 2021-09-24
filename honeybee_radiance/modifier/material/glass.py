@@ -130,8 +130,9 @@ class Glass(Material):
 
     @refraction_index.setter
     def refraction_index(self, value):
-        self._refraction_index = typing.float_positive(value) if value is not None \
-            else None
+        self._refraction_index = \
+            typing.float_in_range(value, 1, input_name='refraction index') \
+            if value is not None else None
 
     @property
     def r_transmittance(self):
