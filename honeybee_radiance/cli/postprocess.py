@@ -504,7 +504,7 @@ def leed_illuminance(folder, glare_control, grids_filter, sub_folder, output_fil
     'increment angle of each state in degrees. (Default: 5).'
 )
 @click.option(
-    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '--sub-folder', '-sf', help='Optional relative path for subfolder to write output '
     '.ill files of the dynamic tracking system.', default='final'
 )
 def solar_tracking(folder, sun_up_hours, wea, north, tracking_increment, sub_folder):
@@ -533,16 +533,19 @@ def solar_tracking(folder, sun_up_hours, wea, north, tracking_increment, sub_fol
         sorted_models = [x for _, x in sorted(zip(model_num, models))]
         models = [os.path.join(folder, f) for f in sorted_models]
 
+        dest_folder = os.path.join(folder, sub_folder)
         if len(models) == 1:  # not a dynamic system; just copy the files
+            if not os.path.isdir(dest_folder):
+                os.mkdir(dest_folder)
             for f in os.listdir(models[0]):
                 shutil.copyfile(
                     os.path.join(models[0], f),
-                    os.path.join(sub_folder, f))
+                    os.path.join(dest_folder, f))
         else:
             wea_obj = Wea.from_file(wea)
             post_process_solar_tracking(
                 models, sun_up_hours, wea_obj.location, north,
-                tracking_increment, sub_folder)
+                tracking_increment, dest_folder)
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')
         sys.exit(1)
