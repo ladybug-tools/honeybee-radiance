@@ -10,6 +10,7 @@ from ladybug.wea import Wea
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
+from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking
 from honeybee_radiance.cli.util import get_compare_func, remove_header
 
 _logger = logging.getLogger(__name__)
@@ -478,6 +479,72 @@ def leed_illuminance(folder, glare_control, grids_filter, sub_folder, output_fil
         output_file.write(json.dumps(credit_summary, indent=4))
     except Exception:
         _logger.exception('Failed to calculate LEED daylight metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('solar-tracking')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument(
+    'sun-up-hours', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    'wea', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    '--north', default=0, type=float, show_default=True,
+    help='Angle to north (0-360). 90 is west and 270 is east'
+)
+@click.option(
+    '--tracking-increment', '-t', type=int, default=5, help='An integer for the '
+    'increment angle of each state in degrees. (Default: 5).'
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    '.ill files of the dynamic tracking system.', default='final'
+)
+def solar_tracking(folder, sun_up_hours, wea, north, tracking_increment, sub_folder):
+    """Postprocess a list of result folders to account for dynamic solar tracking.
+
+    \b
+    This function essentially takes .ill files for each state of a dynamic tracking
+    system and produces a single .ill file that models the tracking behavior.
+
+    \b
+    Args:
+        folder: Results folder containing sub-folders that each represent a state
+            of the dynamic solar tracking system. Each sub-folder should contain .ill
+            files for that state and the names of these .ill files should be the
+            same across all sub-folders.
+        sun_up_hours: The .txt file containing the sun-up hours that were simulated.
+        wea: The .wea file that was used in the simulation. This will be used to
+            determine the solar positions.
+    """
+    try:
+        # load all of the result sub-folders in the folder and sort them
+        models = [f for f in os.listdir(folder)
+                  if os.path.isdir(os.path.join(folder, f)) and
+                  os.path.isfile(os.path.join(folder, f, 'grids_info.json'))]
+        model_num = [int(''.join([i for i in f if i.isdigit()])) for f in models]
+        sorted_models = [x for _, x in sorted(zip(model_num, models))]
+        models = [os.path.join(folder, f) for f in sorted_models]
+
+        if len(models) == 1:  # not a dynamic system; just copy the files
+            for f in os.listdir(models[0]):
+                shutil.copyfile(
+                    os.path.join(models[0], f),
+                    os.path.join(sub_folder, f))
+        else:
+            wea_obj = Wea.from_file(wea)
+            post_process_solar_tracking(
+                models, sun_up_hours, wea_obj.location, north,
+                tracking_increment, sub_folder)
+    except Exception:
+        _logger.exception('Failed to compute irradiance metrics.')
         sys.exit(1)
     else:
         sys.exit(0)

@@ -225,7 +225,7 @@ class ModelRadianceProperties(object):
 
     @property
     def shade_group_identifiers(self):
-        """Get a list of identifers for all the DynamicShadeGroups in the model."""
+        """Get a list of identifiers for all the DynamicShadeGroups in the model."""
         group_ids = set()
         for shade in self.host.shades:
             if shade.properties.radiance._dynamic_group_identifier:
@@ -234,7 +234,7 @@ class ModelRadianceProperties(object):
 
     @property
     def subface_group_identifiers(self):
-        """Get a list of identifers for all the DynamicSubFaceGroups in the model."""
+        """Get a list of identifiers for all the DynamicSubFaceGroups in the model."""
         group_ids = set()
         for subface in self.host.apertures + self.host.doors:
             if subface.properties.radiance._dynamic_group_identifier:
