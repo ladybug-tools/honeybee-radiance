@@ -56,6 +56,8 @@ def post_process_solar_tracking(
             if ang > orient:
                 mtx_to_use.append(i)
                 break
+        else:
+            mtx_to_use.append(-1)
 
     # parse the grids_info in the first folder to understand the sensor grids
     grids_info_file = os.path.join(result_folders[0], 'grids_info.json')
