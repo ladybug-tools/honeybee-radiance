@@ -9,6 +9,8 @@ import json
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
 import honeybee_radiance.sensorgrid as sensorgrid
+from honeybee_radiance_folder.gridutil import redistribute_sensors, \
+    restore_original_distribution
 
 _logger = logging.getLogger(__name__)
 
@@ -183,6 +185,96 @@ def from_rooms(model_json, grid_size, offset, include_mesh, keep_out, room,
                     sg.to_file(folder)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('split-folder')
+@click.argument(
+    'input-folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+@click.argument(
+    'output-folder',
+    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
+@click.argument('grid-count', type=int)
+@click.option(
+    '--min-sensor-count', '-msc', help='Minimum number of sensors in each output grid. '
+    'Use this number to ensure the number of sensors in output grids never gets very '
+    'small. To ignore this limitation set the value to 1. Default: 2000.', type=int,
+    default=2000)
+def split_grid_folder(input_folder, output_folder, grid_count, min_sensor_count):
+    """Create new sensor grids folder with evenly distribute sensors.
+
+    This function creates a new folder with evenly distributed sensor grids. The folder
+    will include a ``_dist_info.json`` file which has the information to recreate the
+    original input files from this folder and the results generated based on the grids
+    in this folder.
+
+    ``_dist_info.json`` file includes an array of JSON objects. Each object has the
+    ``id`` or the original file and the distribution information. The distribution
+    information includes the id of the new files that the sensors has been distributed
+    to and the start and end line in the target file.
+
+    This file is being used to restructure the data that is generated based on the newly
+    created sensor grids.
+
+    .. code-block:: python
+
+        [
+          {
+            "id": "room_1",
+            "dist_info": [
+              {"id": 0, "st_ln": 0, "end_ln": 175},
+              {"id": 1, "st_ln": 0, "end_ln": 21}
+            ]
+          },
+          {
+            "id": "room_2",
+            "dist_info": [
+              {"id": 1, "st_ln": 22, "end_ln": 135}
+            ]
+          }
+        ]
+
+    Args:
+        input_folder: Input sensor grids folder.
+        output_folder: A new folder to write the newly created files.
+        grid_count: Number of output sensor grids to be created. This number
+            is usually equivalent to the number of processes that will be used to run
+            the simulations in parallel.
+    """
+    try:
+        redistribute_sensors(input_folder, output_folder, grid_count, min_sensor_count)
+    except Exception:
+        _logger.exception('Failed to distribute sensor grids in folder.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('merge-folder')
+@click.argument(
+    'input-folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+@click.argument(
+    'output-folder',
+    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
+@click.argument('extension', type=str)
+def merge_grid_folder(input_folder, output_folder, extension):
+    """Restructure files in a distributed folder.
+
+    Args:
+        input_folder: Path to input folder.
+        output_folder: Path to the new restructured folder
+        extention: Extension of the files to collect data from. It will be ``pts`` for
+            sensor files. Another common extension is ``ill`` for the results of daylight
+            studies.
+    """
+    try:
+        restore_original_distribution(input_folder, output_folder, extension)
+    except Exception:
+        _logger.exception('Failed to restructure data from folder.')
         sys.exit(1)
     else:
         sys.exit(0)
