@@ -655,8 +655,8 @@ class View(object):
 
         _views = list(range(x_div_count * y_div_count))
 
-        if self.type == 'l':
-            # parallel view (vtl)
+        if self.type == 'l' or self.type == 'a':
+            # parallel view (vtl) or angular fisheye (vta)
             _vh = self.h_size / x_div_count
             _vv = self.v_size / y_div_count
 
