@@ -340,4 +340,21 @@ def metrics_to_folder(
         with open(grid_info, 'w') as outf:
             json.dump(grids, outf)
 
+    # create info for available results. This file will be used by honeybee-vtk for
+    # results visualization
+    res_info = os.path.join(metrics_folder, 'metrics_info.json')
+
+    res_data = {
+        'paths': ['cda', 'da', 'udi', 'udi_lower', 'udi_upper'],
+        'identifiers': [
+            'Continuous daylight autonomy', 'Daylight autonomy',
+            'Useful daylight illuminance',
+            'Useful daylight illuminance lower', 'Useful daylight illuminance upper'
+        ],
+        'units': ['%', '%', '%', '%', '%']
+    }
+
+    with open(res_info, 'w') as outf:
+        json.dump(res_data, res_info)
+
     return metrics_folder
