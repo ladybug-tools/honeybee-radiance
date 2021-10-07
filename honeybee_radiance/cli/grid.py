@@ -199,11 +199,19 @@ def from_rooms(model_json, grid_size, offset, include_mesh, keep_out, room,
     type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 @click.argument('grid-count', type=int)
 @click.option(
+    '--grid-divisor', '-d', help='An optional integer to be divided by the grid-count '
+    'to yield a final number of grids to generate. This is useful in workflows where '
+    'the grid-count is being interpreted as a cpu-count but there are multiple '
+    'processors acting on a single grid. To ignore this limitation set the value '
+    'to 1. Default: 1.', type=int, default=1)
+@click.option(
     '--min-sensor-count', '-msc', help='Minimum number of sensors in each output grid. '
     'Use this number to ensure the number of sensors in output grids never gets very '
-    'small. To ignore this limitation set the value to 1. Default: 2000.', type=int,
-    default=2000)
-def split_grid_folder(input_folder, output_folder, grid_count, min_sensor_count):
+    'small. This input will override the input grid-count when specified. '
+    'To ignore this limitation, set the value to 1. Default: 1.', type=int,
+    default=1)
+def split_grid_folder(
+        input_folder, output_folder, grid_count, grid_divisor, min_sensor_count):
     """Create new sensor grids folder with evenly distribute sensors.
 
     This function creates a new folder with evenly distributed sensor grids. The folder
@@ -245,6 +253,8 @@ def split_grid_folder(input_folder, output_folder, grid_count, min_sensor_count)
             the simulations in parallel.
     """
     try:
+        grid_count = int(grid_count / grid_divisor)
+        grid_count = 1 if grid_count < 1 else grid_count
         redistribute_sensors(input_folder, output_folder, grid_count, min_sensor_count)
     except Exception:
         _logger.exception('Failed to distribute sensor grids in folder.')
