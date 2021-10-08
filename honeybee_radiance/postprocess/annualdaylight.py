@@ -355,6 +355,6 @@ def metrics_to_folder(
     }
 
     with open(res_info, 'w') as outf:
-        json.dump(res_data, res_info)
+        json.dump(res_data, outf)
 
     return metrics_folder
