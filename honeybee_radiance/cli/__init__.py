@@ -19,6 +19,7 @@ from .rpict import rpict
 from .dc import dc
 from .postprocess import post_process
 from .mtx import mtxop
+from .multiphase import multi_phase
 
 
 _logger = logging.getLogger(__name__)
@@ -68,6 +69,7 @@ radiance.add_command(rpict)
 radiance.add_command(dc)
 radiance.add_command(post_process, name='post-process')
 radiance.add_command(mtxop)
+radiance.add_command(multi_phase)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)
