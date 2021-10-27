@@ -1,0 +1,11 @@
+# VMTX representation for "east_window_classroom"
+
+void glow white_glow_east_window_classroom
+0
+0
+4 1.0 1.0 1.0 0.0
+
+white_glow_east_window_classroom polygon east_window_classroom_6b3006ce
+0
+0
+12 3.0 0.5 3.2 3.0 2.5 3.2 3.0 2.5 0.7 3.0 0.5 0.7
