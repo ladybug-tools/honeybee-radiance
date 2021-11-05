@@ -446,12 +446,24 @@ class View(object):
         self._light_path = l_path
 
     def standardize_fisheye(self):
-        """Automatically set view size to 180 degrees if the view type is a fisheye."""
-        if self.type in ('h', 'a', 's'):
+        """Automatically set view size to 180 degrees if the view type is a fisheye.
+        
+        Alternatively it sets the view size to 360 degrees if both the view type is 
+        angular fisheye and either the horizontal or vertical view size is 360 degrees.
+        """
+        if self.type in ('h', 's'):
             if self.h_size != 180:
                 self.h_size = 180
             if self.v_size != 180:
                 self.v_size = 180
+        if self.type in ('a'):
+            if self.h_size == 360 or self.v_size == 360:
+                self.h_size = self.v_size = 360
+            else:
+                if self.h_size != 180:
+                    self.h_size = 180
+                if self.v_size != 180:
+                    self.v_size = 180
 
     def _check_size_and_type(self):
         """Check to be sure the view size and type are compatible."""
