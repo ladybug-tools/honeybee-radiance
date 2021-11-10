@@ -139,6 +139,10 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
     file_okay=False, dir_okay=True, resolve_path=True))
 @click.argument('base-name', type=str)
 @click.argument('extension', default='.unf', type=str)
+@click.option('--view', '-vf', type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+        help='Full path to input sensor view file.'
+)
 @click.option(
     '--scale-factor', '-s', default=1, type=float, show_default=True,
     help='A number that will be used to scale the dimensions of the output image '
@@ -147,7 +151,7 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
 @click.option('--folder', '-f', help='Optional output folder.',
               default='.', show_default=True)
 @click.option('--name', '-n', help='Optional output filename. Default is base-name.')
-def merge_view(input_folder, base_name, extension, scale_factor, folder, name):
+def merge_view(input_folder, base_name, extension, view, scale_factor, folder, name):
     """Merge several radiance HDR image files into a single file.
 
     This command will also perform an anti-aliasing operation on the output and
@@ -191,7 +195,12 @@ def merge_view(input_folder, base_name, extension, scale_factor, folder, name):
 
         # search for a single .vf in the folder and, if it's found, grab the info
         views = sorted(f for f in os.listdir(input_folder) if f.endswith('.vf'))
-        if len(views) == 1:  # replace the header with the info in the view
+        if view:
+            view_obj = View.from_file(view)
+            getinfo = Getinfo(output=output_file)
+            getinfo.options.a = 'VIEW= {}'.format(view_obj)
+            pfilt.pipe_to = getinfo
+        elif len(views) == 1:  # replace the header with the info in the view
             view_obj = View.from_file(os.path.join(input_folder, views[0]))
             getinfo = Getinfo(output=output_file)
             getinfo.options.a = 'VIEW= {}'.format(view_obj)
