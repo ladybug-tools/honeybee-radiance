@@ -140,7 +140,7 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
 @click.argument('base-name', type=str)
 @click.argument('extension', default='.unf', type=str)
 @click.option('--view', '-vf', type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+        exists=False, file_okay=True, dir_okay=False, resolve_path=True),
         help='Full path to the original view file.'
 )
 @click.option(
