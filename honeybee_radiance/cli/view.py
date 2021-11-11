@@ -166,6 +166,10 @@ def merge_view(input_folder, base_name, extension, view, scale_factor, folder, n
         extension: File extention. [Default: .unf]
     """
     try:
+        # view is an optional input. Make sure we can handle the case that the view
+        # file doesn't exist
+        view = None if (view and not os.path.isfile(view)) else view
+
         # get all of the files in the folder with the given extension
         pattern = r'{}_\d+{}'.format(base_name, extension)
         images = sorted(f for f in os.listdir(input_folder) if re.match(pattern, f))
