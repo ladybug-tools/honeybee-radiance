@@ -141,7 +141,7 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
 @click.argument('extension', default='.unf', type=str)
 @click.option('--view', '-vf', type=click.Path(
         exists=True, file_okay=True, dir_okay=False, resolve_path=True),
-        help='Full path to input sensor view file.'
+        help='Full path to the original view file.'
 )
 @click.option(
     '--scale-factor', '-s', default=1, type=float, show_default=True,
@@ -195,7 +195,7 @@ def merge_view(input_folder, base_name, extension, view, scale_factor, folder, n
 
         # search for a single .vf in the folder and, if it's found, grab the info
         views = sorted(f for f in os.listdir(input_folder) if f.endswith('.vf'))
-        if view:
+        if view and len(views) != 1:
             view_obj = View.from_file(view)
             getinfo = Getinfo(output=output_file)
             getinfo.options.a = 'VIEW= {}'.format(view_obj)
