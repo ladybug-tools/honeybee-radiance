@@ -50,3 +50,20 @@ def test_merge_view():
     out_image = os.path.join(out_folder, 'unnamed.HDR')
     assert os.path.isfile(os.path.join(out_folder, 'unnamed.HDR'))
     nukedir(out_folder, rmdir=True)
+
+
+def test_merge_view_org_view():
+    """Test merge view with additional input that doesn't exist"""
+    runner = CliRunner()
+    input_folder = './tests/assets/hdr/'
+    out_folder = './tests/assets/hdr/hdr_result/'
+    cmd_args = [
+        input_folder, 'unnamed', '--folder', out_folder, '--name', 'unnamed',
+        '--view', 'not-a-view.vf'
+    ]
+
+    result = runner.invoke(merge_view, cmd_args)
+    assert result.exit_code == 0
+    out_image = os.path.join(out_folder, 'unnamed.HDR')
+    assert os.path.isfile(os.path.join(out_folder, 'unnamed.HDR'))
+    nukedir(out_folder, rmdir=True)
