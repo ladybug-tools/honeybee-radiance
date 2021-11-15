@@ -8,6 +8,7 @@ import traceback
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
+from honeybee_radiance.reader import sensor_count_from_file
 
 
 _logger = logging.getLogger(__name__)
@@ -85,7 +86,7 @@ def view_matrix_command(
             options.update_from_string(rad_params_locked.strip())
 
         if not sensor_count:
-            raise ValueError("for the time-being sensor count must be provided.")
+            sensor_count = sensor_count_from_file(sensor_grid)
 
         options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
 
