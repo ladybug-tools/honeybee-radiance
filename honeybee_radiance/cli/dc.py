@@ -7,6 +7,7 @@ from honeybee_radiance.config import folders
 from honeybee_radiance_command.rcontrib import Rcontrib, RcontribOptions
 from honeybee_radiance_command._command_util import run_command
 from honeybee_radiance_command.options.rfluxmtx import RfluxmtxOptions
+from honeybee_radiance.reader import sensor_count_from_file
 
 
 _logger = logging.getLogger(__name__)
@@ -98,7 +99,7 @@ def rcontrib_command_with_postprocess(
             options.update_from_string(rad_params_locked.strip())
 
         if not sensor_count:
-            raise ValueError('for time-being sensor count must be provided.')
+            sensor_count = sensor_count_from_file(sensor_grid)
 
         if coeff:
             options.update_from_string('-aa 0.0 -V- -y {}'.format(sensor_count))
@@ -223,7 +224,7 @@ def rfluxmtx_command_with_postprocess(
             options.update_from_string(rad_params_locked.strip())
 
         if not sensor_count:
-            raise ValueError('Number of sensors in senor grid must be provided!')
+            sensor_count = sensor_count_from_file(sensor_grid)
 
         options.update_from_string('-aa 0.0 -faf -y {}'.format(sensor_count))
 

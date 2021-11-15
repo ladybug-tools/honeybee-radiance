@@ -190,3 +190,25 @@ def parse_header(filepath):
         return len(header_lines) + 1, '\n'.join(header_lines)
     finally:
         inf.close()
+
+
+def sensor_count_from_file(filepath):
+    """Return sensor count of a sensor grid file.
+
+    This function returns the sensor count of a sensor grid file. Comments [#] and
+    empty lines will not be counted.
+
+    Args:
+        filepath: Full path to Radiance pts file.
+
+    Returns:
+        sensor_count
+    """
+    sensor_count = 0
+    with open(filepath, 'r') as pts_file:
+        for l in pts_file:
+            if not l.strip() or l[0] == '#':
+                pass
+            else:
+                sensor_count += 1
+    return sensor_count
