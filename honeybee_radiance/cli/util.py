@@ -72,7 +72,7 @@ def handle_operator(operator):
     if operator == '+':
         return '+'
     elif operator == '-':
-        return '+ -s 1.0'
+        return '+ -s -1.0'
     elif operator == '/':
         return '/'
     elif operator == '*':
