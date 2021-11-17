@@ -182,14 +182,16 @@ def model_to_rad(model, blk=False, minimal=False):
     # write all Faces into the file
     model_str = ['#   ================ MODEL ================\n']
     faces = model.faces
-    interior_faces = set()
+    interior_faces, offset = set(), model.tolerance * -2
     if len(faces) != 0:
         model_str.append('#   ================ FACES ================\n')
         for face in faces:
             if isinstance(face.boundary_condition, Surface):
                 if face.identifier in interior_faces:
-                    continue
-                interior_faces.add(face.boundary_condition.boundary_condition_object)
+                    face = face.duplicate()
+                    face.move(face.normal * offset)
+                else:
+                    interior_faces.add(face.boundary_condition.boundary_condition_object)
             model_str.append(face_to_rad(face, blk, minimal))
 
     # write all orphaned Apertures into the file
@@ -236,7 +238,7 @@ def model_to_rad(model, blk=False, minimal=False):
 
 def model_to_rad_folder(
     model, folder=None, config_file=None, minimal=False, grids=None, views=None
-        ):
+):
     r"""Write a honeybee model to a rad folder.
 
     The rad files in the resulting folders will include all geometry (Rooms, Faces,
@@ -266,7 +268,7 @@ def model_to_rad_folder(
     # prepare the folder for simulation
     model_id = model.identifier
     if folder is None:
-        folder = os.path.join(folders.default_simulation_folder, model_id, 'Radiance')
+        folder = os.path.join(folders.default_simulation_folder, model_id, 'radiance')
     if not os.path.isdir(folder):
         preparedir(folder)  # create the directory if it's not there
     model_folder = ModelFolder(folder, 'model', config_file)

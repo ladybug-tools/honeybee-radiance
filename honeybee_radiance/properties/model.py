@@ -303,12 +303,14 @@ class ModelRadianceProperties(object):
         """
         faces = []
         faces_blk = []
-        interior_faces = set()
+        interior_faces, offset = set(), self.host.tolerance * -2
         for face in self.host.faces:
             if isinstance(face.boundary_condition, Surface):
                 if face.identifier in interior_faces:
-                    continue
-                interior_faces.add(face.boundary_condition.boundary_condition_object)
+                    face = face.duplicate()
+                    face.move(face.normal * offset)
+                else:
+                    interior_faces.add(face.boundary_condition.boundary_condition_object)
             if face.properties.radiance._modifier_blk:
                 faces_blk.append(face)
             else:
