@@ -26,8 +26,8 @@ def view():
 
 @view.command('split-count')
 @click.argument(
-    'input-folder',
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+    'view-info-file',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.argument('cpu-count', type=int)
 @click.option(
@@ -35,16 +35,17 @@ def view():
     'of times to split the view. By default this will be printed to stdout',
     type=click.File('w'), default='-', show_default=True
 )
-def split_count_from_cpu_count(input_folder, cpu_count, output_file):
+def split_count_from_cpu_count(view_info_file, cpu_count, output_file):
     """Get the number of times to split each view in a model using a CPU count.
 
     Args:
-        input_folder: Input views folder.
+        view_info_file: Input view info file.
         cpu_count: Number of processes that will be used to run
             the simulations in parallel.
     """
     try:
-        view_count = sum([1 for f in os.listdir(input_folder) if f.endswith('.vf')])
+        with open(view_info_file) as inf:
+            view_count = len(json.load(inf))
         opt_split = int(cpu_count / view_count)
         opt_split = 1 if opt_split == 0 else opt_split
         output_file.write(str(opt_split))
