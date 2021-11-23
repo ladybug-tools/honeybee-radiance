@@ -11,6 +11,7 @@ from ..lib.modifiers import black, generic_context
 from honeybee.extensionutil import model_extension_dicts
 from honeybee.checkdup import check_duplicate_identifiers
 from honeybee.boundarycondition import Surface
+from honeybee.typing import invalid_dict_error
 
 try:
     from itertools import izip as zip  # python 2
@@ -631,18 +632,24 @@ class ModelRadianceProperties(object):
         # process all modifiers in the ModelRadianceProperties dictionary
         modifiers = {}
         for mod in data['properties']['radiance']['modifiers']:
-            modifiers[mod['identifier']] = dict_to_modifier(mod)
+            try:
+                modifiers[mod['identifier']] = dict_to_modifier(mod)
+            except Exception as e:
+                invalid_dict_error(mod, e)
 
         # process all modifier sets in the ModelRadianceProperties dictionary
         modifier_sets = {}
         if 'modifier_sets' in data['properties']['radiance'] and \
                 data['properties']['radiance']['modifier_sets'] is not None:
             for m_set in data['properties']['radiance']['modifier_sets']:
-                if m_set['type'] == 'ModifierSet':
-                    modifier_sets[m_set['identifier']] = ModifierSet.from_dict(m_set)
-                else:
-                    modifier_sets[m_set['identifier']] = \
-                        ModifierSet.from_dict_abridged(m_set, modifiers)
+                try:
+                    if m_set['type'] == 'ModifierSet':
+                        modifier_sets[m_set['identifier']] = ModifierSet.from_dict(m_set)
+                    else:
+                        modifier_sets[m_set['identifier']] = \
+                            ModifierSet.from_dict_abridged(m_set, modifiers)
+                except Exception as e:
+                    invalid_dict_error(m_set, e)
 
         return modifiers, modifier_sets
 
