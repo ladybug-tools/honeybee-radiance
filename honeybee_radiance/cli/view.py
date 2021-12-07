@@ -5,6 +5,7 @@ import os
 import logging
 import re
 import json
+import shutil
 
 from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
@@ -249,9 +250,11 @@ def merge_view(input_folder, base_name, extension, view, scale_factor, folder, n
         if folders.env != {}:
             env = folders.env
         env = dict(os.environ, **env) if env else None
-        for r_cmd in (pcompos, pfilt):
-            r_cmd.run(env)
-
+        pcompos.run(env)
+        try:
+            pfilt.run(env)
+        except RuntimeError:  # the image was too bright or dark; just use pcompos output
+            shutil.copyfile(temp_output, output_file)
     except Exception:
         _logger.exception('Failed to merge image files.')
         sys.exit(1)
