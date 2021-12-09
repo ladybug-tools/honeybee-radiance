@@ -29,7 +29,7 @@ class Polygon(Geometry):
             or special characters. This will be used to identify the object across
             a model and in the exported Radiance files.
         vertices: Minimum of three arrays, each with 3 (x, y, z) values for
-            vertices that make up the polygon. Vertices musct be ordered
+            vertices that make up the polygon. Vertices must be ordered
             counter-clockwise as viewed from the front side. The last vertex is
             assumed to be connected to the first.
         modifier: Geometry modifier (Default: None).
@@ -131,7 +131,7 @@ class Polygon(Geometry):
             {
             "type": "polygon",  # Geometry type
             "modifier": {} ,
-            "identifier": "",  # Geometry identifer
+            "identifier": "",  # Geometry identifier
             "display_name": "",  # Geometry display name
             "vertices": [(0, 0, 10), (10, 0, 10), (10, 0, 0)],
             "dependencies": []

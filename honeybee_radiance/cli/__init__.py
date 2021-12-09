@@ -17,6 +17,7 @@ from .octree import octree
 from .raytrace import raytrace
 from .rpict import rpict
 from .dc import dc
+from .viewfactor import view_factor
 from .postprocess import post_process
 from .mtx import mtxop
 from .multiphase import multi_phase
@@ -67,6 +68,7 @@ radiance.add_command(octree)
 radiance.add_command(raytrace)
 radiance.add_command(rpict)
 radiance.add_command(dc)
+radiance.add_command(view_factor)
 radiance.add_command(post_process, name='post-process')
 radiance.add_command(mtxop)
 radiance.add_command(multi_phase)
