@@ -82,12 +82,11 @@ def rcontrib_command_with_postprocess(
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
-    octree: Path to octree file.
-
-    sensor-grid: Path to sensor grid file.
-
-    modifiers: Path to modifiers file.
-
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor-grid: Path to sensor grid file.
+        modifiers: Path to modifiers file.
     """
     try:
         options = RcontribOptions()

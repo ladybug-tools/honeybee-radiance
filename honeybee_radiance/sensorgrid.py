@@ -429,7 +429,7 @@ class SensorGrid(object):
                 the rooms/enclosure that each sensor in the grid is contained within.
         """
         # setup rooms and lists to check enclosure info
-        enclosures, sensor_indices, has_outdoor = {}, [], False
+        enclosures, sensor_indices, has_indoor, has_outdoor = {}, [], False, False
         rooms = model._rooms
         if self.room_identifier:  # put the assigned room first for faster calculation
             rooms = model.rooms_by_identifier([self.room_identifier]) + rooms
@@ -444,6 +444,7 @@ class SensorGrid(object):
                     except KeyError:  # the first time that this room is needed
                         enclosures[room.identifier] = len(enclosures)
                         sensor_indices.append(enclosures[room.identifier])
+                    has_indoor = True
                     break
             else:  # the sensor is completely outside and not a part of a room
                 sensor_indices.append(-1)
@@ -452,6 +453,7 @@ class SensorGrid(object):
         # write out the enclosure info JSON
         mapper = sorted(enclosures, key=enclosures.__getitem__)
         return {
+            'has_indoor': has_indoor,
             'has_outdoor': has_outdoor,
             'mapper': mapper,
             'sensor_indices': sensor_indices
