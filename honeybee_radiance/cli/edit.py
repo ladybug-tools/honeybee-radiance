@@ -121,7 +121,7 @@ def mirror_model_sensors(model_json, output_file):
         # write the Model JSON string
         output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
-        _logger.exception('Model translation failed.\n{}'.format(e))
+        _logger.exception('Model sensor grid mirroring failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
