@@ -4,6 +4,7 @@ from __future__ import division
 from .sensor import Sensor
 from .lightpath import light_path_from_room
 
+from honeybee.facetype import AirBoundary
 import honeybee.typing as typing
 import ladybug.futil as futil
 from ladybug_geometry.geometry3d.pointvector import Point3D
@@ -418,7 +419,7 @@ class SensorGrid(object):
 
         return base
 
-    def enclosure_info_dict(self, model):
+    def enclosure_info_dict(self, model, air_boundary_distance=0):
         """Get a dictionary with information about sensor relation to rooms.
 
         This can be written as a JSON in order to map sensors with appropriate
@@ -427,25 +428,66 @@ class SensorGrid(object):
         Args:
             model: A honeybee Model object which will be used to identify
                 the rooms/enclosure that each sensor in the grid is contained within.
+            air_boundary_distance: An optional number to set the distance from
+                air boundaries over which values should be interpolated.
+                Using 0 will assume a hard edge between Rooms of the same
+                radiant enclosures. (Default: 0).
         """
         # setup rooms and lists to check enclosure info
-        enclosures, sensor_indices, has_indoor, has_outdoor = {}, [], False, False
+        enclosures, sensor_indices, air_bound_proximity = {}, [], {}
+        has_indoor, has_outdoor = False, False
         rooms = model._rooms
         if self.room_identifier:  # put the assigned room first for faster calculation
             rooms = model.rooms_by_identifier([self.room_identifier]) + rooms
 
+        # have a dictionary to track proximity to AirBoundary faces
+        model_ab = {}
+        for room in rooms:
+            model_ab[room.identifier] = \
+                [f for f in room.faces if isinstance(f.type, AirBoundary)]
+
+        def _air_boundary_info(distance, face, room_index):
+            """Method to perform interpolation across AirBoundary Faces."""
+            adj_room = face.boundary_condition.boundary_condition_objects[-1]
+            try:
+                adj_i = enclosures[adj_room]
+            except KeyError:  # the first time that this room is needed
+                enclosures[room_identifier] = len(enclosures)
+                adj_i = len(enclosures)
+            fac_1 = 0.5 + (distance / (air_boundary_distance * 2))
+            return {room_index: fac_1, adj_i: 1 - fac_1}
+
         # loop through the sensors and verify the room that they belong to
-        for sensor in self.sensors:
+        for i, sensor in enumerate(self.sensors):
             sensor_pt = Point3D(*sensor.pos)
             for room in rooms:
                 if room.geometry.is_point_inside(sensor_pt):
+                    # add the room index of the sensor
                     try:
                         sensor_indices.append(enclosures[room.identifier])
                     except KeyError:  # the first time that this room is needed
                         enclosures[room.identifier] = len(enclosures)
                         sensor_indices.append(enclosures[room.identifier])
                     has_indoor = True
-                    break
+                    # test if the sensor is near any AriBoundary faces
+                    air_b = model_ab[room.identifier]
+                    if air_boundary_distance > 0 and len(air_b) != 0:
+                        for face in air_b:
+                            fg = face.geometry
+                            close_pt = fg._plane.closest_point(sensor_pt)
+                            p_dist = sensor_pt.distance_to_point(close_pt)
+                            if p_dist <= air_boundary_distance:
+                                close_pt_2d = fg._plane.xyz_to_xy(close_pt)
+                                g_dist = fg.polygon2d.distance_to_point(close_pt_2d)
+                                f_dist = math.sqrt(p_dist ** 2 + g_dist ** 2)
+                                if f_dist <= air_boundary_distance:
+                                    ab_info = _air_boundary_info(
+                                        f_dist, face, sensor_indices[-1])
+                                    try:
+                                        air_bound_proximity[i].append(ab_info)
+                                    except KeyError:
+                                        air_bound_proximity[i] = [ab_info]
+                    break  # we found the room and we don't need to iterate
             else:  # the sensor is completely outside and not a part of a room
                 sensor_indices.append(-1)
                 has_outdoor = True
@@ -456,7 +498,8 @@ class SensorGrid(object):
             'has_indoor': has_indoor,
             'has_outdoor': has_outdoor,
             'mapper': mapper,
-            'sensor_indices': sensor_indices
+            'sensor_indices': sensor_indices,
+            'air_bound_proximity': air_bound_proximity
         }
 
     def to_radiance(self):

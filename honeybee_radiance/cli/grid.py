@@ -5,6 +5,7 @@ import os
 import logging
 import re
 import json
+import shutil
 
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
@@ -285,6 +286,130 @@ def merge_grid_folder(input_folder, output_folder, extension):
         restore_original_distribution(input_folder, output_folder, extension)
     except Exception:
         _logger.exception('Failed to restructure data from folder.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('mirror')
+@click.argument('grid-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--vector', '-v', default=None, help='An optional list of three values '
+    '(separated by spaces) to standardize the direction of all rays in the output '
+    'files. For example, inputting "0 0 1" will ensure that the output sensor files '
+    'all have vectors pointing up in the base file and down in the mirrored file. If '
+    'unspecified, the direction of sensors in the input file will be used.'
+)
+@click.option(
+    '--name', '-n', default='grid', help='File name, which will be incorporated into '
+    'both the base grid and the mirrored grid.'
+)
+@click.option(
+    '--suffix', '-s', help='Text for the suffix to be applied to the mirrored grid file.',
+    default='ref', show_default=True
+)
+@click.option(
+    '--folder', '-f', default='.', help='Output folder into which the base grid '
+    'and mirrored grid files will be written.'
+)
+@click.option(
+    '--log-file', '-log', help='Optional log file to output the list of generated '
+    'radiant enclosure JSONs. By default this will be printed to stdout.',
+    type=click.File('w'), default='-'
+)
+def mirror_grid(grid_file, vector, name, suffix, folder, log_file):
+    """Mirror a honeybee Model's SensorGrids and format them for thermal mapping.
+
+    This involves setting the direction of every sensor to point up (0, 0, 1) and
+    then adding a mirrored sensor grid with the same sensor positions that all
+    point downward. In thermal mapping workflows, the upward-pointing grids can
+    be used to account for direct and diffuse shortwave irradiance while the
+    downard pointing grids account for ground-reflected shortwave irradiance.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+    """
+    try:
+        # create the directory if it's not there and set up output paths
+        if not os.path.isdir(folder):
+            preparedir(folder)
+        base_file = os.path.join(folder, '{}.pts'.format(name))
+        rev_file = os.path.join(folder, '{}_{}.pts'.format(name, suffix))
+
+        # loop through the lines of the grid_file and mirror the sensors
+        if vector is not None and vector != '':
+            # process the vector if it exists
+            vec = [float(v) for v in vector.split()]
+            assert len(vec) == 3, \
+                'Vector "{}" must have 3 values. Got {}.'.format(vector, len(vec))
+            vec_str = ' {} {} {}\n'.format(*vec)
+            rev_vec = [-v for v in vec]
+            rev_vec_str = ' {} {} {}\n'.format(*rev_vec)
+            # get the lines from the grid file
+            with open(grid_file) as sg_file:
+                with open(base_file, 'w') as b_file, open(rev_file, 'w') as r_file:
+                    for line in sg_file:
+                        origin_str = ' '.join(line.split()[:3])
+                        b_file.write(origin_str + vec_str)
+                        r_file.write(origin_str + rev_vec_str)
+        else:
+            # loop through each sensor and reverse the vector
+            with open(grid_file) as sg_file:
+                with open(rev_file, 'w') as r_file:
+                    for line in sg_file:
+                        ray_vals = line.strip().split()
+                        origin_str = ' '.join(ray_vals[:3])
+                        vec_vals = (-float(v) for v in ray_vals[3:])
+                        rev_vec_str = ' {} {} {}\n'.format(*vec_vals)
+                        r_file.write(origin_str + rev_vec_str)
+            # copy the input grid file to the base file location
+            shutil.copyfile(grid_file, base_file)
+        
+        # write the resulting file paths to the log file
+        log_file.write(json.dumps([base_file, rev_file], indent=4))
+    except Exception as e:
+        _logger.exception('Sensor grid mirroring failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('enclosure-info')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('grid-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--air-boundary-distance', '-d', help='A number to set the distance from air '
+    'boundaries over which values should be interpolated. Using 0 will assume a '
+    'hard edge between Rooms of the same radiant enclosures. This can include the '
+    'units of the distance (eg. 3ft) or, if no units are provided the value will '
+    'be interpreted in the honeybee model units.',
+    type=str, default='2m', show_default=True)
+@click.option(
+    '--output-file', '-f', help='Optional output file for the generated radiant '
+    'enclosure JSON. By default this will be printed to stdout',
+    type=click.File('w'), default='-'
+)
+def enclosure_info_grid(model_json, grid_file, air_boundary_distance, output_file):
+    """Get a JSON of radiant enclosure information from a .pts file of a sensor grid.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        grid-file: Full path to a sensor grid file (.pts).
+    """
+    try:
+        # re-serialize the Model
+        model = Model.from_file(model_json)
+        grid = SensorGrid.from_file(grid_file)
+        ab_distance = parse_distance_string(air_boundary_distance, model.units)
+        # write out the list of radiant enclosure JSON info
+        output_file.write(json.dumps(grid.enclosure_info_dict(model, ab_distance)))
+    except Exception as e:
+        _logger.exception('Model translation to radiant enclosure failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
