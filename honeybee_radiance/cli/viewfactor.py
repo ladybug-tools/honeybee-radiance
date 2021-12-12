@@ -98,7 +98,7 @@ def create_view_factor_modifiers(
             for shade in model.shades:
                 _add_geo_and_modifier(shade)
         else:
-            white_plastic.identifier = 'shade_plastic'
+            white_plastic.identifier = 'shade_plastic_mod'
             mod_names.append(white_plastic.identifier)
             mod_strs.append(white_plastic.to_radiance(True, False, False))
             for shade in model.shades:
@@ -107,13 +107,13 @@ def create_view_factor_modifiers(
 
         # add the ground and sky domes if requested
         if not exclude_sky:
-            mod_names.append('sky_glow')
-            mod_strs.append('void glow sky_glow 0 0 4 1 1 1 0')
-            geo_strs.append('sky_glow source sky_dome 0 0 4 0 0 1 180')
+            mod_names.append('sky_glow_mod')
+            mod_strs.append('void glow sky_glow_mod 0 0 4 1 1 1 0')
+            geo_strs.append('sky_glow_mod source sky_dome 0 0 4 0 0 1 180')
         if not exclude_sky:
-            mod_names.append('ground_glow')
-            mod_strs.append('void glow ground_glow 0 0 4 1 1 1 0')
-            geo_strs.append('ground_glow source ground_dome 0 0 4 0 0 1 180')
+            mod_names.append('ground_glow_mod')
+            mod_strs.append('void glow ground_glow_mod 0 0 4 1 1 1 0')
+            geo_strs.append('ground_glow_mod source ground_dome 0 0 4 0 0 1 180')
 
         # write the radiance strings to the output folder
         geo_file = os.path.join(folder, '{}.rad'.format(name))

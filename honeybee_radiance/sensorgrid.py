@@ -452,7 +452,7 @@ class SensorGrid(object):
             try:
                 adj_i = enclosures[adj_room]
             except KeyError:  # the first time that this room is needed
-                enclosures[room_identifier] = len(enclosures)
+                enclosures[adj_room] = len(enclosures)
                 adj_i = len(enclosures)
             fac_1 = 0.5 + (distance / (air_boundary_distance * 2))
             return {room_index: fac_1, adj_i: 1 - fac_1}
