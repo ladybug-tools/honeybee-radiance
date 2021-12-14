@@ -85,23 +85,26 @@ def create_view_factor_modifiers(
             mod_strs.append(white_plastic.to_radiance(True, False, False))
 
         # loop through all geometry in the model and get radiance strings
-        for face in model.faces:
-            if not isinstance(face.type, AirBoundary):
-                if isinstance(face.boundary_condition, Surface):
-                    face.move(face.normal * offset)  # offset to avoidspillover
-                _add_geo_and_modifier(face)
-        for ap in model.apertures:
-             _add_geo_and_modifier(ap)
-        for dr in model.doors:
-             _add_geo_and_modifier(dr)
+        for room in model.rooms:
+            for face in room.faces:
+                if not isinstance(face.type, AirBoundary):
+                    if isinstance(face.boundary_condition, Surface):
+                        face.move(face.normal * offset)
+                    _add_geo_and_modifier(face)
+                for ap in face.apertures:
+                    _add_geo_and_modifier(ap)
+                for dr in face.doors:
+                    _add_geo_and_modifier(dr)
+        all_shades = model.shades + model._orphaned_faces + \
+            model._orphaned_apertures + model._orphaned_doors
         if individual_shades:
-            for shade in model.shades:
+            for shade in all_shades:
                 _add_geo_and_modifier(shade)
         else:
             white_plastic.identifier = 'shade_plastic_mod'
             mod_names.append(white_plastic.identifier)
             mod_strs.append(white_plastic.to_radiance(True, False, False))
-            for shade in model.shades:
+            for shade in all_shades:
                 rad_poly = Polygon(shade.identifier, shade.vertices, white_plastic)
                 geo_strs.append(rad_poly.to_radiance(False, False, False))
 
@@ -210,7 +213,7 @@ def rcontrib_command_with_view_postprocess(
             options.update_from_string(rad_params_locked.strip())
         # overwrite specific options that would otherwise break the command
         options.M = modifiers
-        options.update_from_string('-I -aa 0.0 -V- -y {}'.format(total_rays))
+        options.update_from_string('-I -V- -y {}'.format(total_rays))
 
         # create the rcontrib command and run it
         mtx_file = os.path.abspath(os.path.join(folder, '{}.mtx'.format(name)))
