@@ -7,8 +7,10 @@ import re
 import json
 import shutil
 
+from ladybug.futil import preparedir
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
+
 import honeybee_radiance.sensorgrid as sensorgrid
 from honeybee_radiance_folder.gridutil import redistribute_sensors, \
     restore_original_distribution
@@ -404,7 +406,7 @@ def enclosure_info_grid(model_json, grid_file, air_boundary_distance, output_fil
     try:
         # re-serialize the Model
         model = Model.from_file(model_json)
-        grid = SensorGrid.from_file(grid_file)
+        grid = sensorgrid.SensorGrid.from_file(grid_file)
         ab_distance = parse_distance_string(air_boundary_distance, model.units)
         # write out the list of radiant enclosure JSON info
         output_file.write(json.dumps(grid.enclosure_info_dict(model, ab_distance)))
