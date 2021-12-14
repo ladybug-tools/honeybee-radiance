@@ -110,7 +110,7 @@ def create_view_factor_modifiers(
             mod_names.append('sky_glow_mod')
             mod_strs.append('void glow sky_glow_mod 0 0 4 1 1 1 0')
             geo_strs.append('sky_glow_mod source sky_dome 0 0 4 0 0 1 180')
-        if not exclude_sky:
+        if not exclude_ground:
             mod_names.append('ground_glow_mod')
             mod_strs.append('void glow ground_glow_mod 0 0 4 1 1 1 0')
             geo_strs.append('ground_glow_mod source ground_dome 0 0 4 0 0 1 180')
