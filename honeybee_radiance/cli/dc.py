@@ -73,12 +73,17 @@ def dc():
     'single datetime in each row.'
 )
 @click.option(
+    '--keep-header/--remove-header', ' /-h-', is_flag=True, default=True,
+    help='A flag to keep or remove the header from the output file.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rcontrib_command_with_postprocess(
         octree, sensor_grid, modifiers, sensor_count, rad_params, rad_params_locked,
-        output, coeff, conversion, multiply_by, output_format, order_by_sensor, dry_run
+        output, coeff, conversion, multiply_by, output_format, order_by_sensor,
+        keep_header, dry_run
 ):
     """Run rcontrib command for an input octree and a sensor grid.
 
@@ -127,6 +132,8 @@ def rcontrib_command_with_postprocess(
 
         if order_by_sensor is not True:
             cmd = cmd + ' -t '
+        if not keep_header:
+            cmd_template = cmd_template + ' | getinfo - '
         if output:
             cmd = '{command} > {output}'.format(command=cmd, output=output)
 
@@ -195,13 +202,17 @@ def rcontrib_command_with_postprocess(
     'single datetime in each row.'
 )
 @click.option(
+    '--keep-header/--remove-header', ' /-h-', is_flag=True, default=True,
+    help='A flag to keep or remove the header from the output file.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def rfluxmtx_command_with_postprocess(
     octree, sensor_grid, sky_dome, sky_mtx, sensor_count, rad_params, rad_params_locked,
-    output, conversion, multiply_by, output_format, order_by_sensor, dry_run
-        ):
+    output, conversion, multiply_by, output_format, order_by_sensor, keep_header, dry_run
+):
     """Run rfluxmtx command and pass the results to rmtxop.
 
     octree: Path to octree file.
@@ -239,9 +250,11 @@ def rfluxmtx_command_with_postprocess(
             conversion = '{mult} {mult} {mult}'.format(mult=multiply_by)
             cmd_template = cmd_template + ' -c %s' % conversion
 
-        if order_by_sensor is not True:
+        if not order_by_sensor:
             cmd_template = cmd_template + ' -t '
-
+    
+        if not keep_header:
+            cmd_template = cmd_template + ' | getinfo - '
         if output:
             cmd_template = cmd_template + ' > "{output}"'.format(output=output)
 

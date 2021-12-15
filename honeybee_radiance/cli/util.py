@@ -68,7 +68,7 @@ def get_hoys(start_date, start_time, end_date, end_time, timestep, leap_year):
 
 
 def handle_operator(operator):
-    """Handle operator for rmtxopt command."""
+    """Handle operator for rmtxop command."""
     if operator == '+':
         return '+'
     elif operator == '-':
