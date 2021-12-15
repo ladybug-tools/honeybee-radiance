@@ -133,7 +133,7 @@ def rcontrib_command_with_postprocess(
         if order_by_sensor is not True:
             cmd = cmd + ' -t '
         if not keep_header:
-            cmd_template = cmd_template + ' | getinfo - '
+            cmd = cmd + ' | getinfo - '
         if output:
             cmd = '{command} > {output}'.format(command=cmd, output=output)
 
