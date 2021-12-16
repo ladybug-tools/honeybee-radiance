@@ -4,6 +4,7 @@ from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug.futil import write_to_file_by_name, preparedir
 from honeybee.config import folders
 from honeybee.boundarycondition import Surface
+from honeybee.facetype import AirBoundary
 from honeybee_radiance_folder.folder import ModelFolder
 import honeybee_radiance_folder.config as folder_config
 
@@ -186,13 +187,15 @@ def model_to_rad(model, blk=False, minimal=False):
     if len(faces) != 0:
         model_str.append('#   ================ FACES ================\n')
         for face in faces:
-            if isinstance(face.boundary_condition, Surface):
-                if face.identifier in interior_faces:
-                    face = face.duplicate()
-                    face.move(face.normal * offset)
-                else:
-                    interior_faces.add(face.boundary_condition.boundary_condition_object)
-            model_str.append(face_to_rad(face, blk, minimal))
+            if not isinstance(face.type, AirBoundary):
+                if isinstance(face.boundary_condition, Surface):
+                    if face.identifier in interior_faces:
+                        face = face.duplicate()
+                        face.move(face.normal * offset)
+                    else:
+                        interior_faces.add(
+                            face.boundary_condition.boundary_condition_object)
+                model_str.append(face_to_rad(face, blk, minimal))
 
     # write all orphaned Apertures into the file
     apertures = model.orphaned_apertures
