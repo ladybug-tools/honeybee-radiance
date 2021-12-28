@@ -7,6 +7,7 @@ from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import BSDF
 from ..lib.modifiers import black, generic_context
+from ..lib.modifiersets import generic_modifier_set_visible
 
 from honeybee.extensionutil import model_extension_dicts
 from honeybee.checkdup import check_duplicate_identifiers
@@ -36,6 +37,7 @@ class ModelRadianceProperties(object):
         * shade_modifiers
         * bsdf_modifiers
         * modifier_sets
+        * global_modifier_set
         * dynamic_shade_groups
         * dynamic_subface_groups
         * shade_group_identifiers
@@ -187,6 +189,16 @@ class ModelRadianceProperties(object):
                                                modifier_sets):
                     modifier_sets.append(room.properties.radiance._modifier_set)
         return list(set(modifier_sets))  # catch equivalent modifier sets
+
+    @property
+    def global_modifier_set(self):
+        """The global radiance modifier set.
+
+        This is what is used whenever no modifier has been assigned to a given
+        Face/Aperture/Door/Shade and there is no modifier_set assigned to the
+        parent Room.
+        """
+        return generic_modifier_set_visible
 
     @property
     def dynamic_shade_groups(self):
@@ -567,6 +579,14 @@ class ModelRadianceProperties(object):
     def to_dict(self):
         """Return Model radiance properties as a dictionary."""
         base = {'radiance': {'type': 'ModelRadianceProperties'}}
+
+        # add the global modifier set to the dictionary
+        gs = self.global_modifier_set.to_dict(abridged=True, none_for_defaults=False)
+        gs['type'] = 'GlobalModifierSet'
+        del gs['identifier']
+        g_mods = self.global_modifier_set.modifiers_unique
+        gs['modifiers'] = [mod.to_dict() for mod in g_mods]
+        base['radiance']['global_modifier_set'] = gs
 
         # add all ModifierSets to the dictionary
         base['radiance']['modifier_sets'] = []
