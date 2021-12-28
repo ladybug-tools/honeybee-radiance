@@ -49,6 +49,13 @@ def view_factor():
     'but are just excluded from the list of modifiers.', default=True, show_default=True
 )
 @click.option(
+    '--triangulate/--skip-triangulate', ' /-t', help='Flag to note whether '
+    'the Apertures and Doors of the output model should be triangulated if '
+    'they have more than 4 vertices. This triangulation is necessary to '
+    'align a model with EnergyPlus results since E+ cannot accept sub-faces '
+    'with more than 4 vertices.', default=True
+)
+@click.option(
     '--folder', default='.', help='Output folder into which the modifier and '
     'octree files will be written.'
 )
@@ -57,7 +64,8 @@ def view_factor():
     'modifiers and the octree.'
 )
 def create_view_factor_modifiers(
-        model_file, exclude_sky, exclude_ground, individual_shades, folder, name):
+        model_file, exclude_sky, exclude_ground, individual_shades, triangulate,
+        folder, name):
     """Translate a Model into an Octree and corresponding modifier list for view factors.
 
     \b
@@ -69,8 +77,46 @@ def create_view_factor_modifiers(
         if not os.path.isdir(folder):
             preparedir(folder)
 
-        # load the model and create a modifier for the calculation
+        # load the model and ensure the properties align with the energy model
         model = Model.from_file(model_file)
+        if model.units != 'Meters':
+            model.convert_to_units('Meters')
+        for room in model.rooms:
+            room.remove_colinear_vertices_envelope(
+                tolerance=0.01, delete_degenerate=True)
+
+        # triangulate the sub-faces if requested
+        if triangulate:
+            apertures, parents_to_edit = model.triangulated_apertures()
+            for tri_aps, edit_infos in zip(apertures, parents_to_edit):
+                if len(edit_infos) == 3:
+                    for room in model._rooms:
+                        if room.identifier == edit_infos[2]:
+                            break
+                    for face in room._faces:
+                        if face.identifier == edit_infos[1]:
+                            break
+                    for i, ap in enumerate(face._apertures):
+                        if ap.identifier == edit_infos[0]:
+                            break
+                    face._apertures.pop(i)  # remove the aperture to replace
+                    face._apertures.extend(tri_aps)
+            doors, parents_to_edit = model.triangulated_doors()
+            for tri_drs, edit_infos in zip(doors, parents_to_edit):
+                if len(edit_infos) == 3:
+                    for room in model._rooms:
+                        if room.identifier == edit_infos[2]:
+                            break
+                    for face in room._faces:
+                        if face.identifier == edit_infos[1]:
+                            break
+                    for i, dr in enumerate(face._doors):
+                        if dr.identifier == edit_infos[0]:
+                            break
+                    face._doors.pop(i)  # remove the doors to replace
+                    face._doors.extend(tri_drs)
+
+        # set values to be used throughout the modifier assignment
         offset = model.tolerance * -1
         white_plastic = Plastic('white_plastic', 1, 1, 1)
         geo_strs, mod_strs, mod_names = [], [], []
