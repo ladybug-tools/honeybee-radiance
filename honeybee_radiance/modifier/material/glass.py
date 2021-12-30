@@ -40,6 +40,7 @@ class Glass(Material):
         * b_transmissivity
         * refraction_index
         * average_transmissivity
+        * average_transmittance
         * values
         * modifier
         * dependencies

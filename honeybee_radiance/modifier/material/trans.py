@@ -47,6 +47,13 @@ class Trans(Material):
         * roughness
         * transmitted_diff
         * transmitted_spec
+        * average_reflectance
+        * average_absorption
+        * average_transmittance
+        * diffuse_reflectance
+        * diffuse_transmittance
+        * specular_transmittance
+        * specular_sampling_threshold
         * values
         * modifier
         * dependencies
@@ -177,12 +184,35 @@ class Trans(Material):
     def average_reflectance(self):
         """Get the average reflectance of over the RGB values of the material."""
         return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
-                0.065 * self.b_reflectance) * (1 - self.specularity) + self.specularity
+                0.065 * self.b_reflectance) * (1 - self._transmitted_diff)
+
+    @property
+    def average_absorption(self):
+        """Get the average absorption of over the RGB values of the material."""
+        return (1 - (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
+                0.065 * self.b_reflectance)) * (1 - self._specularity)
 
     @property
     def average_transmittance(self):
-        """Get the average between the transmitted diffuse and specular components."""
-        return (self._transmitted_diff + self._transmitted_spec) / 2
+        """Get the total transmittance over the material."""
+        return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
+                0.065 * self.b_reflectance) * (1 - self._specularity) \
+                * self._transmitted_diff
+
+    @property
+    def diffuse_reflectance(self):
+        """Get the average diffuse reflectance of over the RGB values of the material."""
+        return self.average_reflectance * (1 - self._specularity)
+
+    @property
+    def diffuse_transmittance(self):
+        """Get the total transmitted diffuse component."""
+        return self.average_transmittance * (1 - self._transmitted_spec)
+
+    @property
+    def specular_transmittance(self):
+        """Get the total transmitted specular component."""
+        return self.average_transmittance * self._transmitted_spec
 
     @property
     def specular_sampling_threshold(self):
@@ -203,8 +233,8 @@ class Trans(Material):
 
         Args:
             identifier: Text string for a unique Material ID. Must not contain spaces
-            or special characters. This will be used to identify the object across
-            a model and in the exported Radiance files.
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
             r_reflectance: Reflectance for red. The value should be between 0 and 1
                 (Default: 0).
             g_reflectance: Reflectance for green. The value should be between 0 and 1
