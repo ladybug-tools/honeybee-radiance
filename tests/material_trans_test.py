@@ -1,5 +1,6 @@
 from honeybee_radiance.modifier.material import Trans
 
+import pytest
 
 def test_trans():
     tr = Trans('test_trans')
@@ -76,3 +77,41 @@ def test_from_single_value():
     assert tr.r_reflectance == 0.6
     assert tr.g_reflectance == 0.6
     assert tr.b_reflectance == 0.6
+
+
+def test_from_average_properties():
+    tr = Trans.from_average_properties('test', 0.2, 0.5, True, True)
+    assert tr.average_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.average_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.diffuse_reflectance == 0
+    assert tr.diffuse_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.specular_transmittance == 0
+    assert tr.average_reflectance + tr.average_transmittance + \
+        tr.average_absorption == pytest.approx(1, rel=1e-3)
+
+    tr = Trans.from_average_properties('test', 0.2, 0.5, False, True)
+    assert tr.average_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.average_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.diffuse_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.diffuse_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.specular_transmittance == 0
+    assert tr.average_reflectance + tr.average_transmittance + \
+        tr.average_absorption == pytest.approx(1, rel=1e-3)
+
+    tr = Trans.from_average_properties('test', 0.2, 0.5, True, False)
+    assert tr.average_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.average_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.diffuse_reflectance == 0
+    assert tr.diffuse_transmittance == 0
+    assert tr.specular_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.average_reflectance + tr.average_transmittance + \
+        tr.average_absorption == pytest.approx(1, rel=1e-3)
+
+    tr = Trans.from_average_properties('test', 0.2, 0.5, False, False)
+    assert tr.average_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.average_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.diffuse_reflectance == pytest.approx(0.2, rel=1e-3)
+    assert tr.diffuse_transmittance == 0
+    assert tr.specular_transmittance == pytest.approx(0.5, rel=1e-3)
+    assert tr.average_reflectance + tr.average_transmittance + \
+        tr.average_absorption == pytest.approx(1, rel=1e-3)
