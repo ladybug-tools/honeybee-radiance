@@ -183,8 +183,10 @@ class Trans(Material):
     @property
     def average_reflectance(self):
         """Get the average reflectance of over the RGB values of the material."""
-        return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
-                0.065 * self.b_reflectance) * (1 - self._transmitted_diff)
+        col_ref = 0.265 * self.r_reflectance + 0.670 * self.g_reflectance + \
+            0.065 * self.b_reflectance
+        dif_ref = (1 - self._specularity) * col_ref * (1 - self._transmitted_diff)
+        return self._specularity + dif_ref
 
     @property
     def average_absorption(self):
@@ -202,7 +204,9 @@ class Trans(Material):
     @property
     def diffuse_reflectance(self):
         """Get the average diffuse reflectance of over the RGB values of the material."""
-        return self.average_reflectance * (1 - self._specularity)
+        col_ref = 0.265 * self.r_reflectance + 0.670 * self.g_reflectance + \
+            0.065 * self.b_reflectance
+        return (1 - self._specularity) * col_ref * (1 - self._transmitted_diff)
 
     @property
     def diffuse_transmittance(self):
@@ -327,6 +331,64 @@ class Trans(Material):
             b_reflectance=rgb_reflectance, specularity=specularity, roughness=roughness,
             transmitted_diff=transmitted_diff, transmitted_spec=transmitted_spec,
             modifier=modifier, dependencies=dependencies)
+
+    @classmethod
+    def from_average_properties(
+        cls, identifier, average_reflectance=0.0, average_transmittance=0.0,
+        is_specular=False, is_diffusing=True, roughness=0.0,
+        modifier=None, dependencies=None):
+        """Create trans material from average reflectance and transmittance.
+
+        The sum of average_reflectance and average_transmittance must be less than
+        one and any energy not transmitted or reflected is assumed to be absorbed.
+        The resulting material will always be grey with equivalent red, green and
+        blue channels.
+
+        Args:
+            identifier: Text string for a unique Material ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            average_reflectance: The average reflectance of the material. The value
+                should be between 0 and 1 (Default: 0).
+            average_transmittance: The average transmittance of the material. The value
+                should be between 0 and 1 (Default: 0).
+            is_specular: Boolean to note if the reflected component is specular (True)
+                or diffuse (False). (Default: False).
+            is_diffusing: Boolean to note if the tranmitted component is diffused (True)
+                instead of specular like glass (False). (Default: True).
+            roughness: Roughness is specified as the rms slope of surface facets. A value
+                of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
+                a very rough surface. Roughness values greater than 0.2 are not very
+                realistic. (Default: 0).
+            modifier: Material modifier (Default: None).
+            dependencies: A list of primitives that this primitive depends on. This
+                argument is only useful for defining advanced primitives where the
+                primitive is defined based on other primitives. (Default: [])
+        """
+        # check to be sure the input values are valid
+        absorb = 1 - average_reflectance - average_transmittance
+        assert absorb >= 0, 'Sum of average_reflectance and average_transmittance ' \
+            'must be less than or equal to one. Got {}.'.format(
+                average_reflectance + average_transmittance)
+        # determine the reflectance values
+        if is_specular:
+            spec_ref = average_reflectance
+            diff_ref = average_transmittance / (1 - average_reflectance)
+            total_trans = 1
+        else:
+            spec_ref, total_ref = 0, 1 - absorb
+            diff_ref = total_ref
+            total_trans = average_transmittance / total_ref if total_ref != 0 else 0
+        # determine the transmittance values
+        if is_diffusing:
+            diff_trans, spec_trans = total_trans, 0
+        else:
+            diff_trans, spec_trans = total_trans, 1
+        # create the modifier
+        return cls.from_single_reflectance(
+            identifier, rgb_reflectance=diff_ref, specularity=spec_ref,
+            transmitted_diff=diff_trans, transmitted_spec=spec_trans,
+            roughness=roughness, modifier=modifier, dependencies=dependencies)
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
