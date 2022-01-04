@@ -310,7 +310,7 @@ class ModelRadianceProperties(object):
         Returns:
             A tuple with 2 lists:
 
-            -   faces: A list of all  faces without a unique modifier_blk.
+            -   faces: A list of all faces without a unique modifier_blk.
 
             -   faces_blk: A list of all opaque faces that have a unique modifier_blk.
         """

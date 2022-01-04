@@ -87,7 +87,7 @@ def aperture_to_rad(aperture, blk=False, minimal=False):
     return '\n\n'.join(ap_strs)
 
 
-def face_to_rad(face, blk=False, minimal=False):
+def face_to_rad(face, blk=False, minimal=False, exclude_sub_faces=False):
     """Get Face as a Radiance string.
 
     Note that the resulting string does not include modifier definitions. Nor
@@ -101,7 +101,9 @@ def face_to_rad(face, blk=False, minimal=False):
             be output, which is useful for direct studies and isolation studies
             to understand the contribution of individual apertures.
         minimal: Boolean to note whether the radiance string should be written
-            in a minimal format (with spaces instead of line breaks). Default: False.
+            in a minimal format (with spaces instead of line breaks). (Default: False).
+        exclude_sub_faces:Boolean to note whether Apertures and Doors should
+            be excluded from the output string. (Default: False).
     """
     rad_prop = face.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
@@ -109,10 +111,11 @@ def face_to_rad(face, blk=False, minimal=False):
     face_strs = [rad_poly.to_radiance(minimal, False, False)]
     for shd in face.shades:
         face_strs.append(shade_to_rad(shd, blk, minimal))
-    for dr in face.doors:
-        face_strs.append(door_to_rad(dr, blk, minimal))
-    for ap in face.apertures:
-        face_strs.append(aperture_to_rad(ap, blk, minimal))
+    if not exclude_sub_faces:
+        for dr in face.doors:
+            face_strs.append(door_to_rad(dr, blk, minimal))
+        for ap in face.apertures:
+            face_strs.append(aperture_to_rad(ap, blk, minimal))
     return '\n\n'.join(face_strs)
 
 
@@ -190,9 +193,12 @@ def model_to_rad(model, blk=False, minimal=False):
                 if face.identifier in interior_faces:
                     face = face.duplicate()
                     face.move(face.normal * offset)
+                    model_str.append(face_to_rad(face, blk, minimal, True))
                 else:
                     interior_faces.add(face.boundary_condition.boundary_condition_object)
-            model_str.append(face_to_rad(face, blk, minimal))
+                    model_str.append(face_to_rad(face, blk, minimal))
+            else:
+                model_str.append(face_to_rad(face, blk, minimal))
 
     # write all orphaned Apertures into the file
     apertures = model.orphaned_apertures
