@@ -248,6 +248,7 @@ def split_grid_folder(
           }
         ]
 
+    \b
     Args:
         input_folder: Input sensor grids folder.
         output_folder: A new folder to write the newly created files.
@@ -277,6 +278,7 @@ def split_grid_folder(
 def merge_grid_folder(input_folder, output_folder, extension):
     """Restructure files in a distributed folder.
 
+    \b
     Args:
         input_folder: Path to input folder.
         output_folder: Path to the new restructured folder
