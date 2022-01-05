@@ -39,6 +39,7 @@ def view():
 def split_count_from_cpu_count(view_info_file, cpu_count, output_file):
     """Get the number of times to split each view in a model using a CPU count.
 
+    \b
     Args:
         view_info_file: Input view info file.
         cpu_count: Number of processes that will be used to run
