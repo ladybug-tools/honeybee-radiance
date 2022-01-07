@@ -345,11 +345,11 @@ def metrics_to_folder(
     res_info = os.path.join(metrics_folder, 'metrics_info.json')
 
     res_data = {
-        'paths': ['cda', 'da', 'udi', 'udi_lower', 'udi_upper'],
+        'paths': ['udi_lower', 'udi_upper', 'udi', 'cda', 'da'],
         'identifiers': [
-            'Continuous daylight autonomy', 'Daylight autonomy',
-            'Useful daylight illuminance',
-            'Useful daylight illuminance lower', 'Useful daylight illuminance upper'
+            'Useful daylight illuminance lower', 'Useful daylight illuminance upper',
+            'Useful daylight illuminance', 'Continuous daylight autonomy',
+            'Daylight autonomy'
         ],
         'units': ['%', '%', '%', '%', '%']
     }
