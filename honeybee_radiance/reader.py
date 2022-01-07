@@ -212,3 +212,26 @@ def sensor_count_from_file(filepath):
             else:
                 sensor_count += 1
     return sensor_count
+
+
+def polygon_vertices_from_file(filepath):
+    """Return vertices of a Radiance polygon.
+    
+    This function returns the vertices of a Radiance polygon. The vertices can be used to
+    create Ladybug faces from Radiance polygons.
+    
+    Args:
+        filepath: Path to Radiance file.
+    
+    Returns:
+        vertices, as a list for each polygon in the file.
+    """
+    # read Radiance file
+    vertices = []
+    objects = parse_from_file(filepath)
+    for object in objects:
+        if object.find('polygon') != -1:
+            obj_dict = string_to_dict(object)
+            values = obj_dict['values'][-1]
+            vertices.append([values[i:i+3] for i in range(0, len(values), 3)])
+    return vertices
