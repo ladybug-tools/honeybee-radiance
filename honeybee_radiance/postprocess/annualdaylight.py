@@ -342,19 +342,106 @@ def metrics_to_folder(
 
     # create info for available results. This file will be used by honeybee-vtk for
     # results visualization
-    res_info = os.path.join(metrics_folder, 'metrics_info.json')
+    config_file = os.path.join(metrics_folder, 'config.json')
 
-    res_data = {
-        'paths': ['udi_lower', 'udi_upper', 'udi', 'cda', 'da'],
-        'identifiers': [
-            'Useful daylight illuminance lower', 'Useful daylight illuminance upper',
-            'Useful daylight illuminance', 'Continuous daylight autonomy',
-            'Daylight autonomy'
-        ],
-        'units': ['%', '%', '%', '%', '%']
-    }
+    cfg = _annual_daylight_config()
 
-    with open(res_info, 'w') as outf:
-        json.dump(res_data, outf)
+    with open(config_file, 'w') as outf:
+        json.dump(cfg, outf)
 
     return metrics_folder
+
+
+def _annual_daylight_config():
+    """Return vtk-config for annual daylight. """
+    cfg = {
+        "data": [
+            {
+                "identifier": "Useful daylight illuminance lower...nuanced",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi_lower",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "nuanced",
+                },
+            },
+            {
+                "identifier": "Useful daylight illuminance upper...glare_study",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi_upper",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "glare_study",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Useful daylight illuminance...ecotect",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "udi",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "ecotect",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Continuous daylight autonomy...nuanced",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "cda",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "nuanced",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+            {
+                "identifier": "Daylight autonomy...original",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "da",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "original",
+                    "label_parameters": {
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True,
+                    },
+                },
+            },
+        ]
+    }
+
+    return cfg
