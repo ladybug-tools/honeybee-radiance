@@ -5,7 +5,7 @@ from ..view import View
 from ..modifierset import ModifierSet
 from ..lib.modifiersets import generic_modifier_set_visible
 
-from honeybee.facetype import Floor
+from honeybee.facetype import Floor, Wall
 
 
 class RoomRadianceProperties(object):
@@ -55,7 +55,8 @@ class RoomRadianceProperties(object):
             value.lock()   # lock in case modifier set has multiple references
         self._modifier_set = value
 
-    def generate_sensor_grid(self, x_dim, y_dim=None, offset=1.0, remove_out=False):
+    def generate_sensor_grid(
+            self, x_dim, y_dim=None, offset=1.0, remove_out=False, wall_offset=0):
         """Get a radiance SensorGrid generated from this Room's floors.
 
         The output grid will have this room referenced in their room_identifier
@@ -78,10 +79,14 @@ class RoomRadianceProperties(object):
                 add significantly to runtime and this check is not necessary
                 in the case that all walls are vertical and all floors are
                 horizontal (Default: False).
+            wall_offset: A number for the distance at which sensors close to
+                walls should be removed. Note that this option has no effect
+                unless the value is more than half of the x_dim or y_dim.
 
         Returns:
             A honeybee_radiance SensorGrid generated from the floors of the room.
-            Will be None if the Room has no floors
+            Will be None if the Room has no floors or the criteria for wall_offset
+            and/or remove_out results in all sensors being removed.
 
         Usage:
 
@@ -93,13 +98,37 @@ class RoomRadianceProperties(object):
             south_face.apertures_by_ratio(0.4, 0.01)
             sensor_grid = room.properties.radiance.generate_grid(0.5, 0.5, 1)
         """
+        # generate the mesh grid from the floor Faces
         floor_grid = self.host.generate_grid(x_dim, y_dim, offset)
-        if floor_grid is None:
+        if floor_grid is None:  # no floors in the host Room
             return None
+
+        # remove any outdoor sensors if this has been requested
         if remove_out:
             geo = self.host.geometry
             pattern = [geo.is_point_inside(pt) for pt in floor_grid.face_centroids]
-            floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
+            try:
+                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
+            except AssertionError:  # the grid lies completely outside of the room
+                return None
+
+        # remove any sensors within a certain distance of the walls, if requested
+        if wall_offset >= x_dim or (y_dim is not None and wall_offset >= y_dim):
+            wall_geos = [f.geometry for f in self.host.faces if isinstance(f.type, Wall)]
+            pattern = []
+            for pt in floor_grid.face_centroids:
+                for wg in wall_geos:
+                    if wg.plane.distance_to_point(pt) <= wall_offset:
+                        pattern.append(False)
+                        break
+                else:
+                    pattern.append(True)
+            try:
+                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
+            except AssertionError:  # the grid lies completely outside of the room
+                return None
+
+        # create the sensor grid from the mesh
         sensor_grid = SensorGrid.from_mesh3d(self.host.identifier, floor_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name

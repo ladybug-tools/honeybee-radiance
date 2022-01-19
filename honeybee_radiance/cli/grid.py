@@ -111,7 +111,7 @@ def merge_grid(input_folder, base_name, extension, folder, name):
 
 
 @grid.command('from-rooms')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
               'cells. This can include the units of the distance (eg. 1ft) '
@@ -132,6 +132,12 @@ def merge_grid(input_folder, base_name, extension, folder, name):
               'volume. Note that this can add significantly to the runtime and this '
               'check is not necessary in the case that all walls are vertical '
               'and all floors are horizontal.', default=True, show_default=True)
+@click.option('--wall-offset', '-w', help='A number for the distance at which sensors '
+              'close to walls should be removed. This can include the units of the '
+              'distance (eg. 3ft) or, if no units are provided, the value will be '
+              'interpreted in the honeybee model units. Note that this option has '
+              'no effect unless the value is more than half of the grid-size.',
+              type=str, default='0m', show_default=True)
 @click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
               'room for which sensor grids should be generated. You can pass multiple '
               'rooms (each preceded by -r). By default, all rooms get sensor grids.')
@@ -146,29 +152,31 @@ def merge_grid(input_folder, base_name, extension, folder, name):
 @click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
               'string of the sensor grids. By default this will be printed '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def from_rooms(model_json, grid_size, offset, include_mesh, keep_out, room,
-               write_json, folder, output_file):
+def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
+               room, write_json, folder, output_file):
     """Generate SensorGrids from the Room floors of a honeybee model.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_file: Full path to a HBJSON or HBPkl Model file.
     """
     try:
         # re-serialize the Model and extract rooms and units
-        model = Model.from_hbjson(model_json)
+        model = Model.from_file(model_file)
         rooms = model.rooms if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
         offset = parse_distance_string(offset, model.units)
+        wall_offset = parse_distance_string(wall_offset, model.units)
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
         remove_out = not keep_out
         for room in rooms:
             sg = room.properties.radiance.generate_sensor_grid(
-                grid_size, offset=offset, remove_out=remove_out)
-            sensor_grids.append(sg)
+                grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset)
+            if sg is not None:
+                sensor_grids.append(sg)
         if not include_mesh:
             for sg in sensor_grids:
                 sg.mesh = None

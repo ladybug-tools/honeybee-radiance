@@ -10,7 +10,7 @@ from honeybee.units import parse_distance_string
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands for translating Honeybee JSON files to/from RAD.')
+@click.group(help='Commands for editing radiance properties of Honeybee Models.')
 def edit():
     pass
 
@@ -37,13 +37,19 @@ def edit():
               'volume. Note that this can add significantly to the runtime and this '
               'check is not necessary in the case that all walls are vertical '
               'and all floors are horizontal.', default=True, show_default=True)
+@click.option('--wall-offset', '-w', help='A number for the distance at which sensors '
+              'close to walls should be removed. This can include the units of the '
+              'distance (eg. 3ft) or, if no units are provided, the value will be '
+              'interpreted in the honeybee model units. Note that this option has '
+              'no effect unless the value is more than half of the grid-size.',
+              type=str, default='0m', show_default=True)
 @click.option('--room', '-r', multiple=True, help='Room identifier(s) to specify the '
               'room(s) for which sensor grids should be generated. By default, all '
               'rooms will get sensor grids.')
 @click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
               'string of the new model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out,
+def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall_offset,
                      room, output_file):
     """Add SensorGrids to a honeybee model generated from the Room's floors.
 
@@ -60,14 +66,16 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out,
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
         offset = parse_distance_string(offset, model.units)
+        wall_offset = parse_distance_string(wall_offset, model.units)
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
         remove_out = not keep_out
         for room in rooms:
             sg = room.properties.radiance.generate_sensor_grid(
-                grid_size, offset=offset, remove_out=remove_out)
-            sensor_grids.append(sg)
+                grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset)
+            if sg is not None:
+                sensor_grids.append(sg)
         if not include_mesh:
             for sg in sensor_grids:
                 sg.mesh = None
