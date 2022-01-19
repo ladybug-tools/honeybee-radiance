@@ -113,7 +113,7 @@ class RoomRadianceProperties(object):
                 return None
 
         # remove any sensors within a certain distance of the walls, if requested
-        if wall_offset >= x_dim or (y_dim is not None and wall_offset >= y_dim):
+        if wall_offset >= x_dim / 2 or (y_dim is not None and wall_offset >= y_dim / 2):
             wall_geos = [f.geometry for f in self.host.faces if isinstance(f.type, Wall)]
             pattern = []
             for pt in floor_grid.face_centroids:
