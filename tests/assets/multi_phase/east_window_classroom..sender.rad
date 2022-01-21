@@ -1,0 +1,4 @@
+# east_window_classroom..sender.rad
+
+#@rfluxmtx o=./tests/assets/temp/east_window_classroom..class_room.vmx h=kf
+!xform ./tests/assets/multi_phase/aperture_group/east_window_classroom..mtx.rad

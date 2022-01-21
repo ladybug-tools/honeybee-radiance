@@ -1,4 +1,4 @@
-# office..receiver.rad
+# class_room..receiver.rad
 
 #@rfluxmtx o=./tests/assets/temp/skylight..class_room.vmx h=kf
 !xform ./tests/assets/multi_phase/aperture_group/skylight..mtx.rad

@@ -112,3 +112,87 @@ def view_matrix_command(
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@multi_phase.command("daylight-matrix")
+@click.argument(
+    "sender-file", type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    "receiver-file", type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    "octree", type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option("--rad-params", show_default=True, help="Radiance parameters.")
+@click.option(
+    "--rad-params-locked",
+    show_default=True,
+    help="Protected Radiance parameters. "
+    "These values will overwrite user input rad parameters.",
+)
+@click.option(
+    "--output",
+    "-o",
+    show_default=True,
+    help="Path to output file. If a relative path"
+    " is provided it should be relative to project folder.",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="A flag to show the command without running it.",
+)
+def daylight_matrix_command(
+    sender_file,
+    receiver_file,
+    octree,
+    rad_params,
+    rad_params_locked,
+    output,
+    dry_run,
+):
+    """Calculate daylight matrix for a sender file.
+
+    \b
+    Args:
+        sender_file: Path to sender file.
+        receiver_file: Path to receiver file.
+        octree: Path to octree file.
+    """
+
+    try:
+        options = RfluxmtxOptions()
+        # parse input radiance parameters
+        if rad_params:
+            options.update_from_string(rad_params.strip())
+        # overwrite input values with protected ones
+        if rad_params_locked:
+            options.update_from_string(rad_params_locked.strip())
+
+        options.update_from_string('-aa 0.0')
+
+        # create command.
+        rfluxmtx_cmd = Rfluxmtx(
+            options=options, output=output, octree=octree, sender=sender_file,
+            receivers=receiver_file
+        )
+
+        if dry_run:
+            click.echo(rfluxmtx_cmd)
+            sys.exit(0)
+
+        env = None
+        if folders.env != {}:
+            env = folders.env
+        env = dict(os.environ, **env) if env else None
+        rfluxmtx_cmd.run(env=env)
+
+    except Exception:
+        _logger.exception("Failed to run daylight-matrix command.")
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        sys.exit(0)

@@ -5,7 +5,7 @@ from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_radiance.cli.multiphase import view_matrix_command
+from honeybee_radiance.cli.multiphase import view_matrix_command, daylight_matrix_command 
 
 
 def test_view_matrix_command():
@@ -27,4 +27,23 @@ def test_view_matrix_command():
         os.path.join(output_folder, 'east_window_classroom..class_room.vmx')
     )
     assert os.path.isfile(os.path.join(output_folder, 'skylight..class_room.vmx'))
+    nukedir(output_folder)
+
+
+def test_daylight_matrix_command():
+    runner = CliRunner()
+    sender_file = './tests/assets/multi_phase/east_window_classroom..sender.rad'
+    receiver_file = './tests/assets/multi_phase/rflux_sky.sky'
+    input_oct = './tests/assets/multi_phase/scene.oct'
+    output_folder = './tests/assets/temp'
+    output = './tests/assets/temp/east_window_classroom.dmx'
+    nukedir(output_folder)
+    cmd_args = [
+        sender_file, receiver_file, input_oct,
+        '--rad-params', '-ab 3 -ad 1000 -lw 1e-05 -c 1000',
+        '--output', output
+    ]
+    result = runner.invoke(daylight_matrix_command, cmd_args)
+    assert result.exit_code == 0
+    assert os.path.isfile(output)
     nukedir(output_folder)
