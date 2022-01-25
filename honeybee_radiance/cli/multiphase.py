@@ -114,7 +114,7 @@ def view_matrix_command(
         sys.exit(0)
 
 
-@multi_phase.command("daylight-matrix")
+@multi_phase.command("flux-transfer")
 @click.argument(
     "sender-file", type=click.Path(exists=True, file_okay=True, resolve_path=True)
 )
@@ -145,7 +145,7 @@ def view_matrix_command(
     show_default=True,
     help="A flag to show the command without running it.",
 )
-def daylight_matrix_command(
+def flux_transfer_command(
     sender_file,
     receiver_file,
     octree,
@@ -154,12 +154,23 @@ def daylight_matrix_command(
     output,
     dry_run,
 ):
-    """Calculate daylight matrix for a sender file.
+    """Calculate flux transfer matrix for a sender file per receiver.
+
+    This command calculates a flux transfer matrix for the given sender and receiver
+    files. This can be used to calculate a flux transfer matrix for input and output 
+    apertures on a light pipe, or a flux transfer matrix from an aperture to a 
+    discretized sky (daylight matrix). 
 
     \b
     Args:
-        sender_file: Path to sender file.
-        receiver_file: Path to receiver file.
+        sender_file: Path to sender file. The controlling parameters in the sender file
+            must follow the form: #@rfluxmtx variable=value. At minimum it must specify
+            a hemisphere sampling type. If the command is used to calculate e.g. daylight
+            matrix the sender file represents an aperture or multiple apertures.
+        receiver_file: Path to receiver file. The controlling parameters in the receiver
+            file must follow the form: #@rfluxmtx variable=value. At minimum it must 
+            specify a hemisphere sampling type. If the command is used to calculate e.g.
+            daylight matrix the receiver file represents the ground and sky.
         octree: Path to octree file.
     """
 
@@ -191,7 +202,7 @@ def daylight_matrix_command(
         rfluxmtx_cmd.run(env=env)
 
     except Exception:
-        _logger.exception("Failed to run daylight-matrix command.")
+        _logger.exception("Failed to run flux-transfer command.")
         traceback.print_exc()
         sys.exit(1)
     else:

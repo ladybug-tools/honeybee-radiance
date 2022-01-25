@@ -30,7 +30,7 @@ def test_view_matrix_command():
     nukedir(output_folder)
 
 
-def test_daylight_matrix_command():
+def test_flux_transfer_command():
     runner = CliRunner()
     sender_file = './tests/assets/multi_phase/east_window_classroom..sender.rad'
     receiver_file = './tests/assets/multi_phase/rflux_sky.sky'
@@ -40,10 +40,11 @@ def test_daylight_matrix_command():
     nukedir(output_folder)
     cmd_args = [
         sender_file, receiver_file, input_oct,
-        '--rad-params', '-ab 3 -ad 1000 -lw 1e-05 -c 1000',
+        '--rad-params', '-ab 1 -ad 100 -lw 1e-03 -c 100',
         '--output', output
     ]
     result = runner.invoke(daylight_matrix_command, cmd_args)
     assert result.exit_code == 0
     assert os.path.isfile(output)
+    assert os.path.getsize(output) > 0
     nukedir(output_folder)
