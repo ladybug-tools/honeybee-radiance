@@ -5,7 +5,7 @@ from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_radiance.cli.multiphase import view_matrix_command, daylight_matrix_command 
+from honeybee_radiance.cli.multiphase import view_matrix_command, flux_transfer_command 
 
 
 def test_view_matrix_command():
@@ -43,7 +43,7 @@ def test_flux_transfer_command():
         '--rad-params', '-ab 1 -ad 100 -lw 1e-03 -c 100',
         '--output', output
     ]
-    result = runner.invoke(daylight_matrix_command, cmd_args)
+    result = runner.invoke(flux_transfer_command, cmd_args)
     assert result.exit_code == 0
     assert os.path.isfile(output)
     assert os.path.getsize(output) > 0
