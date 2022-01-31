@@ -1,6 +1,7 @@
 """honeybee radiance daylight coefficient / contribution commands."""
 import click
 import sys
+import os
 import logging
 
 from honeybee_radiance.config import folders
@@ -94,6 +95,13 @@ def rcontrib_command_with_postprocess(
         modifiers: Path to modifiers file.
     """
     try:
+        # first check to be sure there are sun-up hours; if so, write a blank file
+        if os.path.getsize(modifiers) == 0:
+            if output is not None:
+                with open(output, 'w') as wf:
+                    wf.write('')
+            return
+
         options = RcontribOptions()
         # parse input radiance parameters
         if rad_params:
@@ -225,6 +233,13 @@ def rfluxmtx_command_with_postprocess(
 
     """
     try:
+        # first check to be sure there are sun-up hours; if so, write a blank file
+        if os.path.getsize(sky_mtx) == 0:
+            if output is not None:
+                with open(output, 'w') as wf:
+                    wf.write('')
+            return
+
         options = RfluxmtxOptions()
         # parse input radiance parameters
         if rad_params.strip():

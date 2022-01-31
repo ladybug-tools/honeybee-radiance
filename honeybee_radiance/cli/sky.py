@@ -326,7 +326,11 @@ def sunpath_from_wea_rad(
             print(cmd.to_radiance())
             sys.exit(0)
 
-        run_command(cmd.to_radiance(), env=folders.env)
+        try:
+            run_command(cmd.to_radiance(), env=folders.env)
+        except RuntimeError as e:  # likely a nighttime Wea; write blank .mtx file
+            with open(output, 'w') as wf:
+                wf.write('')
         files = [{'path': os.path.relpath(output, folder), 'full_path': output}]
         log_file.write(json.dumps(files))
 
