@@ -1,6 +1,7 @@
 """Commands to work with Radiance matrix using rmtxopt and rcollate."""
 import click
 import sys
+import os
 import logging
 
 from honeybee_radiance.config import folders
@@ -12,7 +13,7 @@ from .util import handle_operator
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to work with Radiance matrix using rmtxopt.')
+@click.group(help='Commands to work with Radiance matrix using rmtxop.')
 def mtxop():
     pass
 
@@ -58,7 +59,7 @@ def mtxop():
 def two_matrix_operations(
     first_mtx, second_mtx, operator, keep_header, conversion, output_mtx,
     output_format, dry_run
-        ):
+):
     """Operations between two Radiance matrices.
 
     \b
@@ -68,6 +69,13 @@ def two_matrix_operations(
 
     """
     try:
+        # first check to be sure there are sun-up hours; if so, write a blank file
+        if os.path.getsize(first_mtx) == 0 or os.path.getsize(second_mtx) == 0:
+            if output_mtx is not None:
+                with open(output_mtx, 'w') as wf:
+                    wf.write('')
+            return
+
         cmd = 'rmtxop -f{output_format} "{first_mtx}" {operator} "{second_mtx}"'.format(
             output_format=output_format, first_mtx=first_mtx,
             operator=handle_operator(operator), second_mtx=second_mtx
@@ -151,6 +159,14 @@ def three_matrix_operations(
 
     """
     try:
+        # first check to be sure there are sun-up hours; if so, write a blank file
+        if os.path.getsize(first_mtx) == 0 or os.path.getsize(second_mtx) == 0 \
+                or os.path.getsize(third_mtx) == 0:
+            if output_mtx is not None:
+                with open(output_mtx, 'w') as wf:
+                    wf.write('')
+            return
+
         cmd = 'rmtxop -f{output_format} "{first_mtx}" {operator_one} "{second_mtx}" ' \
             ' {operator_two} "{third_mtx}"'.format(
                 output_format=output_format, first_mtx=first_mtx,
