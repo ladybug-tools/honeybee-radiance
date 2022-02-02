@@ -1,0 +1,13 @@
+# VMTX representation for "aperture_26"
+
+void glow white_glow_aperture_26
+0
+0
+4 1.0 1.0 1.0 0.0
+
+#@rfluxmtx h=kf u=-0.0,0.0,-1.0
+
+white_glow_aperture_26 polygon aperture_26_8835836d
+0
+0
+12 -51.0 0.5 7.2 -51.0 2.5 7.2 -51.0 2.5 4.7 -51.0 0.5 4.7

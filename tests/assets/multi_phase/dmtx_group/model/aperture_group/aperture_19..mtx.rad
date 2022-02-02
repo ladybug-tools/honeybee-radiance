@@ -1,0 +1,13 @@
+# VMTX representation for "aperture_19"
+
+void glow white_glow_aperture_19
+0
+0
+4 1.0 1.0 1.0 0.0
+
+#@rfluxmtx h=kf u=0.0,-1.0,0.0
+
+white_glow_aperture_19 polygon aperture_19_bbcc89cd
+0
+0
+12 -14.75 0.5 11.0 -14.75 2.5 11.0 -12.25 2.5 11.0 -12.25 0.5 11.0

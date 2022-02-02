@@ -1,0 +1,11 @@
+# STATE 1 for "aperture_31"
+
+void BSDF diffuse50
+6 0.0 ./model/bsdf/diffuse50.xml 0.01 0.01 1.0 .
+0
+0
+
+diffuse50 polygon aperture_31_f2f911e6
+0
+0
+12 -30.25 0.5 11.0 -30.25 2.5 11.0 -32.75 2.5 11.0 -32.75 0.5 11.0

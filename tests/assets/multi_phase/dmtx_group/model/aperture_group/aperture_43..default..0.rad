@@ -1,0 +1,11 @@
+# STATE 0 for "aperture_43"
+
+void BSDF clear
+6 0.0 ./model/bsdf/clear.xml 0.01 0.01 1.0 .
+0
+0
+
+clear polygon aperture_43_17e60920
+0
+0
+12 -51.0 -27.5 0.2 -51.0 -29.5 0.2 -51.0 -29.5 4.2 -51.0 -27.5 4.2

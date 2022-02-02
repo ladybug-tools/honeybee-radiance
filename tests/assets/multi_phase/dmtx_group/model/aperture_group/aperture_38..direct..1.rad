@@ -1,0 +1,11 @@
+# STATE 1 for "aperture_38"
+
+void BSDF diffuse50
+6 0.0 ./model/bsdf/diffuse50.xml 0.01 0.01 1.0 .
+0
+0
+
+diffuse50 polygon aperture_38_536c5701
+0
+0
+12 -50.5 -9.0 5.04898031077 -45.5 -9.0 5.04898031077 -45.5 -9.0 7.54898031077 -50.5 -9.0 7.54898031077

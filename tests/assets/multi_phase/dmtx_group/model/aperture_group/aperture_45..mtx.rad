@@ -1,0 +1,13 @@
+# VMTX representation for "aperture_45"
+
+void glow white_glow_aperture_45
+0
+0
+4 1.0 1.0 1.0 0.0
+
+#@rfluxmtx h=kf u=0.0,-0.0,-1.0
+
+white_glow_aperture_45 polygon aperture_45_8991bf87
+0
+0
+12 -51.0 -33.5 4.2 -51.0 -35.5 4.2 -51.0 -35.5 0.2 -51.0 -33.5 0.2

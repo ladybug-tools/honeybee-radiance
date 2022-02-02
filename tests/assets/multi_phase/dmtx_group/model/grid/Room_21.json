@@ -1,0 +1,23 @@
+{
+    "light_path": [
+        [
+            "aperture_8"
+        ], 
+        [
+            "EC_ApertureGroup"
+        ], 
+        [
+            "aperture_11"
+        ], 
+        [
+            "aperture_12"
+        ], 
+        [
+            "aperture_10"
+        ], 
+        [
+            "aperture_9"
+        ]
+    ], 
+    "count": 270
+}

@@ -1,0 +1,19 @@
+#@rfluxmtx h=u u=Y
+void glow ground_glow
+0
+0
+4 1.000 1.000 1.000 0
+ground_glow source ground
+0
+0
+4 0 0 -1 180
+
+#@rfluxmtx h=r1 u=Y
+void glow sky_glow
+0
+0
+4 1.000 1.000 1.000 0
+sky_glow source sky
+0
+0
+4 0 0 1 180

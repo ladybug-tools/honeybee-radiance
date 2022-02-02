@@ -1,0 +1,12 @@
+[
+  {
+    "name": "diffuse50", 
+    "identifier": "diffuse50", 
+    "path": "model/bsdf\\diffuse50.xml"
+  }, 
+  {
+    "name": "clear", 
+    "identifier": "clear", 
+    "path": "model/bsdf\\clear.xml"
+  }
+]

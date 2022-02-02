@@ -1,0 +1,1949 @@
+generic_exterior_shade_0.35 polygon aperture_2_c7ecb0c1_OutBorder0
+0
+0
+12 0.25 0.5 7.0 2.75 0.5 7.0 2.75 0.5 7.3 0.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_2_c7ecb0c1_OutBorder1
+0
+0
+12 2.75 0.5 7.0 2.75 2.5 7.0 2.75 2.5 7.3 2.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_2_c7ecb0c1_OutBorder2
+0
+0
+12 2.75 2.5 7.0 0.25 2.5 7.0 0.25 2.5 7.3 2.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_2_c7ecb0c1_OutBorder3
+0
+0
+12 0.25 2.5 7.0 0.25 0.5 7.0 0.25 0.5 7.3 0.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_3_a680dc7c_OutBorder0
+0
+0
+12 -0.25 0.5 7.0 -0.25 2.5 7.0 -0.25 2.5 7.3 -0.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_3_a680dc7c_OutBorder1
+0
+0
+12 -0.25 2.5 7.0 -2.75 2.5 7.0 -2.75 2.5 7.3 -0.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_3_a680dc7c_OutBorder2
+0
+0
+12 -2.75 2.5 7.0 -2.75 0.5 7.0 -2.75 0.5 7.3 -2.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_3_a680dc7c_OutBorder3
+0
+0
+12 -2.75 0.5 7.0 -0.25 0.5 7.0 -0.25 0.5 7.3 -2.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon static_window_1_4d4d4a8d_OutBorder0
+0
+0
+12 2.5 12.0 0.7 -2.5 12.0 0.7 -2.5 12.3 0.7 2.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_1_4d4d4a8d_OutBorder1
+0
+0
+12 -2.5 12.0 0.7 -2.5 12.0 3.2 -2.5 12.3 3.2 -2.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_1_4d4d4a8d_OutBorder2
+0
+0
+12 -2.5 12.0 3.2 2.5 12.0 3.2 2.5 12.3 3.2 -2.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_1_4d4d4a8d_OutBorder3
+0
+0
+12 2.5 12.0 3.2 2.5 12.0 0.7 2.5 12.3 0.7 2.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_51_76eb12c5_OutBorder0
+0
+0
+12 3.0 2.5 3.2 3.0 0.5 3.2 3.3 0.5 3.2 3.3 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_51_76eb12c5_OutBorder1
+0
+0
+12 3.0 0.5 3.2 3.0 0.5 0.7 3.3 0.5 0.7 3.3 0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_51_76eb12c5_OutBorder2
+0
+0
+12 3.0 0.5 0.7 3.0 2.5 0.7 3.3 2.5 0.7 3.3 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_51_76eb12c5_OutBorder3
+0
+0
+12 3.0 2.5 0.7 3.0 2.5 3.2 3.3 2.5 3.2 3.3 2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_1_c1ff6e2c_OutBorder0
+0
+0
+12 -2.5 -9.0 1.04898031077 2.5 -9.0 1.04898031077 2.5 -9.3 1.04898031077 -2.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_1_c1ff6e2c_OutBorder1
+0
+0
+12 2.5 -9.0 1.04898031077 2.5 -9.0 3.54898031077 2.5 -9.3 3.54898031077 2.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_1_c1ff6e2c_OutBorder2
+0
+0
+12 2.5 -9.0 3.54898031077 -2.5 -9.0 3.54898031077 -2.5 -9.3 3.54898031077 2.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_1_c1ff6e2c_OutBorder3
+0
+0
+12 -2.5 -9.0 3.54898031077 -2.5 -9.0 1.04898031077 -2.5 -9.3 1.04898031077 -2.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_1_441cf231_OutBorder0
+0
+0
+12 -2.5 -9.0 1.04898031077 2.5 -9.0 1.04898031077 2.5 -9.3 1.04898031077 -2.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_1_441cf231_OutBorder1
+0
+0
+12 2.5 -9.0 1.04898031077 2.5 -9.0 3.54898031077 2.5 -9.3 3.54898031077 2.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_1_441cf231_OutBorder2
+0
+0
+12 2.5 -9.0 3.54898031077 -2.5 -9.0 3.54898031077 -2.5 -9.3 3.54898031077 2.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_1_441cf231_OutBorder3
+0
+0
+12 -2.5 -9.0 3.54898031077 -2.5 -9.0 1.04898031077 -2.5 -9.3 1.04898031077 -2.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_52_6e926876_OutBorder0
+0
+0
+12 3.0 -0.5 3.2 3.0 -2.5 3.2 3.3 -2.5 3.2 3.3 -0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_52_6e926876_OutBorder1
+0
+0
+12 3.0 -2.5 3.2 3.0 -2.5 0.7 3.3 -2.5 0.7 3.3 -2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_52_6e926876_OutBorder2
+0
+0
+12 3.0 -2.5 0.7 3.0 -0.5 0.7 3.3 -0.5 0.7 3.3 -2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_52_6e926876_OutBorder3
+0
+0
+12 3.0 -0.5 0.7 3.0 -0.5 3.2 3.3 -0.5 3.2 3.3 -0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_4_765f8248_OutBorder0
+0
+0
+12 -8.5 -9.0 1.04898031077 -3.5 -9.0 1.04898031077 -3.5 -9.3 1.04898031077 -8.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_4_765f8248_OutBorder1
+0
+0
+12 -3.5 -9.0 1.04898031077 -3.5 -9.0 3.54898031077 -3.5 -9.3 3.54898031077 -3.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_4_765f8248_OutBorder2
+0
+0
+12 -3.5 -9.0 3.54898031077 -8.5 -9.0 3.54898031077 -8.5 -9.3 3.54898031077 -3.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_4_765f8248_OutBorder3
+0
+0
+12 -8.5 -9.0 3.54898031077 -8.5 -9.0 1.04898031077 -8.5 -9.3 1.04898031077 -8.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_5_9081d7e3_OutBorder0
+0
+0
+12 -14.5 -9.0 1.04898031077 -9.5 -9.0 1.04898031077 -9.5 -9.3 1.04898031077 -14.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_5_9081d7e3_OutBorder1
+0
+0
+12 -9.5 -9.0 1.04898031077 -9.5 -9.0 3.54898031077 -9.5 -9.3 3.54898031077 -9.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_5_9081d7e3_OutBorder2
+0
+0
+12 -9.5 -9.0 3.54898031077 -14.5 -9.0 3.54898031077 -14.5 -9.3 3.54898031077 -9.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_5_9081d7e3_OutBorder3
+0
+0
+12 -14.5 -9.0 3.54898031077 -14.5 -9.0 1.04898031077 -14.5 -9.3 1.04898031077 -14.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_17_d754a360_OutBorder0
+0
+0
+12 -9.0 0.5 0.7 -9.0 2.5 0.7 -8.7 2.5 0.7 -8.7 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_17_d754a360_OutBorder1
+0
+0
+12 -9.0 2.5 0.7 -9.0 2.5 3.2 -8.7 2.5 3.2 -8.7 2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_17_d754a360_OutBorder2
+0
+0
+12 -9.0 2.5 3.2 -9.0 0.5 3.2 -8.7 0.5 3.2 -8.7 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_17_d754a360_OutBorder3
+0
+0
+12 -9.0 0.5 3.2 -9.0 0.5 0.7 -8.7 0.5 0.7 -8.7 0.5 3.2
+
+generic_exterior_shade_0.35 polygon static_window_2_8dfe1272_OutBorder0
+0
+0
+12 -9.5 12.0 0.7 -14.5 12.0 0.7 -14.5 12.3 0.7 -9.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_2_8dfe1272_OutBorder1
+0
+0
+12 -14.5 12.0 0.7 -14.5 12.0 3.2 -14.5 12.3 3.2 -14.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_2_8dfe1272_OutBorder2
+0
+0
+12 -14.5 12.0 3.2 -9.5 12.0 3.2 -9.5 12.3 3.2 -14.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_2_8dfe1272_OutBorder3
+0
+0
+12 -9.5 12.0 3.2 -9.5 12.0 0.7 -9.5 12.3 0.7 -9.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_6_4ed6f1d1_OutBorder0
+0
+0
+12 -20.5 -9.0 1.04898031077 -15.5 -9.0 1.04898031077 -15.5 -9.3 1.04898031077 -20.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_6_4ed6f1d1_OutBorder1
+0
+0
+12 -15.5 -9.0 1.04898031077 -15.5 -9.0 3.54898031077 -15.5 -9.3 3.54898031077 -15.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_6_4ed6f1d1_OutBorder2
+0
+0
+12 -15.5 -9.0 3.54898031077 -20.5 -9.0 3.54898031077 -20.5 -9.3 3.54898031077 -15.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_6_4ed6f1d1_OutBorder3
+0
+0
+12 -20.5 -9.0 3.54898031077 -20.5 -9.0 1.04898031077 -20.5 -9.3 1.04898031077 -20.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_30_fc42e3d5_OutBorder0
+0
+0
+12 -51.0 0.5 0.7 -51.0 2.5 0.7 -50.7 2.5 0.7 -50.7 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_30_fc42e3d5_OutBorder1
+0
+0
+12 -51.0 2.5 0.7 -51.0 2.5 3.2 -50.7 2.5 3.2 -50.7 2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_30_fc42e3d5_OutBorder2
+0
+0
+12 -51.0 2.5 3.2 -51.0 0.5 3.2 -50.7 0.5 3.2 -50.7 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_30_fc42e3d5_OutBorder3
+0
+0
+12 -51.0 0.5 3.2 -51.0 0.5 0.7 -50.7 0.5 0.7 -50.7 0.5 3.2
+
+generic_exterior_shade_0.35 polygon static_window_3_70d47404_OutBorder0
+0
+0
+12 -51.5 12.0 0.7 -56.5 12.0 0.7 -56.5 12.3 0.7 -51.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_3_70d47404_OutBorder1
+0
+0
+12 -56.5 12.0 0.7 -56.5 12.0 3.2 -56.5 12.3 3.2 -56.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_3_70d47404_OutBorder2
+0
+0
+12 -56.5 12.0 3.2 -51.5 12.0 3.2 -51.5 12.3 3.2 -56.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_3_70d47404_OutBorder3
+0
+0
+12 -51.5 12.0 3.2 -51.5 12.0 0.7 -51.5 12.3 0.7 -51.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_7_46a74565_OutBorder0
+0
+0
+12 -26.5 -9.0 1.04898031077 -21.5 -9.0 1.04898031077 -21.5 -9.3 1.04898031077 -26.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_7_46a74565_OutBorder1
+0
+0
+12 -21.5 -9.0 1.04898031077 -21.5 -9.0 3.54898031077 -21.5 -9.3 3.54898031077 -21.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_7_46a74565_OutBorder2
+0
+0
+12 -21.5 -9.0 3.54898031077 -26.5 -9.0 3.54898031077 -26.5 -9.3 3.54898031077 -21.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_7_46a74565_OutBorder3
+0
+0
+12 -26.5 -9.0 3.54898031077 -26.5 -9.0 1.04898031077 -26.5 -9.3 1.04898031077 -26.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon static_window_11_d3d2b68f_OutBorder0
+0
+0
+12 -50.5 -36.0 3.8 -48.5 -36.0 3.8 -48.5 -36.3 3.8 -50.5 -36.3 3.8
+
+generic_exterior_shade_0.35 polygon static_window_11_d3d2b68f_OutBorder1
+0
+0
+12 -48.5 -36.0 3.8 -48.5 -36.0 7.8 -48.5 -36.3 7.8 -48.5 -36.3 3.8
+
+generic_exterior_shade_0.35 polygon static_window_11_d3d2b68f_OutBorder2
+0
+0
+12 -48.5 -36.0 7.8 -50.5 -36.0 7.8 -50.5 -36.3 7.8 -48.5 -36.3 7.8
+
+generic_exterior_shade_0.35 polygon static_window_11_d3d2b68f_OutBorder3
+0
+0
+12 -50.5 -36.0 7.8 -50.5 -36.0 3.8 -50.5 -36.3 3.8 -50.5 -36.3 7.8
+
+generic_exterior_shade_0.35 polygon static_window_12_df26e84b_OutBorder0
+0
+0
+12 -35.5 -36.0 3.8 -33.5 -36.0 3.8 -33.5 -36.3 3.8 -35.5 -36.3 3.8
+
+generic_exterior_shade_0.35 polygon static_window_12_df26e84b_OutBorder1
+0
+0
+12 -33.5 -36.0 3.8 -33.5 -36.0 7.8 -33.5 -36.3 7.8 -33.5 -36.3 3.8
+
+generic_exterior_shade_0.35 polygon static_window_12_df26e84b_OutBorder2
+0
+0
+12 -33.5 -36.0 7.8 -35.5 -36.0 7.8 -35.5 -36.3 7.8 -33.5 -36.3 7.8
+
+generic_exterior_shade_0.35 polygon static_window_12_df26e84b_OutBorder3
+0
+0
+12 -35.5 -36.0 7.8 -35.5 -36.0 3.8 -35.5 -36.3 3.8 -35.5 -36.3 7.8
+
+generic_exterior_shade_0.35 polygon aperture_47_8f190bbd_OutBorder0
+0
+0
+12 -33.0 -27.5 0.2 -33.0 -27.5 4.2 -32.7 -27.5 4.2 -32.7 -27.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_47_8f190bbd_OutBorder1
+0
+0
+12 -33.0 -27.5 4.2 -33.0 -29.5 4.2 -32.7 -29.5 4.2 -32.7 -27.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_47_8f190bbd_OutBorder2
+0
+0
+12 -33.0 -29.5 4.2 -33.0 -29.5 0.2 -32.7 -29.5 0.2 -32.7 -29.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_47_8f190bbd_OutBorder3
+0
+0
+12 -33.0 -29.5 0.2 -33.0 -27.5 0.2 -32.7 -27.5 0.2 -32.7 -29.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_48_5f73e753_OutBorder0
+0
+0
+12 -33.0 -24.5 0.2 -33.0 -24.5 4.2 -32.7 -24.5 4.2 -32.7 -24.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_48_5f73e753_OutBorder1
+0
+0
+12 -33.0 -24.5 4.2 -33.0 -26.5 4.2 -32.7 -26.5 4.2 -32.7 -24.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_48_5f73e753_OutBorder2
+0
+0
+12 -33.0 -26.5 4.2 -33.0 -26.5 0.2 -32.7 -26.5 0.2 -32.7 -26.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_48_5f73e753_OutBorder3
+0
+0
+12 -33.0 -26.5 0.2 -33.0 -24.5 0.2 -32.7 -24.5 0.2 -32.7 -26.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_49_69ba73ab_OutBorder0
+0
+0
+12 -33.0 -18.5 0.2 -33.0 -18.5 4.2 -32.7 -18.5 4.2 -32.7 -18.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_49_69ba73ab_OutBorder1
+0
+0
+12 -33.0 -18.5 4.2 -33.0 -20.5 4.2 -32.7 -20.5 4.2 -32.7 -18.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_49_69ba73ab_OutBorder2
+0
+0
+12 -33.0 -20.5 4.2 -33.0 -20.5 0.2 -32.7 -20.5 0.2 -32.7 -20.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_49_69ba73ab_OutBorder3
+0
+0
+12 -33.0 -20.5 0.2 -33.0 -18.5 0.2 -32.7 -18.5 0.2 -32.7 -20.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_50_f4278147_OutBorder0
+0
+0
+12 -33.0 -33.5 0.2 -33.0 -33.5 4.2 -32.7 -33.5 4.2 -32.7 -33.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_50_f4278147_OutBorder1
+0
+0
+12 -33.0 -33.5 4.2 -33.0 -35.5 4.2 -32.7 -35.5 4.2 -32.7 -33.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_50_f4278147_OutBorder2
+0
+0
+12 -33.0 -35.5 4.2 -33.0 -35.5 0.2 -32.7 -35.5 0.2 -32.7 -35.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_50_f4278147_OutBorder3
+0
+0
+12 -33.0 -35.5 0.2 -33.0 -33.5 0.2 -32.7 -33.5 0.2 -32.7 -35.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_43_17e60920_OutBorder0
+0
+0
+12 -51.0 -27.5 0.2 -51.0 -29.5 0.2 -51.3 -29.5 0.2 -51.3 -27.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_43_17e60920_OutBorder1
+0
+0
+12 -51.0 -29.5 0.2 -51.0 -29.5 4.2 -51.3 -29.5 4.2 -51.3 -29.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_43_17e60920_OutBorder2
+0
+0
+12 -51.0 -29.5 4.2 -51.0 -27.5 4.2 -51.3 -27.5 4.2 -51.3 -29.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_43_17e60920_OutBorder3
+0
+0
+12 -51.0 -27.5 4.2 -51.0 -27.5 0.2 -51.3 -27.5 0.2 -51.3 -27.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_44_9e08cc4c_OutBorder0
+0
+0
+12 -51.0 -24.5 0.2 -51.0 -26.5 0.2 -51.3 -26.5 0.2 -51.3 -24.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_44_9e08cc4c_OutBorder1
+0
+0
+12 -51.0 -26.5 0.2 -51.0 -26.5 4.2 -51.3 -26.5 4.2 -51.3 -26.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_44_9e08cc4c_OutBorder2
+0
+0
+12 -51.0 -26.5 4.2 -51.0 -24.5 4.2 -51.3 -24.5 4.2 -51.3 -26.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_44_9e08cc4c_OutBorder3
+0
+0
+12 -51.0 -24.5 4.2 -51.0 -24.5 0.2 -51.3 -24.5 0.2 -51.3 -24.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_45_8991bf87_OutBorder0
+0
+0
+12 -51.0 -33.5 0.2 -51.0 -35.5 0.2 -51.3 -35.5 0.2 -51.3 -33.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_45_8991bf87_OutBorder1
+0
+0
+12 -51.0 -35.5 0.2 -51.0 -35.5 4.2 -51.3 -35.5 4.2 -51.3 -35.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_45_8991bf87_OutBorder2
+0
+0
+12 -51.0 -35.5 4.2 -51.0 -33.5 4.2 -51.3 -33.5 4.2 -51.3 -35.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_45_8991bf87_OutBorder3
+0
+0
+12 -51.0 -33.5 4.2 -51.0 -33.5 0.2 -51.3 -33.5 0.2 -51.3 -33.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_46_8b995a25_OutBorder0
+0
+0
+12 -51.0 -18.5 0.2 -51.0 -20.5 0.2 -51.3 -20.5 0.2 -51.3 -18.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_46_8b995a25_OutBorder1
+0
+0
+12 -51.0 -20.5 0.2 -51.0 -20.5 4.2 -51.3 -20.5 4.2 -51.3 -20.5 0.2
+
+generic_exterior_shade_0.35 polygon aperture_46_8b995a25_OutBorder2
+0
+0
+12 -51.0 -20.5 4.2 -51.0 -18.5 4.2 -51.3 -18.5 4.2 -51.3 -20.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_46_8b995a25_OutBorder3
+0
+0
+12 -51.0 -18.5 4.2 -51.0 -18.5 0.2 -51.3 -18.5 0.2 -51.3 -18.5 4.2
+
+generic_exterior_shade_0.35 polygon aperture_18_0215487c_OutBorder0
+0
+0
+12 -11.75 0.5 11.0 -9.25 0.5 11.0 -9.25 0.5 11.3 -11.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_18_0215487c_OutBorder1
+0
+0
+12 -9.25 0.5 11.0 -9.25 2.5 11.0 -9.25 2.5 11.3 -9.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_18_0215487c_OutBorder2
+0
+0
+12 -9.25 2.5 11.0 -11.75 2.5 11.0 -11.75 2.5 11.3 -9.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_18_0215487c_OutBorder3
+0
+0
+12 -11.75 2.5 11.0 -11.75 0.5 11.0 -11.75 0.5 11.3 -11.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_19_bbcc89cd_OutBorder0
+0
+0
+12 -12.25 0.5 11.0 -12.25 2.5 11.0 -12.25 2.5 11.3 -12.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_19_bbcc89cd_OutBorder1
+0
+0
+12 -12.25 2.5 11.0 -14.75 2.5 11.0 -14.75 2.5 11.3 -12.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_19_bbcc89cd_OutBorder2
+0
+0
+12 -14.75 2.5 11.0 -14.75 0.5 11.0 -14.75 0.5 11.3 -14.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_19_bbcc89cd_OutBorder3
+0
+0
+12 -14.75 0.5 11.0 -12.25 0.5 11.0 -12.25 0.5 11.3 -14.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon static_window_4_50e2f127_OutBorder0
+0
+0
+12 -9.5 12.0 4.7 -14.5 12.0 4.7 -14.5 12.3 4.7 -9.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon static_window_4_50e2f127_OutBorder1
+0
+0
+12 -14.5 12.0 4.7 -14.5 12.0 7.2 -14.5 12.3 7.2 -14.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon static_window_4_50e2f127_OutBorder2
+0
+0
+12 -14.5 12.0 7.2 -9.5 12.0 7.2 -9.5 12.3 7.2 -14.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon static_window_4_50e2f127_OutBorder3
+0
+0
+12 -9.5 12.0 7.2 -9.5 12.0 4.7 -9.5 12.3 4.7 -9.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon aperture_20_7c25002d_OutBorder0
+0
+0
+12 -9.0 0.5 4.7 -9.0 2.5 4.7 -8.7 2.5 4.7 -8.7 0.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_20_7c25002d_OutBorder1
+0
+0
+12 -9.0 2.5 4.7 -9.0 2.5 7.2 -8.7 2.5 7.2 -8.7 2.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_20_7c25002d_OutBorder2
+0
+0
+12 -9.0 2.5 7.2 -9.0 0.5 7.2 -8.7 0.5 7.2 -8.7 2.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_20_7c25002d_OutBorder3
+0
+0
+12 -9.0 0.5 7.2 -9.0 0.5 4.7 -8.7 0.5 4.7 -8.7 0.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_21_a10a72fc_OutBorder0
+0
+0
+12 -23.75 0.5 7.0 -21.25 0.5 7.0 -21.25 0.5 7.3 -23.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_21_a10a72fc_OutBorder1
+0
+0
+12 -21.25 0.5 7.0 -21.25 2.5 7.0 -21.25 2.5 7.3 -21.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_21_a10a72fc_OutBorder2
+0
+0
+12 -21.25 2.5 7.0 -23.75 2.5 7.0 -23.75 2.5 7.3 -21.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_21_a10a72fc_OutBorder3
+0
+0
+12 -23.75 2.5 7.0 -23.75 0.5 7.0 -23.75 0.5 7.3 -23.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_22_3465eaa1_OutBorder0
+0
+0
+12 -24.25 0.5 7.0 -24.25 2.5 7.0 -24.25 2.5 7.3 -24.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_22_3465eaa1_OutBorder1
+0
+0
+12 -24.25 2.5 7.0 -26.75 2.5 7.0 -26.75 2.5 7.3 -24.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_22_3465eaa1_OutBorder2
+0
+0
+12 -26.75 2.5 7.0 -26.75 0.5 7.0 -26.75 0.5 7.3 -26.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_22_3465eaa1_OutBorder3
+0
+0
+12 -26.75 0.5 7.0 -24.25 0.5 7.0 -24.25 0.5 7.3 -26.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon static_window_5_9cb1a5f7_OutBorder0
+0
+0
+12 -21.5 12.0 0.7 -26.5 12.0 0.7 -26.5 12.3 0.7 -21.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_5_9cb1a5f7_OutBorder1
+0
+0
+12 -26.5 12.0 0.7 -26.5 12.0 3.2 -26.5 12.3 3.2 -26.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_5_9cb1a5f7_OutBorder2
+0
+0
+12 -26.5 12.0 3.2 -21.5 12.0 3.2 -21.5 12.3 3.2 -26.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_5_9cb1a5f7_OutBorder3
+0
+0
+12 -21.5 12.0 3.2 -21.5 12.0 0.7 -21.5 12.3 0.7 -21.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_23_917cfd07_OutBorder0
+0
+0
+12 -21.0 0.5 0.7 -21.0 2.5 0.7 -20.7 2.5 0.7 -20.7 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_23_917cfd07_OutBorder1
+0
+0
+12 -21.0 2.5 0.7 -21.0 2.5 3.2 -20.7 2.5 3.2 -20.7 2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_23_917cfd07_OutBorder2
+0
+0
+12 -21.0 2.5 3.2 -21.0 0.5 3.2 -20.7 0.5 3.2 -20.7 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_23_917cfd07_OutBorder3
+0
+0
+12 -21.0 0.5 3.2 -21.0 0.5 0.7 -20.7 0.5 0.7 -20.7 0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_24_fc7cac7a_OutBorder0
+0
+0
+12 -53.75 0.5 11.0 -51.25 0.5 11.0 -51.25 0.5 11.3 -53.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_24_fc7cac7a_OutBorder1
+0
+0
+12 -51.25 0.5 11.0 -51.25 2.5 11.0 -51.25 2.5 11.3 -51.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_24_fc7cac7a_OutBorder2
+0
+0
+12 -51.25 2.5 11.0 -53.75 2.5 11.0 -53.75 2.5 11.3 -51.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_24_fc7cac7a_OutBorder3
+0
+0
+12 -53.75 2.5 11.0 -53.75 0.5 11.0 -53.75 0.5 11.3 -53.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_25_11a0748b_OutBorder0
+0
+0
+12 -54.25 0.5 11.0 -54.25 2.5 11.0 -54.25 2.5 11.3 -54.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_25_11a0748b_OutBorder1
+0
+0
+12 -54.25 2.5 11.0 -56.75 2.5 11.0 -56.75 2.5 11.3 -54.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_25_11a0748b_OutBorder2
+0
+0
+12 -56.75 2.5 11.0 -56.75 0.5 11.0 -56.75 0.5 11.3 -56.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_25_11a0748b_OutBorder3
+0
+0
+12 -56.75 0.5 11.0 -54.25 0.5 11.0 -54.25 0.5 11.3 -56.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon static_window_6_9d1d1dea_OutBorder0
+0
+0
+12 -51.5 12.0 4.7 -56.5 12.0 4.7 -56.5 12.3 4.7 -51.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon static_window_6_9d1d1dea_OutBorder1
+0
+0
+12 -56.5 12.0 4.7 -56.5 12.0 7.2 -56.5 12.3 7.2 -56.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon static_window_6_9d1d1dea_OutBorder2
+0
+0
+12 -56.5 12.0 7.2 -51.5 12.0 7.2 -51.5 12.3 7.2 -56.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon static_window_6_9d1d1dea_OutBorder3
+0
+0
+12 -51.5 12.0 7.2 -51.5 12.0 4.7 -51.5 12.3 4.7 -51.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon aperture_26_8835836d_OutBorder0
+0
+0
+12 -51.0 0.5 4.7 -51.0 2.5 4.7 -50.7 2.5 4.7 -50.7 0.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_26_8835836d_OutBorder1
+0
+0
+12 -51.0 2.5 4.7 -51.0 2.5 7.2 -50.7 2.5 7.2 -50.7 2.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_26_8835836d_OutBorder2
+0
+0
+12 -51.0 2.5 7.2 -51.0 0.5 7.2 -50.7 0.5 7.2 -50.7 2.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_26_8835836d_OutBorder3
+0
+0
+12 -51.0 0.5 7.2 -51.0 0.5 4.7 -50.7 0.5 4.7 -50.7 0.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_27_c37ab847_OutBorder0
+0
+0
+12 -77.75 0.5 7.0 -75.25 0.5 7.0 -75.25 0.5 7.3 -77.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_27_c37ab847_OutBorder1
+0
+0
+12 -75.25 0.5 7.0 -75.25 2.5 7.0 -75.25 2.5 7.3 -75.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_27_c37ab847_OutBorder2
+0
+0
+12 -75.25 2.5 7.0 -77.75 2.5 7.0 -77.75 2.5 7.3 -75.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_27_c37ab847_OutBorder3
+0
+0
+12 -77.75 2.5 7.0 -77.75 0.5 7.0 -77.75 0.5 7.3 -77.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_28_fda6050c_OutBorder0
+0
+0
+12 -78.25 0.5 7.0 -78.25 2.5 7.0 -78.25 2.5 7.3 -78.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_28_fda6050c_OutBorder1
+0
+0
+12 -78.25 2.5 7.0 -80.75 2.5 7.0 -80.75 2.5 7.3 -78.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_28_fda6050c_OutBorder2
+0
+0
+12 -80.75 2.5 7.0 -80.75 0.5 7.0 -80.75 0.5 7.3 -80.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_28_fda6050c_OutBorder3
+0
+0
+12 -80.75 0.5 7.0 -78.25 0.5 7.0 -78.25 0.5 7.3 -80.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon static_window_7_4940c547_OutBorder0
+0
+0
+12 -75.5 12.0 0.7 -80.5 12.0 0.7 -80.5 12.3 0.7 -75.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_7_4940c547_OutBorder1
+0
+0
+12 -80.5 12.0 0.7 -80.5 12.0 3.2 -80.5 12.3 3.2 -80.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_7_4940c547_OutBorder2
+0
+0
+12 -80.5 12.0 3.2 -75.5 12.0 3.2 -75.5 12.3 3.2 -80.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_7_4940c547_OutBorder3
+0
+0
+12 -75.5 12.0 3.2 -75.5 12.0 0.7 -75.5 12.3 0.7 -75.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_29_3a04d6ae_OutBorder0
+0
+0
+12 -75.0 0.5 0.7 -75.0 2.5 0.7 -74.7 2.5 0.7 -74.7 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_29_3a04d6ae_OutBorder1
+0
+0
+12 -75.0 2.5 0.7 -75.0 2.5 3.2 -74.7 2.5 3.2 -74.7 2.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_29_3a04d6ae_OutBorder2
+0
+0
+12 -75.0 2.5 3.2 -75.0 0.5 3.2 -74.7 0.5 3.2 -74.7 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_29_3a04d6ae_OutBorder3
+0
+0
+12 -75.0 0.5 3.2 -75.0 0.5 0.7 -74.7 0.5 0.7 -74.7 0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_34_9404ecbf_OutBorder0
+0
+0
+12 -33.0 0.5 0.7 -33.0 0.5 3.2 -33.3 0.5 3.2 -33.3 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_34_9404ecbf_OutBorder1
+0
+0
+12 -33.0 0.5 3.2 -33.0 2.5 3.2 -33.3 2.5 3.2 -33.3 0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_34_9404ecbf_OutBorder2
+0
+0
+12 -33.0 2.5 3.2 -33.0 2.5 0.7 -33.3 2.5 0.7 -33.3 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_34_9404ecbf_OutBorder3
+0
+0
+12 -33.0 2.5 0.7 -33.0 0.5 0.7 -33.3 0.5 0.7 -33.3 2.5 0.7
+
+generic_exterior_shade_0.35 polygon static_window_8_9f6776ca_OutBorder0
+0
+0
+12 -32.5 12.0 0.7 -32.5 12.0 3.2 -32.5 12.3 3.2 -32.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_8_9f6776ca_OutBorder1
+0
+0
+12 -32.5 12.0 3.2 -27.5 12.0 3.2 -27.5 12.3 3.2 -32.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_8_9f6776ca_OutBorder2
+0
+0
+12 -27.5 12.0 3.2 -27.5 12.0 0.7 -27.5 12.3 0.7 -27.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_8_9f6776ca_OutBorder3
+0
+0
+12 -27.5 12.0 0.7 -32.5 12.0 0.7 -32.5 12.3 0.7 -27.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon aperture_31_f2f911e6_OutBorder0
+0
+0
+12 -30.25 0.5 11.0 -30.25 2.5 11.0 -30.25 2.5 11.3 -30.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_31_f2f911e6_OutBorder1
+0
+0
+12 -30.25 2.5 11.0 -32.75 2.5 11.0 -32.75 2.5 11.3 -30.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_31_f2f911e6_OutBorder2
+0
+0
+12 -32.75 2.5 11.0 -32.75 0.5 11.0 -32.75 0.5 11.3 -32.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_31_f2f911e6_OutBorder3
+0
+0
+12 -32.75 0.5 11.0 -30.25 0.5 11.0 -30.25 0.5 11.3 -32.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_32_9f4fa33d_OutBorder0
+0
+0
+12 -29.75 0.5 11.0 -27.25 0.5 11.0 -27.25 0.5 11.3 -29.75 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_32_9f4fa33d_OutBorder1
+0
+0
+12 -27.25 0.5 11.0 -27.25 2.5 11.0 -27.25 2.5 11.3 -27.25 0.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_32_9f4fa33d_OutBorder2
+0
+0
+12 -27.25 2.5 11.0 -29.75 2.5 11.0 -29.75 2.5 11.3 -27.25 2.5 11.3
+
+generic_exterior_shade_0.35 polygon aperture_32_9f4fa33d_OutBorder3
+0
+0
+12 -29.75 2.5 11.0 -29.75 0.5 11.0 -29.75 0.5 11.3 -29.75 2.5 11.3
+
+generic_exterior_shade_0.35 polygon static_window_9_f5376c07_OutBorder0
+0
+0
+12 -32.5 12.0 4.7 -32.5 12.0 7.2 -32.5 12.3 7.2 -32.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon static_window_9_f5376c07_OutBorder1
+0
+0
+12 -32.5 12.0 7.2 -27.5 12.0 7.2 -27.5 12.3 7.2 -32.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon static_window_9_f5376c07_OutBorder2
+0
+0
+12 -27.5 12.0 7.2 -27.5 12.0 4.7 -27.5 12.3 4.7 -27.5 12.3 7.2
+
+generic_exterior_shade_0.35 polygon static_window_9_f5376c07_OutBorder3
+0
+0
+12 -27.5 12.0 4.7 -32.5 12.0 4.7 -32.5 12.3 4.7 -27.5 12.3 4.7
+
+generic_exterior_shade_0.35 polygon aperture_33_ff865fdb_OutBorder0
+0
+0
+12 -33.0 0.5 4.7 -33.0 0.5 7.2 -33.3 0.5 7.2 -33.3 0.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_33_ff865fdb_OutBorder1
+0
+0
+12 -33.0 0.5 7.2 -33.0 2.5 7.2 -33.3 2.5 7.2 -33.3 0.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_33_ff865fdb_OutBorder2
+0
+0
+12 -33.0 2.5 7.2 -33.0 2.5 4.7 -33.3 2.5 4.7 -33.3 2.5 7.2
+
+generic_exterior_shade_0.35 polygon aperture_33_ff865fdb_OutBorder3
+0
+0
+12 -33.0 2.5 4.7 -33.0 0.5 4.7 -33.3 0.5 4.7 -33.3 2.5 4.7
+
+generic_exterior_shade_0.35 polygon aperture_13_a9675395_OutBorder0
+0
+0
+12 -62.5 -9.0 1.04898031077 -57.5 -9.0 1.04898031077 -57.5 -9.3 1.04898031077 -62.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_13_a9675395_OutBorder1
+0
+0
+12 -57.5 -9.0 1.04898031077 -57.5 -9.0 3.54898031077 -57.5 -9.3 3.54898031077 -57.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_13_a9675395_OutBorder2
+0
+0
+12 -57.5 -9.0 3.54898031077 -62.5 -9.0 3.54898031077 -62.5 -9.3 3.54898031077 -57.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_13_a9675395_OutBorder3
+0
+0
+12 -62.5 -9.0 3.54898031077 -62.5 -9.0 1.04898031077 -62.5 -9.3 1.04898031077 -62.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_16_259f9bb9_OutBorder0
+0
+0
+12 -80.5 -9.0 1.04898031077 -75.5 -9.0 1.04898031077 -75.5 -9.3 1.04898031077 -80.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_16_259f9bb9_OutBorder1
+0
+0
+12 -75.5 -9.0 1.04898031077 -75.5 -9.0 3.54898031077 -75.5 -9.3 3.54898031077 -75.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_16_259f9bb9_OutBorder2
+0
+0
+12 -75.5 -9.0 3.54898031077 -80.5 -9.0 3.54898031077 -80.5 -9.3 3.54898031077 -75.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_16_259f9bb9_OutBorder3
+0
+0
+12 -80.5 -9.0 3.54898031077 -80.5 -9.0 1.04898031077 -80.5 -9.3 1.04898031077 -80.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_14_e10de2d6_OutBorder0
+0
+0
+12 -68.5 -9.0 1.04898031077 -63.5 -9.0 1.04898031077 -63.5 -9.3 1.04898031077 -68.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_14_e10de2d6_OutBorder1
+0
+0
+12 -63.5 -9.0 1.04898031077 -63.5 -9.0 3.54898031077 -63.5 -9.3 3.54898031077 -63.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_14_e10de2d6_OutBorder2
+0
+0
+12 -63.5 -9.0 3.54898031077 -68.5 -9.0 3.54898031077 -68.5 -9.3 3.54898031077 -63.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_14_e10de2d6_OutBorder3
+0
+0
+12 -68.5 -9.0 3.54898031077 -68.5 -9.0 1.04898031077 -68.5 -9.3 1.04898031077 -68.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_15_9a7767ca_OutBorder0
+0
+0
+12 -74.5 -9.0 1.04898031077 -69.5 -9.0 1.04898031077 -69.5 -9.3 1.04898031077 -74.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_15_9a7767ca_OutBorder1
+0
+0
+12 -69.5 -9.0 1.04898031077 -69.5 -9.0 3.54898031077 -69.5 -9.3 3.54898031077 -69.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_15_9a7767ca_OutBorder2
+0
+0
+12 -69.5 -9.0 3.54898031077 -74.5 -9.0 3.54898031077 -74.5 -9.3 3.54898031077 -69.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_15_9a7767ca_OutBorder3
+0
+0
+12 -74.5 -9.0 3.54898031077 -74.5 -9.0 1.04898031077 -74.5 -9.3 1.04898031077 -74.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_8_8f08df1a_OutBorder0
+0
+0
+12 -32.5 -9.0 1.04898031077 -27.5 -9.0 1.04898031077 -27.5 -9.3 1.04898031077 -32.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_8_8f08df1a_OutBorder1
+0
+0
+12 -27.5 -9.0 1.04898031077 -27.5 -9.0 3.54898031077 -27.5 -9.3 3.54898031077 -27.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_8_8f08df1a_OutBorder2
+0
+0
+12 -27.5 -9.0 3.54898031077 -32.5 -9.0 3.54898031077 -32.5 -9.3 3.54898031077 -27.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_8_8f08df1a_OutBorder3
+0
+0
+12 -32.5 -9.0 3.54898031077 -32.5 -9.0 1.04898031077 -32.5 -9.3 1.04898031077 -32.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_9_03f5fb00_OutBorder0
+0
+0
+12 -38.5 -9.0 1.04898031077 -33.5 -9.0 1.04898031077 -33.5 -9.3 1.04898031077 -38.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_9_03f5fb00_OutBorder1
+0
+0
+12 -33.5 -9.0 1.04898031077 -33.5 -9.0 3.54898031077 -33.5 -9.3 3.54898031077 -33.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_9_03f5fb00_OutBorder2
+0
+0
+12 -33.5 -9.0 3.54898031077 -38.5 -9.0 3.54898031077 -38.5 -9.3 3.54898031077 -33.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_9_03f5fb00_OutBorder3
+0
+0
+12 -38.5 -9.0 3.54898031077 -38.5 -9.0 1.04898031077 -38.5 -9.3 1.04898031077 -38.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_10_ffb6b6bf_OutBorder0
+0
+0
+12 -44.5 -9.0 1.04898031077 -39.5 -9.0 1.04898031077 -39.5 -9.3 1.04898031077 -44.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_10_ffb6b6bf_OutBorder1
+0
+0
+12 -39.5 -9.0 1.04898031077 -39.5 -9.0 3.54898031077 -39.5 -9.3 3.54898031077 -39.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_10_ffb6b6bf_OutBorder2
+0
+0
+12 -39.5 -9.0 3.54898031077 -44.5 -9.0 3.54898031077 -44.5 -9.3 3.54898031077 -39.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_10_ffb6b6bf_OutBorder3
+0
+0
+12 -44.5 -9.0 3.54898031077 -44.5 -9.0 1.04898031077 -44.5 -9.3 1.04898031077 -44.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_11_8f785097_OutBorder0
+0
+0
+12 -50.5 -9.0 1.04898031077 -45.5 -9.0 1.04898031077 -45.5 -9.3 1.04898031077 -50.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_11_8f785097_OutBorder1
+0
+0
+12 -45.5 -9.0 1.04898031077 -45.5 -9.0 3.54898031077 -45.5 -9.3 3.54898031077 -45.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_11_8f785097_OutBorder2
+0
+0
+12 -45.5 -9.0 3.54898031077 -50.5 -9.0 3.54898031077 -50.5 -9.3 3.54898031077 -45.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_11_8f785097_OutBorder3
+0
+0
+12 -50.5 -9.0 3.54898031077 -50.5 -9.0 1.04898031077 -50.5 -9.3 1.04898031077 -50.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_12_15926822_OutBorder0
+0
+0
+12 -56.5 -9.0 1.04898031077 -51.5 -9.0 1.04898031077 -51.5 -9.3 1.04898031077 -56.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_12_15926822_OutBorder1
+0
+0
+12 -51.5 -9.0 1.04898031077 -51.5 -9.0 3.54898031077 -51.5 -9.3 3.54898031077 -51.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_12_15926822_OutBorder2
+0
+0
+12 -51.5 -9.0 3.54898031077 -56.5 -9.0 3.54898031077 -56.5 -9.3 3.54898031077 -51.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_12_15926822_OutBorder3
+0
+0
+12 -56.5 -9.0 3.54898031077 -56.5 -9.0 1.04898031077 -56.5 -9.3 1.04898031077 -56.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_2_9895f4d0_OutBorder0
+0
+0
+12 -32.5 -9.0 1.04898031077 -27.5 -9.0 1.04898031077 -27.5 -9.3 1.04898031077 -32.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_2_9895f4d0_OutBorder1
+0
+0
+12 -27.5 -9.0 1.04898031077 -27.5 -9.0 3.54898031077 -27.5 -9.3 3.54898031077 -27.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_2_9895f4d0_OutBorder2
+0
+0
+12 -27.5 -9.0 3.54898031077 -32.5 -9.0 3.54898031077 -32.5 -9.3 3.54898031077 -27.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_2_9895f4d0_OutBorder3
+0
+0
+12 -32.5 -9.0 3.54898031077 -32.5 -9.0 1.04898031077 -32.5 -9.3 1.04898031077 -32.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_3_0aee00f8_OutBorder0
+0
+0
+12 -38.5 -9.0 1.04898031077 -33.5 -9.0 1.04898031077 -33.5 -9.3 1.04898031077 -38.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_3_0aee00f8_OutBorder1
+0
+0
+12 -33.5 -9.0 1.04898031077 -33.5 -9.0 3.54898031077 -33.5 -9.3 3.54898031077 -33.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_3_0aee00f8_OutBorder2
+0
+0
+12 -33.5 -9.0 3.54898031077 -38.5 -9.0 3.54898031077 -38.5 -9.3 3.54898031077 -33.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_3_0aee00f8_OutBorder3
+0
+0
+12 -38.5 -9.0 3.54898031077 -38.5 -9.0 1.04898031077 -38.5 -9.3 1.04898031077 -38.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_4_3dff7b5d_OutBorder0
+0
+0
+12 -44.5 -9.0 1.04898031077 -39.5 -9.0 1.04898031077 -39.5 -9.3 1.04898031077 -44.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_4_3dff7b5d_OutBorder1
+0
+0
+12 -39.5 -9.0 1.04898031077 -39.5 -9.0 3.54898031077 -39.5 -9.3 3.54898031077 -39.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_4_3dff7b5d_OutBorder2
+0
+0
+12 -39.5 -9.0 3.54898031077 -44.5 -9.0 3.54898031077 -44.5 -9.3 3.54898031077 -39.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_4_3dff7b5d_OutBorder3
+0
+0
+12 -44.5 -9.0 3.54898031077 -44.5 -9.0 1.04898031077 -44.5 -9.3 1.04898031077 -44.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_5_513b2e61_OutBorder0
+0
+0
+12 -50.5 -9.0 1.04898031077 -45.5 -9.0 1.04898031077 -45.5 -9.3 1.04898031077 -50.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_5_513b2e61_OutBorder1
+0
+0
+12 -45.5 -9.0 1.04898031077 -45.5 -9.0 3.54898031077 -45.5 -9.3 3.54898031077 -45.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_5_513b2e61_OutBorder2
+0
+0
+12 -45.5 -9.0 3.54898031077 -50.5 -9.0 3.54898031077 -50.5 -9.3 3.54898031077 -45.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_5_513b2e61_OutBorder3
+0
+0
+12 -50.5 -9.0 3.54898031077 -50.5 -9.0 1.04898031077 -50.5 -9.3 1.04898031077 -50.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_6_ebaa7218_OutBorder0
+0
+0
+12 -56.5 -9.0 1.04898031077 -51.5 -9.0 1.04898031077 -51.5 -9.3 1.04898031077 -56.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_6_ebaa7218_OutBorder1
+0
+0
+12 -51.5 -9.0 1.04898031077 -51.5 -9.0 3.54898031077 -51.5 -9.3 3.54898031077 -51.5 -9.3 1.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_6_ebaa7218_OutBorder2
+0
+0
+12 -51.5 -9.0 3.54898031077 -56.5 -9.0 3.54898031077 -56.5 -9.3 3.54898031077 -51.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_6_ebaa7218_OutBorder3
+0
+0
+12 -56.5 -9.0 3.54898031077 -56.5 -9.0 1.04898031077 -56.5 -9.3 1.04898031077 -56.5 -9.3 3.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_35_e317f771_OutBorder0
+0
+0
+12 -32.5 -9.0 5.04898031077 -27.5 -9.0 5.04898031077 -27.5 -9.3 5.04898031077 -32.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_35_e317f771_OutBorder1
+0
+0
+12 -27.5 -9.0 5.04898031077 -27.5 -9.0 7.54898031077 -27.5 -9.3 7.54898031077 -27.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_35_e317f771_OutBorder2
+0
+0
+12 -27.5 -9.0 7.54898031077 -32.5 -9.0 7.54898031077 -32.5 -9.3 7.54898031077 -27.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_35_e317f771_OutBorder3
+0
+0
+12 -32.5 -9.0 7.54898031077 -32.5 -9.0 5.04898031077 -32.5 -9.3 5.04898031077 -32.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_36_2af7732a_OutBorder0
+0
+0
+12 -38.5 -9.0 5.04898031077 -33.5 -9.0 5.04898031077 -33.5 -9.3 5.04898031077 -38.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_36_2af7732a_OutBorder1
+0
+0
+12 -33.5 -9.0 5.04898031077 -33.5 -9.0 7.54898031077 -33.5 -9.3 7.54898031077 -33.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_36_2af7732a_OutBorder2
+0
+0
+12 -33.5 -9.0 7.54898031077 -38.5 -9.0 7.54898031077 -38.5 -9.3 7.54898031077 -33.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_36_2af7732a_OutBorder3
+0
+0
+12 -38.5 -9.0 7.54898031077 -38.5 -9.0 5.04898031077 -38.5 -9.3 5.04898031077 -38.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_37_060ca1ce_OutBorder0
+0
+0
+12 -44.5 -9.0 5.04898031077 -39.5 -9.0 5.04898031077 -39.5 -9.3 5.04898031077 -44.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_37_060ca1ce_OutBorder1
+0
+0
+12 -39.5 -9.0 5.04898031077 -39.5 -9.0 7.54898031077 -39.5 -9.3 7.54898031077 -39.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_37_060ca1ce_OutBorder2
+0
+0
+12 -39.5 -9.0 7.54898031077 -44.5 -9.0 7.54898031077 -44.5 -9.3 7.54898031077 -39.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_37_060ca1ce_OutBorder3
+0
+0
+12 -44.5 -9.0 7.54898031077 -44.5 -9.0 5.04898031077 -44.5 -9.3 5.04898031077 -44.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_38_536c5701_OutBorder0
+0
+0
+12 -50.5 -9.0 5.04898031077 -45.5 -9.0 5.04898031077 -45.5 -9.3 5.04898031077 -50.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_38_536c5701_OutBorder1
+0
+0
+12 -45.5 -9.0 5.04898031077 -45.5 -9.0 7.54898031077 -45.5 -9.3 7.54898031077 -45.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_38_536c5701_OutBorder2
+0
+0
+12 -45.5 -9.0 7.54898031077 -50.5 -9.0 7.54898031077 -50.5 -9.3 7.54898031077 -45.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_38_536c5701_OutBorder3
+0
+0
+12 -50.5 -9.0 7.54898031077 -50.5 -9.0 5.04898031077 -50.5 -9.3 5.04898031077 -50.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_39_10306ed2_OutBorder0
+0
+0
+12 -56.5 -9.0 5.04898031077 -51.5 -9.0 5.04898031077 -51.5 -9.3 5.04898031077 -56.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_39_10306ed2_OutBorder1
+0
+0
+12 -51.5 -9.0 5.04898031077 -51.5 -9.0 7.54898031077 -51.5 -9.3 7.54898031077 -51.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon aperture_39_10306ed2_OutBorder2
+0
+0
+12 -51.5 -9.0 7.54898031077 -56.5 -9.0 7.54898031077 -56.5 -9.3 7.54898031077 -51.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_39_10306ed2_OutBorder3
+0
+0
+12 -56.5 -9.0 7.54898031077 -56.5 -9.0 5.04898031077 -56.5 -9.3 5.04898031077 -56.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_7_4c268412_OutBorder0
+0
+0
+12 -32.5 -9.0 5.04898031077 -27.5 -9.0 5.04898031077 -27.5 -9.3 5.04898031077 -32.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_7_4c268412_OutBorder1
+0
+0
+12 -27.5 -9.0 5.04898031077 -27.5 -9.0 7.54898031077 -27.5 -9.3 7.54898031077 -27.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_7_4c268412_OutBorder2
+0
+0
+12 -27.5 -9.0 7.54898031077 -32.5 -9.0 7.54898031077 -32.5 -9.3 7.54898031077 -27.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_7_4c268412_OutBorder3
+0
+0
+12 -32.5 -9.0 7.54898031077 -32.5 -9.0 5.04898031077 -32.5 -9.3 5.04898031077 -32.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_8_9752a45f_OutBorder0
+0
+0
+12 -38.5 -9.0 5.04898031077 -33.5 -9.0 5.04898031077 -33.5 -9.3 5.04898031077 -38.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_8_9752a45f_OutBorder1
+0
+0
+12 -33.5 -9.0 5.04898031077 -33.5 -9.0 7.54898031077 -33.5 -9.3 7.54898031077 -33.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_8_9752a45f_OutBorder2
+0
+0
+12 -33.5 -9.0 7.54898031077 -38.5 -9.0 7.54898031077 -38.5 -9.3 7.54898031077 -33.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_8_9752a45f_OutBorder3
+0
+0
+12 -38.5 -9.0 7.54898031077 -38.5 -9.0 5.04898031077 -38.5 -9.3 5.04898031077 -38.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_9_a9793f92_OutBorder0
+0
+0
+12 -44.5 -9.0 5.04898031077 -39.5 -9.0 5.04898031077 -39.5 -9.3 5.04898031077 -44.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_9_a9793f92_OutBorder1
+0
+0
+12 -39.5 -9.0 5.04898031077 -39.5 -9.0 7.54898031077 -39.5 -9.3 7.54898031077 -39.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_9_a9793f92_OutBorder2
+0
+0
+12 -39.5 -9.0 7.54898031077 -44.5 -9.0 7.54898031077 -44.5 -9.3 7.54898031077 -39.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_9_a9793f92_OutBorder3
+0
+0
+12 -44.5 -9.0 7.54898031077 -44.5 -9.0 5.04898031077 -44.5 -9.3 5.04898031077 -44.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_10_7db59bdb_OutBorder0
+0
+0
+12 -50.5 -9.0 5.04898031077 -45.5 -9.0 5.04898031077 -45.5 -9.3 5.04898031077 -50.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_10_7db59bdb_OutBorder1
+0
+0
+12 -45.5 -9.0 5.04898031077 -45.5 -9.0 7.54898031077 -45.5 -9.3 7.54898031077 -45.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_10_7db59bdb_OutBorder2
+0
+0
+12 -45.5 -9.0 7.54898031077 -50.5 -9.0 7.54898031077 -50.5 -9.3 7.54898031077 -45.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_10_7db59bdb_OutBorder3
+0
+0
+12 -50.5 -9.0 7.54898031077 -50.5 -9.0 5.04898031077 -50.5 -9.3 5.04898031077 -50.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_11_2ad90458_OutBorder0
+0
+0
+12 -56.5 -9.0 5.04898031077 -51.5 -9.0 5.04898031077 -51.5 -9.3 5.04898031077 -56.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_11_2ad90458_OutBorder1
+0
+0
+12 -51.5 -9.0 5.04898031077 -51.5 -9.0 7.54898031077 -51.5 -9.3 7.54898031077 -51.5 -9.3 5.04898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_11_2ad90458_OutBorder2
+0
+0
+12 -51.5 -9.0 7.54898031077 -56.5 -9.0 7.54898031077 -56.5 -9.3 7.54898031077 -51.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon EC_Aperture_11_2ad90458_OutBorder3
+0
+0
+12 -56.5 -9.0 7.54898031077 -56.5 -9.0 5.04898031077 -56.5 -9.3 5.04898031077 -56.5 -9.3 7.54898031077
+
+generic_exterior_shade_0.35 polygon aperture_40_49ada8ad_OutBorder0
+0
+0
+12 -59.75 0.5 7.0 -57.25 0.5 7.0 -57.25 0.5 7.3 -59.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_40_49ada8ad_OutBorder1
+0
+0
+12 -57.25 0.5 7.0 -57.25 2.5 7.0 -57.25 2.5 7.3 -57.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_40_49ada8ad_OutBorder2
+0
+0
+12 -57.25 2.5 7.0 -59.75 2.5 7.0 -59.75 2.5 7.3 -57.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_40_49ada8ad_OutBorder3
+0
+0
+12 -59.75 2.5 7.0 -59.75 0.5 7.0 -59.75 0.5 7.3 -59.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_41_54f379c3_OutBorder0
+0
+0
+12 -60.25 0.5 7.0 -60.25 2.5 7.0 -60.25 2.5 7.3 -60.25 0.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_41_54f379c3_OutBorder1
+0
+0
+12 -60.25 2.5 7.0 -62.75 2.5 7.0 -62.75 2.5 7.3 -60.25 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_41_54f379c3_OutBorder2
+0
+0
+12 -62.75 2.5 7.0 -62.75 0.5 7.0 -62.75 0.5 7.3 -62.75 2.5 7.3
+
+generic_exterior_shade_0.35 polygon aperture_41_54f379c3_OutBorder3
+0
+0
+12 -62.75 0.5 7.0 -60.25 0.5 7.0 -60.25 0.5 7.3 -62.75 0.5 7.3
+
+generic_exterior_shade_0.35 polygon static_window_10_6831ca5b_OutBorder0
+0
+0
+12 -57.5 12.0 0.7 -62.5 12.0 0.7 -62.5 12.3 0.7 -57.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_10_6831ca5b_OutBorder1
+0
+0
+12 -62.5 12.0 0.7 -62.5 12.0 3.2 -62.5 12.3 3.2 -62.5 12.3 0.7
+
+generic_exterior_shade_0.35 polygon static_window_10_6831ca5b_OutBorder2
+0
+0
+12 -62.5 12.0 3.2 -57.5 12.0 3.2 -57.5 12.3 3.2 -62.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon static_window_10_6831ca5b_OutBorder3
+0
+0
+12 -57.5 12.0 3.2 -57.5 12.0 0.7 -57.5 12.3 0.7 -57.5 12.3 3.2
+
+generic_exterior_shade_0.35 polygon aperture_42_1764f760_OutBorder0
+0
+0
+12 -63.0 0.5 0.7 -63.0 0.5 3.2 -63.3 0.5 3.2 -63.3 0.5 0.7
+
+generic_exterior_shade_0.35 polygon aperture_42_1764f760_OutBorder1
+0
+0
+12 -63.0 0.5 3.2 -63.0 2.5 3.2 -63.3 2.5 3.2 -63.3 0.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_42_1764f760_OutBorder2
+0
+0
+12 -63.0 2.5 3.2 -63.0 2.5 0.7 -63.3 2.5 0.7 -63.3 2.5 3.2
+
+generic_exterior_shade_0.35 polygon aperture_42_1764f760_OutBorder3
+0
+0
+12 -63.0 2.5 0.7 -63.0 0.5 0.7 -63.3 0.5 0.7 -63.3 2.5 0.7
+
+generic_context_0.20 polygon Shade_52209106_0
+0
+0
+12 3.0 -36.0 0.0 3.0 -36.0 8.0 -21.0 -36.0 8.0 -21.0 -36.0 0.0
+
+generic_context_0.20 polygon Shade_52209106_1
+0
+0
+12 3.0 -36.0 8.0 3.0 -27.0 8.0 -21.0 -27.0 8.0 -21.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_52209106_2
+0
+0
+12 3.0 -27.0 0.0 3.0 -36.0 0.0 -21.0 -36.0 0.0 -21.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_52209106_3
+0
+0
+12 3.0 -36.0 0.0 3.0 -27.0 0.0 3.0 -27.0 8.0 3.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_52209106_4
+0
+0
+12 -21.0 -36.0 0.0 -21.0 -36.0 8.0 -21.0 -27.0 8.0 -21.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_52209106_5
+0
+0
+12 3.0 -27.0 8.0 3.0 -27.0 0.0 -21.0 -27.0 0.0 -21.0 -27.0 8.0
+
+generic_context_0.20 polygon Shade_7969adf6_0
+0
+0
+12 36.0 -9.0 0.0 36.0 -9.0 8.0 12.0 -9.0 8.0 12.0 -9.0 0.0
+
+generic_context_0.20 polygon Shade_7969adf6_1
+0
+0
+12 36.0 -9.0 8.0 36.0 0.0 8.0 12.0 0.0 8.0 12.0 -9.0 8.0
+
+generic_context_0.20 polygon Shade_7969adf6_2
+0
+0
+12 36.0 0.0 0.0 36.0 -9.0 0.0 12.0 -9.0 0.0 12.0 0.0 0.0
+
+generic_context_0.20 polygon Shade_7969adf6_3
+0
+0
+12 36.0 -9.0 0.0 36.0 0.0 0.0 36.0 0.0 8.0 36.0 -9.0 8.0
+
+generic_context_0.20 polygon Shade_7969adf6_4
+0
+0
+12 12.0 -9.0 0.0 12.0 -9.0 8.0 12.0 0.0 8.0 12.0 0.0 0.0
+
+generic_context_0.20 polygon Shade_7969adf6_5
+0
+0
+12 36.0 0.0 8.0 36.0 0.0 0.0 12.0 0.0 0.0 12.0 0.0 8.0
+
+generic_context_0.20 polygon Shade_defe9c9c_0
+0
+0
+12 36.0 -36.0 0.0 36.0 -36.0 8.0 3.0 -36.0 8.0 3.0 -36.0 0.0
+
+generic_context_0.20 polygon Shade_defe9c9c_1
+0
+0
+12 36.0 -36.0 8.0 36.0 -27.0 8.0 3.0 -27.0 8.0 3.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_defe9c9c_2
+0
+0
+12 36.0 -27.0 0.0 36.0 -36.0 0.0 3.0 -36.0 0.0 3.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_defe9c9c_3
+0
+0
+12 36.0 -36.0 0.0 36.0 -27.0 0.0 36.0 -27.0 8.0 36.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_defe9c9c_4
+0
+0
+12 3.0 -36.0 0.0 3.0 -36.0 8.0 3.0 -27.0 8.0 3.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_defe9c9c_5
+0
+0
+12 36.0 -27.0 8.0 36.0 -27.0 0.0 3.0 -27.0 0.0 3.0 -27.0 8.0
+
+generic_context_0.20 polygon Shade_ac040a5e_0
+0
+0
+12 -90.0 -9.0 0.0 -90.0 -9.0 8.0 -114.0 -9.0 8.0 -114.0 -9.0 0.0
+
+generic_context_0.20 polygon Shade_ac040a5e_1
+0
+0
+12 -90.0 -9.0 8.0 -90.0 0.0 8.0 -114.0 0.0 8.0 -114.0 -9.0 8.0
+
+generic_context_0.20 polygon Shade_ac040a5e_2
+0
+0
+12 -90.0 0.0 0.0 -90.0 -9.0 0.0 -114.0 -9.0 0.0 -114.0 0.0 0.0
+
+generic_context_0.20 polygon Shade_ac040a5e_3
+0
+0
+12 -90.0 -9.0 0.0 -90.0 0.0 0.0 -90.0 0.0 8.0 -90.0 -9.0 8.0
+
+generic_context_0.20 polygon Shade_ac040a5e_4
+0
+0
+12 -114.0 -9.0 0.0 -114.0 -9.0 8.0 -114.0 0.0 8.0 -114.0 0.0 0.0
+
+generic_context_0.20 polygon Shade_ac040a5e_5
+0
+0
+12 -90.0 0.0 8.0 -90.0 0.0 0.0 -114.0 0.0 0.0 -114.0 0.0 8.0
+
+generic_context_0.20 polygon Shade_20ccc85c_0
+0
+0
+12 -63.0 -36.0 0.0 -63.0 -36.0 8.0 -114.0 -36.0 8.0 -114.0 -36.0 0.0
+
+generic_context_0.20 polygon Shade_20ccc85c_1
+0
+0
+12 -63.0 -36.0 8.0 -63.0 -27.0 8.0 -114.0 -27.0 8.0 -114.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_20ccc85c_2
+0
+0
+12 -63.0 -27.0 0.0 -63.0 -36.0 0.0 -114.0 -36.0 0.0 -114.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_20ccc85c_3
+0
+0
+12 -63.0 -36.0 0.0 -63.0 -27.0 0.0 -63.0 -27.0 8.0 -63.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_20ccc85c_4
+0
+0
+12 -114.0 -36.0 0.0 -114.0 -36.0 8.0 -114.0 -27.0 8.0 -114.0 -27.0 0.0
+
+generic_context_0.20 polygon Shade_20ccc85c_5
+0
+0
+12 -63.0 -27.0 8.0 -63.0 -27.0 0.0 -114.0 -27.0 0.0 -114.0 -27.0 8.0
+
+generic_context_0.20 polygon Shade_c2770a4f_0
+0
+0
+12 36.0 12.0 0.0 36.0 12.0 8.0 12.0 12.0 8.0 12.0 12.0 0.0
+
+generic_context_0.20 polygon Shade_c2770a4f_1
+0
+0
+12 36.0 12.0 8.0 36.0 21.0 8.0 12.0 21.0 8.0 12.0 12.0 8.0
+
+generic_context_0.20 polygon Shade_c2770a4f_2
+0
+0
+12 36.0 21.0 0.0 36.0 12.0 0.0 12.0 12.0 0.0 12.0 21.0 0.0
+
+generic_context_0.20 polygon Shade_c2770a4f_3
+0
+0
+12 36.0 12.0 0.0 36.0 21.0 0.0 36.0 21.0 8.0 36.0 12.0 8.0
+
+generic_context_0.20 polygon Shade_c2770a4f_4
+0
+0
+12 12.0 12.0 0.0 12.0 12.0 8.0 12.0 21.0 8.0 12.0 21.0 0.0
+
+generic_context_0.20 polygon Shade_c2770a4f_5
+0
+0
+12 36.0 21.0 8.0 36.0 21.0 0.0 12.0 21.0 0.0 12.0 21.0 8.0
+
+generic_context_0.20 polygon Shade_897d54bd_0
+0
+0
+12 -90.0 12.0 0.0 -90.0 12.0 8.0 -114.0 12.0 8.0 -114.0 12.0 0.0
+
+generic_context_0.20 polygon Shade_897d54bd_1
+0
+0
+12 -90.0 12.0 8.0 -90.0 21.0 8.0 -114.0 21.0 8.0 -114.0 12.0 8.0
+
+generic_context_0.20 polygon Shade_897d54bd_2
+0
+0
+12 -90.0 21.0 0.0 -90.0 12.0 0.0 -114.0 12.0 0.0 -114.0 21.0 0.0
+
+generic_context_0.20 polygon Shade_897d54bd_3
+0
+0
+12 -90.0 12.0 0.0 -90.0 21.0 0.0 -90.0 21.0 8.0 -90.0 12.0 8.0
+
+generic_context_0.20 polygon Shade_897d54bd_4
+0
+0
+12 -114.0 12.0 0.0 -114.0 12.0 8.0 -114.0 21.0 8.0 -114.0 21.0 0.0
+
+generic_context_0.20 polygon Shade_897d54bd_5
+0
+0
+12 -90.0 21.0 8.0 -90.0 21.0 0.0 -114.0 21.0 0.0 -114.0 21.0 8.0
+
+generic_context_0.20 polygon Shade_f3b16848_0
+0
+0
+12 36.0 33.0 0.0 36.0 33.0 8.0 12.0 33.0 8.0 12.0 33.0 0.0
+
+generic_context_0.20 polygon Shade_f3b16848_1
+0
+0
+12 36.0 33.0 8.0 36.0 42.0 8.0 12.0 42.0 8.0 12.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_f3b16848_2
+0
+0
+12 36.0 42.0 0.0 36.0 33.0 0.0 12.0 33.0 0.0 12.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_f3b16848_3
+0
+0
+12 36.0 33.0 0.0 36.0 42.0 0.0 36.0 42.0 8.0 36.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_f3b16848_4
+0
+0
+12 12.0 33.0 0.0 12.0 33.0 8.0 12.0 42.0 8.0 12.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_f3b16848_5
+0
+0
+12 36.0 42.0 8.0 36.0 42.0 0.0 12.0 42.0 0.0 12.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_6681c61e_0
+0
+0
+12 3.0 33.0 0.0 3.0 33.0 8.0 -21.0 33.0 8.0 -21.0 33.0 0.0
+
+generic_context_0.20 polygon Shade_6681c61e_1
+0
+0
+12 3.0 33.0 8.0 3.0 42.0 8.0 -21.0 42.0 8.0 -21.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_6681c61e_2
+0
+0
+12 3.0 42.0 0.0 3.0 33.0 0.0 -21.0 33.0 0.0 -21.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_6681c61e_3
+0
+0
+12 3.0 33.0 0.0 3.0 42.0 0.0 3.0 42.0 8.0 3.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_6681c61e_4
+0
+0
+12 -21.0 33.0 0.0 -21.0 33.0 8.0 -21.0 42.0 8.0 -21.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_6681c61e_5
+0
+0
+12 3.0 42.0 8.0 3.0 42.0 0.0 -21.0 42.0 0.0 -21.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_37f922a7_0
+0
+0
+12 -90.0 33.0 0.0 -90.0 33.0 8.0 -114.0 33.0 8.0 -114.0 33.0 0.0
+
+generic_context_0.20 polygon Shade_37f922a7_1
+0
+0
+12 -90.0 33.0 8.0 -90.0 42.0 8.0 -114.0 42.0 8.0 -114.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_37f922a7_2
+0
+0
+12 -90.0 42.0 0.0 -90.0 33.0 0.0 -114.0 33.0 0.0 -114.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_37f922a7_3
+0
+0
+12 -90.0 33.0 0.0 -90.0 42.0 0.0 -90.0 42.0 8.0 -90.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_37f922a7_4
+0
+0
+12 -114.0 33.0 0.0 -114.0 33.0 8.0 -114.0 42.0 8.0 -114.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_37f922a7_5
+0
+0
+12 -90.0 42.0 8.0 -90.0 42.0 0.0 -114.0 42.0 0.0 -114.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_325e4fc5_0
+0
+0
+12 -57.0 33.0 0.0 -57.0 33.0 8.0 -81.0 33.0 8.0 -81.0 33.0 0.0
+
+generic_context_0.20 polygon Shade_325e4fc5_1
+0
+0
+12 -57.0 33.0 8.0 -57.0 42.0 8.0 -81.0 42.0 8.0 -81.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_325e4fc5_2
+0
+0
+12 -57.0 42.0 0.0 -57.0 33.0 0.0 -81.0 33.0 0.0 -81.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_325e4fc5_3
+0
+0
+12 -57.0 33.0 0.0 -57.0 42.0 0.0 -57.0 42.0 8.0 -57.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_325e4fc5_4
+0
+0
+12 -81.0 33.0 0.0 -81.0 33.0 8.0 -81.0 42.0 8.0 -81.0 42.0 0.0
+
+generic_context_0.20 polygon Shade_325e4fc5_5
+0
+0
+12 -57.0 42.0 8.0 -57.0 42.0 0.0 -81.0 42.0 0.0 -81.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_0
+0
+0
+12 -63.0 -36.0 8.0 -63.0 -36.0 16.0 -114.0 -36.0 16.0 -114.0 -36.0 8.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_1
+0
+0
+12 -63.0 -36.0 16.0 -63.0 -27.0 16.0 -114.0 -27.0 16.0 -114.0 -36.0 16.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_2
+0
+0
+12 -63.0 -27.0 8.0 -63.0 -36.0 8.0 -114.0 -36.0 8.0 -114.0 -27.0 8.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_3
+0
+0
+12 -63.0 -36.0 8.0 -63.0 -27.0 8.0 -63.0 -27.0 16.0 -63.0 -36.0 16.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_4
+0
+0
+12 -114.0 -36.0 8.0 -114.0 -36.0 16.0 -114.0 -27.0 16.0 -114.0 -27.0 8.0
+
+generic_context_0.20 polygon Shade_8e6cf57e_5
+0
+0
+12 -63.0 -27.0 16.0 -63.0 -27.0 8.0 -114.0 -27.0 8.0 -114.0 -27.0 16.0
+
+generic_context_0.20 polygon Shade_c37c2427_0
+0
+0
+12 -90.0 -9.0 8.0 -90.0 -9.0 16.0 -114.0 -9.0 16.0 -114.0 -9.0 8.0
+
+generic_context_0.20 polygon Shade_c37c2427_1
+0
+0
+12 -90.0 -9.0 16.0 -90.0 0.0 16.0 -114.0 0.0 16.0 -114.0 -9.0 16.0
+
+generic_context_0.20 polygon Shade_c37c2427_2
+0
+0
+12 -90.0 0.0 8.0 -90.0 -9.0 8.0 -114.0 -9.0 8.0 -114.0 0.0 8.0
+
+generic_context_0.20 polygon Shade_c37c2427_3
+0
+0
+12 -90.0 -9.0 8.0 -90.0 0.0 8.0 -90.0 0.0 16.0 -90.0 -9.0 16.0
+
+generic_context_0.20 polygon Shade_c37c2427_4
+0
+0
+12 -114.0 -9.0 8.0 -114.0 -9.0 16.0 -114.0 0.0 16.0 -114.0 0.0 8.0
+
+generic_context_0.20 polygon Shade_c37c2427_5
+0
+0
+12 -90.0 0.0 16.0 -90.0 0.0 8.0 -114.0 0.0 8.0 -114.0 0.0 16.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_0
+0
+0
+12 -90.0 12.0 8.0 -90.0 12.0 16.0 -114.0 12.0 16.0 -114.0 12.0 8.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_1
+0
+0
+12 -90.0 12.0 16.0 -90.0 21.0 16.0 -114.0 21.0 16.0 -114.0 12.0 16.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_2
+0
+0
+12 -90.0 21.0 8.0 -90.0 12.0 8.0 -114.0 12.0 8.0 -114.0 21.0 8.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_3
+0
+0
+12 -90.0 12.0 8.0 -90.0 21.0 8.0 -90.0 21.0 16.0 -90.0 12.0 16.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_4
+0
+0
+12 -114.0 12.0 8.0 -114.0 12.0 16.0 -114.0 21.0 16.0 -114.0 21.0 8.0
+
+generic_context_0.20 polygon Shade_5e5a5e8b_5
+0
+0
+12 -90.0 21.0 16.0 -90.0 21.0 8.0 -114.0 21.0 8.0 -114.0 21.0 16.0
+
+generic_context_0.20 polygon Shade_98f5aa41_0
+0
+0
+12 -90.0 33.0 8.0 -90.0 33.0 16.0 -114.0 33.0 16.0 -114.0 33.0 8.0
+
+generic_context_0.20 polygon Shade_98f5aa41_1
+0
+0
+12 -90.0 33.0 16.0 -90.0 42.0 16.0 -114.0 42.0 16.0 -114.0 33.0 16.0
+
+generic_context_0.20 polygon Shade_98f5aa41_2
+0
+0
+12 -90.0 42.0 8.0 -90.0 33.0 8.0 -114.0 33.0 8.0 -114.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_98f5aa41_3
+0
+0
+12 -90.0 33.0 8.0 -90.0 42.0 8.0 -90.0 42.0 16.0 -90.0 33.0 16.0
+
+generic_context_0.20 polygon Shade_98f5aa41_4
+0
+0
+12 -114.0 33.0 8.0 -114.0 33.0 16.0 -114.0 42.0 16.0 -114.0 42.0 8.0
+
+generic_context_0.20 polygon Shade_98f5aa41_5
+0
+0
+12 -90.0 42.0 16.0 -90.0 42.0 8.0 -114.0 42.0 8.0 -114.0 42.0 16.0

@@ -1,0 +1,14 @@
+{
+    "light_path": [
+        [
+            "aperture_52"
+        ], 
+        [
+            "aperture_1"
+        ], 
+        [
+            "EC_ApertureGroup"
+        ]
+    ], 
+    "count": 54
+}

@@ -1,0 +1,11 @@
+{
+    "light_path": [
+        [
+            "aperture_30"
+        ], 
+        [
+            "static_apertures"
+        ]
+    ], 
+    "count": 72
+}

@@ -1,0 +1,11 @@
+# STATE 0 for "aperture_28"
+
+void BSDF clear
+6 0.0 ./model/bsdf/clear.xml 0.01 0.01 1.0 .
+0
+0
+
+clear polygon aperture_28_fda6050c
+0
+0
+12 -78.25 0.5 7.0 -78.25 2.5 7.0 -80.75 2.5 7.0 -80.75 0.5 7.0
