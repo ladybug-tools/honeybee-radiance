@@ -54,18 +54,16 @@ def test_flux_transfer_command():
 def test_dmtx_group_command():
     runner = CliRunner()
     folder = './tests/assets/multi_phase/dmtx_group/model'
-    octree = './tests/assets/multi_phase/dmtx_group/model/scene.oct'
-    rflux_sky = './tests/assets/multi_phase/dmtx_group/model/rflux_sky.sky'
-    output_folder = './tests/assets/multi_phase/dmtx_group/temp'
-    output_json = './tests/assets/multi_phase/dmtx_group/temp/dmtx_aperture_groups.json'
-    nukedir(output_folder)
+    octree = './tests/assets/multi_phase/dmtx_group/scene.oct'
+    rflux_sky = './tests/assets/multi_phase/dmtx_group/rflux_sky.sky'
+    output_folder = 'temp'
+    folder_path = './tests/assets/multi_phase/dmtx_group/temp'
+    nukedir(folder_path)
     cmd_args = [
         folder, octree, rflux_sky,
-        '--size', '0.5', '--ambient_division', '100',
+        '--size', '0.2', '--ambient-division', '1000',
         '--output-folder', output_folder
     ]
     result = runner.invoke(dmtx_group_command, cmd_args)
     assert result.exit_code == 0
-    assert os.path.isfile(output_json)
-    assert os.path.getsize(output_json) > 0
-    nukedir(output_folder)
+    nukedir(folder_path)

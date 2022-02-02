@@ -241,7 +241,8 @@ def flux_transfer_command(
     " calculation time.")
 @click.option("--write-rad-files", is_flag=True, default=True, show_default=True,
     help="A flag to write the rad files of groupes apertures.")
-@click.option("--output-folder", help="Optional output folder.", default="dmtx_aperture_groups", show_default=True)
+@click.option("--output-folder", help="Output folder into which the files be written.", 
+    default="dmtx_aperture_groups", show_default=True)
 def dmtx_group_command(
     folder,
     octree,
@@ -464,7 +465,7 @@ def dmtx_group_command(
         # group rad files.
         for idx, group in enumerate(ap_groups):
             group_name = "group_{}_t_{}".format(idx, threshold)
-            group_file = os.path.join(output_folder, group_name + '.rad')
+            group_file = os.path.join(model_folder.folder, output_folder, group_name + '.rad')
             xform = []
             for ap in group:
                 xform.append("!xform ./model/aperture_group/{}..mtx.rad".format(ap))
@@ -475,7 +476,7 @@ def dmtx_group_command(
                     file.write('\n'.join(xform))
 
         # Write aperture dictionary to json file.
-        output = os.path.join(output_folder, '%s.json' % name)
+        output = os.path.join(model_folder.folder, output_folder, '%s.json' % name)
         with open(output, 'w') as fp:
             json.dump(ap_dict, fp, indent=2)
 

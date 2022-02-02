@@ -1,0 +1,13 @@
+# VMTX representation for "skylight_1"
+
+void glow white_glow_skylight_1
+0
+0
+4 1.0 1.0 1.0 0.0
+
+#@rfluxmtx h=kf u=0.0,-1.0,0.0
+
+white_glow_skylight_1 polygon skylight_1_06536c8f
+0
+0
+12 -2.75 0.5 7.0 -2.75 2.5 7.0 -0.25 2.5 7.0 -0.25 0.5 7.0

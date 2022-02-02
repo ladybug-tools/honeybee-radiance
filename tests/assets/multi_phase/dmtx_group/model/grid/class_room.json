@@ -1,0 +1,17 @@
+{
+    "light_path": [
+        [
+            "skylight_2"
+        ], 
+        [
+            "skylight_1"
+        ], 
+        [
+            "east_window_classroom"
+        ], 
+        [
+            "static_apertures"
+        ]
+    ], 
+    "count": 72
+}

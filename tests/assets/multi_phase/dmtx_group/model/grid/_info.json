@@ -1,163 +1,16 @@
 [
   {
-    "full_id": "Room_1", 
-    "name": "Room_1", 
-    "identifier": "Room_1", 
+    "full_id": "class_room", 
+    "name": "class_room", 
+    "identifier": "class_room", 
     "group": "", 
     "count": 72
   }, 
   {
-    "full_id": "Room_2", 
-    "name": "Room_2", 
-    "identifier": "Room_2", 
+    "full_id": "office", 
+    "name": "office", 
+    "identifier": "office", 
     "group": "", 
     "count": 54
-  }, 
-  {
-    "full_id": "Room_3", 
-    "name": "Room_3", 
-    "identifier": "Room_3", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_4", 
-    "name": "Room_4", 
-    "identifier": "Room_4", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_5", 
-    "name": "Room_5", 
-    "identifier": "Room_5", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_6", 
-    "name": "Room_6", 
-    "identifier": "Room_6", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_7", 
-    "name": "Room_7", 
-    "identifier": "Room_7", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_8", 
-    "name": "Room_8", 
-    "identifier": "Room_8", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_9", 
-    "name": "Room_9", 
-    "identifier": "Room_9", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_10", 
-    "name": "Room_10", 
-    "identifier": "Room_10", 
-    "group": "", 
-    "count": 324
-  }, 
-  {
-    "full_id": "Room_11", 
-    "name": "Room_11", 
-    "identifier": "Room_11", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_12", 
-    "name": "Room_12", 
-    "identifier": "Room_12", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_13", 
-    "name": "Room_13", 
-    "identifier": "Room_13", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_14", 
-    "name": "Room_14", 
-    "identifier": "Room_14", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_15", 
-    "name": "Room_15", 
-    "identifier": "Room_15", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_16", 
-    "name": "Room_16", 
-    "identifier": "Room_16", 
-    "group": "", 
-    "count": 72
-  }, 
-  {
-    "full_id": "Room_17", 
-    "name": "Room_17", 
-    "identifier": "Room_17", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_18", 
-    "name": "Room_18", 
-    "identifier": "Room_18", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_19", 
-    "name": "Room_19", 
-    "identifier": "Room_19", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_20", 
-    "name": "Room_20", 
-    "identifier": "Room_20", 
-    "group": "", 
-    "count": 54
-  }, 
-  {
-    "full_id": "Room_21", 
-    "name": "Room_21", 
-    "identifier": "Room_21", 
-    "group": "", 
-    "count": 270
-  }, 
-  {
-    "full_id": "Room_22", 
-    "name": "Room_22", 
-    "identifier": "Room_22", 
-    "group": "", 
-    "count": 270
-  }, 
-  {
-    "full_id": "Room_23", 
-    "name": "Room_23", 
-    "identifier": "Room_23", 
-    "group": "", 
-    "count": 72
   }
 ]
