@@ -405,7 +405,13 @@ class SensorGrid(object):
             model: A honeybee Model object which will be used to identify
                 the aperture groups that will be run with this sensor grid.
         """
-        base = {'count': self.count}
+        base = {
+            'count': self.count,
+            'name': self.display_name,
+            'identifier': self.identifier,
+            'group': self.group_identifier or '',
+            'full_id': self.full_identifier
+        }
         if self._light_path:
             base['light_path'] = self._light_path
         elif model and self._room_identifier:  # auto-calculate the light path

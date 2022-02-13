@@ -317,7 +317,9 @@ def model_to_rad_folder(
                 st_d = _write_dynamic_subface_files(
                     folder, out_subfolder, group, minimal)
                 _write_mtx_files(folder, out_subfolder, group, st_d, minimal)
+
                 ext_dict[group.identifier] = st_d
+
         _write_dynamic_json(folder, out_subfolder, ext_dict)
 
     # write dynamic shade groups
@@ -369,6 +371,7 @@ def model_to_rad_folder(
     view_dir = model_folder.view_folder(full=True)
     _write_views(view_dir, model, views)
 
+    model_folder.combined_receivers(auto_mtx_path=False)
     return folder
 
 
@@ -403,21 +406,8 @@ def _write_sensor_grids(folder, model, grids_filter):
         # group_by_identifier
         grouped_grids = _group_by_identifier(filtered_grids)
         for grid in grouped_grids:
-            fp = grid.to_file(folder)
-            info_dir = os.path.dirname(fp)
-            info_file = os.path.join(info_dir, '{}.json'.format(grid.identifier))
-            with open(info_file, 'w') as fp:
-                json.dump(grid.info_dict(model), fp, indent=4)
-
-            grid_info = {
-                'name': grid.identifier,
-                'identifier': grid.identifier,
-                'count': grid.count,
-                'group': grid.group_identifier or '',
-                'full_id': grid.full_identifier
-            }
-
-            grids_info.append(grid_info)
+            grid.to_file(folder)
+            grids_info.append(grid.info_dict(model))
 
         # write information file for all the grids.
         grids_info_file = os.path.join(folder, '_info.json')
@@ -435,7 +425,7 @@ def _write_sensor_grids(folder, model, grids_filter):
                 'count': grid.count,
                 'group': grid.group_identifier or '',
                 'full_id': grid.full_identifier,
-                'start_ln': start_line[identifier]
+                'start_ln': start_line[identifier],
             }
 
             start_line[identifier] += grid.count
