@@ -283,7 +283,13 @@ def split_grid_folder(
     'output-folder',
     type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 @click.argument('extension', type=str)
-def merge_grid_folder(input_folder, output_folder, extension):
+@click.option(
+    '--dist-info', '-di',
+    help='An optional input for distribution information to put the grids back together '
+    '. Alternatively, the command will look for a _redist_info.json file inside the '
+    'folder.', type=click.Path(file_okay=True, dir_okay=False, resolve_path=True)
+)
+def merge_grid_folder(input_folder, output_folder, extension, dist_info):
     """Restructure files in a distributed folder.
 
     \b
@@ -295,7 +301,10 @@ def merge_grid_folder(input_folder, output_folder, extension):
             studies.
     """
     try:
-        restore_original_distribution(input_folder, output_folder, extension)
+        # handle optional case for Functions input
+        if dist_info and not os.path.isfile(dist_info):
+            dist_info = None
+        restore_original_distribution(input_folder, output_folder, extension, dist_info)
     except Exception:
         _logger.exception('Failed to restructure data from folder.')
         sys.exit(1)

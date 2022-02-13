@@ -4,11 +4,19 @@ import sys
 import logging
 import os
 import traceback
-
+import json
+import math
+from collections import OrderedDict
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
 from honeybee_radiance.reader import sensor_count_from_file
+from honeybee_radiance.sensorgrid import SensorGrid
+from ladybug_geometry.geometry3d.mesh import Mesh3D
+from honeybee_radiance.reader import parse_from_file
+from honeybee_radiance_folder import ModelFolder
+from honeybee.aperture import Aperture
+from honeybee_radiance.geometry.polygon import Polygon
 
 
 _logger = logging.getLogger(__name__)
@@ -99,6 +107,16 @@ def view_matrix_command(
         if dry_run:
             click.echo(rfluxmtx_cmd)
             sys.exit(0)
+
+        if output:
+            parent = os.path.dirname(output)
+            if not os.path.isdir(parent):
+                os.mkdir(parent)
+
+        if options.o.value != None:
+            parent = os.path.dirname(options.o.value)
+            if not os.path.isdir(parent):
+                os.mkdir(parent)
 
         env = None
         if folders.env != {}:
@@ -203,6 +221,284 @@ def flux_transfer_command(
 
     except Exception:
         _logger.exception("Failed to run flux-transfer command.")
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@multi_phase.command("dmtx-group")
+@click.argument("folder", type=click.STRING)
+@click.argument(
+    "octree", type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.argument(
+    "rflux_sky", type=click.Path(exists=True, file_okay=True, resolve_path=True)
+)
+@click.option(
+    "--name", help="Name of output JSON file.", show_default=True, 
+    default='dmx_aperture_groups'
+)
+@click.option("--size", "-s", type=float, default=0.2, show_default=True,
+    help="Aperture grid size. A lower number will give a finer grid and more accurate"
+    " results but the calculation time will increase.")
+@click.option("--threshold", "-t", type=float, default=0.001, show_default=True,
+    help="A number that determines if two apertures/aperture groups can be clustered. A"
+    " higher number is more accurate but will also increase the number of aperture groups.")
+@click.option("--ambient-division", "-ad", type=int, default=1000, show_default=True,
+    help="Number of ambient divisions (-ad) for view factor calculation in rfluxmtx."
+    " Increasing the number will give more accurate results but also increase the"
+    " calculation time.")
+@click.option("--output-folder", help="Output folder into which the files be written.", 
+    default="dmtx_aperture_groups", show_default=True)
+def dmtx_group_command(
+    folder,
+    octree,
+    rflux_sky,
+    name,
+    size,
+    threshold,
+    ambient_division,
+    output_folder,
+):
+    """Calculate aperture groups for daylight matrix purposes.
+    This command calculates view factor from apertures to sky patches (rfluxmtx). Each
+    aperture is represented by a sensor grid, and the view factor for the whole aperture
+    is the average of the grid. The apertures are grouped based on the threshold.
+    \b
+    Args:
+        folder: Path to a Radiance model folder.
+        octree: Path to octree file.
+        rflux_sky: Path to rflux sky file.
+    """
+
+    def _index_and_min(distance_matrix):
+        """Return the minimum value of the distance matrix, as well as the index [j, i] of
+        the minimum value of the distance matrix."""
+        min_value = min([min(sublist) for sublist in distance_matrix])
+        for i, _i in enumerate(distance_matrix):
+            for j, _j in enumerate(distance_matrix):
+                if distance_matrix[i][j] == min_value:
+                    index = [j, i]
+                    break
+        return min_value, index
+
+    def _pairwise_maximum(array1, array2):
+        """Return an array of the pairwise maximum of two arrays."""
+        pair_array = [array1, array2]
+        max_array = list(map(max, zip(*pair_array)))
+        return max_array
+
+    def _tranpose_matrix(matrix):
+        """Transposes the distance matrix."""
+        matrix = list(map(list, zip(*matrix)))
+        return matrix
+
+    def _rmse_from_matrix(input):
+        """Calculates RMSE."""
+        rmse = []
+        for i, predicted in enumerate(input):
+            r_list = []
+            for j, observed in enumerate(input):
+                error = [(p - o) for p, o in zip(predicted, observed)]
+                square_error = [e ** 2 for e in error]
+                mean_square_error = sum(square_error) / len(square_error)
+                root_mean_square_error = mean_square_error ** 0.5
+                r_list.append(root_mean_square_error)
+            rmse.append(r_list)
+        return rmse
+
+    def _flatten(container):
+        """Flatten an array."""
+        if not isinstance(container, list):
+            container = [container]
+        for i in container:
+            if isinstance(i, (list, tuple)):
+                for j in _flatten(i):
+                    yield j
+            else:
+                yield i
+
+    def _agglomerative_clustering_complete(distance_matrix, ap_name, threshold=0.001):
+        """Cluster apertures based on the threshold."""
+
+        # Fill the diagonal with 9999 so a diagonal of zeros will NOT be stored as min_value.
+        for i in range(len(distance_matrix)):
+            distance_matrix[i][i] = 9999
+
+        # Create starting list of aperture groups. Each aperture starts as its own group.
+        ap_groups = ap_name
+
+        # Set the number of samples and the minimum value of the distance matrix.
+        n_samples = len(distance_matrix)
+
+        # Set the minimum value of the distance matrix and find the indices of the minimum
+        # value in the distance matrix.
+        min_value, index = _index_and_min(distance_matrix)
+
+        while n_samples > 1 and min_value < threshold:
+            # Combine the two groups and place it at index 0, and remove item at index 1.
+            ap_groups[index[0]] = [ap_groups[index[0]], ap_groups[index[1]]]
+            ap_groups.pop(index[1])
+
+            # Update the values in the distance matrix. We need the maximum values between
+            # the new cluster and all the remaining apertures or clusters still in the
+            # distance matrix.
+            distance_matrix[index[0]] = \
+                _pairwise_maximum(distance_matrix[index[0]], distance_matrix[index[1]])
+            distance_matrix = _tranpose_matrix(distance_matrix)
+            distance_matrix[index[0]] = \
+                _pairwise_maximum(distance_matrix[index[0]], distance_matrix[index[1]])
+
+            # Remove the values at index 1 along both axes.
+            distance_matrix.pop(index[1])
+            distance_matrix = _tranpose_matrix(distance_matrix)
+            distance_matrix.pop(index[1])
+
+            # Update the number of samples that are left in the distance matrix.
+            n_samples -= 1
+            # Update the minimum value and the indices.
+            min_value, index = _index_and_min(distance_matrix)
+
+        return ap_groups
+
+    def _aperture_view_factor(project_folder, apertures, size=0.2, ambient_division=1000,
+                            receiver='rflux_sky.sky', octree='scene.oct', 
+                            calc_folder='dmtx_aperture_grouping'):
+        """Calculates the view factor for each aperture by sensor points."""
+
+        # Instantiate dictionary that will store the sensor count for each aperture. We need
+        # a OrderedDict so that we can split the rfluxmtx output file by each aperture
+        # (sensor count) in the correct order.
+        ap_dict = OrderedDict()
+
+        meshes = []
+        # Create a mesh for each aperture and add the the sensor count to dict.
+        for aperture in apertures:
+            ap_mesh = aperture.geometry.mesh_grid(size, flip=True, generate_centroids=False)
+            meshes.append(ap_mesh)
+            ap_dict[aperture.display_name] = {'sensor_count': len(ap_mesh.faces)}
+
+        # Create a sensor grid from joined aperture mesh.
+        grid_mesh = SensorGrid.from_mesh3d('aperture_grid', Mesh3D.join_meshes(meshes))
+
+        # Write sensor grid to pts file.
+        sensors = grid_mesh.to_file(os.path.join(project_folder, calc_folder),
+                                    file_name='apertures')
+
+        # rfluxmtx options
+        rfluxOpt = RfluxmtxOptions()
+        rfluxOpt.ad = ambient_division
+        rfluxOpt.lw = 1.0 / float(rfluxOpt.ad)
+        rfluxOpt.I = True
+        rfluxOpt.h = True
+
+        # rfluxmtx command
+        rflux = Rfluxmtx()
+        rflux.options = rfluxOpt
+        rflux.receivers = receiver
+        rflux.sensors = sensors
+        rflux.octree = octree
+        rflux.output = os.path.join(calc_folder, 'apertures_vf.mtx')
+
+        # Run rfluxmtx command
+        rflux.run(cwd=project_folder)
+
+        # Get the output file of the rfluxmtx command.
+        mtx_file = os.path.join(project_folder, rflux.output)
+
+        return mtx_file, ap_dict
+
+    try:
+        model_folder = ModelFolder.from_model_folder(folder)
+
+        apertures = []
+        states = model_folder.aperture_groups_states(full=True)
+        ap_group_folder = model_folder.aperture_group_folder(full=True)
+        for ap_group in states.keys():
+            if 'dmtx' in states[ap_group][0]:
+                mtx_file = os.path.join(ap_group_folder,
+                                        os.path.basename(states[ap_group][0]['dmtx']))
+                polygon_string = parse_from_file(mtx_file)
+                polygon = Polygon.from_string('\n'.join(polygon_string))
+                apertures.append(Aperture.from_vertices(ap_group, polygon.vertices))
+
+        assert len(apertures) != 0, \
+            'Found no valid dynamic apertures. There should at least be one aperture ' \
+            'with transmittance matrix in your model.'
+
+        # Calculate view factor.
+        mtx_file, ap_dict = _aperture_view_factor(
+            model_folder.folder, apertures, size=size, ambient_division=ambient_division,
+            receiver=rflux_sky, octree=octree, calc_folder=output_folder
+        )
+
+        view_factor = []
+        # Read view factor file, convert to one channel output, and divide by Pi.
+        with open(mtx_file) as mtx_data:
+            for sensor in mtx_data:
+                sensor_split = sensor.strip().split()
+                if len(sensor_split) % 3 == 0:
+                    one_channel = sensor_split[::3]
+                    convert_to_vf = lambda x: float(x) / math.pi
+                    view_factor.append(list(map(convert_to_vf, one_channel)))
+
+        ap_view_factor = []
+        # Split the view factor file by the aperture sensor count.
+        for aperture in ap_dict.values():
+            sensor_count = aperture['sensor_count']
+            ap_vf, view_factor = view_factor[:sensor_count], view_factor[sensor_count:]
+            ap_view_factor.append(ap_vf)
+
+        ap_view_factor_mean = []
+        # Get the mean view factor per sky patch for each aperture.
+        for aperture in ap_view_factor:
+            ap_t = _tranpose_matrix(aperture)
+            ap_view_factor_mean.append(
+                [sum(sky_patch) / len(sky_patch) for sky_patch in ap_t])
+
+        # Calculate RMSE between all combinations of averaged aperture view factors.
+        rmse = _rmse_from_matrix(ap_view_factor_mean)
+
+        ap_name = list(ap_dict.keys())
+        # Cluster the apertures by the 'complete method'.
+        ap_groups = _agglomerative_clustering_complete(rmse, ap_name, threshold)
+
+        # Flatten the groups. This will break the intercluster structure, but we do not need
+        # to know that.
+        ap_groups = [list(_flatten(cluster)) for cluster in ap_groups]
+
+        # Add the aperture group to each aperture in the dictionary and write the aperture
+        # group rad files.
+        group_names = []
+        groups_folder = os.path.join(
+                model_folder.folder, output_folder, 'groups'
+        )
+        if not os.path.isdir(groups_folder):
+            os.mkdir(groups_folder)
+        for idx, group in enumerate(ap_groups):
+            group_name = "group_{}".format(idx)
+            group_file = os.path.join(groups_folder, group_name + '.rad')
+            xform = []
+            group_names.append(
+                {'identifier': group_name, 'aperture_groups': group}
+            )
+
+            for ap in group:
+                xform.append("!xform ./model/aperture_group/{}..mtx.rad".format(ap))
+
+            with open(group_file, "w") as file:
+                file.write('\n'.join(xform))
+
+        # Write aperture dictionary to json file.
+        output = os.path.join(
+            model_folder.folder, output_folder, 'groups', '%s.json' % name
+        )
+        with open(output, 'w') as fp:
+            json.dump(group_names, fp, indent=2)
+
+    except Exception:
+        _logger.exception("Failed to run dmtx-group command.")
         traceback.print_exc()
         sys.exit(1)
     else:
