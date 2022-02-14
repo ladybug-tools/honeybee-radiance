@@ -755,9 +755,7 @@ def test_writer_to_rad_folder_sensor_grids_views():
 
     grid_dir = model_folder.grid_folder(full=True)
     assert os.path.isfile(os.path.join(grid_dir, 'Tiny_House_Zone.pts'))
-    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_House_Zone.json'))
     assert os.path.isfile(os.path.join(grid_dir, 'Tiny_Garage.pts'))
-    assert os.path.isfile(os.path.join(grid_dir, 'Tiny_Garage.json'))
 
     view_dir = model_folder.view_folder(full=True)
     assert os.path.isfile(os.path.join(view_dir, 'Tiny_House_Zone.vf'))
