@@ -7,8 +7,6 @@ import re
 import json
 import shutil
 
-from ladybug.futil import write_to_file_by_name
-from honeybee.model import Model
 from honeybee_radiance_command.rpict import Rpict, RpictOptions
 from honeybee_radiance_command.pcompos import Pcompos
 from honeybee_radiance_command.pfilt import Pfilt
@@ -118,7 +116,7 @@ def split_view(view, count, resolution, skip_overture, octree, rad_params,
         # correct the count to meet the target resolution
         if resolution is not None and resolution % count != 0:
             while resolution % count != 0:
-                count =  count - 1
+                count = count - 1
 
         # split the view into smaller views
         view_obj = View.from_file(view)
