@@ -8,7 +8,6 @@ from honeybee_radiance_command._command_util import run_command
 
 from honeybee_radiance.lightsource.sunpath import Sunpath
 from ladybug.location import Location
-from ladybug.dt import DateTime
 from ladybug.wea import Wea
 import logging
 import json
@@ -250,7 +249,7 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
     help='An optional integer to set the number of time steps per hour. Default is 1'
     ' for one value per hour.')
 @click.option(
-    '--leap-year/--full-year', ' /-fy', 
+    '--leap-year/--full-year', ' /-fy',
     help='Flag for whether input epw is for a leap year.'
 )
 @click.option('--folder', default='.', help='Output folder.')
@@ -263,8 +262,8 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
     '--reverse-vectors', is_flag=True,
     help='Reverse sun vectors to go from ground to sky.')
 def sunpath_from_epw(
-    epw, north, folder, name, log_file, start_date, start_time, end_date, end_time,
-    timestep, leap_year, reverse_vectors):
+        epw, north, folder, name, log_file, start_date, start_time, end_date, end_time,
+        timestep, leap_year, reverse_vectors):
     """Generate a climate-based sunpath from an epw weather file.
 
     This command also generates a mod file which includes all the modifiers in sunpath.

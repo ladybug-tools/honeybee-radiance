@@ -447,8 +447,8 @@ class View(object):
 
     def standardize_fisheye(self):
         """Automatically set view size to 180 degrees if the view type is a fisheye.
-        
-        Alternatively it sets the view size to 360 degrees if both the view type is 
+
+        Alternatively it sets the view size to 360 degrees if both the view type is
         angular fisheye and either the horizontal or vertical view size is 360 degrees.
         """
         if self.type in ('h', 's'):
@@ -600,10 +600,10 @@ class View(object):
         Args:
             grid: A list of subviews. If only a single view is given, this view will be
                 returned. The views can be either class instances of View, strings or
-                .unf files. If strings are used, the views will be created by the 
+                .unf files. If strings are used, the views will be created by the
                 from_string method. If .unf files are used, the views will be created by
                 the from_string method using the view found in the Radiance header.
-            identifier: Optional text string for a unique View ID. Must not contain spaces
+            identifier: Text string for a unique View ID. Must not contain spaces
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files. If None, this will be set
                 to 'from_grid'. (Default: 'from_grid')
@@ -619,7 +619,7 @@ class View(object):
             elif view.endswith('.unf'):
                 try:
                     f = open(view, 'r', encoding='utf-8', errors='ignore')
-                except:
+                except Exception:
                     f = open(view, 'r')
                 try:
                     for line in f:
@@ -630,14 +630,15 @@ class View(object):
                             if low_line.startswith('view='):
                                 print(low_line)
                                 views.append(cls.from_string('view_%04d' % c, low_line))
-                except:
+                except Exception:
                     raise ValueError('Failed to find view in Radiance header.')
                 finally:
                     f.close()
             elif isinstance(view, str):
                 views.append(cls.from_string('view_%04d' % c, view))
             else:
-                raise ValueError('Expected Honeybee Radiance View, string or .unf file.' \
+                raise ValueError(
+                    'Expected Honeybee Radiance View, string or .unf file.'
                     'Got: {}'.format(type(view))
                 )
 
@@ -664,7 +665,7 @@ class View(object):
             _vv.add(_view.v_size)
             _x_div_count.add(_view.shift)
             _y_div_count.add(_view.lift)
-            
+
         if len(_type) > 1:
             raise ValueError('All subviews must have the same view type.')
         if len(_view_point) > 1:
@@ -703,21 +704,20 @@ class View(object):
 
         elif view.type == 'v':
             # perspective (vtv)
-            h_size = (2. * 180. / PI) * math.tan(_vh / (2. * 180. / PI)) * x_div_count
-            v_size = (2. * 180. / PI) * \
-                math.atan(math.tan(_vv / (2. * 180. / PI)) * y_div_count)
+            pi2 = (2. * 180. / PI)
+            h_size = pi2 * math.tan(_vh / (2. * 180. / PI)) * x_div_count
+            v_size = pi2 * math.atan(math.tan(_vv / (2. * 180. / PI)) * y_div_count)
 
         elif view.type == 'h':
             # hemispherical fisheye (vth)
-            h_size = (2. * 180. / PI) * \
-                math.asin(math.sin(_vh / (2. * 180. / PI)) * x_div_count)
-            v_size = (2. * 180. / PI) * \
-                math.asin(math.sin(_vv / (2. * 180. / PI)) * y_div_count)
+            pi2 = (2. * 180. / PI)
+            h_size = pi2 * math.asin(math.sin(_vh / (2. * 180. / PI)) * x_div_count)
+            v_size = pi2 * math.asin(math.sin(_vv / (2. * 180. / PI)) * y_div_count)
 
         else:
             raise ValueError(
-                'Grid views are not supported for %s.' % view.type.to_radiance())
-        
+                'Grid views are not supported for %s.' % view.type)
+
         # round the number to avoid cases like 59.99999999999999 when should be 60
         h_size = round(h_size, 10)
         v_size = round(v_size, 10)
@@ -735,7 +735,7 @@ class View(object):
         match Radiance defaults.
         """
         x, y = self.dimension_x_y(x_res, y_res)
-        return '-x %d -y %d -ld%s' % (x, y,'-' if (self.vo + self.va == '') else '+')
+        return '-x %d -y %d -ld%s' % (x, y, '-' if (self.vo + self.va == '') else '+')
 
     def dimension_x_y(self, x_res=None, y_res=None):
         """Get dimensions for this view as x, y.
@@ -802,27 +802,31 @@ class View(object):
 
         _views = list(range(x_div_count * y_div_count))
 
-        if self.type == 'l' or self.type == 'a':
+        if self.type in ('l', 'a', 'c'):
             # parallel view (vtl) or angular fisheye (vta)
             _vh = self.h_size / x_div_count
             _vv = self.v_size / y_div_count
 
         elif self.type == 'v':
             # perspective (vtv)
-            _vh = (2. * 180. / PI) * \
-                math.atan(((PI / 180. / 2.) * self.h_size) / x_div_count)
-            _vv = (2. * 180. / PI) * \
-                math.atan(math.tan((PI / 180. / 2.) * self.v_size) / y_div_count)
+            pi2 = (2. * 180. / PI)
+            _vh = pi2 * math.atan(((PI / 180. / 2.) * self.h_size) / x_div_count)
+            _vv = pi2 * math.atan(math.tan((PI / 180. / 2.) * self.v_size) / y_div_count)
 
-        elif self.is_fisheye:
-            # fish eye
-            _vh = (2. * 180. / PI) * \
-                math.asin(math.sin((PI / 180. / 2.) * self.h_size) / x_div_count)
-            _vv = (2. * 180. / PI) * \
-                math.asin(math.sin((PI / 180. / 2.) * self.v_size) / y_div_count)
+        elif self.type == 's':
+            # planisphere (stereographic)
+            pi2 = (2. * 180. / PI * 2)
+            _vh = pi2 * math.atan(math.sin((PI / 180. / 2.) * self.h_size) / x_div_count)
+            _vv = pi2 * math.atan(math.sin((PI / 180. / 2.) * self.v_size) / y_div_count)
+
+        elif self.type in ('h'):
+            # hemispherical fish eye
+            pi2 = (2. * 180. / PI)
+            _vh = pi2 * math.asin(math.sin((PI / 180. / 2.) * self.h_size) / x_div_count)
+            _vv = pi2 * math.asin(math.sin((PI / 180. / 2.) * self.v_size) / y_div_count)
 
         else:
-            print("Grid views are not supported for %s." % self.type.to_radiance())
+            print("Grid views are not supported for %s." % self.type)
             return [self]
 
         # create a set of new views
@@ -916,7 +920,7 @@ class View(object):
             base['group_identifier'] = self.group_identifier
         return base
 
-    def to_file(self, folder, file_name=None, mkdir=False): 
+    def to_file(self, folder, file_name=None, mkdir=False):
         """Save view to a file.
 
         Args:
@@ -1034,7 +1038,8 @@ class View(object):
             if not ' '.join(string.split()).replace('"', '').replace("'", '').strip():
                 return {}
             raise ValueError(
-                'Invalid Radiance options string input. Failed to find - in input string.'
+                'Invalid Radiance options string input. '
+                'Failed to find - in input string.'
             )
 
         _rad_opt_pattern = r'-[a-zA-Z]+'
