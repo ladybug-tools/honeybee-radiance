@@ -18,6 +18,7 @@ from honeybee_radiance_folder import ModelFolder
 from honeybee.aperture import Aperture
 from honeybee_radiance.geometry.polygon import Polygon
 
+from .threephase import three_phase
 
 _logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ _logger = logging.getLogger(__name__)
 def multi_phase():
     pass
 
+multi_phase.add_command(three_phase)
 
 @multi_phase.command("view-matrix")
 @click.argument(
