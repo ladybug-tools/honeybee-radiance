@@ -10,17 +10,15 @@ from honeybee_radiance_command.rmtxop import Rmtxop, RmtxopOptions
 from honeybee_radiance.config import folders
 from honeybee_radiance_command._command_util import run_command
 
-
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to do matrix multiplication for three-phase and '
-                  'other methods.')
-def mpmtxop():
+@click.group(help='Commands to do matrix operations for three-phase.')
+def three_phase():
     pass
 
 
-@mpmtxop.command('three-phase-mult')
+@three_phase.command('multiplication')
 @click.argument(
     'sky-vector', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @click.argument(
@@ -48,7 +46,9 @@ def three_phase_calc(sky_vector, view_matrix, t_matrix, daylight_matrix, output_
 
     try:
         base_options = DctimestepOptions()
-        base_options.update_from_string(options) if options.strip() else None
+        options = options.strip() if options else None
+        if options:
+            base_options.update_from_string(options)
 
         cmd = Dctimestep.three_phase_calc(sky_vector=sky_vector, view_matrix=view_matrix,
                                           t_matrix=t_matrix,
@@ -68,7 +68,7 @@ def three_phase_calc(sky_vector, view_matrix, t_matrix, daylight_matrix, output_
         sys.exit(0)
 
 
-@mpmtxop.command('three-phase-rmtxop')
+@three_phase.command('rmtxop')
 @click.argument(
     'view-matrix', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @click.argument(
@@ -122,7 +122,7 @@ def three_phase_rmtxop(
         sys.exit(0)
 
 
-@mpmtxop.command('three-phase-combinations')
+@three_phase.command('combinations')
 @click.argument(
     'sender-info', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @click.argument(
