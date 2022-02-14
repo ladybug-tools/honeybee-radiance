@@ -696,8 +696,8 @@ class View(object):
 
         PI = math.pi
         # find the horizontal and vertical size
-        if view.type == 'l' or view.type == 'a':
-            # parallel view (vtl) or angular fisheye (vta)
+        if view.type == 'l' or view.type == 'a' or view.type == 's':
+            # parallel view (vtl), angular fisheye (vta), planisphere projection (vts)
             h_size = _vh * x_div_count
             v_size = _vv * y_div_count
 
@@ -802,8 +802,8 @@ class View(object):
 
         _views = list(range(x_div_count * y_div_count))
 
-        if self.type == 'l' or self.type == 'a':
-            # parallel view (vtl) or angular fisheye (vta)
+        if self.type == 'l' or self.type == 'a' or self.type == 's':
+            # parallel view (vtl), angular fisheye (vta), planisphere projection (vts)
             _vh = self.h_size / x_div_count
             _vv = self.v_size / y_div_count
 
