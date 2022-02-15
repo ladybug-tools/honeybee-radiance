@@ -89,3 +89,64 @@ def post_process_solar_tracking(
         with open(dest_file, 'w') as ill_file:
             for row in zip(*grid_ill):
                 ill_file.write('  '.join(row) + '\n')
+
+
+def _annual_irradiance_config():
+    """Return vtk-config for annual irradiance. """
+    cfg = {
+        "data": [
+            {
+                "identifier": "Cumulative Radiation",
+                "object_type": "grid",
+                "unit": "W/m2",
+                "path": 'cumulative_radiation',
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "color_set": "original",
+                    "label_parameters": {
+                        "min": 0,
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True
+                    }
+                }
+            },
+                    {
+                "identifier": "Peak Irradiance",
+                "object_type": "grid",
+                "unit": "W/m2",
+                "path": 'peak_irradiance',
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "color_set": "original",
+                    "label_parameters": {
+                        "min": 0,
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True
+                    }
+                }
+            },
+            {
+                "identifier": "Average irradiance",
+                "object_type": "grid",
+                "unit": "W/m2",
+                "path": 'average_irradiance',
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "color_set": "original",
+                    "label_parameters": {
+                        "min": 0,
+                        "color": [34, 247, 10],
+                        "size": 0,
+                        "bold": True
+                    }
+                }
+            }
+        ]
+    }
+
+    return cfg

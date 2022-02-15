@@ -10,7 +10,8 @@ from ladybug.wea import Wea
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
-from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking
+from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking, \
+    _annual_irradiance_config
 from honeybee_radiance.cli.util import get_compare_func, remove_header
 
 _logger = logging.getLogger(__name__)
@@ -355,6 +356,16 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
                         cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
                     except ValueError:
                         pass  # last line of the file
+
+        # create info for available results. This file will be used by honeybee-vtk for
+        # results visualization
+        config_file = os.path.join(metrics_folder, 'config.json')
+
+        cfg = _annual_irradiance_config()
+
+        with open(config_file, 'w') as outf:
+            json.dump(cfg, outf)
+
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')
         sys.exit(1)
