@@ -139,7 +139,7 @@ class Primitive(object):
     MATERIALTYPES = \
         set(('plastic', 'glass', 'trans', 'metal', 'mirror', 'illum',
              'mixedfunc', 'dielectric', 'transdata', 'light', 'glow', 'BSDF',
-             'spotlight', 'prism1', 'prism2', 'mist', 'plastic2',
+             'aBSDF', 'spotlight', 'prism1', 'prism2', 'mist', 'plastic2',
              'metal2', 'trans2', 'ashik2', 'dielectric', 'interface',
              'plasfunc', 'metfunc', 'transfunc', 'BRTDfunc',
              'plasdata', 'metdata', 'transdata', 'antimatter'))
@@ -160,7 +160,7 @@ class Primitive(object):
     # Modifiers that are not usually opaque. This will be used to set is_opaque property
     # if it is not overridded by the user by setting the is_opaque property
     NONEOPAQUETYPES = set(('glass', 'trans', 'trans2', 'transdata', 'transfunc',
-                           'dielectric', 'BSDF', 'mixfunc', 'BRTDfunc', 'mist',
+                           'dielectric', 'BSDF', 'aBSDF', 'mixfunc', 'BRTDfunc', 'mist',
                            'prism1', 'prism2'))
 
     def __init__(self, identifier, modifier=None, values=None, is_opaque=None,

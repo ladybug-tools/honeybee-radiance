@@ -5,7 +5,7 @@ import honeybee_radiance.modifier.pattern as pattern
 import honeybee_radiance.modifier.texture as texture
 from honeybee_radiance.primitive import Primitive, Void
 
-_MAPPER = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+_MAPPER = {'bsdf': 'BSDF', 'absdf': 'aBSDF', 'brtdfunc': 'BRTDfunc'}
 
 
 def modifier_class_from_type_string(type_string):
