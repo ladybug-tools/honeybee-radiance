@@ -1,5 +1,6 @@
 """Radiance Materials."""
 
+from .absdf import aBSDF
 from .antimatter import Antimatter
 from .ashik2 import Ashik2
 from .brtdfunc import BRTDfunc

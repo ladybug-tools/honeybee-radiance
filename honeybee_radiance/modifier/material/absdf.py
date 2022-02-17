@@ -1,4 +1,4 @@
-"""Radiance BSDF Material.
+"""Radiance aBSDF Material.
 
 https://floyd.lbl.gov/radiance/refer/ray.html#BSDF
 """
@@ -11,13 +11,13 @@ import honeybee.typing as typing
 import ladybug_geometry.geometry3d.pointvector as pv
 
 
-class BSDF(Material):
-    """Radiance BSDF material.
+class aBSDF(Material):
+    """Radiance aBSDF material.
 
     .. code-block:: shell
 
-        mod BSDF id
-        6+ thick BSDFfile ux uy uz funcfile transform
+        mod aBSDF id
+        5+ BSDFfile ux uy uz funcfile transform
         0
         0|3|6|9
             rfdif gfdif bfdif
@@ -42,8 +42,6 @@ class BSDF(Material):
             should be coordinated with the direction the face are facing.
             The default is set to (0.01, 0.01, 1.00), which should hopefully
             not be perpendicular to any typical face.
-        thickness: Optional number to set the thickness of the BSDF material.
-            (default: 0).
         modifier: Material modifier (Default: None).
         function_file: Optional input for function file (Default: .).
         transform: Optional transform input to to scale the thickness and reorient
@@ -60,7 +58,6 @@ class BSDF(Material):
         * display_name
         * bsdf_file
         * up_orientation
-        * thickness
         * function_file
         * transform
         * angle_basis
@@ -74,15 +71,14 @@ class BSDF(Material):
         * is_modifier
         * is_material
     """
-    __slots__ = ('_bsdf_file', '_up_orientation', '_thickness', '_function_file',
-                 '_transform', '_angle_basis', '_front_diffuse_reflectance',
+    __slots__ = ('_bsdf_file', '_up_orientation', '_function_file', '_transform', 
+                 '_angle_basis', '_front_diffuse_reflectance',
                  '_back_diffuse_reflectance', '_diffuse_transmittance')
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
-    def __init__(self, bsdf_file, identifier=None, up_orientation=None, thickness=0,
-                 modifier=None, function_file='.', transform=None, angle_basis=None,
-                 dependencies=None):
-        """Create BSDF material."""
+    def __init__(self, bsdf_file, identifier=None, up_orientation=None, modifier=None, 
+                 function_file='.', transform=None, angle_basis=None, dependencies=None):
+        """Create aBSDF material."""
         identifier = identifier or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
 
         Material.__init__(self, identifier, modifier=modifier,
@@ -91,7 +87,6 @@ class BSDF(Material):
         self.bsdf_file = bsdf_file
         self.angle_basis = angle_basis
         self.up_orientation = up_orientation
-        self.thickness = thickness or 0
         self.function_file = function_file
         self.transform = transform
         self._front_diffuse_reflectance = None
@@ -104,7 +99,6 @@ class BSDF(Material):
         n_path = os.path.normpath(self.bsdf_file).replace('\\', '/')
         f_path = n_path if os.path.isabs(n_path) else './{}'.format(n_path)
         self._values[0] = [
-            float(self.thickness),
             f_path,
             self.up_orientation.x,
             self.up_orientation.y,
@@ -166,30 +160,6 @@ class BSDF(Material):
             up_vector = pv.Vector3D(0.01, 0.01, 1.00)
 
         self._up_orientation = up_vector
-
-    @property
-    def thickness(self):
-        """Get or set a number for the thickness of the BSDF material (default: 0).
-
-        If a view or shadow ray hits a BSDF proxy with non-zero thickness, it will pass
-        directly through as if the surface were not there. Similar to the illum type,
-        this permits direct viewing and shadow testing of complex geometry. The BSDF is
-        used when a scattered (indirect) ray hits the surface, and any transmitted sample
-        rays will be offset by the thickness amount to avoid the hidden geometry and
-        gather samples from the other side. In this manner, BSDF surfaces can improve the
-        results for indirect scattering from complex systems without sacrificing
-        appearance or shadow accuracy. If the BSDF has transmission and back-side
-        reflection data, a parallel BSDF surface may be placed slightly less than the
-        given thickness away from the front surface to enclose the complex geometry on
-        both sides. The sign of the thickness is important, as it indicates whether the
-        proxied geometry is behind the BSDF surface (when thickness is positive) or in
-        front (when thickness is negative)
-        """
-        return self._thickness
-
-    @thickness.setter
-    def thickness(self, value):
-        self._thickness = float(value)
 
     @property
     def function_file(self):
@@ -292,7 +262,7 @@ class BSDF(Material):
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
-        """Initialize a BSDF from a primitive dict.
+        """Initialize a aBSDF from a primitive dict.
 
         Args:
             data: A dictionary in the format below.
@@ -301,7 +271,7 @@ class BSDF(Material):
 
             {
             "modifier": {},  # primitive modifier (Default: None)
-            "type": "BSDF",  # primitive type
+            "type": "aBSDF",  # primitive type
             "identifier": "",  # primitive identifier
             "display_name": "",  # primitive display name
             "values": []  # values,
@@ -315,13 +285,12 @@ class BSDF(Material):
         extra_values = primitive_dict['values'][2]
 
         cls_ = cls(
-            thickness=values[0],
-            bsdf_file=values[1],
+            bsdf_file=values[0],
             identifier=primitive_dict['identifier'],
-            up_orientation=values[2:5],
+            up_orientation=values[1:4],
             modifier=modifier,
-            function_file=values[5],
-            transform=values[6] if len(values) == 7 else None,
+            function_file=values[4],
+            transform=values[5] if len(values) == 6 else None,
             angle_basis=None,
             dependencies=dependencies
         )
@@ -353,7 +322,7 @@ class BSDF(Material):
 
     @classmethod
     def from_dict(cls, data, folder=None):
-        """Initialize a BSDF from a dictionary.
+        """Initialize a aBSDF from a dictionary.
 
         Args:
             data: A dictionary in the format below.
@@ -363,11 +332,10 @@ class BSDF(Material):
 
             {
             "modifier": {},  # material modifier (Default: None)
-            "type": "BSDF",  # Material type
+            "type": "aBSDF",  # Material type
             "identifier": "",  # Material identifer
             "display_name": ""  # Material display name
             "up_orientation": [number, number, number],
-            "thickness": float,  # default: 0
             "function_file": string,  # default: '.'
             "transform": string,  # default: None
             "bsdf_data": string,  # bsdf file data as string
@@ -393,7 +361,6 @@ class BSDF(Material):
             bsdf_file=fp,
             identifier=data['identifier'],
             up_orientation=data['up_orientation'],
-            thickness=data['thickness'],
             modifier=modifier,
             dependencies=dependencies
         )
@@ -410,31 +377,30 @@ class BSDF(Material):
         return cls_
 
     def to_dict(self):
-        """Convert BSDF material to a dictionary."""
+        """Convert aBSDF material to a dictionary."""
         bsdf_data = self.compress_file(self.bsdf_file)
 
-        bsdf_dict = {
+        absdf_dict = {
             'modifier': self.modifier.to_dict(),
-            'type': 'BSDF',
+            'type': 'aBSDF',
             'identifier': self.identifier,
             'up_orientation': self.up_orientation.to_array(),
-            'thickness': self.thickness,
             'function_file': self.function_file,
             'transform': self.transform,
             'bsdf_data': bsdf_data,
             'dependencies': [dep.to_dict() for dep in self.dependencies]
         }
         if self._display_name is not None:
-            bsdf_dict['display_name'] = self.display_name
+            absdf_dict['display_name'] = self.display_name
 
         if self.front_diffuse_reflectance:
-            bsdf_dict['front_diffuse_reflectance'] = self.front_diffuse_reflectance
+            absdf_dict['front_diffuse_reflectance'] = self.front_diffuse_reflectance
             if self.back_diffuse_reflectance:
-                bsdf_dict['back_diffuse_reflectance'] = self.back_diffuse_reflectance
+                absdf_dict['back_diffuse_reflectance'] = self.back_diffuse_reflectance
                 if self.diffuse_transmittance:
-                    bsdf_dict['diffuse_transmittance'] = self.diffuse_transmittance
+                    absdf_dict['diffuse_transmittance'] = self.diffuse_transmittance
 
-        return bsdf_dict
+        return absdf_dict
 
     @staticmethod
     def find_angle_basis(bsdf_file, max_ln_count=2000):
@@ -490,11 +456,11 @@ class BSDF(Material):
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
-        new_bsdf = self.__class__(
-            self.bsdf_file, self.identifier, self.up_orientation, self.thickness, mod,
+        new_absdf = self.__class__(
+            self.bsdf_file, self.identifier, self.up_orientation, mod,
             self.function_file, self.transform, self.angle_basis, depend)
-        new_bsdf._front_diffuse_reflectance = self._front_diffuse_reflectance
-        new_bsdf._back_diffuse_reflectance = self._back_diffuse_reflectance
-        new_bsdf._diffuse_transmittance = self._diffuse_transmittance
-        new_bsdf._display_name = self._display_name
-        return new_bsdf
+        new_absdf._front_diffuse_reflectance = self._front_diffuse_reflectance
+        new_absdf._back_diffuse_reflectance = self._back_diffuse_reflectance
+        new_absdf._diffuse_transmittance = self._diffuse_transmittance
+        new_absdf._display_name = self._display_name
+        return new_absdf
