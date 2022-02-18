@@ -260,7 +260,7 @@ class Primitive(object):
 
     @type.setter
     def type(self, type_str):
-        _mapper = {'bsdf': 'BSDF', 'brtdfunc': 'BRTDfunc'}
+        _mapper = {'bsdf': 'BSDF', 'absdf': 'aBSDF', 'brtdfunc': 'BRTDfunc'}
 
         if type_str != 'primitive':
             if type_str not in self.TYPES:
