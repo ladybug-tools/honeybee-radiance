@@ -5,11 +5,13 @@ https://floyd.lbl.gov/radiance/refer/ray.html#BSDF
 from __future__ import division
 
 import os
-from .bsdf import BSDF
+from .materialbase import Material
+import honeybee.typing as typing
 from honeybee.config import folders
+import ladybug_geometry.geometry3d.pointvector as pv
 
 
-class aBSDF(BSDF):
+class aBSDF(Material):
     """Radiance aBSDF material.
 
     .. code-block:: shell
@@ -70,17 +72,29 @@ class aBSDF(BSDF):
         * is_material
     """
 
-    __slots__ = ()
+    __slots__ = ('_bsdf_file', '_up_orientation', '_function_file',
+                 '_transform', '_angle_basis', '_front_diffuse_reflectance',
+                 '_back_diffuse_reflectance', '_diffuse_transmittance')
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
     def __init__(self, bsdf_file, identifier=None, up_orientation=None, modifier=None, 
                  function_file='.', transform=None, angle_basis=None, dependencies=None):
         """Create aBSDF material."""
-        # thickness is ignored in aBSDF class
-        thickness = None
-        BSDF.__init__(self, bsdf_file, identifier, up_orientation, thickness,
-                 modifier, function_file, transform, angle_basis,
-                 dependencies)
+        identifier = identifier or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
+
+        Material.__init__(self, identifier, modifier=modifier,
+                          dependencies=dependencies)
+        
+        self.bsdf_file = bsdf_file
+        self.angle_basis = angle_basis
+        self.up_orientation = up_orientation
+        self.function_file = function_file
+        self.transform = transform
+        self._front_diffuse_reflectance = None
+        self._back_diffuse_reflectance = None
+        self._diffuse_transmittance = None
+        
+        self._update_values()
 
     def _update_values(self):
         "update value dictionaries."
@@ -106,6 +120,147 @@ class aBSDF(BSDF):
             if self.diffuse_transmittance is not None:
                 for v in self.diffuse_transmittance:
                     self._values[2].append(v)
+
+    @property
+    def bsdf_file(self):
+        """Path to BSDF file."""
+        return self._bsdf_file
+
+    @bsdf_file.setter
+    def bsdf_file(self, bsdf_file):
+        assert os.path.isfile(
+            bsdf_file), 'No such file at: {}'.format(bsdf_file)
+        assert bsdf_file.lower().endswith('.xml'), \
+            'BSDF file must be an xml file: {}'.format(bsdf_file)
+        self._bsdf_file = os.path.normpath(bsdf_file).replace('\\', '/')
+        if not hasattr(self, '_angle_basis'):
+            # first time that file is assigned
+            pass
+        else:
+            self.find_angle_basis(bsdf_file)
+
+    @property
+    def up_orientation(self):
+        """Get or set the up normal vector.
+
+        (x, y ,z) vector that sets the hemisphere that the
+        BSDF material faces.  For materials that are symmetrical about
+        the face plane (like non-angled venetian blinds), this can be
+        any vector that is not perfectly normal to the face. For
+        asymmetrical materials like angled venetian blinds, this variable
+        should be coordinated with the direction the face are facing.
+        The default is set to (0.01, 0.01, 1.00), which should hopefully
+        not be perpendicular to any typical face.
+        """
+        return self._up_orientation
+
+    @up_orientation.setter
+    def up_orientation(self, vector):
+        if vector:
+            up_vector = pv.Vector3D(*[float(v) for v in vector])
+        else:
+            up_vector = pv.Vector3D(0.01, 0.01, 1.00)
+
+        self._up_orientation = up_vector
+
+    @property
+    def function_file(self):
+        """Get or set the path to function file."""
+        return self._function_file
+
+    @function_file.setter
+    def function_file(self, value):
+        self._function_file = value or '.'
+
+    @property
+    def transform(self):
+        """Get or set the transform.
+
+        This is optional and is used to scale the thickness and reorient the
+        up vector. (Default: None).
+        """
+        return self._transform
+
+    @transform.setter
+    def transform(self, value):
+        self._transform = value
+
+    @property
+    def angle_basis(self):
+        """Get or set a string for the BSDF file angle basis.
+
+        Valid values are Klems Full, Klems Half, Klems Quarter and TensorTree
+        """
+        return self._angle_basis
+
+    @angle_basis.setter
+    def angle_basis(self, value):
+        if value:
+            assert value in (
+                'Klems Full', 'Klems Half',
+                'Klems Quarter', 'TensorTree'), '{} is not a valid angle basis.'
+            self._angle_basis = value
+        else:
+            self._angle_basis = self.find_angle_basis(self.bsdf_file)
+
+    @property
+    def sampling_type(self):
+        """Return rfluxmtx parameters sampling type based on the angle basis.
+
+        Values are:
+
+            * kf for klems full.
+            * kh for klems half.
+            * kq for klems quarter.
+
+        For other angle basis a None value will be returned.
+        """
+        _mapper = {
+            'Klems Full': 'kf', 'Klems Half': 'kh', 'Klems Quarter': 'kq'
+        }
+
+        try:
+            sampling = _mapper[self.angle_basis]
+        except KeyError:
+            sampling = None
+
+        return sampling
+
+    @property
+    def front_diffuse_reflectance(self):
+        """Get or set the additional front diffuse reflectance."""
+        return self._front_diffuse_reflectance
+
+    @front_diffuse_reflectance.setter
+    def front_diffuse_reflectance(self, value):
+        if value is not None:
+            value = typing.tuple_with_length(value, 3)
+
+        self._front_diffuse_reflectance = value
+
+    @property
+    def back_diffuse_reflectance(self):
+        """Get or set the additional back diffuse reflectance."""
+        return self._back_diffuse_reflectance
+
+    @back_diffuse_reflectance.setter
+    def back_diffuse_reflectance(self, value):
+        if value is not None:
+            value = typing.tuple_with_length(value, 3)
+
+        self._back_diffuse_reflectance = value
+
+    @property
+    def diffuse_transmittance(self):
+        """Get or set the additional diffuse transmittance."""
+        return self._diffuse_transmittance
+
+    @diffuse_transmittance.setter
+    def diffuse_transmittance(self, value):
+        if value is not None:
+            value = typing.tuple_with_length(value, 3)
+
+        self._diffuse_transmittance = value
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
@@ -248,6 +403,58 @@ class aBSDF(BSDF):
                     absdf_dict['diffuse_transmittance'] = self.diffuse_transmittance
 
         return absdf_dict
+
+    @staticmethod
+    def find_angle_basis(bsdf_file, max_ln_count=2000):
+        """Find angle basis in an xml file."""
+        # find data structure first
+        with open(bsdf_file, 'r') as inf:
+            for count, line in enumerate(inf):
+                if line.strip().startswith('<IncidentDataStructure>'):
+                    # get data structure
+                    data_structure = line.replace('<IncidentDataStructure>', '') \
+                        .replace('</IncidentDataStructure>', '').strip()
+                    break
+                assert count < max_ln_count, \
+                    'Failed to find IncidentDataStructure in first %d lines. ' \
+                    'You can check the file by opening the file in a text editor ' \
+                    'and search for <IncidentDataStructure>' % max_ln_count
+
+        # now find the angle basis
+        if data_structure.startswith('TensorTree'):
+            return 'TensorTree'
+        elif data_structure.lower() == 'columns':
+            # look for AngleBasisName
+            with open(bsdf_file, 'r') as inf:
+                for i in range(count):
+                    next(inf)
+                for count, line in enumerate(inf):
+                    if line.strip().startswith('<AngleBasisName>'):
+                        angle_basis = line.replace('<AngleBasisName>', '') \
+                            .replace('</AngleBasisName>', '').replace('LBNL/', '') \
+                            .strip()
+                        return angle_basis
+                    assert count < max_ln_count, \
+                        'Failed to find AngleBasisName in first %d lines. ' \
+                        'You can check the file by opening the file in a text editor ' \
+                        'and search for <AngleBasisName>' % max_ln_count
+        else:
+            raise ValueError(
+                'Unknown IncidentDataStructure: {}'.format(data_structure))
+
+    @staticmethod
+    def compress_file(filepath):
+        """Compress bsdf data in an XML file to a string."""
+        # TODO: Research better ways to compress the file
+        with open(filepath, 'r') as input_file:
+            content = input_file.read()
+        return content
+
+    @staticmethod
+    def decompress_to_file(value, filepath):
+        """Write bsdf data string to a file."""
+        with open(filepath, 'w') as output_file:
+            output_file.write(value)
 
     def __copy__(self):
         mod, depend = self._dup_mod_and_depend()
