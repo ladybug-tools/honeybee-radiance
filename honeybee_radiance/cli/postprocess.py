@@ -9,6 +9,7 @@ import logging
 from ladybug.wea import Wea
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance.postprocess.electriclight import daylight_control_schedules
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking, \
     _annual_irradiance_config
@@ -440,6 +441,96 @@ def annual_metrics(
         )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('electric-lighting')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--base-schedule', '-s', help='Path to a CSV file for the lighting schedule '
+    'without any daylight controls. The values of this schedule will be multiplied '
+    'by the hourly dimming fraction to yield the output lighting schedules. If '
+    'unspecified, a schedule from 9AM to 5PM on weekdays will be used.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--ill-setpoint', '-i', help='A number for the illuminance setpoint in lux beyond '
+    'which electric lights are dimmed if there is sufficient daylight.',
+    default=300, type=int, show_default=True
+)
+@click.option(
+    '--min-power-in', '-p',
+    help='A number between 0 and 1 for the the lowest power the lighting system can '
+    'dim down to, expressed as a fraction of maximum input power.', default=0.3,
+    type=float, show_default=True
+)
+@click.option(
+    '--min-light-out', '-l',
+    help='A number between 0 and 1 the lowest lighting output the lighting system can '
+    'dim down to, expressed as a fraction of maximum light output. Note that setting '
+    'this to 1 means lights are not dimmed at all until the illuminance setpoint is '
+    'reached. This can be used to approximate manual light-switching behavior when '
+    'used in conjunction with the off_at_min_ output below.', default=0.2,
+    type=float, show_default=True
+)
+@click.option(
+    '--on-at-min/--off-at-min', ' /-oam', help='Flag to note whether lights should '
+    'switch off completely when they get to the minimum power input.',
+    default=True, show_default=True
+)
+@click.option(
+    '--output-file', '-f', help='Optional JSON file to output a summary of the number '
+    'of LEED credits and the percentage of sensor area that meets the criteria. '
+    'By default this will be printed out to stdout',
+    type=click.File('w'), default='-', show_default=True
+)
+def electric_lighting(
+    folder, base_schedule, ill_setpoint, min_power_in, min_light_out, on_at_min,
+    output_file
+):
+    """Generate electric lighting schedules from annual daylight results.
+
+    Such controls will dim the lights according to whether the illuminance values
+    at the sensor locations are at a target illuminance setpoint. The results can be
+    used to account for daylight controls in energy simulations.
+
+    This function will generate one schedule per sensor grid in the simulation. Each
+    grid should have sensors at the locations in space where daylight dimming sensors
+    are located. Grids with one, two, or more sensors can be used to model setups
+    where fractions of each room are controlled by different sensors. If the sensor
+    grids are distributed over the entire floor of the rooms, the resulting schedules
+    will be idealized, where light dimming has been optimized to supply the minimum
+    illuminance setpoint everywhere in the room.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of the annual
+            daylight recipe. Folder should include grids_info.json and
+            sun-up-hours.txt. The command uses the list in grids_info.json to
+            find the result files for each sensor grid.
+    """
+    try:
+        # optional input - only check if the file exist otherwise ignore
+        if base_schedule and os.path.isfile(base_schedule):
+            with open(base_schedule) as hourly_schedule:
+                schedule = [int(float(v)) for v in hourly_schedule]
+        else:
+            schedule = None
+
+        off_at_min = not on_at_min
+        schedules, _ = daylight_control_schedules(
+            folder, schedule, ill_setpoint, min_power_in, min_light_out, off_at_min
+        )
+
+        for line in zip(*schedules):
+            output_file.write(','.join([str(v) for v in line]) + '\n')
+    except Exception:
+        _logger.exception('Failed to calculate electric lighting.')
         sys.exit(1)
     else:
         sys.exit(0)
