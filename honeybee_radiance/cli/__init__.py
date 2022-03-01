@@ -21,6 +21,7 @@ from .viewfactor import view_factor
 from .postprocess import post_process
 from .mtx import mtxop
 from .multiphase import multi_phase
+from .glare import dcglare
 
 
 _logger = logging.getLogger(__name__)
@@ -72,6 +73,7 @@ radiance.add_command(view_factor)
 radiance.add_command(post_process, name='post-process')
 radiance.add_command(mtxop)
 radiance.add_command(multi_phase)
+radiance.add_command(dcglare)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)

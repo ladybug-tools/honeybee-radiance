@@ -1,4 +1,4 @@
-"""Test cli translate module."""
+"""Test cli threephase module."""
 import os
 
 from click.testing import CliRunner
