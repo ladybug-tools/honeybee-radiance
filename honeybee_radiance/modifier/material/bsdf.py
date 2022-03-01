@@ -5,7 +5,7 @@ https://floyd.lbl.gov/radiance/refer/ray.html#BSDF
 from __future__ import division
 
 import os
-from honeybee_radiance.modifier.material.absdf import aBSDF
+from .absdf import aBSDF
 from honeybee.config import folders
 
 
@@ -73,7 +73,7 @@ class BSDF(aBSDF):
         * is_material
     """
 
-    __slots__ = ('_thickness')
+    __slots__ = ('_thickness',)
 
     # TODO(): compress file content: https://stackoverflow.com/a/15529390/4394669
     def __init__(self, bsdf_file, identifier=None, up_orientation=None, thickness=0,
@@ -83,8 +83,6 @@ class BSDF(aBSDF):
         self.thickness = thickness or 0
         aBSDF.__init__(self, bsdf_file, identifier, up_orientation, modifier, 
                  function_file, transform, angle_basis, dependencies)
-
-        self._update_values()
         
     def _update_values(self):
         "update value dictionaries."
