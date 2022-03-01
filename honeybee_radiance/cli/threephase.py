@@ -42,7 +42,8 @@ def three_phase():
 )
 def three_phase_calc(sky_vector, view_matrix, t_matrix, daylight_matrix, output_matrix,
                      options, dry_run):
-    """Matrix multiplication between two """
+    """Matrix multiplication for view matrix, transmission matrix, daylight matrix and
+    sky matrix."""
 
     try:
         base_options = DctimestepOptions()
