@@ -14,6 +14,14 @@ import ladybug_geometry.geometry3d.pointvector as pv
 class aBSDF(Material):
     """Radiance aBSDF material.
 
+    From source code: https://github.com/LBNL-ETA/Radiance/blob/master/src/rt/m_bsdf.c
+    "For the MAT_ABSDF type, we check for a strong "through" component. Such a component 
+    will cause direct rays to pass through unscattered. A separate test prevents 
+    over-counting by dropping samples that are too close to this "through" direction.  
+    BSDFs with such a through direction will also have a view component, meaning they are 
+    somewhat see-through. A MAT_BSDF type with zero thickness behaves the same as a 
+    MAT_ABSDF type with no strong through component."
+
     .. code-block:: shell
 
         mod aBSDF id
