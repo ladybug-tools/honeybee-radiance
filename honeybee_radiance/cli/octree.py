@@ -24,13 +24,19 @@ def octree():
     ' is provided it should be relative to project folder.'
 )
 @click.option(
-    '--default/--black', is_flag=True, default=True, show_default=True,
-    help='Flag to note wheather the octree should be created with black materials.'
+    '--default/--black',  ' /-b', default=True, show_default=True,
+    help='Flag to note whether the octree should be created completely with '
+    'black materials.'
 )
 @click.option(
-    '--include-aperture/--exclude-aperture', is_flag=True, default=True,
+    '--include-aperture/--exclude-aperture',  ' /-xa', default=True,
     show_default=True,
-    help='Flag to note wheather apertures should be included in the octree.'
+    help='Flag to note whether apertures should be included in the octree.'
+)
+@click.option(
+    '--black-groups/--exclude-groups', ' /-xg', default=True, show_default=True,
+    help='Flag to note whether dynamic aperture groups should blacked-out in '
+    'the octree or they should simply be excluded, letting light pass through.'
 )
 @click.option(
     '--add-before', type=click.STRING, multiple=True, default=None, show_default=True,
@@ -45,7 +51,9 @@ def octree():
     help='A flag to show the command without running it.'
 )
 def create_octree_from_folder(
-        folder, output, include_aperture, default, add_before, add_after, dry_run):
+    folder, output, default, include_aperture, black_groups,
+    add_before, add_after, dry_run
+):
     """Generate a static octree from a folder.
 
     folder: Path to a Radiance model folder.
@@ -58,8 +66,14 @@ def create_octree_from_folder(
             try:
                 aperture_files = model_folder.aperture_files()
                 scene_files += aperture_files
-            except FileNotFoundError:
+            except Exception:
                 pass  # no apertures available in the model
+        if black_groups:
+            try:
+                group_files = model_folder.aperture_group_files_black()
+                scene_files += group_files
+            except Exception:
+                pass  # no aperture groups available in the model
         if add_after:
             scene_files += list(add_after)
         if add_before:
