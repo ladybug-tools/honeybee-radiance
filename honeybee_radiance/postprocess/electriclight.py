@@ -21,7 +21,7 @@ def daylight_control_schedules(
     grids are distributed over the entire floor of the rooms, the resulting schedules
     will be idealized, where light dimming has been optimized to supply the minimum
     illuminance setpoint everywhere in the room.
-    
+
     Args:
         results_folder: The path to the folder containing the annual daylight
             result files.
@@ -51,7 +51,7 @@ def daylight_control_schedules(
             with the off_at_min input below. (Default: 0.2).
         off_at_min: Boolean to note whether lights should switch off completely when
             they get to the minimum power input. (Default: False).
-    
+
     Returns:
         A tuple with two values.
 
