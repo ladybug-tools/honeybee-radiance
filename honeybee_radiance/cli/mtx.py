@@ -63,10 +63,9 @@ def two_matrix_operations(
     """Operations between two Radiance matrices.
 
     \b
-    args:
+    Args:
         first-mtx: Path to fist matrix.
         second-mtx: Path to second matrix.
-
     """
     try:
         # first check to be sure there are sun-up hours; if so, write a blank file
@@ -152,11 +151,10 @@ def three_matrix_operations(
     """Operations between two Radiance matrices.
 
     \b
-    args:
+    Args:
         first-mtx: Path to fist matrix.
         second-mtx: Path to second matrix.
         third-mtx: Path to third matrix.
-
     """
     try:
         # first check to be sure there are sun-up hours; if so, write a blank file
