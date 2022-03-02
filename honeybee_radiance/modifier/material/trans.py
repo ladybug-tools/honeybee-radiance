@@ -63,9 +63,11 @@ class Trans(Material):
     __slots__ = ('_r_reflectance', '_g_reflectance', '_b_reflectance',
                  '_specularity', '_roughness', '_transmitted_diff', '_transmitted_spec')
 
-    def __init__(self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
-                 specularity=0.0, roughness=0.0, transmitted_diff=0.0,
-                 transmitted_spec=0.0, modifier=None, dependencies=None):
+    def __init__(
+        self, identifier, r_reflectance=0.0, g_reflectance=0.0, b_reflectance=0.0,
+        specularity=0.0, roughness=0.0, transmitted_diff=0.0,
+        transmitted_spec=0.0, modifier=None, dependencies=None
+    ):
         """Create trans material."""
         Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
@@ -197,9 +199,9 @@ class Trans(Material):
     @property
     def average_transmittance(self):
         """Get the total transmittance over the material."""
-        return (0.265 * self.r_reflectance + 0.670 * self.g_reflectance +
-                0.065 * self.b_reflectance) * (1 - self._specularity) \
-                * self._transmitted_diff
+        return (1 - self._specularity) * self._transmitted_diff * \
+            (0.265 * self.r_reflectance + 0.670 * self.g_reflectance + 0.065 *
+             self.b_reflectance)
 
     @property
     def diffuse_reflectance(self):
@@ -302,7 +304,8 @@ class Trans(Material):
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
-        transmitted_diff=0.0, transmitted_spec=0.0, modifier=None, dependencies=None):
+        transmitted_diff=0.0, transmitted_spec=0.0, modifier=None, dependencies=None
+    ):
         """Create trans material with single reflectance value.
 
         Args:
@@ -336,7 +339,8 @@ class Trans(Material):
     def from_average_properties(
         cls, identifier, average_reflectance=0.0, average_transmittance=0.0,
         is_specular=False, is_diffusing=True, roughness=0.0,
-        modifier=None, dependencies=None):
+        modifier=None, dependencies=None
+    ):
         """Create trans material from average reflectance and transmittance.
 
         The sum of average_reflectance and average_transmittance must be less than
@@ -423,7 +427,8 @@ class Trans(Material):
             transmitted_spec=values[6],
             modifier=modifier,
             dependencies=dependencies)
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict and \
+                primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.

@@ -18,7 +18,7 @@ def octree():
 
 
 @octree.command('from-folder')
-@click.argument('folder', type=click.STRING)
+@click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.option(
     '--output', '-o', show_default=True, help='Path to output file. If a relative path'
     ' is provided it should be relative to project folder.'
@@ -56,7 +56,9 @@ def create_octree_from_folder(
 ):
     """Generate a static octree from a folder.
 
-    folder: Path to a Radiance model folder.
+    \b
+    Args:
+        folder: Path to a Radiance model folder.
     """
     model_folder = ModelFolder.from_model_folder(folder)
     try:
@@ -96,11 +98,10 @@ def create_octree_from_folder(
 
 
 @octree.command('from-folder-multiphase')
-@click.argument('folder', type=click.STRING)
+@click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.option(
     '--sun-path',
-    type=click.Path(exists=True, file_okay=True,
-                    dir_okay=False, resolve_path=True),
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
     default=None, show_default=True,
     help='Path for a sun-path file that will be added to octrees for direct sunlight '
     'studies. If sunpath is provided an extra octree for direct_sun will be created.'
@@ -119,7 +120,9 @@ def create_octree_from_folder_multiphase(folder, sun_path, phase, output_folder)
     for static apertures and aperture groups, creating one octree for each light path,
     i.e., all other light paths are blacked.
 
-    folder: Path to a Radiance model folder.
+    \b
+    Args:
+        folder: Path to a Radiance model folder.
     """
     model_folder = ModelFolder.from_model_folder(folder)
 
@@ -216,3 +219,118 @@ def create_octree_from_folder_multiphase(folder, sun_path, phase, output_folder)
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@octree.command('from-abstracted-groups')
+@click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option(
+    '--sun-path', 'sp',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+    default=None, show_default=True,
+    help='Path for a sun-path file that will be added to octrees for direct sunlight '
+    'studies. If sunpath is provided an extra octree for direct_sun will be created.'
+)
+@click.option("--output-folder", help="Output folder into which the files be written.",
+              default="octree", show_default=True)
+def create_octree_from_abstracted_groups(folder, sun_path, output_folder):
+    """Generate a set of octrees from a folder containing abstracted aperture groups.
+
+    This command assumes that each aperture group in the radiance folder contains
+    only two states. The first is a 100 percent transmittance specular (or beam)
+    representation of the aperture group and the second is a 100 percent transmittance
+    diffuse representation of the aperture group. This abstracted representation is
+    intended to simulate contributions of dynamic groups when an external source
+    is able to provide specular and diffuse transmittances at each timestep.
+    For example, EnergyPlus can provide such values, which together can account
+    for several types of complex dynamic fenestration types.
+
+    Each aperture group will get at least two octrees (one with specular and one
+    with diffuse). If a sun-path is provided, a third octree will be added with
+
+    \b
+    Args:
+        folder: Path to a Radiance model folder.
+    """
+    model_folder = ModelFolder.from_model_folder(folder)
+    try:
+        # first, check to see if there are any aperture groups in the model
+        if not os.path.isdir(output_folder):
+            os.mkdir(output_folder)
+        group_info_file = os.path.join(output_folder, 'group_info.json')
+        group_info, groups_exist = [], True
+        try:
+            grp_folder = model_folder.aperture_group_folder()
+            ap_groups = model_folder.aperture_groups()
+            if len(ap_groups) == 0:
+                groups_exist = False
+        except Exception:
+            groups_exist = False
+
+        if groups_exist:
+            # get the static scene files with blacked-out apertures
+            scene_files = model_folder.scene_files(black_out=False)
+            try:
+                aperture_files = model_folder.aperture_files(black_out=True)
+                scene_files += aperture_files
+            except Exception:
+                pass  # no apertures available in the model
+
+            # get the environment variables
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+
+            # loop through the aperture groups and create the octrees
+            for i, a_grp in enumerate(ap_groups):
+                # create a sub-folder and get black versions of all other aperture groups
+                sub_folder = os.path.join(output_folder, a_grp.identifier)
+                if not os.path.isdir(sub_folder):
+                    os.mkdir(sub_folder)
+                blk_grp = [_model_rel(grp_folder, ag.states[0].black)
+                           for j, ag in enumerate(ap_groups) if j != i]
+                blk_grp = [bg.replace('\\', '/') for bg in blk_grp]
+                grp_scene_files = scene_files + blk_grp
+                # command for the octree for specular transmittance
+                spec_file = os.path.join(sub_folder, 'spec.oct')
+                spec_scene_files = grp_scene_files + \
+                    [_model_rel(grp_folder, a_grp.states[0].default)]
+                cmd_s = Oconv(output=spec_file, inputs=spec_scene_files)
+                # command for the octree for diffuse transmittance
+                diff_file = os.path.join(sub_folder, 'diff.oct')
+                diff_scene_files = grp_scene_files + \
+                    [_model_rel(grp_folder, a_grp.states[1].default)]
+                cmd_d = Oconv(output=diff_file, inputs=diff_scene_files)
+                cmds = [cmd_s, cmd_d]
+                # add info about the generated files
+                grp_info_dict = {
+                    'identifier': a_grp.identifier,
+                    'spec': os.path.basename(spec_file),
+                    'diff': os.path.basename(diff_file)
+                }
+                # command for the octree with suns
+                if sun_path:
+                    spec_sun_file = os.path.join(sub_folder, 'spec_sun.oct')
+                    spec_sun_scene_files = [sun_path] + spec_scene_files
+                    cmd_ss = Oconv(output=spec_sun_file, inputs=spec_sun_scene_files)
+                    cmds.append(cmd_ss)
+                    grp_info_dict['sun'] = os.path.basename(spec_sun_file)
+                # run all of the commands to create the octrees
+                for cmd in cmds:
+                    cmd.options.f = True
+                    cmd.run(env=env, cwd=model_folder.folder)
+                group_info.append(grp_info_dict)
+
+        # write out a JSON with information about the octrees and groups
+        with open(group_info_file, 'w') as fp:
+            json.dump(group_info, fp, indent=2)
+    except Exception:
+        _logger.exception('Failed to generate abstracted group octrees.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+def _model_rel(folder, rel_file):
+    """Get a file path relative to a model folder."""
+    return os.path.join(folder, os.path.normpath(rel_file)).replace('\\', '/')
