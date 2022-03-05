@@ -224,7 +224,7 @@ def create_octree_from_folder_multiphase(folder, sun_path, phase, output_folder)
 @octree.command('from-abstracted-groups')
 @click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.option(
-    '--sun-path', 'sp',
+    '--sun-path', '-sp',
     type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
     default=None, show_default=True,
     help='Path for a sun-path file that will be added to octrees for direct sunlight '
