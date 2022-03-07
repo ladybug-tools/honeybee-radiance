@@ -620,7 +620,9 @@ class ModelRadianceProperties(object):
             If None, the properties will be duplicated with the same host.
         """
         _host = new_host or self._host
-        return ModelRadianceProperties(_host, self._sensor_grids, self._views)
+        new_grids = [sg.duplicate() for sg in self._sensor_grids]
+        new_views = [vw.duplicate() for vw in self._views]
+        return ModelRadianceProperties(_host, new_grids, new_views)
 
     @staticmethod
     def load_properties_from_dict(data):
