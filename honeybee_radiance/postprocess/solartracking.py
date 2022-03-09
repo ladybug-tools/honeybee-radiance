@@ -104,8 +104,9 @@ def _annual_irradiance_config():
                 "legend_parameters": {
                     "hide_legend": False,
                     "color_set": "original",
+                    "min": 800,
+                    "max": 5800,
                     "label_parameters": {
-                        "min": 0,
                         "color": [34, 247, 10],
                         "size": 0,
                         "bold": True
@@ -121,10 +122,11 @@ def _annual_irradiance_config():
                 "legend_parameters": {
                     "hide_legend": False,
                     "color_set": "original",
+                    "min": 100,
+                    "max": 400,
                     "label_parameters": {
-                        "min": 0,
-                        "color": [34, 247, 10],
                         "size": 0,
+                        "color": [34, 247, 10],
                         "bold": True
                     }
                 }
@@ -138,8 +140,9 @@ def _annual_irradiance_config():
                 "legend_parameters": {
                     "hide_legend": False,
                     "color_set": "original",
+                    "min": 100,
+                    "max": 400,
                     "label_parameters": {
-                        "min": 0,
                         "color": [34, 247, 10],
                         "size": 0,
                         "bold": True
