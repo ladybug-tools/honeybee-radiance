@@ -72,6 +72,8 @@ def two_phase_command(
         view-rays: Path to file of view rays.
 
     """
+    occupancy_schedule = None if (occupancy_schedule and not \
+        os.path.isfile(occupancy_schedule)) else occupancy_schedule
     try:
         options = DcglareOptions()
         options.vf = view_rays
