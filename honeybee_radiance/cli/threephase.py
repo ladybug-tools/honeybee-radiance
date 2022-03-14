@@ -7,6 +7,7 @@ import json
 
 from honeybee_radiance_command.dctimestep import Dctimestep, DctimestepOptions
 from honeybee_radiance_command.rmtxop import Rmtxop, RmtxopOptions
+from honeybee_radiance_command.getinfo import Getinfo, GetinfoOptions
 from honeybee_radiance.config import folders
 from honeybee_radiance_command._command_util import run_command
 
@@ -92,12 +93,20 @@ def three_phase_calc(sky_vector, view_matrix, t_matrix, daylight_matrix, output_
     show_choices=True
 )
 @click.option(
+    '--illuminance/--raw', is_flag=True, default=True, show_default=True,
+    help='A flag to convert the result to illuminance.'
+)
+@click.option(
+    '--remove-header/--keep-header', is_flag=True, default=True,
+    help='A flag to keep or remove the header from the output file.'
+)
+@click.option(
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
 def three_phase_rmtxop(
     view_matrix, t_matrix, daylight_matrix, sky_vector, output_matrix, output_format,
-    dry_run
+    illuminance, remove_header, dry_run
 ):
     """Matrix multiplication for view matrix, transmission matrix, daylight matrix and
     sky matrix."""
@@ -105,9 +114,23 @@ def three_phase_rmtxop(
     try:
         options = RmtxopOptions()
         options.f = output_format
-
         matrices = [view_matrix, t_matrix, daylight_matrix, sky_vector]
-        cmd = Rmtxop(options=options, matrices=matrices, output=output_matrix)
+
+        if illuminance:
+            # rmtxop concatenation
+            calc = Rmtxop(matrices=matrices)
+
+            cmd = Rmtxop(options=options)
+            cmd.transforms = [['47.4', '119.9', '11.6']]
+            cmd.matrices = calc
+        else:
+            cmd = Rmtxop(options=options, matrices=matrices)
+
+        if remove_header:
+            getinfo = Getinfo.remove_header(output=output_matrix)
+            cmd.pipe_to = getinfo
+        else:
+            cmd.output = output_matrix
 
         if dry_run:
             click.echo(cmd)
