@@ -162,6 +162,26 @@ def test_model_to_rad_folder_grid_filter():
     nukedir(output_hb_model, True)
 
 
+def test_model_to_rad_folder_grid_filter_full_match():
+    runner = CliRunner()
+    input_hb_model = "./tests/assets/model/complex.hbjson"
+    output_hb_model = "./tests/assets/temp/model"
+
+    result = runner.invoke(
+        model_to_rad_folder,
+        [input_hb_model, "--folder", output_hb_model, "-g", "Room_1", "-g", "Room_6",
+        "--full-match"],
+    )
+    assert result.exit_code == 0
+    assert os.path.isdir(os.path.join(output_hb_model, "model"))
+    assert os.path.isfile(os.path.join(output_hb_model, "model", "grid", "Room_1.pts"))
+    assert os.path.isfile(os.path.join(output_hb_model, "model", "grid", "Room_6.pts"))
+    # model has 23 grids, should only write Room_1 and Room_6 and two json files
+    assert len(os.listdir(os.path.join(output_hb_model, "model", "grid"))) == 4
+
+    nukedir(output_hb_model, True)
+
+
 def test_model_to_rad():
     runner = CliRunner()
     input_hb_model = "./tests/assets/model/model_complete_multiroom_radiance.hbjson"

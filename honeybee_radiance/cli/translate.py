@@ -33,10 +33,15 @@ def translate():
     'example daylight/* will select all the grids that belong to daylight group.')
 @click.option(
     '--view', '-v', multiple=True, help='List of views to be included in folder. By '
-    'default all the views will be exported. You can also use wildcards to fileter '
+    'default all the views will be exported. You can also use wildcards to filter '
     'multiple views. For instance first_floor_* will select all the views that has an '
     'identifier that starts with first_floor. To filter based on group_identifier use '
     '/. For example daylight/* will select all the views that belong to daylight group.')
+@click.option('--full-match/--no-full-match', help='Flag to note whether the grids and '
+            'views should be filtered by their identifiers as full matches. Setting '
+            'this to True indicates that wildcard symbols will not be used in the '
+            'filtering of grids and views.', default=False, show_default=True
+)
 @click.option('--config-file', help='An optional config file path to modify the '
               'default folder names. If None, folder.cfg in honeybee-radiance-folder '
               'will be used.', default=None, show_default=True)
@@ -54,7 +59,7 @@ def translate():
 @click.option('--log-file', help='Optional log file to output the path of the radiance '
               'folder generated from the model. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
-def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal,
+def model_to_rad_folder(model_json, folder, view, grid, full_match, config_file, minimal,
                         no_grid_check, no_view_check, log_file):
     """Translate a Model JSON file into a Radiance Folder.
 
@@ -76,7 +81,8 @@ def model_to_rad_folder(model_json, folder, view, grid, config_file, minimal,
 
         # translate the model to a radiance folder
         rad_fold = model.to.rad_folder(
-            model, folder, config_file, minimal, views=view, grids=grid
+            model, folder, config_file, minimal, views=view, grids=grid, 
+            full_match=full_match
         )
         log_file.write(rad_fold)
     except Exception as e:
