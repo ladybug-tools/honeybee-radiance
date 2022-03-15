@@ -41,7 +41,7 @@ def load_modifier_set_object(mset_dict, load_mods, mod_sets, misc_mods):
 
 def load_modifiersets_from_folder(modifierset_lib_folder, loaded_modifiers):
     """Load all of the ModifierSet objects from a modifierset standards folder.
-    
+
     Args:
         modifierset_lib_folder: Path to a modifiersets sub-folder within a
             honeybee standards folder.
@@ -62,6 +62,7 @@ def load_modifiersets_from_folder(modifierset_lib_folder, loaded_modifiers):
                     load_modifier_set_object(
                         mod_set_dict[mod_set_id], loaded_modifiers, mod_sets, misc_mods)
     return mod_sets, misc_mods
+
 
 loaded_m_sets, misc_m = \
     load_modifiersets_from_folder(folders.modifierset_lib, _loaded_modifiers)

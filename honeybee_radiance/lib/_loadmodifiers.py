@@ -38,7 +38,7 @@ def load_modifier_object(mod_dict, user_modifiers):
 
 def load_modifiers_from_folder(modifier_lib_folder):
     """Load all of the material layer objects from a modifier standards folder.
-    
+
     Args:
         modifier_lib_folder: Path to a modifiers sub-folder within a
             honeybee standards folder.
@@ -66,6 +66,7 @@ def load_modifiers_from_folder(modifier_lib_folder):
                     for mod_identifier in data:
                         load_modifier_object(data[mod_identifier], user_modifiers)
     return user_modifiers
+
 
 user_mods = load_modifiers_from_folder(folders.modifier_lib)
 _loaded_modifiers.update(user_mods)
