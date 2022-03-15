@@ -149,8 +149,7 @@ class Folders(object):
             path = self._find_standards_data_folder()
 
         # gather all of the sub folders underneath the master folder
-        self._modifier_lib, self._modifierset_lib, self._defaults_file = \
-            self._check_standards_folder(path)
+        self._modifier_lib, self._modifierset_lib = self._check_standards_folder(path)
 
         # set the standards_data_folder
         self._standards_data_folder = path
@@ -170,8 +169,18 @@ class Folders(object):
 
     @property
     def defaults_file(self):
-        """Get the path to the JSON file where honeybee's defaults are loaded from."""
+        """Get or set the JSON file where honeybee's defaults are loaded from."""
         return self._defaults_file
+
+    @defaults_file.setter
+    def defaults_file(self, path):
+        if not path:  # check the default location
+            path = self._find_defaults_file()
+        assert os.path.isfile(path), \
+            '{} is not a valid path to an defaults JSON file.'.format(path)
+        self._defaults_file = path
+        if not self.mute:
+            print("Path to defaults file is set to: %s" % self._defaults_file)
 
     @property
     def config_file(self):
@@ -213,7 +222,8 @@ class Folders(object):
         # set the default paths to be all blank
         default_path = {
             "radiance_path": r'',
-            "standards_data_folder": r''
+            "standards_data_folder": r'',
+            "defaults_file": r''
         }
 
         with open(file_path, 'r') as cfg:
@@ -229,8 +239,9 @@ class Folders(object):
         # set path for radiance installations
         self.radiance_path = default_path["radiance_path"]
 
-        # set path for the standards_data_folder
+        # set path for the standards_data_folder and defaults_file
         self.standards_data_folder = default_path["standards_data_folder"]
+        self.defaults_file = default_path["defaults_file"]
 
     def _radiance_version_from_cli(self):
         """Get the Radiance version properties by making a call to a Radiance command."""
@@ -304,11 +315,19 @@ class Folders(object):
     def _find_standards_data_folder():
         """Find the the user template library in its default location.
 
-        The ladybug_tools/resources/standards/honeybee_standards folder will be
-        checked first, which can contain libraries that are not overwritten with
-        the update of the honeybee_radiance package. If no such folder is found,
-        this method defaults to the lib/library/ folder within this package.
+        The %AppData%/ladybug_tools/standards folder will be checked first, which
+        can contain libraries that are not overwritten with the update of the
+        honeybee_radiance package. If this is not found, the ladybug_tools/resources/
+        standards/honeybee_standards folder will be checked next,  If no such folder
+        is found, this method defaults to the lib/library/ folder within this package.
         """
+        # first check if there's a user-defined folder in AppData
+        app_folder = os.getenv('APPDATA')
+        if app_folder is not None:
+            lib_folder = os.path.join(app_folder, 'ladybug_tools', 'standards')
+            if os.path.isdir(lib_folder):
+                return lib_folder
+
         # first check the ladybug_tools installation folder were permanent lib is
         lb_install = lb_config.folders.ladybug_tools_folder
         if os.path.isdir(lb_install):
@@ -324,21 +343,34 @@ class Folders(object):
     def _check_standards_folder(path):
         """Check that a standards data sub-folders exist."""
         if not path:  # first check that a path exists
-            return [None] * 3
+            return [None] * 2
 
         # gather all of the sub folders underneath the master folder
-        _modifier_lib = os.path.join(path, 'modifiers') if path else None
-        _modifierset_lib = os.path.join(path, 'modifiersets') if path else None
-        _radiance_default = os.path.join(path, 'radiance_default.json')
+        _modifier_lib = os.path.join(path, 'modifiers')
+        _modifierset_lib = os.path.join(path, 'modifiersets')
 
         assert os.path.isdir(_modifier_lib), \
             '{} lacks a "modifiers" folder.'.format(path)
         assert os.path.isdir(_modifierset_lib), \
             '{} lacks a "modifiersets" folder.'.format(path)
-        assert os.path.isfile(_radiance_default), \
-            '{} lacks a "radiance_default.json."'.format(path)
 
-        return _modifier_lib, _modifierset_lib, _radiance_default
+        return _modifier_lib, _modifierset_lib
+
+    @staticmethod
+    def _find_defaults_file():
+        """Find the radiance default JSON in its default locations."""
+        # first check the ladybug_tools installation folder were permanent lib is
+        lb_install = lb_config.folders.ladybug_tools_folder
+        if os.path.isdir(lb_install):
+            def_file = os.path.join(
+                lb_install, 'resources', 'standards', 'honeybee_standards',
+                'radiance_default.json')
+            if os.path.isfile(def_file):
+                return def_file
+
+        # default to the library folder that installs with this Python package
+        return os.path.join(
+            os.path.dirname(honeybee_standards.__file__), 'radiance_default.json')
 
 
 """Object possesing all key folders within the configuration."""
