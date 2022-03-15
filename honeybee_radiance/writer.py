@@ -243,7 +243,8 @@ def model_to_rad(model, blk=False, minimal=False):
 
 
 def model_to_rad_folder(
-    model, folder=None, config_file=None, minimal=False, grids=None, views=None
+    model, folder=None, config_file=None, minimal=False, grids=None, views=None,
+    full_match=False
 ):
     r"""Write a honeybee model to a rad folder.
 
@@ -270,6 +271,10 @@ def model_to_rad_folder(
         views: A list of view files that should be exported to folder. Use this argument
             to limit what will be written to the radiance folder. You can use wildcard
             symbols in names. Use relative path from inside views folder.
+        full_match: A boolean to filter grids and views by their identifiers as full 
+            matches. Setting this to True indicates that wildcard symbols will not be
+            used in the filtering of grids and views. In this case the names of grids
+            and views are filtered as is. (Default: False).
     """
     # prepare the folder for simulation
     model_id = model.identifier
@@ -367,15 +372,15 @@ def model_to_rad_folder(
 
     # write the assigned sensor grids and views into the correct folder
     grid_dir = model_folder.grid_folder(full=True)
-    _write_sensor_grids(grid_dir, model, grids)
+    _write_sensor_grids(grid_dir, model, grids, full_match)
     view_dir = model_folder.view_folder(full=True)
-    _write_views(view_dir, model, views)
+    _write_views(view_dir, model, views, full_match)
 
     model_folder.combined_receivers(auto_mtx_path=False)
     return folder
 
 
-def _write_sensor_grids(folder, model, grids_filter):
+def _write_sensor_grids(folder, model, grids_filter, full_match=False):
     """Write out the sensor grid files.
 
     Args:
@@ -385,6 +390,8 @@ def _write_sensor_grids(folder, model, grids_filter):
             model. Use this argument to indicate specific sensor grids that should
             be included. By default all the sensor grids will be exported. You can use
             wildcard symbols in names. Use relative path from inside grids folder.
+        full_match: A boolean to filter grids by their identifiers as full matches. 
+            (Default: False).
 
     Returns:
         A tuple for path to _info.json and _model_grids_info.json. The first file
@@ -399,7 +406,7 @@ def _write_sensor_grids(folder, model, grids_filter):
 
     """
     sensor_grids = model.properties.radiance.sensor_grids
-    filtered_grids = _filter_by_pattern(sensor_grids, grids_filter)
+    filtered_grids = _filter_by_pattern(sensor_grids, grids_filter, full_match=full_match)
     if len(filtered_grids) != 0:
         grids_info = []
         preparedir(folder)
@@ -441,7 +448,7 @@ def _write_sensor_grids(folder, model, grids_filter):
         raise ValueError('All sensor grids were filtered out of the model folder!')
 
 
-def _write_views(folder, model, views_filter):
+def _write_views(folder, model, views_filter, full_match=False):
     """Write out the view files.
 
     Args:
@@ -451,13 +458,15 @@ def _write_views(folder, model, views_filter):
             argument to indicate specific views that should be included. By default,
             all the views will be exported. You can use wildcard symbols in names.
             Use relative path from inside views folder.
+        full_match: A boolean to filter views by their identifiers as full matches. 
+            (Default: False).
 
     Returns:
         The path to _info.json, which includes the information for the views that
         are written to the folder.
     """
     model_views = model.properties.radiance.views
-    filtered_views = _filter_by_pattern(model_views, views_filter)
+    filtered_views = _filter_by_pattern(model_views, views_filter, full_match=full_match)
     if len(filtered_views) != 0:
         preparedir(folder)
         # group_by_identifier
@@ -772,17 +781,22 @@ def _instance_in_array(object_instance, object_array):
     return False
 
 
-def _filter_by_pattern(input_objects, filter):
+def _filter_by_pattern(input_objects, filter, full_match=False):
     """Filter model grids and views based on user input."""
     if not filter or filter == '*':
         return input_objects
 
     if not isinstance(filter, (list, tuple)):
         filter = [filter]
-    patterns = [
-        re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
-        ]
-
+    if not full_match:
+        patterns = [
+            re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
+            ]
+    else:
+        patterns = [
+            re.compile(f) if f.startswith('^') and f.endswith('$') else \
+                re.compile('^%s$' % f) for f in filter
+            ]
     indexes = []
 
     for count, obj in enumerate(input_objects):
