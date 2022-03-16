@@ -4,12 +4,13 @@ import sys
 import os
 import logging
 import json
+import zipfile
 
 from honeybee_radiance.reader import string_to_dicts
 from honeybee_radiance.mutil import dict_to_modifier, modifier_class_from_type_string
 
 from honeybee.model import Model
-from ladybug.futil import preparedir
+from ladybug.futil import preparedir, unzip_file
 
 _logger = logging.getLogger(__name__)
 
@@ -20,11 +21,13 @@ def translate():
 
 
 @translate.command('model-to-rad-folder')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option('--folder', help='Folder into which the model Radiance '
-              'folders will be written. If None, the files will be output in the '
-              'same location as the model_json.', default=None, show_default=True)
+@click.option(
+    '--folder', help='Folder into which the model Radiance '
+    'folders will be written. If None, the files will be output in the '
+    'same location as the model_file.', default=None, show_default=True
+)
 @click.option(
     '--grid', '-g', multiple=True, help='List of grids to be included in folder. By '
     'default all the sensor grids will be exported. You can also use wildcards here. '
@@ -37,54 +40,67 @@ def translate():
     'multiple views. For instance first_floor_* will select all the views that has an '
     'identifier that starts with first_floor. To filter based on group_identifier use '
     '/. For example daylight/* will select all the views that belong to daylight group.')
-@click.option('--full-match/--no-full-match', help='Flag to note whether the grids and '
-            'views should be filtered by their identifiers as full matches. Setting '
-            'this to True indicates that wildcard symbols will not be used in the '
-            'filtering of grids and views.', default=False, show_default=True
-)
-@click.option('--config-file', help='An optional config file path to modify the '
-              'default folder names. If None, folder.cfg in honeybee-radiance-folder '
-              'will be used.', default=None, show_default=True)
-@click.option('--minimal/--maximal', help='Flag to note whether the radiance strings '
-              'should be written in a minimal format (with spaces instead of line '
-              'breaks).', default=False, show_default=True)
-@click.option('--no-grid-check/--grid-check', ' /-gc', help='Flag to note whether the '
-              'model should be checked for the presence of sensor grids. If the check '
-              'is set and the model has no grids, an explicit error will be raised.',
-              default=True, show_default=True)
-@click.option('--no-view-check/--view-check', ' /-vc', help='Flag to note whether the '
-              'model should be checked for the presence of views. If the check '
-              'is set and the model has no views, an explicit error will be raised.',
-              default=True, show_default=True)
-@click.option('--log-file', help='Optional log file to output the path of the radiance '
-              'folder generated from the model. By default this will be printed '
-              'to stdout', type=click.File('w'), default='-')
-def model_to_rad_folder(model_json, folder, view, grid, full_match, config_file, minimal,
+@click.option(
+    '--full-match/--no-full-match', help='Flag to note whether the grids and'
+    'views should be filtered by their identifiers as full matches. Setting '
+    'this to True indicates that wildcard symbols will not be used in the '
+    'filtering of grids and views.', default=False, show_default=True)
+@click.option(
+    '--config-file', '-c', help='An optional config file path to modify the '
+    'default folder names. If None, folder.cfg in honeybee-radiance-folder '
+    'will be used.', default=None, show_default=True)
+@click.option(
+    '--minimal/--maximal', '-min/-max', help='Flag to note whether the radiance strings '
+    'should be written in a minimal format (with spaces instead of line '
+    'breaks).', default=False, show_default=True)
+@click.option(
+    '--no-grid-check/--grid-check', ' /-gc', help='Flag to note whether the '
+    'model should be checked for the presence of sensor grids. If the check '
+    'is set and the model has no grids, an explicit error will be raised.',
+    default=True, show_default=True)
+@click.option(
+    '--no-view-check/--view-check', ' /-vc', help='Flag to note whether the '
+    'model should be checked for the presence of views. If the check '
+    'is set and the model has no views, an explicit error will be raised.',
+    default=True, show_default=True)
+@click.option(
+    '--log-file', help='Optional log file to output the path of the radiance '
+    'folder generated from the model. By default this will be printed '
+    'to stdout', type=click.File('w'), default='-')
+def model_to_rad_folder(model_file, folder, view, grid, full_match, config_file, minimal,
                         no_grid_check, no_view_check, log_file):
-    """Translate a Model JSON file into a Radiance Folder.
+    """Translate a Model file into a Radiance Folder.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_file: Full path to a Model JSON file (HBJSON) or a Model
+            pkl (HBpkl) file. This can also be a zipped version of a Radiance
+            folder, in which case this command will simply unzip the file
+            into the --folder and no other operations will be performed on it.
     """
     try:
         # set the default folder if it's not specified
         if folder is None:
-            folder = os.path.dirname(os.path.abspath(model_json))
+            folder = os.path.dirname(os.path.abspath(model_file))
 
-        # re-serialize the Model and perform any checks
-        model = Model.from_file(model_json)
-        if not no_grid_check and len(model.properties.radiance.sensor_grids) == 0:
-            raise ValueError('Model contains no sensor grids. These are required.')
-        if not no_view_check and len(model.properties.radiance.views) == 0:
-            raise ValueError('Model contains no views These are required.')
+        # first check to see if the model_file is a zipped radiance folder
+        if zipfile.is_zipfile(model_file):
+            unzip_file(model_file, folder)
+            log_file.write(folder)
+        else:
+            # re-serialize the Model and perform any checks
+            model = Model.from_file(model_file)
+            if not no_grid_check and len(model.properties.radiance.sensor_grids) == 0:
+                raise ValueError('Model contains no sensor grids. These are required.')
+            if not no_view_check and len(model.properties.radiance.views) == 0:
+                raise ValueError('Model contains no views These are required.')
 
-        # translate the model to a radiance folder
-        rad_fold = model.to.rad_folder(
-            model, folder, config_file, minimal, views=view, grids=grid, 
-            full_match=full_match
-        )
-        log_file.write(rad_fold)
+            # translate the model to a radiance folder
+            rad_fold = model.to.rad_folder(
+                model, folder, config_file, minimal, views=view, grids=grid,
+                full_match=full_match
+            )
+            log_file.write(rad_fold)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -93,7 +109,7 @@ def model_to_rad_folder(model_json, folder, view, grid, full_match, config_file,
 
 
 @translate.command('model-to-rad')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--blk', help='Boolean to note whether the "blacked out" version '
               'of the geometry should be output, which is useful for direct studies '
@@ -105,8 +121,8 @@ def model_to_rad_folder(model_json, folder, view, grid, full_match, config_file,
 @click.option('--output-file', help='Optional RAD file to output the RAD string of the '
               'translation. By default this will be printed out to stdout',
               type=click.File('w'), default='-', show_default=True)
-def model_to_rad(model_json, blk, minimal, output_file):
-    """Translate a Model JSON file to a Radiance string.
+def model_to_rad(model_file, blk, minimal, output_file):
+    """Translate a Model file to a Radiance string.
 
     The resulting strings will include all geometry (Rooms, Faces, Shades, Apertures,
     Doors) and all modifiers. However, it does not include any states for dynamic
@@ -115,11 +131,11 @@ def model_to_rad(model_json, blk, minimal, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
         # re-serialize the Model and translate the model to a rad string
-        model = Model.from_file(model_json)
+        model = Model.from_file(model_file)
         model_str, modifier_str = model.to.rad(model, blk, minimal)
         rad_str_list = ['# ========  MODEL MODIFIERS ========', modifier_str,
                         '# ========  MODEL GEOMETRY ========', model_str]
@@ -135,17 +151,17 @@ def model_to_rad(model_json, blk, minimal, output_file):
 
 
 @translate.command('model-radiant-enclosure-info')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--folder', help='Folder into which the radiant enclosure info JSONs '
               'will be written. If None, the files will be output in the'
-              'same location as the model_json in an enclosure subfolder.',
+              'same location as the model_file in an enclosure subfolder.',
               default=None, show_default=True)
 @click.option('--log-file', help='Optional log file to output the list of generated '
               'radiant enclosure JSONs. By default this will be printed '
               'to stdout', type=click.File('w'), default='-')
-def model_radiant_enclosure_info(model_json, folder, log_file):
-    """Translate a Model JSON file to a list of JSONs with radiant enclosure information.
+def model_radiant_enclosure_info(model_file, folder, log_file):
+    """Translate a Model file to a list of JSONs with radiant enclosure information.
 
     There will be one radiant enclosure JSON for each Model SensorGrid written to
     the output folder and each JSON will contain a list of values about which room
@@ -154,15 +170,15 @@ def model_radiant_enclosure_info(model_json, folder, log_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
         # re-serialize the Model
-        model = Model.from_file(model_json)
+        model = Model.from_file(model_file)
 
         # set the default folder if it's not specified
         if folder is None:
-            folder = os.path.dirname(os.path.abspath(model_json))
+            folder = os.path.dirname(os.path.abspath(model_file))
             folder = os.path.join(folder, 'enclosure')
         if not os.path.isdir(folder):
             preparedir(folder)  # create the directory if it's not there

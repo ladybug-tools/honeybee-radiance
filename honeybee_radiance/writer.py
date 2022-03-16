@@ -271,7 +271,7 @@ def model_to_rad_folder(
         views: A list of view files that should be exported to folder. Use this argument
             to limit what will be written to the radiance folder. You can use wildcard
             symbols in names. Use relative path from inside views folder.
-        full_match: A boolean to filter grids and views by their identifiers as full 
+        full_match: A boolean to filter grids and views by their identifiers as full
             matches. Setting this to True indicates that wildcard symbols will not be
             used in the filtering of grids and views. In this case the names of grids
             and views are filtered as is. (Default: False).
@@ -390,7 +390,7 @@ def _write_sensor_grids(folder, model, grids_filter, full_match=False):
             model. Use this argument to indicate specific sensor grids that should
             be included. By default all the sensor grids will be exported. You can use
             wildcard symbols in names. Use relative path from inside grids folder.
-        full_match: A boolean to filter grids by their identifiers as full matches. 
+        full_match: A boolean to filter grids by their identifiers as full matches.
             (Default: False).
 
     Returns:
@@ -406,7 +406,8 @@ def _write_sensor_grids(folder, model, grids_filter, full_match=False):
 
     """
     sensor_grids = model.properties.radiance.sensor_grids
-    filtered_grids = _filter_by_pattern(sensor_grids, grids_filter, full_match=full_match)
+    filtered_grids = _filter_by_pattern(
+        sensor_grids, grids_filter, full_match=full_match)
     if len(filtered_grids) != 0:
         grids_info = []
         preparedir(folder)
@@ -458,7 +459,7 @@ def _write_views(folder, model, views_filter, full_match=False):
             argument to indicate specific views that should be included. By default,
             all the views will be exported. You can use wildcard symbols in names.
             Use relative path from inside views folder.
-        full_match: A boolean to filter views by their identifiers as full matches. 
+        full_match: A boolean to filter views by their identifiers as full matches.
             (Default: False).
 
     Returns:
@@ -794,8 +795,8 @@ def _filter_by_pattern(input_objects, filter, full_match=False):
             ]
     else:
         patterns = [
-            re.compile(f) if f.startswith('^') and f.endswith('$') else \
-                re.compile('^%s$' % f) for f in filter
+            re.compile(f) if f.startswith('^') and f.endswith('$') else
+            re.compile('^%s$' % f) for f in filter
             ]
     indexes = []
 
