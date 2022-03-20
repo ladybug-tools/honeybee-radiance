@@ -204,7 +204,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
 @grid.command('split-folder')
 @click.argument(
     'input-folder',
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True))
+    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 @click.argument(
     'output-folder',
     type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
@@ -221,8 +221,15 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
     'small. This input will override the input grid-count when specified. '
     'To ignore this limitation, set the value to 1. Default: 1.', type=int,
     default=1)
+@click.option(
+    '--grid-info-file', help='Optional input JSON file containing information about '
+    'the sensor grids to be split. If unspecified, it will be assumed that this '
+    'JSON already exists in the input-folder with the name _info.json', default=None,
+    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 def split_grid_folder(
-        input_folder, output_folder, grid_count, grid_divisor, min_sensor_count):
+    input_folder, output_folder, grid_count, grid_divisor, min_sensor_count,
+    grid_info_file
+):
     """Create new sensor grids folder with evenly distribute sensors.
 
     This function creates a new folder with evenly distributed sensor grids. The folder
@@ -265,9 +272,14 @@ def split_grid_folder(
             the simulations in parallel.
     """
     try:
-        grid_count = int(grid_count / grid_divisor)
-        grid_count = 1 if grid_count < 1 else grid_count
-        redistribute_sensors(input_folder, output_folder, grid_count, min_sensor_count)
+        if os.path.isdir(input_folder):
+            if grid_info_file is not None and os.path.isfile(grid_info_file):
+                info_file = os.path.join(input_folder, '_info.json')
+                shutil.copyfile(grid_info_file, info_file)
+            grid_count = int(grid_count / grid_divisor)
+            grid_count = 1 if grid_count < 1 else grid_count
+            redistribute_sensors(
+                input_folder, output_folder, grid_count, min_sensor_count)
     except Exception:
         _logger.exception('Failed to distribute sensor grids in folder.')
         sys.exit(1)
