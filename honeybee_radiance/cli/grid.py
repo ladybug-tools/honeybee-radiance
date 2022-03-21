@@ -209,6 +209,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
     'output-folder',
     type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 @click.argument('grid-count', type=int)
+@click.argument('extension', default='.pts', type=str)
 @click.option(
     '--grid-divisor', '-d', help='An optional integer to be divided by the grid-count '
     'to yield a final number of grids to generate. This is useful in workflows where '
@@ -227,8 +228,8 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
     'JSON already exists in the input-folder with the name _info.json', default=None,
     type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
 def split_grid_folder(
-    input_folder, output_folder, grid_count, grid_divisor, min_sensor_count,
-    grid_info_file
+    input_folder, output_folder, grid_count, extension,
+    grid_divisor, min_sensor_count, grid_info_file
 ):
     """Create new sensor grids folder with evenly distribute sensors.
 
@@ -270,6 +271,9 @@ def split_grid_folder(
         grid_count: Number of output sensor grids to be created. This number
             is usually equivalent to the number of processes that will be used to run
             the simulations in parallel.
+        extension: Extension of the files to collect data from. It will be ``pts`` for
+            sensor files. Another common extension is ``csv`` for data aligned with
+            the sensor grids.
     """
     try:
         if os.path.isdir(input_folder):
@@ -279,7 +283,9 @@ def split_grid_folder(
             grid_count = int(grid_count / grid_divisor)
             grid_count = 1 if grid_count < 1 else grid_count
             redistribute_sensors(
-                input_folder, output_folder, grid_count, min_sensor_count)
+                input_folder, output_folder, grid_count, min_sensor_count,
+                extension=extension.replace('.', '')
+            )
     except Exception:
         _logger.exception('Failed to distribute sensor grids in folder.')
         sys.exit(1)
@@ -308,7 +314,7 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
     Args:
         input_folder: Path to input folder.
         output_folder: Path to the new restructured folder
-        extention: Extension of the files to collect data from. It will be ``pts`` for
+        extension: Extension of the files to collect data from. It will be ``pts`` for
             sensor files. Another common extension is ``ill`` for the results of daylight
             studies.
     """
