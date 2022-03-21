@@ -226,7 +226,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
     '--grid-info-file', help='Optional input JSON file containing information about '
     'the sensor grids to be split. If unspecified, it will be assumed that this '
     'JSON already exists in the input-folder with the name _info.json', default=None,
-    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
+    type=click.Path(file_okay=True, dir_okay=False, resolve_path=True))
 def split_grid_folder(
     input_folder, output_folder, grid_count, extension,
     grid_divisor, min_sensor_count, grid_info_file
