@@ -271,7 +271,7 @@ def split_grid_folder(
         grid_count: Number of output sensor grids to be created. This number
             is usually equivalent to the number of processes that will be used to run
             the simulations in parallel.
-        extension: Extension of the files to collect data from. It will be ``pts`` for
+        extension: Extension of the files to split. The default is ``pts`` for
             sensor files. Another common extension is ``csv`` for data aligned with
             the sensor grids.
     """
