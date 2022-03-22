@@ -357,7 +357,7 @@ def _annual_daylight_config():
     cfg = {
         "data": [
             {
-                "identifier": "Useful daylight illuminance lower...nuanced",
+                "identifier": "Useful daylight illuminance lower",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi_lower",
@@ -370,7 +370,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Useful daylight illuminance upper...glare_study",
+                "identifier": "Useful daylight illuminance upper",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi_upper",
@@ -388,7 +388,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Useful daylight illuminance...ecotect",
+                "identifier": "Useful daylight illuminance",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi",
@@ -406,7 +406,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Continuous daylight autonomy...nuanced",
+                "identifier": "Continuous daylight autonomy",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "cda",
@@ -424,7 +424,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Daylight autonomy...original",
+                "identifier": "Daylight autonomy",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "da",
