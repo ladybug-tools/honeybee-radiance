@@ -7,7 +7,7 @@ import logging
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rcontrib import Rcontrib, RcontribOptions
 from honeybee_radiance_command._command_util import run_command
-from honeybee_radiance_command.options.rfluxmtx import RfluxmtxOptions
+from honeybee_radiance_command.rfluxmtx import Rfluxmtx, RfluxmtxOptions
 from honeybee_radiance.reader import sensor_count_from_file
 
 
@@ -242,10 +242,10 @@ def rfluxmtx_command_with_postprocess(
 
         options = RfluxmtxOptions()
         # parse input radiance parameters
-        if rad_params.strip():
+        if rad_params:
             options.update_from_string(rad_params.strip())
         # overwrite input values with protected ones
-        if rad_params_locked.strip():
+        if rad_params_locked:
             options.update_from_string(rad_params_locked.strip())
 
         if not sensor_count:
@@ -282,6 +282,98 @@ def rfluxmtx_command_with_postprocess(
             click.echo(cmd)
         else:
             run_command(cmd, env=folders.env)
+    except Exception:
+        _logger.exception('Failed to run rfluxmtx command.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@dc.command('coeff')
+@click.argument(
+    'octree', type=click.Path(exists=True, file_okay=True)
+)
+@click.argument(
+    'sensor-grid', type=click.Path(exists=True, file_okay=True)
+)
+@click.argument(
+    'sky-dome', type=click.Path(exists=True, file_okay=True)
+)
+@click.option(
+    '--sensor-count', type=click.INT, show_default=True,
+    help='Number of sensors in sensor grid file. Number of sensors will be parsed form'
+    ' the sensor file if not provided.'
+)
+@click.option(
+    '--rad-params', show_default=True, help='Radiance parameters.'
+)
+@click.option(
+    '--rad-params-locked', show_default=True, help='Protected Radiance parameters. '
+    'These values will overwrite user input rad parameters.'
+)
+@click.option(
+    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    ' is provided it should be relative to project folder.'
+)
+@click.option(
+    '--output-format', help='Output type for converted results. Valid inputs are a, f '
+    'and d for ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='f',
+    show_default=True, show_choices=True
+)
+@click.option(
+    '--keep-header/--remove-header', ' /-h-', is_flag=True, default=True,
+    help='A flag to keep or remove the header from the output file.'
+)
+@click.option(
+    '--dry-run', is_flag=True, default=False, show_default=True,
+    help='A flag to show the command without running it.'
+)
+def rfluxmtx_command_without_postprocess(
+    octree, sensor_grid, sky_dome, sensor_count, rad_params, rad_params_locked, output, 
+    output_format, keep_header, dry_run
+):
+    """Run rfluxmtx command without sky matrix.
+
+    This command calculates the coefficient matrix for a sensor grid and sky dome. There
+    is no postprocessing, i.e., no sky matrix.
+
+    \b
+    Args:
+        octree: Path to octree file.
+        sensor-grid: Path to sensor grid file.
+        sky-dome: Path to sky dome for coefficient calculation.
+    """
+    try:
+
+        options = RfluxmtxOptions()
+        options.fio = output_format
+        if not keep_header:
+            options.h = True
+        # parse input radiance parameters
+        if rad_params:
+            options.update_from_string(rad_params.strip())
+        # overwrite input values with protected ones
+        if rad_params_locked:
+            options.update_from_string(rad_params_locked.strip())
+
+        if not sensor_count:
+            sensor_count = sensor_count_from_file(sensor_grid)
+
+        options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
+
+        cmd = Rfluxmtx(options=options, octree=octree, sensors=sensor_grid, 
+                       receivers=sky_dome)
+        if output:
+            cmd.output = output
+
+        if dry_run:
+            click.echo(cmd)
+        else:
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+            cmd.run(env=env)
     except Exception:
         _logger.exception('Failed to run rfluxmtx command.')
         sys.exit(1)
