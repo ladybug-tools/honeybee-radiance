@@ -132,7 +132,7 @@ def create_octree_from_folder_multiphase(folder, sun_path, phase, output_folder)
 
     if phase == '5' and not sun_path:
         raise RuntimeError(
-            'To generated octrees for a 5 Phase study you must provide a sunpath.'
+            'To generate octrees for a 5 Phase study you must provide a sunpath.'
         )
 
     phases = {
@@ -151,47 +151,7 @@ def create_octree_from_folder_multiphase(folder, sun_path, phase, output_folder)
                 continue
             study_type = []
             for state in states:
-                commands = []
-                info = {'identifier': state['identifier']}
-                # default
-                if 'scene_files' in state:
-                    scene_files = state['scene_files']
-                    octree_name = state['identifier']
-                    output = os.path.join(
-                        output_folder, '%s.oct' % octree_name)
-                    cmd = Oconv(output=output, inputs=scene_files)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree'] = '%s.oct' % octree_name
-
-                # direct - don't add them for 5 phase
-                if 'scene_files_direct' in state and study != 'five_phase':
-                    scene_files_direct = state['scene_files_direct']
-                    octree_direct_name = '%s_direct' % state['identifier']
-                    output_direct = os.path.join(
-                        output_folder, '%s.oct' % octree_direct_name)
-                    cmd = Oconv(output=output_direct,
-                                inputs=scene_files_direct)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree_direct'] = '%s.oct' % octree_direct_name
-
-                # direct sun - don't add them for 3-phase
-                if sun_path and study != 'three_phase':
-                    scene_files_direct_sun = [sun_path] + scene_files_direct
-                    octree_direct_sun_name = '%s_direct_sun' % state['identifier']
-                    output_direct = \
-                        os.path.join(output_folder, '%s.oct' %
-                                     octree_direct_sun_name)
-                    cmd = Oconv(output=output_direct,
-                                inputs=scene_files_direct_sun)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
-
+                info, commands = _generate_octrees_info(state, output_folder, study, sun_path)
                 study_type.append(info)
 
                 for cmd in commands:
@@ -334,3 +294,80 @@ def create_octree_from_abstracted_groups(folder, sun_path, output_folder):
 def _model_rel(folder, rel_file):
     """Get a file path relative to a model folder."""
     return os.path.join(folder, os.path.normpath(rel_file)).replace('\\', '/')
+
+
+def _generate_octrees_info(state, output_folder='octree', study='two_phase', 
+        sun_path=None):
+    """Get octree information for default, direct, and direct sun. The functions also
+    generates the Radiance commands (oconv) for creating the octrees.
+    
+    Example of valid argument 'state':
+    {
+        'light_path': '__static_apertures__',
+        'identifier': '__static_apertures__',
+        'scene_files': ['model/scene/envelope.mat', 'model/scene/envelope.rad'],
+        'scene_files_direct': ['model/scene/envelope.mat', 'model/scene/envelope.rad'],
+        'scene_files_direct': ['model/scene/envelope.mat', 'model/scene/envelope.rad'],
+    }
+
+    Args:
+        state: A state as a dictionary with information about which files to include in
+            each octree.
+        output_folder: Folder name to where the octrees will we generated.
+        study: A string of the study. There are either 'two_phase', 'three_phase', or
+            'five_phase'.
+        sun_path: Path for a sun-path file that will be added to octrees for direct
+            sunlight studies. If sunpath is provided an extra octree for direct_sun 
+            will be created.
+    
+    Returns:
+        Two elements:
+            - octree information as dictionary
+            - oconv commands as a list
+    """
+    commands = []
+    info = {
+        'identifier': state['identifier'],
+        'light_path': state['light_path']}
+
+    # default
+    if 'scene_files' in state:
+        scene_files = state['scene_files']
+        octree_name = state['identifier']
+        output = os.path.join(
+            output_folder, '%s.oct' % octree_name)
+        cmd = Oconv(output=output, inputs=scene_files)
+        cmd.options.f = True
+        commands.append(cmd)
+
+        info['octree'] = '%s.oct' % octree_name
+
+    # direct - don't add them for 5 phase
+    if 'scene_files_direct' in state and study != 'five_phase':
+        scene_files_direct = state['scene_files_direct']
+        octree_direct_name = '%s_direct' % state['identifier']
+        output_direct = os.path.join(
+            output_folder, '%s.oct' % octree_direct_name)
+        cmd = Oconv(output=output_direct,
+                    inputs=scene_files_direct)
+        cmd.options.f = True
+        commands.append(cmd)
+
+        info['octree_direct'] = '%s.oct' % octree_direct_name
+
+    # direct sun - don't add them for 3-phase
+    if sun_path and study != 'three_phase':
+        scene_files_direct = state['scene_files_direct']
+        scene_files_direct_sun = [sun_path] + scene_files_direct
+        octree_direct_sun_name = '%s_direct_sun' % state['identifier']
+        output_direct = \
+            os.path.join(output_folder, '%s.oct' %
+                        octree_direct_sun_name)
+        cmd = Oconv(output=output_direct,
+                    inputs=scene_files_direct_sun)
+        cmd.options.f = True
+        commands.append(cmd)
+
+        info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
+    
+    return info, commands

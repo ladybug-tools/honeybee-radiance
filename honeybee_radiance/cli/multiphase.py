@@ -19,6 +19,7 @@ from honeybee_radiance_folder import ModelFolder
 from honeybee_radiance_folder.gridutil import redistribute_sensors
 from honeybee.aperture import Aperture
 from honeybee_radiance.geometry.polygon import Polygon
+from .octree import _generate_octrees_info
 
 from .threephase import three_phase
 
@@ -569,7 +570,7 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
 
     if phase == '5' and not sun_path:
         raise RuntimeError(
-            'To generated octrees for a 5 Phase study you must provide a sunpath.'
+            'To generate octrees for a 5 Phase study you must provide a sunpath.'
         )
 
     phases = {
@@ -590,8 +591,8 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
             if study == 'two_phase':
                 grid_info_dict = {}
                 grid_mapping = model_folder.grid_mapping()
-                if not os.path.isdir('grid'):
-                    os.mkdir('grid')
+                if not os.path.isdir(grid_folder):
+                    os.mkdir(grid_folder)
                 
                 grid_count = int(grid_count / grid_divisor)
                 grid_count = 1 if grid_count < 1 else grid_count
@@ -601,56 +602,12 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
                     output_folder = os.path.join(grid_folder, light_path['identifier'])
                     _grid_count, _sensor_per_grid, out_grid_info = redistribute_sensors(
                         model_folder.grid_folder(), output_folder, grid_count, 
-                        min_sensor_count, grid_info, return_out_grid_info=True)
+                        min_sensor_count, grid_info=grid_info)
                     grid_info_dict[light_path['identifier']] = out_grid_info
 
             study_type = []
             for state in states:
-                commands = []
-                info = {
-                    'identifier': state['identifier'],
-                    'light_path': state['light_path']
-                }
-
-                # default
-                if 'scene_files' in state:
-                    scene_files = state['scene_files']
-                    octree_name = state['identifier']
-                    output = os.path.join(
-                        octree_folder, '%s.oct' % octree_name)
-                    cmd = Oconv(output=output, inputs=scene_files)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree'] = '%s.oct' % octree_name
-
-                # direct - don't add them for 5 phase
-                if 'scene_files_direct' in state and study != 'five_phase':
-                    scene_files_direct = state['scene_files_direct']
-                    octree_direct_name = '%s_direct' % state['identifier']
-                    output_direct = os.path.join(
-                        octree_folder, '%s.oct' % octree_direct_name)
-                    cmd = Oconv(output=output_direct,
-                                inputs=scene_files_direct)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree_direct'] = '%s.oct' % octree_direct_name
-
-                # direct sun - don't add them for 3-phase
-                if sun_path and study != 'three_phase':
-                    scene_files_direct_sun = [sun_path] + scene_files_direct
-                    octree_direct_sun_name = '%s_direct_sun' % state['identifier']
-                    output_direct = \
-                        os.path.join(octree_folder, '%s.oct' %
-                                     octree_direct_sun_name)
-                    cmd = Oconv(output=output_direct,
-                                inputs=scene_files_direct_sun)
-                    cmd.options.f = True
-                    commands.append(cmd)
-
-                    info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
-
+                info, commands = _generate_octrees_info(state, octree_folder, study, sun_path)
                 study_type.append(info)
 
                 for cmd in commands:
