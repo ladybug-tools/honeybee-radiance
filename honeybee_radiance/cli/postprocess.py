@@ -653,3 +653,40 @@ def solar_tracking(folder, sun_up_hours, wea, north, tracking_increment, sub_fol
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('daylight-factor-config')
+@click.option(
+    '--folder', '-f', help='Optional relative path for results folder. This value will '
+    'be set as path inside the config file', default='daylight-factor'
+)
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def daylight_fatcor_config(folder, output_file):
+    """write a vtk-config file for daylight factor. """
+    cfg = {
+        "data": [
+            {
+                "identifier": "Daylight factor",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": folder,
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 2,
+                    "color_set": "original"
+                }
+            }
+        ]
+    }
+    try:
+        output_file.write(json.dumps(cfg, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)

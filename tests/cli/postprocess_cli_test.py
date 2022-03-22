@@ -6,7 +6,8 @@ from click.testing import CliRunner
 
 from ladybug.futil import nukedir
 
-from honeybee_radiance.cli.postprocess import annual_irradiance, leed_illuminance
+from honeybee_radiance.cli.postprocess import annual_irradiance, leed_illuminance, \
+    daylight_fatcor_config
 
 
 def test_annual_irradiance():
@@ -36,3 +37,17 @@ def test_leed_illuminance():
     result_dict = json.loads(result.output)
     assert round(result_dict['percentage_passing']) == 24
     nukedir(result_dir, rmdir=True)
+
+
+def test_df_config():
+    runner = CliRunner()
+    cfg_file = 'tests/assets/temp/config.json'
+    cmd_args = ['-o', cfg_file, '-f', 'results']
+
+    result = runner.invoke(daylight_fatcor_config, cmd_args)
+    assert result.exit_code == 0
+    assert os.path.isfile(cfg_file)
+    with open(cfg_file) as inf:
+        result_dict = json.load(inf)
+    assert result_dict['data'][0]['path'] == 'results'
+    os.unlink(cfg_file)
