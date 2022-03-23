@@ -361,10 +361,8 @@ def rfluxmtx_command_without_postprocess(
 
         options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
 
-        cmd = Rfluxmtx(options=options, octree=octree, sensors=sensor_grid, 
-                       receivers=sky_dome)
-        if output:
-            cmd.output = output
+        cmd = Rfluxmtx(options=options, output=output, octree=octree, 
+                       sensors=sensor_grid, receivers=sky_dome)
 
         if dry_run:
             click.echo(cmd)
