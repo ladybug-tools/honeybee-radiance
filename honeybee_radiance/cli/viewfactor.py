@@ -79,11 +79,15 @@ def create_view_factor_modifiers(
 
         # load the model and ensure the properties align with the energy model
         model = Model.from_file(model_file)
+        original_units = None
         if model.units != 'Meters':
+            original_units = model.units
             model.convert_to_units('Meters')
         for room in model.rooms:
             room.remove_colinear_vertices_envelope(
                 tolerance=0.01, delete_degenerate=True)
+        if original_units is not None:
+            model.convert_to_units(original_units)
 
         # triangulate the sub-faces if requested
         if triangulate:
