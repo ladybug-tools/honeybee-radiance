@@ -316,6 +316,11 @@ def rfluxmtx_command_with_postprocess(
     ' is provided it should be relative to project folder.'
 )
 @click.option(
+    '--input-format', help='Format type for input. Valid inputs are a, f and d for ' \
+    'ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='a',
+    show_default=True, show_choices=True
+)
+@click.option(
     '--output-format', help='Output type for converted results. Valid inputs are a, f '
     'and d for ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='f',
     show_default=True, show_choices=True
@@ -330,7 +335,7 @@ def rfluxmtx_command_with_postprocess(
 )
 def rfluxmtx_command_without_postprocess(
     octree, sensor_grid, sky_dome, sensor_count, rad_params, rad_params_locked, output, 
-    output_format, keep_header, dry_run
+    input_format, output_format, keep_header, dry_run
 ):
     """Run rfluxmtx command without sky matrix.
 
@@ -346,7 +351,7 @@ def rfluxmtx_command_without_postprocess(
     try:
 
         options = RfluxmtxOptions()
-        options.fio = output_format
+        options.fio = input_format + output_format
         if not keep_header:
             options.h = True
         # parse input radiance parameters
