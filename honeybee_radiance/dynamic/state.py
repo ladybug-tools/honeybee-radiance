@@ -71,8 +71,8 @@ class _RadianceState(object):
             try:
                 self._shades = [self._check_shade(sh) for sh in value]
             except (ValueError, TypeError):
-                raise TypeError('RadianceState shades must be an iterable. ' \
-                    'Got  {}.'.format(type(value)))
+                raise TypeError('RadianceState shades must be an iterable. '
+                                'Got  {}.'.format(type(value)))
         else:
             self._shades = []
 
@@ -235,7 +235,8 @@ class _RadianceState(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'State: ({})'.format(self.modifier.display_name)
+        return 'State: ({})'.format(self.modifier.display_name) \
+            if self.modifier is not None else 'State: ()'
 
 
 class RadianceShadeState(_RadianceState):
@@ -410,8 +411,9 @@ class RadianceSubFaceState(_RadianceState):
         If None, it will be a flipped (inward-facing) version of this state's parent.
         Note that this property is only used in 3-phase and 5-phase studies and
         its usual purpose is to account for thickness of the tmtx (BSDF) layer.
-        Also note that the gen_geo_from_vmtx_offset or gen_geos_from_tmtx_thickness methods can be used to
-        automatically generate this geometry without the need to set it here.
+        Also note that the gen_geo_from_vmtx_offset or gen_geos_from_tmtx_thickness
+        methods can be used to automatically generate this geometry without the
+        need to set it here.
         """
         if not self._vmtx_geometry:  # use the inward-version of the parent geometry
             return self.parent.geometry.flip() if self.has_parent else None
@@ -422,7 +424,7 @@ class RadianceSubFaceState(_RadianceState):
         if value is not None:
             assert isinstance(value, Face3D), \
                 'Expected Face3D for RadianceSubFaceState vmtx_geometry. ' \
-                    'Got {}'.format(type(value))
+                'Got {}'.format(type(value))
         self._vmtx_geometry = value
 
     @property
@@ -432,8 +434,9 @@ class RadianceSubFaceState(_RadianceState):
         If None, it will be a flipped (inward-facing) version of this state's parent.
         Note that this property is only used in 3-phase and 5-phase studies and
         its usual purpose is to account for thickness of the tmtx (BSDF) layer.
-        Also note that the gen_geo_from_dmtx_offset or gen_geos_from_tmtx_thickness methods can be used to
-        automatically generate this geometry without the need to set it here.
+        Also note that the gen_geo_from_dmtx_offset or gen_geos_from_tmtx_thickness
+        methods can be used to automatically generate this geometry without the
+        need to set it here.
         """
         if not self._dmtx_geometry:  # use the inward-version of the parent geometry
             return self.parent.geometry.flip() if self.has_parent else None
@@ -444,13 +447,13 @@ class RadianceSubFaceState(_RadianceState):
         if value is not None:
             assert isinstance(value, Face3D), \
                 'Expected Face3D for RadianceSubFaceState dmtx_geometry. ' \
-                    'Got {}'.format(type(value))
+                'Got {}'.format(type(value))
         self._dmtx_geometry = value
 
     @property
     def mtxs_default(self):
         """Get a boolean noting whether the vmtx_geometry and dmtx_geometry are None.
-        
+
         This indicates that the vmtx_geometry and dmtx_geometry are both just a
         flipped version of the parent geometry.
         """
@@ -465,7 +468,8 @@ class RadianceSubFaceState(_RadianceState):
                 of this thickness inward. The dmtx_geometry will be set to the
                 parent geometry moved half of this thickness outward.
         """
-        assert self.has_parent, 'State must have a parent to use gen_geos_from_tmtx_thickness.'
+        assert self.has_parent, \
+            'State must have a parent to use gen_geos_from_tmtx_thickness.'
         dist = thickness / 2
         out_vec = self.parent.normal * dist
         in_vec = out_vec.reverse()
@@ -479,7 +483,8 @@ class RadianceSubFaceState(_RadianceState):
         Args:
             offset: A number for the offset of the vmtx layer from the parent geometry.
         """
-        assert self.has_parent, 'State must have a parent to use gen_geo_from_vmtx_offset.'
+        assert self.has_parent, \
+            'State must have a parent to use gen_geo_from_vmtx_offset.'
         in_vec = self.parent.normal.reverse() * offset
         base_geo = self.parent.geometry.flip()
         self.vmtx_geometry = base_geo.move(in_vec)
@@ -490,7 +495,8 @@ class RadianceSubFaceState(_RadianceState):
         Args:
             offset: A number for the offset of the dmtx layer from the parent geometry.
         """
-        assert self.has_parent, 'State must have a parent to use gen_geo_from_dmtx_offset.'
+        assert self.has_parent, \
+            'State must have a parent to use gen_geo_from_dmtx_offset.'
         out_vec = self.parent.normal * offset
         base_geo = self.parent.geometry.flip()
         self.vmtx_geometry = base_geo.move(out_vec)
@@ -579,9 +585,9 @@ class RadianceSubFaceState(_RadianceState):
         The resulting string lacks modifiers and only includes the vmtx_geometry.
 
         Args:
-            modifier: A modifier object assigned to the vmtx_geometry. Default: white_glow.
+            modifier: A modifier assigned to the vmtx_geometry. (Default: white_glow)
             minimal: Boolean to note whether the radiance string should be written
-                in a minimal format (with spaces instead of line breaks). Default: False.
+                in a minimal format (spaces instead of line breaks). (Default: False)
         """
         assert self.has_parent, 'State must have a parent to use vmtx_to_radiance.'
         vmtx_poly = Polygon(self.parent.identifier,
@@ -601,7 +607,7 @@ class RadianceSubFaceState(_RadianceState):
         dmtx_poly = Polygon(self.parent.identifier,
                             self.dmtx_geometry.vertices, white_glow)
         return dmtx_poly.to_radiance(minimal, False, False)
-    
+
     @classmethod
     def from_dict(cls, data):
         """Create RadianceSubFaceState from a dictionary.
