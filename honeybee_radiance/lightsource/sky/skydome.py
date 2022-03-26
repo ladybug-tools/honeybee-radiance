@@ -15,7 +15,7 @@ class SkyDome(_SkyDome):
         void glow ground_glow
         0
         0
-        4 1 1 1 0
+        4 0.2 0.2 0.2 0
 
         ground_glow source ground
         0
@@ -42,12 +42,16 @@ class SkyDome(_SkyDome):
             which yields a higher resolution sky using the Reinhart patch subdivision
             For example, setting density to 4 yields a sky with 2305 patches plus one
             patch for the ground.
+        ground_emittance: Ground emittance value between 0.0 and 1.0 - Default: 0.2
     """
-    __slots__ = ('_sky_density',)
+    __slots__ = ('_sky_density', '_ground_emittance')
 
-    def __init__(self, sky_density=1):
+    def __init__(self, sky_density=1, ground_emittance=0.2):
         _SkyDome.__init__(self, modifier='void')
         self.sky_density = sky_density
+        self.ground_hemisphere.r_emittance = ground_emittance
+        self.ground_hemisphere.g_emittance = ground_emittance
+        self.ground_hemisphere.b_emittance = ground_emittance
 
     @property
     def sky_density(self):
