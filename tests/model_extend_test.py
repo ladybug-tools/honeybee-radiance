@@ -284,6 +284,51 @@ def test_to_dict_multizone_house():
         mod_set.identifier
 
 
+def test_load_dump_properties_from_dict():
+    """Test the Model load / dump properties_from_dict."""
+    first_floor = Room.from_box('First_Floor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('Second_Floor', 10, 10, 3, origin=Point3D(0, 0, 3))
+    for face in first_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    for face in second_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+
+    pts_1 = [Point3D(0, 0, 6), Point3D(0, 10, 6), Point3D(10, 10, 6), Point3D(10, 0, 6)]
+    pts_2 = [Point3D(0, 0, 6), Point3D(5, 0, 9), Point3D(5, 10, 9), Point3D(0, 10, 6)]
+    pts_3 = [Point3D(10, 0, 6), Point3D(10, 10, 6), Point3D(5, 10, 9), Point3D(5, 0, 9)]
+    pts_4 = [Point3D(0, 0, 6), Point3D(10, 0, 6), Point3D(5, 0, 9)]
+    pts_5 = [Point3D(10, 10, 6), Point3D(0, 10, 6), Point3D(5, 10, 9)]
+    face_1 = Face('AtticFace1', Face3D(pts_1))
+    face_2 = Face('AtticFace2', Face3D(pts_2))
+    face_3 = Face('AtticFace3', Face3D(pts_3))
+    face_4 = Face('AtticFace4', Face3D(pts_4))
+    face_5 = Face('AtticFace5', Face3D(pts_5))
+    attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
+
+    mod_set = ModifierSet('Attic_Construction_Set')
+    mod_set.floor_set.interior_modifier = Plastic('AtticFloor', 0.4)
+    mod_set.roof_ceiling_set.exterior_modifier = Plastic('AtticRoof', 0.6)
+    attic.properties.radiance.modifier_set = mod_set
+
+    Room.solve_adjacency([first_floor, second_floor, attic], 0.01)
+
+    model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor, attic])
+    model_dict = model.to_dict()
+
+    modifiers, modifier_sets = \
+        model.properties.radiance.load_properties_from_dict(model_dict)
+
+    new_prop_dict = model.properties.radiance.dump_properties_to_dict(
+        modifiers.values(), modifier_sets.values())
+
+    for key in new_prop_dict:
+        if isinstance(new_prop_dict[key], list):
+            for item in model_dict['properties']['radiance'][key]:
+                assert item in new_prop_dict[key]
+        else:
+            assert new_prop_dict[key] == model_dict['properties']['radiance'][key]
+
+
 def test_to_dict_sensor_grids_views():
     """Test the Model to_dict method with assigned sensor grids and views."""
     room = Room.from_box('Tiny_House_Zone', 5, 10, 3)
