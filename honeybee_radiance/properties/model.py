@@ -653,27 +653,59 @@ class ModelRadianceProperties(object):
 
         # process all modifiers in the ModelRadianceProperties dictionary
         modifiers = {}
-        for mod in data['properties']['radiance']['modifiers']:
-            try:
-                modifiers[mod['identifier']] = dict_to_modifier(mod)
-            except Exception as e:
-                invalid_dict_error(mod, e)
+        if 'modifiers' in data['properties']['radiance'] and \
+                data['properties']['radiance']['modifiers'] is not None:
+            for mod in data['properties']['radiance']['modifiers']:
+                try:
+                    modifiers[mod['identifier']] = dict_to_modifier(mod)
+                except Exception as e:
+                    invalid_dict_error(mod, e)
 
         # process all modifier sets in the ModelRadianceProperties dictionary
         modifier_sets = {}
         if 'modifier_sets' in data['properties']['radiance'] and \
                 data['properties']['radiance']['modifier_sets'] is not None:
-            for m_set in data['properties']['radiance']['modifier_sets']:
-                try:
-                    if m_set['type'] == 'ModifierSet':
-                        modifier_sets[m_set['identifier']] = ModifierSet.from_dict(m_set)
-                    else:
-                        modifier_sets[m_set['identifier']] = \
-                            ModifierSet.from_dict_abridged(m_set, modifiers)
-                except Exception as e:
-                    invalid_dict_error(m_set, e)
+            if 'modifier_sets' in data['properties']['radiance'] and \
+                    data['properties']['radiance']['modifier_sets'] is not None:
+                for m_set in data['properties']['radiance']['modifier_sets']:
+                    try:
+                        if m_set['type'] == 'ModifierSet':
+                            modifier_sets[m_set['identifier']] = \
+                                ModifierSet.from_dict(m_set)
+                        else:
+                            modifier_sets[m_set['identifier']] = \
+                                ModifierSet.from_dict_abridged(m_set, modifiers)
+                    except Exception as e:
+                        invalid_dict_error(m_set, e)
 
         return modifiers, modifier_sets
+
+    @staticmethod
+    def dump_properties_to_dict(modifiers=None, modifier_sets=None):
+        """Get a ModelRadianceProperties dictionary from arrays of Python objects.
+
+        Args:
+            modifiers: A list or tuple of radiance modifier objects.
+            modifier_sets: A list or tuple of modifier set objects.
+
+        Returns:
+            data: A dictionary representation of ModelRadianceProperties. Note that
+                all objects in this dictionary will follow the abridged schema.
+        """
+        # process the modifiers and modifier sets
+        all_m = [] if modifiers is None else list(modifiers)
+        all_mod_sets = [] if modifier_sets is None else list(modifier_sets)
+        for mod_set in all_mod_sets:
+            all_m.extend(mod_set.modified_modifiers)
+
+        # get sets of unique objects
+        all_mods = set(all_m)
+
+        # add all object dictionaries into one object
+        data = {'type': 'ModelRadianceProperties'}
+        data['modifiers'] = [m.to_dict() for m in all_mods]
+        data['modifier_sets'] = [ms.to_dict(abridged=True) for ms in all_mod_sets]
+        return data
 
     def _check_and_add_room_modifier_shade(self, room, modifiers):
         """Check if a modifier is assigned to a Room's shades and add it to a list."""

@@ -6,6 +6,7 @@ import json
 
 from honeybee.cli import main
 from ..config import folders
+from .setconfig import set_config
 from .edit import edit
 from .translate import translate
 from .lib import lib
@@ -25,6 +26,7 @@ from .glare import dcglare
 
 
 _logger = logging.getLogger(__name__)
+
 
 # command group for all radiance extension commands.
 @click.group(help='honeybee radiance commands.')
@@ -58,6 +60,7 @@ def config(output_file):
 
 
 # add sub-commands to radiance
+radiance.add_command(set_config, name='set-config')
 radiance.add_command(edit)
 radiance.add_command(translate)
 radiance.add_command(lib)
