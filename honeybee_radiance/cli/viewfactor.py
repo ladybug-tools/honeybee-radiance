@@ -38,8 +38,8 @@ def view_factor():
 )
 @click.option(
     '--exclude-ground/--include-ground', ' /-g',
-    help='Flag to note whether a ground dome should be included in the resulting octree. '
-    'The inclusion of the ground dome enables the ground view to be computed in the '
+    help='Flag to note whether a ground dome should be included in the resulting octree.'
+    ' The inclusion of the ground dome enables the ground view to be computed in the '
     'resulting calculation.', default=True, show_default=True
 )
 @click.option(
@@ -166,7 +166,7 @@ def create_view_factor_modifiers(
         if not exclude_ground:
             mod_names.append('ground_glow_mod')
             mod_strs.append('void glow ground_glow_mod 0 0 4 1 1 1 0')
-            geo_strs.append('ground_glow_mod source ground_dome 0 0 4 0 0 1 180')
+            geo_strs.append('ground_glow_mod source ground_dome 0 0 4 0 0 -1 180')
 
         # write the radiance strings to the output folder
         geo_file = os.path.join(folder, '{}.rad'.format(name))
@@ -268,12 +268,11 @@ def rcontrib_command_with_view_postprocess(
         # create the rcontrib command and run it
         mtx_file = os.path.abspath(os.path.join(folder, '{}.mtx'.format(name)))
         rcontrib = Rcontrib(options=options, octree=octree, sensors=ray_file)
-        #rcontrib.output = mtx_file
         cmd = rcontrib.to_radiance().replace('\\', '/')
         cmd = '{} | rmtxop -fa - -c .333 .333 .334'.format(cmd)
         cmd = '{}  | getinfo - > {}'.format(cmd, mtx_file.replace('\\', '/'))
         run_command(cmd, env=folders.env)
-        
+
         # load the resulting matrix and process the results into view factors
         view_fac_mtx = []
         with open(mtx_file) as mtx_data:
@@ -281,12 +280,12 @@ def rcontrib_command_with_view_postprocess(
                 sens_lines = list(islice(mtx_data, ray_count))
                 if not sens_lines:
                     break
-                sens_mtx = ((float(v) for v in l.strip().split()) for l in sens_lines)
+                sens_mtx = ((float(v) for v in ln.strip().split()) for ln in sens_lines)
                 s_facs = []
                 for sens_facs in zip(*sens_mtx):
                     s_facs.append(sum(sens_facs) / (math.pi * ray_count))
                 view_fac_mtx.append(s_facs)
-        
+
         # write the final view factors into a CSV file
         view_file = os.path.join(folder, '{}.csv'.format(name))
         with open(view_file, 'w') as v_file:
