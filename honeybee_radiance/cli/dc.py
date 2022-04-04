@@ -267,7 +267,7 @@ def rfluxmtx_command_with_postprocess(
 
         if not order_by_sensor:
             cmd_template = cmd_template + ' -t '
-    
+
         if not keep_header:
             cmd_template = cmd_template + ' | getinfo - '
         if output:
@@ -316,7 +316,7 @@ def rfluxmtx_command_with_postprocess(
     ' is provided it should be relative to project folder.'
 )
 @click.option(
-    '--input-format', help='Format type for input. Valid inputs are a, f and d for ' \
+    '--input-format', help='Format type for input. Valid inputs are a, f and d for '
     'ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='a',
     show_default=True, show_choices=True
 )
@@ -334,7 +334,7 @@ def rfluxmtx_command_with_postprocess(
     help='A flag to show the command without running it.'
 )
 def rfluxmtx_command_without_postprocess(
-    octree, sensor_grid, sky_dome, sensor_count, rad_params, rad_params_locked, output, 
+    octree, sensor_grid, sky_dome, sensor_count, rad_params, rad_params_locked, output,
     input_format, output_format, keep_header, dry_run
 ):
     """Run rfluxmtx command without sky matrix.
@@ -366,7 +366,7 @@ def rfluxmtx_command_without_postprocess(
 
         options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
 
-        cmd = Rfluxmtx(options=options, output=output, octree=octree, 
+        cmd = Rfluxmtx(options=options, output=output, octree=octree,
                        sensors=sensor_grid, receivers=sky_dome)
 
         if dry_run:

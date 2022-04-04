@@ -41,8 +41,8 @@ def dcglare():
     'default value is 2000 (fixed threshold method).'
 )
 @click.option(
-    '--occupancy-schedule', '-sf', type=click.Path(exists=False, dir_okay=False, 
-    resolve_path=True), 
+    '--occupancy-schedule', '-sf',
+    type=click.Path(exists=False, dir_okay=False, resolve_path=True),
     help='In the event that the sky matrix includes unoccupied hours that should not '
     'contribute to the glare autonomy calculation, file will be read to determine which '
     'entries from the sky file matrix will be included in this calculation. Each line '
@@ -65,15 +65,16 @@ def two_phase_command(
 
     \b
     Args:
-        dc-direct: Path to direct contribution matrix calculated with a single ambient 
+        dc-direct: Path to direct contribution matrix calculated with a single ambient
             bounce.
         dc-total: Path to total contribution matrix.
-        sky-mtx: Path to sky mtx. 
+        sky-mtx: Path to sky mtx.
         view-rays: Path to file of view rays.
 
     """
-    occupancy_schedule = None if (occupancy_schedule and not \
-        os.path.isfile(occupancy_schedule)) else occupancy_schedule
+    occupancy_schedule = None if \
+        (occupancy_schedule and not os.path.isfile(occupancy_schedule)) \
+        else occupancy_schedule
     try:
         options = DcglareOptions()
         options.vf = view_rays

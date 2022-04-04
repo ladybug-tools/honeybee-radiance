@@ -7,7 +7,7 @@ from .lightpath import light_path_from_room
 from honeybee.facetype import AirBoundary
 import honeybee.typing as typing
 import ladybug.futil as futil
-from ladybug_geometry.geometry3d.pointvector import Point3D
+from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 from ladybug_geometry.geometry3d.face import Face3D
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 
@@ -101,10 +101,10 @@ class SensorGrid(object):
             identifier: Text string for a unique SensorGrid ID. Must not contain spaces
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
-            positions: A list of (x, y ,z) for position of sensors.
-            plane_normal: (x, y, z) for direction of sensors.
+            positions: A list of (x, y ,z) tuples for position of sensors.
+            plane_normal: (x, y, z) tuples for direction of sensors.
         """
-        sg = (Sensor(l, plane_normal) for l in positions)
+        sg = (Sensor(pt, plane_normal) for pt in positions)
         return cls(identifier, sg)
 
     @classmethod
@@ -118,10 +118,10 @@ class SensorGrid(object):
             identifier: Text string for a unique SensorGrid ID. Must not contain spaces
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
-            positions: A list of (x, y ,z) for position of sensors.
-            directions: A list of (x, y, z) for direction of sensors.
+            positions: A list of (x, y ,z) tuples for position of sensors.
+            directions: A list of (x, y, z) tuples for direction of sensors.
         """
-        sg = tuple(Sensor(l, v) for l, v in zip(positions, directions))
+        sg = tuple(Sensor(pt, v) for pt, v in zip(positions, directions))
         return cls(identifier, sg)
 
     @classmethod
@@ -178,6 +178,81 @@ class SensorGrid(object):
             s_grid = cls.from_mesh3d(identifier, Mesh3D.join_meshes(meshes))
         s_grid.base_geometry = faces
         return s_grid
+
+    @classmethod
+    def from_positions_circular(
+            cls, identifier, positions, dir_count=8, start_vector=Vector3D(0, -1, 0),
+            mesh_radius=0):
+        """Create a sensor grid from circular directions around sensor positions.
+
+        This type of sensor grid is particularly helpful for studies of multiple view
+        directions, such as imageless glare studies.
+
+        Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            positions: A list of (x, y ,z) tuples for position of sensors.
+            dir_count: A positive integer for the number of directions in a circle
+                to be generated around each position. (Default: 8).
+            start_vector: A Vector3D to set the start direction of the generated
+                directions. This can be used to orient the resulting sensors to
+                specific parts of the scene. It can also change the elevation of the
+                resulting directions since this start vector will always be rotated in
+                the XY plane to generate the resulting directions. (Default: (0, -1, 0)).
+            mesh_radius: An optional number that can be used to generate a Mesh3D
+                that is aligned with the resulting sensors and will automatically
+                be assigned to the grid's mesh property. Such meshes will resemble
+                a circle around each sensor with the specified radius and will
+                contain triangular faces that can be colored with simulation results.
+                If zero, no mesh will be generated for the sensor grid. (Default: 0).
+        """
+        # set up the vectors to generate the rays
+        inc_ang = (math.pi * 2) / dir_count
+        vw_vecs = [start_vector.rotate_xy(i * inc_ang) for i in range(dir_count)]
+        vw_vecs = [(round(v.x, 5), round(v.y, 5), round(v.z, 3)) for v in vw_vecs]
+        # set up the sensor grid object
+        sensors = tuple(Sensor(pt, v) for pt in positions for v in vw_vecs)
+        sg = cls(identifier, sensors)
+        # generate the mesh if it was requested
+        if mesh_radius > 0:
+            sg.mesh = cls.circular_positions_mesh(
+                positions, dir_count, start_vector, mesh_radius)
+        return sg
+
+    @classmethod
+    def from_mesh3d_circular(
+            cls, identifier, mesh, dir_count=8, start_vector=Vector3D(0, -1, 0),
+            mesh_radius=0):
+        """Create a sensor grid from circular directions around centroids of a Mesh3D.
+
+        This type of sensor grid is particularly helpful for studies of multiple view
+        directions, such as imageless glare studies.
+
+        Args:
+            identifier: Text string for a unique SensorGrid ID. Must not contain spaces
+                or special characters. This will be used to identify the object across
+                a model and in the exported Radiance files.
+            mesh: A ladybug_geometry Mesh3D from which the sensor grid will be generated.
+            dir_count: A positive integer for the number of directions in a circle
+                to be generated around each position. (Default: 8).
+            start_vector: A Vector3D to set the start direction of the generated
+                directions. This can be used to orient the resulting sensors to
+                specific parts of the scene. It can also change the elevation of
+                the resulting directions since this start vector will always be
+                rotated in the XY plane to generate the resulting directions.
+            mesh_radius: An optional number that can be used to generate a Mesh3D
+                that is aligned with the resulting sensors and will automatically
+                be assigned to the grid's mesh property. Such meshes will resemble
+                a circle around each sensor with the specified radius and will
+                contain triangular faces that can be colored with simulation results.
+                If zero, no mesh will be generated for the sensor grid. (Default: 0).
+        """
+        assert isinstance(mesh, Mesh3D), 'Expected ladybug_geometry Mesh3D for ' \
+            'SensorGrid.from_mesh3d. Got {}.'.format(type(mesh))
+        positions = [(pt.x, pt.y, pt.z) for pt in mesh.face_centroids]
+        return cls.from_positions_circular(
+            identifier, positions, dir_count, start_vector, mesh_radius)
 
     @classmethod
     def from_file(cls, file_path, start_line=None, end_line=None, identifier=None):
@@ -272,12 +347,12 @@ class SensorGrid(object):
     @property
     def positions(self):
         """Get a generator of sensor positions as x, y, z."""
-        return (ap.position for ap in self.sensors)
+        return (ap.pos for ap in self.sensors)
 
     @property
     def directions(self):
         """Get a generator of sensor directions as x, y , z."""
-        return (ap.direction for ap in self.sensors)
+        return (ap.dir for ap in self.sensors)
 
     @property
     def count(self):
@@ -730,6 +805,41 @@ class SensorGrid(object):
     def duplicate(self):
         """Get a copy of this object."""
         return self.__copy__()
+
+    @staticmethod
+    def circular_positions_mesh(
+            positions, dir_count=8, start_vector=Vector3D(0, -1, 0), mesh_radius=1):
+        """Generate a Mesh3D resembling a circle around each position.
+
+        Args:
+            positions: A list of (x, y ,z) tuples for position of sensors.
+            dir_count: A positive integer for the number of directions in a circle
+                to be generated around each position. (Default: 8).
+            start_vector: A Vector3D to set the start direction of the generated
+                directions. (Default: (0, -1, 0)).
+            mesh_radius: A number for the radius of the circular mesh to be
+                generated around each sensor. (Default: 1).
+        """
+        # set up the start vector and rotation angles
+        st_vec = Vector3D(start_vector.x, start_vector.y, 0).normalize()
+        st_vec = st_vec * mesh_radius
+        inc_ang = (math.pi * 2) / dir_count
+        st_vec = st_vec.rotate_xy(-inc_ang / 2)
+        # loop through the positions and angles to create the mesh
+        verts, faces = [], []
+        v_count = 0
+        for pt in positions:
+            st_pt = Point3D(*pt)
+            nxt_pt = st_pt.move(st_vec)
+            verts.extend([st_pt, nxt_pt])
+            for i in range(dir_count - 1):
+                new_pt = verts[-1].rotate_xy(inc_ang, st_pt)
+                new_f = (v_count, v_count + i + 1, v_count + i + 2)
+                verts.append(new_pt)
+                faces.append(new_f)
+            faces.append((v_count, v_count + dir_count, v_count + 1))
+            v_count += (dir_count + 1)
+        return Mesh3D(verts, faces)
 
     def __len__(self):
         """Number of sensors in this grid."""
