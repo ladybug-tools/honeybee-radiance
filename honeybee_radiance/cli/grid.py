@@ -7,6 +7,7 @@ import re
 import json
 import shutil
 
+from ladybug_geometry.geometry3d.pointvector import Vector3D
 from ladybug.futil import preparedir
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
@@ -105,97 +106,6 @@ def merge_grid(input_folder, base_name, extension, folder, name):
                         outf.write(line)
     except Exception:
         _logger.exception('Failed to merge grid files.')
-        sys.exit(1)
-    else:
-        sys.exit(0)
-
-
-@grid.command('from-rooms')
-@click.argument('model-file', type=click.Path(
-    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
-              'cells. This can include the units of the distance (eg. 1ft) '
-              'or, if no units are provided, the value will be interpreted in the '
-              'honeybee model units.', type=str, default='0.5m', show_default=True)
-@click.option('--offset', '-o', help='A number for the distance at which the '
-              'the sensor grid should be offset from the floor. This can include the '
-              'units of the distance (eg. 3ft) or, if no units are provided, the '
-              'value will be interpreted in the honeybee model units.',
-              type=str, default='0.8m', show_default=True)
-@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
-              'include a Mesh3D object that aligns with the grid positions under the '
-              '"mesh" property of each grid. Excluding the mesh can reduce size but '
-              'will mean Radiance results cannot be visualized as colored meshes.',
-              default=True)
-@click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
-              'check should be run to remove sensor points that lie outside the Room '
-              'volume. Note that this can add significantly to the runtime and this '
-              'check is not necessary in the case that all walls are vertical '
-              'and all floors are horizontal.', default=True, show_default=True)
-@click.option('--wall-offset', '-w', help='A number for the distance at which sensors '
-              'close to walls should be removed. This can include the units of the '
-              'distance (eg. 3ft) or, if no units are provided, the value will be '
-              'interpreted in the honeybee model units. Note that this option has '
-              'no effect unless the value is more than half of the grid-size.',
-              type=str, default='0m', show_default=True)
-@click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
-              'room for which sensor grids should be generated. You can pass multiple '
-              'rooms (each preceded by -r). By default, all rooms get sensor grids.')
-@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
-              'data collection should be in JSON format or the typical CSV-style format '
-              'of the Radiance .pts files.', default=True, show_default=True)
-@click.option('--folder', help='Optional output folder. If specified, the --output-file '
-              'will be ignored and each sensor grid will be written into its own '
-              '.json or .pts file within the folder.', default=None,
-              type=click.Path(exists=True, file_okay=False,
-                              dir_okay=True, resolve_path=True))
-@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
-              'string of the sensor grids. By default this will be printed '
-              'to stdout', type=click.File('w'), default='-', show_default=True)
-def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
-               room, write_json, folder, output_file):
-    """Generate SensorGrids from the Room floors of a honeybee model.
-
-    \b
-    Args:
-        model_file: Full path to a HBJSON or HBPkl Model file.
-    """
-    try:
-        # re-serialize the Model and extract rooms and units
-        model = Model.from_file(model_file)
-        rooms = model.rooms if room is None or len(room) == 0 else \
-            [r for r in model.rooms if r.identifier in room]
-        grid_size = parse_distance_string(grid_size, model.units)
-        offset = parse_distance_string(offset, model.units)
-        wall_offset = parse_distance_string(wall_offset, model.units)
-
-        # loop through the rooms and generate sensor grids
-        sensor_grids = []
-        remove_out = not keep_out
-        for room in rooms:
-            sg = room.properties.radiance.generate_sensor_grid(
-                grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset)
-            if sg is not None:
-                sensor_grids.append(sg)
-        if not include_mesh:
-            for sg in sensor_grids:
-                sg.mesh = None
-
-        # write the sensor grids to the output file or folder
-        if folder is None:
-            if write_json:
-                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
-            else:
-                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
-        else:
-            if write_json:
-                for sg in sensor_grids:
-                    sg.to_json(folder)
-            else:
-                for sg in sensor_grids:
-                    sg.to_file(folder)
-    except Exception as e:
-        _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
@@ -345,8 +255,8 @@ def merge_grid_folder(input_folder, output_folder, extension, dist_info):
     'both the base grid and the mirrored grid.'
 )
 @click.option(
-    '--suffix', '-s', help='Text for the suffix to be applied to the mirrored grid file.',
-    default='ref', show_default=True
+    '--suffix', '-s', default='ref', show_default=True,
+    help='Text for the suffix to be applied to the mirrored grid file.',
 )
 @click.option(
     '--folder', '-f', default='.', help='Output folder into which the base grid '
@@ -405,11 +315,211 @@ def mirror_grid(grid_file, vector, name, suffix, folder, log_file):
                         r_file.write(origin_str + rev_vec_str)
             # copy the input grid file to the base file location
             shutil.copyfile(grid_file, base_file)
-        
+
         # write the resulting file paths to the log file
         log_file.write(json.dumps([base_file, rev_file], indent=4))
     except Exception as e:
         _logger.exception('Sensor grid mirroring failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('from-rooms')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.8m', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions under the '
+              '"mesh" property of each grid. Excluding the mesh can reduce size but '
+              'will mean Radiance results cannot be visualized as colored meshes.',
+              default=True)
+@click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
+              'check should be run to remove sensor points that lie outside the Room '
+              'volume. Note that this can add significantly to the runtime and this '
+              'check is not necessary in the case that all walls are vertical '
+              'and all floors are horizontal.', default=True, show_default=True)
+@click.option('--wall-offset', '-w', help='A number for the distance at which sensors '
+              'close to walls should be removed. This can include the units of the '
+              'distance (eg. 3ft) or, if no units are provided, the value will be '
+              'interpreted in the honeybee model units. Note that this option has '
+              'no effect unless the value is more than half of the grid-size.',
+              type=str, default='0m', show_default=True)
+@click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
+              'room for which sensor grids should be generated. You can pass multiple '
+              'rooms (each preceded by -r). By default, all rooms get sensor grids.')
+@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
+              'data collection should be in JSON format or the typical CSV-style format '
+              'of the Radiance .pts files.', default=True, show_default=True)
+@click.option('--folder', help='Optional output folder. If specified, the --output-file '
+              'will be ignored and each sensor grid will be written into its own '
+              '.json or .pts file within the folder.', default=None,
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
+@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
+              'string of the sensor grids. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
+               room, write_json, folder, output_file):
+    """Generate SensorGrids from the Room floors of a honeybee model.
+
+    \b
+    Args:
+        model_file: Full path to a HBJSON or HBPkl Model file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_file(model_file)
+        rooms = model.rooms if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+        wall_offset = parse_distance_string(wall_offset, model.units)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        remove_out = not keep_out
+        for room in rooms:
+            sg = room.properties.radiance.generate_sensor_grid(
+                grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset)
+            if sg is not None:
+                sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+
+        # write the sensor grids to the output file or folder
+        if folder is None:
+            if write_json:
+                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
+            else:
+                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
+        else:
+            if write_json:
+                for sg in sensor_grids:
+                    sg.to_json(folder)
+            else:
+                for sg in sensor_grids:
+                    sg.to_file(folder)
+    except Exception as e:
+        _logger.exception('Grid generation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('from-rooms-circular')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='1.2m', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions under the '
+              '"mesh" property of each grid. Excluding the mesh can reduce size but '
+              'will mean Radiance results cannot be visualized as colored meshes.',
+              default=True)
+@click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
+              'check should be run to remove sensor points that lie outside the Room '
+              'volume. Note that this can add significantly to the runtime and this '
+              'check is not necessary in the case that all walls are vertical '
+              'and all floors are horizontal.', default=True, show_default=True)
+@click.option('--wall-offset', '-w', help='A number for the distance at which sensors '
+              'close to walls should be removed. This can include the units of the '
+              'distance (eg. 3ft) or, if no units are provided, the value will be '
+              'interpreted in the honeybee model units. Note that this option has '
+              'no effect unless the value is more than half of the grid-size.',
+              type=str, default='0m', show_default=True)
+@click.option('--dir-count', '-d', help='A positive integer for the number of '
+              'directions in a circle to be generated around each position.',
+              type=click.INT, default=8, show_default=True)
+@click.option('--start-vector', '-v', help='An optional list of three values '
+              '(separated by spaces) set the start direction of the generated '
+              'directions. This can be used to orient the resulting sensors to '
+              'specific parts of the scene. It can also change the elevation of the '
+              'resulting directions since this start vector will always be rotated in '
+              'the XY plane to generate the resulting directions.',
+              type=str, default='0 -1 0', show_default=True)
+@click.option('--mesh-radius', '-m', help='An optional number to override the radius '
+              'of the meshes generated around each sensor. If unspecified, it will be '
+              'equal to 45 percent of the grid-size. Set to zero to ensure no mesh is '
+              'added to the resulting sensor grids.', type=float, default=None)
+@click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
+              'room for which sensor grids should be generated. You can pass multiple '
+              'rooms (each preceded by -r). By default, all rooms get sensor grids.')
+@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
+              'data collection should be in JSON format or the typical CSV-style format '
+              'of the Radiance .pts files.', default=True, show_default=True)
+@click.option('--folder', help='Optional output folder. If specified, the --output-file '
+              'will be ignored and each sensor grid will be written into its own '
+              '.json or .pts file within the folder.', default=None,
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
+@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
+              'string of the sensor grids. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def from_rooms_circular(
+        model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
+        dir_count, start_vector, mesh_radius, room, write_json, folder, output_file):
+    """Generate SensorGrids of circular directions around positions from room floors.
+
+    \b
+    Args:
+        model_file: Full path to a HBJSON or HBPkl Model file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_file(model_file)
+        rooms = model.rooms if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+        wall_offset = parse_distance_string(wall_offset, model.units)
+        vec = [float(v) for v in start_vector.split()]
+        st_vec = Vector3D(*vec)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        remove_out = not keep_out
+        for room in rooms:
+            sg = room.properties.radiance.generate_sensor_grid_circular(
+                grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset,
+                dir_count=dir_count, start_vector=st_vec, mesh_radius=mesh_radius)
+            if sg is not None:
+                sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+
+        # write the sensor grids to the output file or folder
+        if folder is None:
+            if write_json:
+                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
+            else:
+                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
+        else:
+            if write_json:
+                for sg in sensor_grids:
+                    sg.to_json(folder)
+            else:
+                for sg in sensor_grids:
+                    sg.to_file(folder)
+    except Exception as e:
+        _logger.exception('Grid generation failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
@@ -448,7 +558,7 @@ def enclosure_info_grid(model_json, grid_file, air_boundary_distance, output_fil
         # write out the list of radiant enclosure JSON info
         output_file.write(json.dumps(grid.enclosure_info_dict(model, ab_distance)))
     except Exception as e:
-        _logger.exception('Model translation to radiant enclosure failed.\n{}'.format(e))
+        _logger.exception('Creation of radiant enclosure info failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)

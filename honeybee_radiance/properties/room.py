@@ -1,11 +1,12 @@
 # coding=utf-8
 """Room Radiance Properties."""
+from ladybug_geometry.geometry3d.pointvector import Vector3D
+from honeybee.facetype import Floor, Wall
+
 from ..sensorgrid import SensorGrid
 from ..view import View
 from ..modifierset import ModifierSet
 from ..lib.modifiersets import generic_modifier_set_visible
-
-from honeybee.facetype import Floor, Wall
 
 
 class RoomRadianceProperties(object):
@@ -59,7 +60,7 @@ class RoomRadianceProperties(object):
             self, x_dim, y_dim=None, offset=1.0, remove_out=False, wall_offset=0):
         """Get a radiance SensorGrid generated from this Room's floors.
 
-        The output grid will have this room referenced in their room_identifier
+        The output grid will have this room referenced in its room_identifier
         property. It will also include a Mesh3D object with faces that align
         with the grid positions under the grid's mesh property.
 
@@ -69,19 +70,20 @@ class RoomRadianceProperties(object):
 
         Args:
             x_dim: The x dimension of the grid cells as a number.
-            y_dim: The y dimension of the grid cells as a number. Default is None,
-                which will assume the same cell dimension for y as is set for x.
+            y_dim: The y dimension of the grid cells as a number. If None,
+                the y dimension will be assumed to be the same as the x
+                dimension. (Default: None).
             offset: A number for how far to offset the grid from the base face.
-                Default is 1.0, which will not offset the grid to be 1 unit above
-                the floor.
+                (Default is 1.0, which will not offset the grid to be 1 unit above
+                the floor).
             remove_out: Boolean to note whether an extra check should be run to remove
                 sensor points that lie outside the Room volume. Note that this can
                 add significantly to runtime and this check is not necessary
                 in the case that all walls are vertical and all floors are
                 horizontal (Default: False).
-            wall_offset: A number for the distance at which sensors close to
-                walls should be removed. Note that this option has no effect
-                unless the value is more than half of the x_dim or y_dim.
+            wall_offset: A number for the distance at which sensors close to walls
+                should be removed. Note that this option has no effect unless the
+                value is more than half of the x_dim or y_dim. (Default: 0).
 
         Returns:
             A honeybee_radiance SensorGrid generated from the floors of the room.
@@ -99,37 +101,79 @@ class RoomRadianceProperties(object):
             sensor_grid = room.properties.radiance.generate_grid(0.5, 0.5, 1)
         """
         # generate the mesh grid from the floor Faces
-        floor_grid = self.host.generate_grid(x_dim, y_dim, offset)
-        if floor_grid is None:  # no floors in the host Room
+        floor_grid = self._base_sensor_mesh(
+            x_dim, y_dim, offset, remove_out, wall_offset)
+        if floor_grid is None:  # no valid mesh could be generated
             return None
-
-        # remove any outdoor sensors if this has been requested
-        if remove_out:
-            geo = self.host.geometry
-            pattern = [geo.is_point_inside(pt) for pt in floor_grid.face_centroids]
-            try:
-                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
-            except AssertionError:  # the grid lies completely outside of the room
-                return None
-
-        # remove any sensors within a certain distance of the walls, if requested
-        if wall_offset >= x_dim / 2 or (y_dim is not None and wall_offset >= y_dim / 2):
-            wall_geos = [f.geometry for f in self.host.faces if isinstance(f.type, Wall)]
-            pattern = []
-            for pt in floor_grid.face_centroids:
-                for wg in wall_geos:
-                    if wg.plane.distance_to_point(pt) <= wall_offset:
-                        pattern.append(False)
-                        break
-                else:
-                    pattern.append(True)
-            try:
-                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
-            except AssertionError:  # the grid lies completely outside of the room
-                return None
 
         # create the sensor grid from the mesh
         sensor_grid = SensorGrid.from_mesh3d(self.host.identifier, floor_grid)
+        sensor_grid.room_identifier = self.host.identifier
+        sensor_grid.display_name = self.host.display_name
+        sensor_grid.base_geometry = \
+            tuple(face.geometry.move(face.normal.reverse() * offset)
+                  for face in self.host.faces if isinstance(face.type, Floor))
+        return sensor_grid
+
+    def generate_sensor_grid_circular(
+            self, x_dim, y_dim=None, offset=1.0, remove_out=False, wall_offset=0,
+            dir_count=8, start_vector=Vector3D(0, -1, 0), mesh_radius=None):
+        """Get a SensorGrid of circular directions around positions from the floors.
+
+        This type of sensor grid is particularly helpful for studies of multiple view
+        directions, such as imageless glare studies.
+
+        The output grid will have this room referenced in its room_identifier
+        property. It will also include a Mesh3D of circular faces around each position
+        under the grid's mesh property. Note that the x_dim and y_dim refer to
+        dimensions within the XY coordinate system of the floor faces's planes.
+        So rotating the planes of the floor faces will result in rotated grid cells.
+
+        Args:
+            x_dim: The x dimension of the grid cells as a number.
+            y_dim: The y dimension of the grid cells as a number. If None,
+                the y dimension will be assumed to be the same as the x
+                dimension. (Default: None).
+            offset: A number for how far to offset the grid from the base face.
+                (Default: 1.0, which will not offset the grid to be 1 unit above
+                the floor).
+            remove_out: Boolean to note whether an extra check should be run to remove
+                sensor points that lie outside the Room volume. Note that this can
+                add significantly to runtime and this check is not necessary
+                in the case that all walls are vertical and all floors are
+                horizontal (Default: False).
+            wall_offset: A number for the distance at which sensors close to walls
+                should be removed. Note that this option has no effect unless the
+                value is more than half of the x_dim or y_dim. (Default: 0).
+            dir_count: A positive integer for the number of directions in a circle
+                to be generated around each position. (Default: 8).
+            start_vector: A Vector3D to set the start direction of the generated
+                directions. This can be used to orient the resulting sensors to
+                specific parts of the scene. It can also change the elevation of the
+                resulting directions since this start vector will always be rotated in
+                the XY plane to generate the resulting directions. (Default: (0, -1, 0)).
+            mesh_radius: An optional number to override the radius of the meshes
+                generated around each sensor. If None, it will be equal to 45%
+                of the x_dim or y_dim (whichever is smaller). Set to zero to ensure
+                no mesh is added to the resulting sensor grids. (Default: None).
+
+        Returns:
+            A honeybee_radiance SensorGrid generated from the floors of the room.
+            Will be None if the Room has no floors or the criteria for wall_offset
+            and/or remove_out results in all sensors being removed.
+        """
+        # generate the mesh grid from the floor Faces
+        floor_grid = self._base_sensor_mesh(
+            x_dim, y_dim, offset, remove_out, wall_offset)
+        if floor_grid is None:  # no valid mesh could be generated
+            return None
+
+        # create the sensor grid from the mesh
+        if mesh_radius is None:
+            small_dim = x_dim if y_dim is None else min((x_dim, y_dim))
+            mesh_radius = small_dim * 0.45
+        sensor_grid = SensorGrid.from_mesh3d_circular(
+            self.host.identifier, floor_grid, dir_count, start_vector, mesh_radius)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         sensor_grid.base_geometry = \
@@ -279,6 +323,39 @@ class RoomRadianceProperties(object):
         _host = new_host or self._host
         new_room = RoomRadianceProperties(_host, self._modifier_set)
         return new_room
+
+    def _base_sensor_mesh(self, x_dim, y_dim, offset, remove_out, wall_offset):
+        """Get a base Mesh3D from the Room floors to be used for sensor girds."""
+        # generate the mesh grid from the floor Faces
+        floor_grid = self.host.generate_grid(x_dim, y_dim, offset)
+        if floor_grid is None:  # no floors in the host Room
+            return None
+
+        # remove any outdoor sensors if this has been requested
+        if remove_out:
+            geo = self.host.geometry
+            pattern = [geo.is_point_inside(pt) for pt in floor_grid.face_centroids]
+            try:
+                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
+            except AssertionError:  # the grid lies completely outside of the room
+                return None
+
+        # remove any sensors within a certain distance of the walls, if requested
+        if wall_offset >= x_dim / 2 or (y_dim is not None and wall_offset >= y_dim / 2):
+            wall_geos = [f.geometry for f in self.host.faces if isinstance(f.type, Wall)]
+            pattern = []
+            for pt in floor_grid.face_centroids:
+                for wg in wall_geos:
+                    if wg.plane.distance_to_point(pt) <= wall_offset:
+                        pattern.append(False)
+                        break
+                else:
+                    pattern.append(True)
+            try:
+                floor_grid, vertex_pattern = floor_grid.remove_faces(pattern)
+            except AssertionError:  # the grid lies completely outside of the room
+                return None
+        return floor_grid
 
     def ToString(self):
         return self.__repr__()
