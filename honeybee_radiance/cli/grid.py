@@ -416,7 +416,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
         sys.exit(0)
 
 
-@grid.command('from-rooms-circular')
+@grid.command('from-rooms-radial')
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
@@ -445,7 +445,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
               'no effect unless the value is more than half of the grid-size.',
               type=str, default='0m', show_default=True)
 @click.option('--dir-count', '-d', help='A positive integer for the number of '
-              'directions in a circle to be generated around each position.',
+              'radial directions to be generated around each position.',
               type=click.INT, default=8, show_default=True)
 @click.option('--start-vector', '-v', help='An optional list of three values '
               '(separated by spaces) set the start direction of the generated '
@@ -472,10 +472,10 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
 @click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
               'string of the sensor grids. By default this will be printed '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def from_rooms_circular(
+def from_rooms_radial(
         model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
         dir_count, start_vector, mesh_radius, room, write_json, folder, output_file):
-    """Generate SensorGrids of circular directions around positions from room floors.
+    """Generate SensorGrids of radial directions around positions from room floors.
 
     \b
     Args:
@@ -496,7 +496,7 @@ def from_rooms_circular(
         sensor_grids = []
         remove_out = not keep_out
         for room in rooms:
-            sg = room.properties.radiance.generate_sensor_grid_circular(
+            sg = room.properties.radiance.generate_sensor_grid_radial(
                 grid_size, offset=offset, remove_out=remove_out, wall_offset=wall_offset,
                 dir_count=dir_count, start_vector=st_vec, mesh_radius=mesh_radius)
             if sg is not None:

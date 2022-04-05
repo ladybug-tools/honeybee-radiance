@@ -77,8 +77,8 @@ def test_from_mesh3d():
     assert mesh.area == 4
 
 
-def test_from_positions_circular():
-    sg = SensorGrid.from_positions_circular(
+def test_from_positions_radial():
+    sg = SensorGrid.from_positions_radial(
         'glare_grid', [(0, 0, 0.8), (2, 2, 0.8)], mesh_radius=1)
 
     assert len(sg.sensors) == 16

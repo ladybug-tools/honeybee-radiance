@@ -115,16 +115,16 @@ class RoomRadianceProperties(object):
                   for face in self.host.faces if isinstance(face.type, Floor))
         return sensor_grid
 
-    def generate_sensor_grid_circular(
+    def generate_sensor_grid_radial(
             self, x_dim, y_dim=None, offset=1.0, remove_out=False, wall_offset=0,
             dir_count=8, start_vector=Vector3D(0, -1, 0), mesh_radius=None):
-        """Get a SensorGrid of circular directions around positions from the floors.
+        """Get a SensorGrid of radial directions around positions from the floors.
 
         This type of sensor grid is particularly helpful for studies of multiple view
         directions, such as imageless glare studies.
 
         The output grid will have this room referenced in its room_identifier
-        property. It will also include a Mesh3D of circular faces around each position
+        property. It will also include a Mesh3D of radial faces around each position
         under the grid's mesh property. Note that the x_dim and y_dim refer to
         dimensions within the XY coordinate system of the floor faces's planes.
         So rotating the planes of the floor faces will result in rotated grid cells.
@@ -145,7 +145,7 @@ class RoomRadianceProperties(object):
             wall_offset: A number for the distance at which sensors close to walls
                 should be removed. Note that this option has no effect unless the
                 value is more than half of the x_dim or y_dim. (Default: 0).
-            dir_count: A positive integer for the number of directions in a circle
+            dir_count: A positive integer for the number of radial directions
                 to be generated around each position. (Default: 8).
             start_vector: A Vector3D to set the start direction of the generated
                 directions. This can be used to orient the resulting sensors to
@@ -172,7 +172,7 @@ class RoomRadianceProperties(object):
         if mesh_radius is None:
             small_dim = x_dim if y_dim is None else min((x_dim, y_dim))
             mesh_radius = small_dim * 0.45
-        sensor_grid = SensorGrid.from_mesh3d_circular(
+        sensor_grid = SensorGrid.from_mesh3d_radial(
             self.host.identifier, floor_grid, dir_count, start_vector, mesh_radius)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name

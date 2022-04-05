@@ -180,10 +180,10 @@ class SensorGrid(object):
         return s_grid
 
     @classmethod
-    def from_positions_circular(
+    def from_positions_radial(
             cls, identifier, positions, dir_count=8, start_vector=Vector3D(0, -1, 0),
             mesh_radius=0):
-        """Create a sensor grid from circular directions around sensor positions.
+        """Create a sensor grid from radial directions around sensor positions.
 
         This type of sensor grid is particularly helpful for studies of multiple view
         directions, such as imageless glare studies.
@@ -193,7 +193,7 @@ class SensorGrid(object):
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
             positions: A list of (x, y ,z) tuples for position of sensors.
-            dir_count: A positive integer for the number of directions in a circle
+            dir_count: A positive integer for the number of radial directions
                 to be generated around each position. (Default: 8).
             start_vector: A Vector3D to set the start direction of the generated
                 directions. This can be used to orient the resulting sensors to
@@ -216,15 +216,15 @@ class SensorGrid(object):
         sg = cls(identifier, sensors)
         # generate the mesh if it was requested
         if mesh_radius > 0:
-            sg.mesh = cls.circular_positions_mesh(
+            sg.mesh = cls.radial_positions_mesh(
                 positions, dir_count, start_vector, mesh_radius)
         return sg
 
     @classmethod
-    def from_mesh3d_circular(
+    def from_mesh3d_radial(
             cls, identifier, mesh, dir_count=8, start_vector=Vector3D(0, -1, 0),
             mesh_radius=0):
-        """Create a sensor grid from circular directions around centroids of a Mesh3D.
+        """Create a sensor grid from radial directions around centroids of a Mesh3D.
 
         This type of sensor grid is particularly helpful for studies of multiple view
         directions, such as imageless glare studies.
@@ -234,7 +234,7 @@ class SensorGrid(object):
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
             mesh: A ladybug_geometry Mesh3D from which the sensor grid will be generated.
-            dir_count: A positive integer for the number of directions in a circle
+            dir_count: A positive integer for the number of radial directions
                 to be generated around each position. (Default: 8).
             start_vector: A Vector3D to set the start direction of the generated
                 directions. This can be used to orient the resulting sensors to
@@ -251,7 +251,7 @@ class SensorGrid(object):
         assert isinstance(mesh, Mesh3D), 'Expected ladybug_geometry Mesh3D for ' \
             'SensorGrid.from_mesh3d. Got {}.'.format(type(mesh))
         positions = [(pt.x, pt.y, pt.z) for pt in mesh.face_centroids]
-        return cls.from_positions_circular(
+        return cls.from_positions_radial(
             identifier, positions, dir_count, start_vector, mesh_radius)
 
     @classmethod
@@ -807,17 +807,17 @@ class SensorGrid(object):
         return self.__copy__()
 
     @staticmethod
-    def circular_positions_mesh(
+    def radial_positions_mesh(
             positions, dir_count=8, start_vector=Vector3D(0, -1, 0), mesh_radius=1):
         """Generate a Mesh3D resembling a circle around each position.
 
         Args:
             positions: A list of (x, y ,z) tuples for position of sensors.
-            dir_count: A positive integer for the number of directions in a circle
+            dir_count: A positive integer for the number of radial directions
                 to be generated around each position. (Default: 8).
             start_vector: A Vector3D to set the start direction of the generated
                 directions. (Default: (0, -1, 0)).
-            mesh_radius: A number for the radius of the circular mesh to be
+            mesh_radius: A number for the radius of the radial mesh to be
                 generated around each sensor. (Default: 1).
         """
         # set up the start vector and rotation angles
