@@ -2,6 +2,7 @@
 """Room Radiance Properties."""
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 from honeybee.facetype import Floor, Wall
+from honeybee.typing import clean_rad_string
 
 from ..sensorgrid import SensorGrid
 from ..view import View
@@ -107,7 +108,8 @@ class RoomRadianceProperties(object):
             return None
 
         # create the sensor grid from the mesh
-        sensor_grid = SensorGrid.from_mesh3d(self.host.identifier, floor_grid)
+        sensor_grid = SensorGrid.from_mesh3d(
+            clean_rad_string(self.host.display_name), floor_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         sensor_grid.base_geometry = \
@@ -173,7 +175,8 @@ class RoomRadianceProperties(object):
             small_dim = x_dim if y_dim is None else min((x_dim, y_dim))
             mesh_radius = small_dim * 0.45
         sensor_grid = SensorGrid.from_mesh3d_radial(
-            self.host.identifier, floor_grid, dir_count, start_vector, mesh_radius)
+            clean_rad_string(self.host.display_name), floor_grid, dir_count,
+            start_vector, mesh_radius)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         sensor_grid.base_geometry = \
