@@ -8,7 +8,8 @@ import logging
 
 from ladybug.wea import Wea
 
-from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder, \
+    glare_autonomy_to_folder
 from honeybee_radiance.postprocess.electriclight import daylight_control_schedules
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking, \
@@ -441,6 +442,63 @@ def annual_metrics(
         )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-glare')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--schedule', '-sch', help='Path to an annual schedule file. Values should be 0-1 '
+    'separated by new line. If not provided an 8-5 annual schedule will be created.',
+    type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--glare-threshold', '-gt', help='A fractional number for the threshold of DGP ' \
+    'above which conditions are considered to induce glare.',
+    default=0.4, type=float, show_default=True
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_glare(
+    folder, schedule, glare_threshold, grids_filter, sub_folder
+):
+    """Compute annual glare autonomy in a folder and write them in a subfolder.
+
+    \b
+    This command generates 1 file for each input grid.
+        ga/{grid-name}.ga -> Glare Autonomy
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of imageless annual
+        glare recipe. Folder should include grids_info.json and sun-up-hours.txt.
+        The command uses the list in grids_info.json to find the result files for each
+        sensor grid.
+    """
+    # optional input - only check if the file exist otherwise ignore
+    if schedule and os.path.isfile(schedule):
+        with open(schedule) as hourly_schedule:
+            schedule = [int(float(v)) for v in hourly_schedule]
+    else:
+        schedule = None
+
+    try:
+        glare_autonomy_to_folder(
+            folder, schedule, glare_threshold, grids_filter, sub_folder
+        )
+    except Exception:
+        _logger.exception('Failed to calculate annual glare autonomy.')
         sys.exit(1)
     else:
         sys.exit(0)
