@@ -8,8 +8,8 @@ import logging
 
 from ladybug.wea import Wea
 
-from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder, \
-    glare_autonomy_to_folder
+from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance.postprocess.annualglare import glare_autonomy_to_folder
 from honeybee_radiance.postprocess.electriclight import daylight_control_schedules
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking, \
