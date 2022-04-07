@@ -1,7 +1,7 @@
 """Functions for post-processing daylight outputs into electric lighting schedules."""
 import os
 
-from .annualdaylight import generate_default_schedule, _process_input_folder
+from .annual import generate_default_schedule, _process_input_folder
 
 
 def daylight_control_schedules(
