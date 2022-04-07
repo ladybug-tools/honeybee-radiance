@@ -10,10 +10,11 @@ from ladybug.wea import Wea
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.annualglare import glare_autonomy_to_folder
+from honeybee_radiance.postprocess.annualirradiance import annual_irradiance_to_folder, \
+    _annual_irradiance_config
 from honeybee_radiance.postprocess.electriclight import daylight_control_schedules
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
-from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking, \
-    _annual_irradiance_config
+from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking
 from honeybee_radiance.cli.util import get_compare_func, remove_header
 
 _logger = logging.getLogger(__name__)
@@ -312,62 +313,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
             cumulative radiation.
     """
     try:
-        # get the time length of the Wea and the list of grids
-        wea_len = Wea.count_timesteps(wea) * timestep
-        grids = [g.replace('.ill', '') for g in os.listdir(folder) if g.endswith('.ill')]
-        grid_info = os.path.join(folder, 'grids_info.json')
-
-        # write a record of the timestep into the result folder for result processing
-        t_step_f = os.path.join(folder, 'timestep.txt')
-        with open(t_step_f, 'w') as t_f:
-            t_f.write(str(timestep))
-
-        # setup the folder into which the metrics will be written
-        metrics_folder = os.path.join(folder, sub_folder)
-        metrics_folders = []
-        for sub_f in ('average_irradiance', 'peak_irradiance', 'cumulative_radiation'):
-            m_path = os.path.join(metrics_folder, sub_f)
-            metrics_folders.append(m_path)
-            if not os.path.isdir(m_path):
-                os.makedirs(m_path)
-            grid_info_copy = os.path.join(m_path, 'grids_info.json')
-            shutil.copyfile(grid_info, grid_info_copy)
-
-        # loop through the grids and compute metrics
-        for grid in grids:
-            input_matrix = os.path.join(folder, '{}.ill'.format(grid))
-            first_line, input_file = remove_header(input_matrix)
-            avg = os.path.join(metrics_folders[0], '{}.res'.format(grid))
-            pk = os.path.join(metrics_folders[1], '{}.res'.format(grid))
-            cml = os.path.join(metrics_folders[2], '{}.res'.format(grid))
-            with open(avg, 'w') as avg_i, open(pk, 'w') as pk_i, open(cml, 'w') as cml_r:
-                # calculate the values for the first line
-                values = [float(v) for v in first_line.split()]
-                total_val = sum(values)
-                avg_i.write('{}\n'.format(total_val / wea_len))
-                pk_i.write('{}\n'.format(max(values)))
-                cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
-
-                # write rest of the lines
-                for line in input_file:
-                    try:
-                        values = [float(v) for v in line.split()]
-                        total_val = sum(values)
-                        pk_i.write('{}\n'.format(max(values)))
-                        avg_i.write('{}\n'.format(total_val / wea_len))
-                        cml_r.write('{}\n'.format(total_val / (timestep * 1000)))
-                    except ValueError:
-                        pass  # last line of the file
-
-        # create info for available results. This file will be used by honeybee-vtk for
-        # results visualization
-        config_file = os.path.join(metrics_folder, 'config.json')
-
-        cfg = _annual_irradiance_config()
-
-        with open(config_file, 'w') as outf:
-            json.dump(cfg, outf)
-
+        annual_irradiance_to_folder(folder, wea, timestep, sub_folder)
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')
         sys.exit(1)
@@ -458,7 +404,7 @@ def annual_metrics(
     type=click.Path(exists=False, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
-    '--glare-threshold', '-gt', help='A fractional number for the threshold of DGP ' \
+    '--glare-threshold', '-gt', help='A fractional number for the threshold of DGP '
     'above which conditions are considered to induce glare.',
     default=0.4, type=float, show_default=True
 )
@@ -723,20 +669,164 @@ def solar_tracking(folder, sun_up_hours, wea, north, tracking_increment, sub_fol
     type=click.File('w'), default='-', show_default=True
 )
 def daylight_fatcor_config(folder, output_file):
-    """write a vtk-config file for daylight factor. """
+    """Write a vtk-config file for daylight factor."""
     cfg = {
-        "data": [
+        'data': [
             {
-                "identifier": "Daylight factor",
-                "object_type": "grid",
-                "unit": "Percentage",
-                "path": folder,
-                "hide": False,
-                "legend_parameters": {
-                    "hide_legend": False,
-                    "min": 0,
-                    "max": 2,
-                    "color_set": "original"
+                'identifier': 'Daylight Factor',
+                'object_type': 'grid',
+                'unit': 'Percentage',
+                'path': folder,
+                'hide': False,
+                'legend_parameters': {
+                    'hide_legend': False,
+                    'min': 0,
+                    'max': 2,
+                    'color_set': 'original'
+                }
+            }
+        ]
+    }
+    try:
+        output_file.write(json.dumps(cfg, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('point-in-time-config')
+@click.option(
+    '--metric', '-m', default='illuminance', show_default=True,
+    help='Text for the type of metric to be output from the calculation. Choose from: '
+    'illuminance, irradiance, luminance, radiance.'
+)
+@click.option(
+    '--folder', '-f', help='Optional relative path for results folder. This value will '
+    'be set as path inside the config file', default='point-in-time'
+)
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def point_in_time_config(metric, folder, output_file):
+    """Write a vtk-config file for a point-in-time study."""
+    unit_map = {
+        'illuminance': ['Lux', 0, 3000],
+        'irradiance': ['W/m2', 0, 300],
+        'luminance': ['cd/m2', 0, 3000],
+        'radiance': ['W/m2-sr', 0, 300]
+    }
+    unit_props = unit_map[metric.lower()]
+    cfg = {
+        'data': [
+            {
+                'identifier': 'Point-in-time {}'.format(metric.title()),
+                'object_type': 'grid',
+                'unit': unit_props[0],
+                'path': folder,
+                'hide': False,
+                'legend_parameters': {
+                    'hide_legend': False,
+                    'min': unit_props[1],
+                    'max': unit_props[2],
+                    'color_set': 'ecotect'
+                }
+            }
+        ]
+    }
+    try:
+        output_file.write(json.dumps(cfg, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('cumulative-radiation-config')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def cumulative_radiation_config(output_file):
+    """Write a vtk-config file for cumulative radiation."""
+    rad_config_dict = _annual_irradiance_config()
+    cfg = {
+        'data': [
+            rad_config_dict['data'][0],
+            rad_config_dict['data'][2]
+        ]
+    }
+    try:
+        output_file.write(json.dumps(cfg, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('direct-sun-hours-config')
+@click.option(
+    '--folder', '-f', help='Optional relative path for results folder. This value will '
+    'be set as path inside the config file', default='direct-sun-hours'
+)
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def direct_sun_hours_config(folder, output_file):
+    """Write a vtk-config file for direct sun hours."""
+    cfg = {
+        'data': [
+            {
+                'identifier': 'Direct Sun Hours',
+                'object_type': 'grid',
+                'unit': 'Hours',
+                'path': folder,
+                'hide': False,
+                'legend_parameters': {
+                    'hide_legend': False,
+                    'color_set': 'ecotect'
+                }
+            }
+        ]
+    }
+    try:
+        output_file.write(json.dumps(cfg, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('sky-view-config')
+@click.option(
+    '--folder', '-f', help='Optional relative path for results folder. This value will '
+    'be set as path inside the config file', default='sky-view'
+)
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def sky_view_config(folder, output_file):
+    """Write a vtk-config file for daylight factor. """
+    cfg = {
+        'data': [
+            {
+                'identifier': 'Sky View',
+                'object_type': 'grid',
+                'unit': 'Percentage',
+                'path': folder,
+                'hide': False,
+                'legend_parameters': {
+                    'hide_legend': False,
+                    'min': 0,
+                    'max': 100,
+                    'color_set': 'view_study'
                 }
             }
         ]

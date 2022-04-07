@@ -1,69 +1,11 @@
 """Functions for post-processing annual daylight outputs.
 
 Note: These functions will most likely be moved to a separate package in the near future.
-
 """
 import json
 import os
-from ..writer import _filter_by_pattern
 
-
-def generate_default_schedule(weekday=None, weekend=None):
-    """Create a list of 8760 values based on a daily schedule for weekend and weekday.
-
-    Args:
-        weekday: A list of 24 values for each hour of a weekday. The values can
-            be 0 or 1.
-        weekend: A list of 24 values for each hour of a weekend day. The values can
-            be 0 or 1.
-
-    Returns:
-        List -- A list of 8760 values for the year.
-
-    """
-    weekend = weekend or [0] * 24
-    weekday = weekday or \
-        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-    assert len(weekend) == 24, 'Weekend list should be 24 values.'
-    assert len(weekday) == 24, 'Weekend list should be 24 values.'
-    weekend = [0 if v == 0 else 1 for v in weekend]
-    weekday = [0 if v == 0 else 1 for v in weekday]
-    all_values = []
-    day_counter = 0
-    week_counter = 1
-    while day_counter < 365:
-        day_counter += 1
-        if week_counter < 7:
-            if week_counter == 1:
-                all_values.extend(weekend)
-            else:
-                all_values.extend(weekday)
-            week_counter += 1
-        else:
-            all_values.extend(weekend)
-            week_counter = 1
-    return all_values
-
-
-# TODO: support smaller timesteps - currently this works only for hourly calculations
-def filter_schedule_by_hours(sun_up_hours, schedule=None):
-    """Filter an annual schedule based on sun up hours.
-
-    Args:
-        sun_up_hours: A list of sun up hours as integers.
-        schedule: A list of 8760 values for the occupancy schedule.
-
-    Returns:
-        A tuple with two values.
-
-        occ_pattern -- A filtered version of the annual schedule that only
-            includes the sun-up-hours.
-
-        total_hours -- A number for the total occupied hours of the schedule.
-    """
-    schedule = schedule or generate_default_schedule()
-    occ_pattern = [schedule[int(h)] for h in sun_up_hours]
-    return occ_pattern, sum(schedule)
+from .annual import filter_schedule_by_hours, _process_input_folder
 
 
 def _metrics(values, occ_pattern, threshold, min_t, max_t, total_hours):
@@ -225,25 +167,6 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
     return da, cda, udi_lower, udi, udi_upper
 
 
-def _process_input_folder(folder, filter_pattern):
-    """Process an annual daylight results folder.
-
-    This returns grids_info and sun-up-hours.
-    """
-    suh_fp = os.path.join(folder, 'sun-up-hours.txt')
-    with open(suh_fp) as suh_file:
-        sun_up_hours = [float(hour) for hour in suh_file.readlines()]
-
-    info = os.path.join(folder, 'grids_info.json')
-    with open(info) as data_f:
-        data = json.load(data_f)
-
-    # filter grids if there is a filtering pattern
-    grids = _filter_by_pattern(data, filter=filter_pattern)
-
-    return grids, sun_up_hours
-
-
 # TODO - support a list of schedules/schedule folder to match the input grids
 def metrics_from_folder(results_folder, schedule=None, threshold=300,
                         min_t=100, max_t=3000, grids_filter='*'):
@@ -357,7 +280,7 @@ def _annual_daylight_config():
     cfg = {
         "data": [
             {
-                "identifier": "Useful daylight illuminance lower",
+                "identifier": "Useful Daylight Illuminance Lower",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi_lower",
@@ -370,7 +293,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Useful daylight illuminance upper",
+                "identifier": "Useful Daylight Illuminance Upper",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi_upper",
@@ -388,7 +311,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Useful daylight illuminance",
+                "identifier": "Useful Daylight Illuminance",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "udi",
@@ -397,7 +320,7 @@ def _annual_daylight_config():
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "ecotect",
+                    "color_set": "annual_comfort",
                     "label_parameters": {
                         "color": [34, 247, 10],
                         "size": 0,
@@ -406,7 +329,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Continuous daylight autonomy",
+                "identifier": "Continuous Daylight Autonomy",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "cda",
@@ -415,7 +338,7 @@ def _annual_daylight_config():
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "nuanced",
+                    "color_set": "annual_comfort",
                     "label_parameters": {
                         "color": [34, 247, 10],
                         "size": 0,
@@ -424,7 +347,7 @@ def _annual_daylight_config():
                 },
             },
             {
-                "identifier": "Daylight autonomy",
+                "identifier": "Daylight Autonomy",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "da",
@@ -433,7 +356,7 @@ def _annual_daylight_config():
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "original",
+                    "color_set": "annual_comfort",
                     "label_parameters": {
                         "color": [34, 247, 10],
                         "size": 0,

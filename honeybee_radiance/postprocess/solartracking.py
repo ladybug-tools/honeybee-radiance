@@ -6,7 +6,6 @@ import math
 
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 from ladybug.sunpath import Sunpath
-from ladybug.futil import preparedir
 
 
 def post_process_solar_tracking(
@@ -89,67 +88,3 @@ def post_process_solar_tracking(
         with open(dest_file, 'w') as ill_file:
             for row in zip(*grid_ill):
                 ill_file.write('  '.join(row) + '\n')
-
-
-def _annual_irradiance_config():
-    """Return vtk-config for annual irradiance. """
-    cfg = {
-        "data": [
-            {
-                "identifier": "Cumulative Radiation",
-                "object_type": "grid",
-                "unit": "W/m2",
-                "path": 'cumulative_radiation',
-                "hide": False,
-                "legend_parameters": {
-                    "hide_legend": False,
-                    "color_set": "original",
-                    "min": 800,
-                    "max": 5800,
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True
-                    }
-                }
-            },
-                    {
-                "identifier": "Peak Irradiance",
-                "object_type": "grid",
-                "unit": "W/m2",
-                "path": 'peak_irradiance',
-                "hide": False,
-                "legend_parameters": {
-                    "hide_legend": False,
-                    "color_set": "original",
-                    "min": 100,
-                    "max": 400,
-                    "label_parameters": {
-                        "size": 0,
-                        "color": [34, 247, 10],
-                        "bold": True
-                    }
-                }
-            },
-            {
-                "identifier": "Average irradiance",
-                "object_type": "grid",
-                "unit": "W/m2",
-                "path": 'average_irradiance',
-                "hide": False,
-                "legend_parameters": {
-                    "hide_legend": False,
-                    "color_set": "original",
-                    "min": 100,
-                    "max": 400,
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True
-                    }
-                }
-            }
-        ]
-    }
-
-    return cfg

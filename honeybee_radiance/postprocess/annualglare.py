@@ -1,69 +1,11 @@
 """Functions for post-processing imageless annual glare outputs.
 
 Note: These functions will most likely be moved to a separate package in the near future.
-
 """
 import json
 import os
-from ..writer import _filter_by_pattern
 
-
-def generate_default_schedule(weekday=None, weekend=None):
-    """Create a list of 8760 values based on a daily schedule for weekend and weekday.
-
-    Args:
-        weekday: A list of 24 values for each hour of a weekday. The values can
-            be 0 or 1.
-        weekend: A list of 24 values for each hour of a weekend day. The values can
-            be 0 or 1.
-
-    Returns:
-        List -- A list of 8760 values for the year.
-
-    """
-    weekend = weekend or [0] * 24
-    weekday = weekday or \
-        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
-    assert len(weekend) == 24, 'Weekend list should be 24 values.'
-    assert len(weekday) == 24, 'Weekend list should be 24 values.'
-    weekend = [0 if v == 0 else 1 for v in weekend]
-    weekday = [0 if v == 0 else 1 for v in weekday]
-    all_values = []
-    day_counter = 0
-    week_counter = 1
-    while day_counter < 365:
-        day_counter += 1
-        if week_counter < 7:
-            if week_counter == 1:
-                all_values.extend(weekend)
-            else:
-                all_values.extend(weekday)
-            week_counter += 1
-        else:
-            all_values.extend(weekend)
-            week_counter = 1
-    return all_values
-
-
-# TODO: support smaller timesteps - currently this works only for hourly calculations
-def filter_schedule_by_hours(sun_up_hours, schedule=None):
-    """Filter an annual schedule based on sun up hours.
-
-    Args:
-        sun_up_hours: A list of sun up hours as integers.
-        schedule: A list of 8760 values for the occupancy schedule.
-
-    Returns:
-        A tuple with two values.
-
-        occ_pattern -- A filtered version of the annual schedule that only
-            includes the sun-up-hours.
-
-        total_hours -- A number for the total occupied hours of the schedule.
-    """
-    schedule = schedule or generate_default_schedule()
-    occ_pattern = [schedule[int(h)] for h in sun_up_hours]
-    return occ_pattern, sum(schedule)
+from .annual import filter_schedule_by_hours, _process_input_folder
 
 
 def glare_autonomy_to_file(dgp_file, occ_pattern, output_folder, glare_threshold=0.4,
@@ -113,39 +55,20 @@ def glare_autonomy_to_file(dgp_file, occ_pattern, output_folder, glare_threshold
     return ga
 
 
-def _process_input_folder(folder, filter_pattern):
-    """Process an imageless annual glare results folder.
-
-    This returns grids_info and sun-up-hours.
-    """
-    suh_fp = os.path.join(folder, 'sun-up-hours.txt')
-    with open(suh_fp) as suh_file:
-        sun_up_hours = [float(hour) for hour in suh_file.readlines()]
-
-    info = os.path.join(folder, 'grids_info.json')
-    with open(info) as data_f:
-        data = json.load(data_f)
-
-    # filter grids if there is a filtering pattern
-    grids = _filter_by_pattern(data, filter=filter_pattern)
-
-    return grids, sun_up_hours
-
-
 def glare_autonomy_to_folder(
     results_folder, schedule=None, glare_threshold=0.4, grids_filter='*',
     sub_folder='metrics'
         ):
     """Compute annual glare autonomy in a folder and write them in a subfolder.
 
-    This folder is an output folder of imageless annual glare recipe. Folder should 
+    This folder is an output folder of imageless annual glare recipe. Folder should
     include grids_info.json and sun-up-hours.txt - the script uses the list in
     grids_info.json to find the result files for each sensor grid.
 
     Args:
         results_folder: Results folder.
         schedule: An annual schedule for 8760 hours of the year as a list of values.
-        glare_threshold: A fractional number for the threshold of DGP above which 
+        glare_threshold: A fractional number for the threshold of DGP above which
             conditions are considered to induce glare. Default: 0.4.
         grids_filter: A pattern to filter the grids. By default all the grids will be
             processed.
@@ -221,7 +144,7 @@ def _annual_glare_config():
     cfg = {
         "data": [
             {
-                "identifier": "Glare autonomy",
+                "identifier": "Glare Autonomy",
                 "object_type": "grid",
                 "unit": "Percentage",
                 "path": "ga",
