@@ -10,7 +10,6 @@ from collections import OrderedDict
 
 from honeybee_radiance.config import folders
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
-from honeybee_radiance_command.oconv import Oconv
 from honeybee_radiance.reader import sensor_count_from_file
 from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug_geometry.geometry3d.mesh import Mesh3D
@@ -510,7 +509,7 @@ def dmtx_group_command(
         sys.exit(0)
 
 
-@multi_phase.command('octrees-grids')
+@multi_phase.command('prepare-dynamic')
 @click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.argument('grid-count', type=int)
 @click.option(
@@ -543,13 +542,22 @@ def dmtx_group_command(
 @click.option(
     '--grid-folder', help='Output folder into which the grid files be written.',
     default='grid', show_default=True)
-def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path, 
-                          phase, octree_folder, grid_folder):
-    """Generate a set of octrees and sensor grids from a folder.
+@click.option(
+    '--exclude-static/--include-static', is_flag=True, default=True,
+    help='A flag to indicate if static apertures should be excluded or icluded. If '
+    'excluded static apertures will not be treated as its own dynamic state.'
+)
+def prepare_dynamic_command(
+    folder, grid_count, grid_divisor, min_sensor_count, sun_path, phase, octree_folder,
+    grid_folder, exclude_static
+    ):
+    """This command prepares the model folder for simulations with aperture groups. It
+    will generate a set of octrees and sensor grids that are unique to each state of each
+    aperture group.
 
-    This command will generate octrees for both default and direct studies. It will do so
-    for static apertures and aperture groups, creating one octree for each light path,
-    i.e., all other light paths are blacked.
+    This command will generate octrees for both default and direct studies for aperture
+    groups, creating one octree for each light path, i.e., all other light paths are
+    blacked.
 
     Sensor grids will be redistributed if they are to be used in a two phase simulation.
     A subfolder for each light path will be created. In this folder the redistributed
@@ -579,18 +587,25 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
         '5': ['two_phase', 'three_phase', 'five_phase']
     }
 
-    try:
-        scene_mapping = model_folder.octree_scene_mapping()
+    def get_dynamic_octrees_and_grids(
+        model_folder=model_folder, grid_count=grid_count, phase=phase,
+        octree_folder=octree_folder, grid_folder=grid_folder
+        ):
+        scene_mapping = model_folder.octree_scene_mapping(
+            exclude_static=exclude_static, phase=phase
+            )
         if not os.path.isdir(octree_folder):
             os.mkdir(octree_folder)
-        octree_mapping = []
+        dynamic_mapping = []
         for study, states in scene_mapping.items():
             if study not in phases[phase]:
                 continue
 
             if study == 'two_phase':
                 grid_info_dict = {}
-                grid_mapping = model_folder.grid_mapping()
+                grid_mapping = model_folder.grid_mapping(
+                    exclude_static=exclude_static, phase=phase
+                    )
                 if not os.path.isdir(grid_folder):
                     os.mkdir(grid_folder)
                 
@@ -607,7 +622,9 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
 
             study_type = []
             for state in states:
-                info, commands = _generate_octrees_info(state, octree_folder, study, sun_path)
+                info, commands = _generate_octrees_info(
+                    state, octree_folder, study, sun_path
+                    )
                 study_type.append(info)
 
                 for cmd in commands:
@@ -622,18 +639,34 @@ def octrees_grids(folder, grid_count, grid_divisor, min_sensor_count, sun_path,
                     info['sensor_grids_folder'] = state['light_path']
                     info['sensor_grids_info'] = grid_info_dict[state['light_path']]
                     
-            octree_mapping.append({study: study_type})
-            octree_output = os.path.join(
-                model_folder.folder, '%s.json' % study
-            )
-            with open(octree_output, 'w') as fp:
+            dynamic_mapping.append({study: study_type})
+            dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
+            with open(dynamic_output, 'w') as fp:
                 json.dump(study_type, fp, indent=2)
 
-        octree_output = os.path.join(
-            model_folder.folder, 'multi_phase.json'
-        )
-        with open(octree_output, 'w') as fp:
-            json.dump(octree_mapping, fp, indent=2)
+        dynamic_output = os.path.join(model_folder.folder, 'multi_phase.json')
+        with open(dynamic_output, 'w') as fp:
+            json.dump(dynamic_mapping, fp, indent=2)
+
+    try:
+        if model_folder.has_aperture_group:
+            get_dynamic_octrees_and_grids(
+                model_folder=model_folder, grid_count=grid_count, phase=phase,
+                octree_folder=octree_folder, grid_folder=grid_folder
+            )
+        else:
+            # no aperture groups, write empty files
+            dynamic_mapping = []
+            for study in phases[phase]:
+                study_type = []
+                dynamic_mapping.append({study: study_type})
+                dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
+                with open(dynamic_output, 'w') as fp:
+                    json.dump(study_type, fp, indent=2)
+
+            dynamic_output = os.path.join(model_folder.folder, 'multi_phase.json')
+            with open(dynamic_output, 'w') as fp:
+                json.dump(dynamic_mapping, fp, indent=2)
 
     except Exception:
         _logger.exception('Failed to generate octrees and grids.')
