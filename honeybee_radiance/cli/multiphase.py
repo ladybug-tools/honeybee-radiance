@@ -576,15 +576,16 @@ def prepare_dynamic_command(
     if sun_path and not os.path.isfile(sun_path):
         sun_path = None
 
-    if phase == '5' and not sun_path:
+    phase = int(phase)
+    if phase == 5 and not sun_path:
         raise RuntimeError(
             'To generate octrees for a 5 Phase study you must provide a sunpath.'
         )
 
     phases = {
-        '2': ['two_phase'],
-        '3': ['two_phase', 'three_phase'],
-        '5': ['two_phase', 'three_phase', 'five_phase']
+        2: ['two_phase'],
+        3: ['two_phase', 'three_phase'],
+        5: ['two_phase', 'three_phase', 'five_phase']
     }
 
     def get_dynamic_octrees_and_grids(
