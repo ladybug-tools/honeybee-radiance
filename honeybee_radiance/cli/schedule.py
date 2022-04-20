@@ -2,6 +2,7 @@
 import click
 import sys
 import logging
+import os
 
 from ladybug.epw import EPW
 
@@ -17,11 +18,12 @@ def schedule():
 @schedule.command('epw-to-daylight-hours')
 @click.argument(
     'epw', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+@click.option('--folder', '-f', help='Output folder.', default='.', show_default=True)
 @click.option(
-    '--schedule-name', '-sn', help='Output file name for schedule.',
+    '--name', '-n', help='Output file name for schedule.',
     type=click.STRING, default='daylight_hours', show_default=True
 )
-def epw_to_daylight_hours(epw, schedule_name):
+def epw_to_daylight_hours(epw, folder, name):
     """Convert EPW to EN 17037 schedule as a CSV file.
 
     This command generates a valid schedule for EN 17037, also known as daylight hours.
@@ -39,13 +41,16 @@ def epw_to_daylight_hours(epw, schedule_name):
         _illuminance, indices = diffuse_horizontal_illuminance.highest_values(4380)
         values = ['1' if i in indices else '0' for i in range(8760)]
 
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+
         # write csv
-        file_path = '%s.csv' % schedule_name
+        file_path = os.path.join(folder, '%s.csv' % name)
         with open(file_path, 'w') as fp:
             fp.write('\n'.join(values))
 
     except Exception:
-        _logger.exception('Failed to generate daylight hours.')
+        _logger.exception('Failed to generate daylight hours schedule.')
         sys.exit(1)
     else:
         sys.exit(0)
