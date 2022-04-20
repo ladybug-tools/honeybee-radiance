@@ -9,6 +9,7 @@ import logging
 from ladybug.wea import Wea
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
+from honeybee_radiance.postprocess.en17037 import en17037_to_folder
 from honeybee_radiance.postprocess.annualglare import glare_autonomy_to_folder
 from honeybee_radiance.postprocess.annualirradiance import annual_irradiance_to_folder, \
     _annual_irradiance_config
@@ -388,6 +389,49 @@ def annual_metrics(
         )
     except Exception:
         _logger.exception('Failed to calculate annual metrics.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('annual-daylight-en17037')
+@click.argument(
+    'folder',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.argument(
+    'schedule',
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+)
+@click.option(
+    '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
+    show_default=True
+)
+@click.option(
+    '--sub_folder', '-sf', help='Optional relative path for subfolder to write output '
+    'metric files.', default='metrics'
+)
+def annual_en17037_metrics(
+    folder, schedule, grids_filter, sub_folder
+):
+    """Compute annual EN 17037 metrics in a folder and write them in a subfolder.
+
+    \b
+    This command generates multiple files for each input grid.
+
+    \b
+    Args:
+        folder: Results folder. This folder is an output folder of annual
+            daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
+            The command uses the list in grids_info.json to find the result files for
+            each sensor grid.
+        schedule: An annual schedule for 8760 hours of the year as a list of values. This
+            should be a daylight hours schedule.
+    """
+    try:
+        en17037_to_folder(folder, schedule, grids_filter, sub_folder)
+    except Exception:
+        _logger.exception('Failed to calculate annual EN 17037 metrics.')
         sys.exit(1)
     else:
         sys.exit(0)
