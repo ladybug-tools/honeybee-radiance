@@ -23,6 +23,7 @@ from .postprocess import post_process
 from .mtx import mtxop
 from .multiphase import multi_phase
 from .glare import dcglare
+from .schedule import schedule
 
 
 _logger = logging.getLogger(__name__)
@@ -77,6 +78,7 @@ radiance.add_command(post_process, name='post-process')
 radiance.add_command(mtxop)
 radiance.add_command(multi_phase)
 radiance.add_command(dcglare)
+radiance.add_command(schedule)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)
