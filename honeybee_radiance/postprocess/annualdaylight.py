@@ -17,7 +17,7 @@ def _metrics(values, occ_pattern, threshold, min_t, max_t, total_hours):
         threshold: Threshold value for daylight autonomy. Default: 300.
         min_t: Minimum threshold for useful daylight illuminance. Default: 100.
         max_t: Maximum threshold for useful daylight illuminance. Default: 3000.
-        total_occupied_hours: An integer for the total number of occupied hours,
+        total_hours: An integer for the total number of occupied hours,
             which can be used to avoid having to sum occ pattern each time.
 
     Returns:

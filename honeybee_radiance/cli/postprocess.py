@@ -427,8 +427,8 @@ def annual_en17037_metrics(
             daylight recipe. Folder should include grids_info.json and sun-up-hours.txt.
             The command uses the list in grids_info.json to find the result files for
             each sensor grid.
-        schedule: An annual schedule for 8760 hours of the year as a list of values. This
-            should be a daylight hours schedule.
+        schedule: Path to an annual schedule file. Values should be 0-1 separated by new
+            line. This should be a daylight hours schedule.
     """
     with open(schedule) as hourly_schedule:
         schedule = [int(float(v)) for v in hourly_schedule]
