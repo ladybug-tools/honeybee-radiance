@@ -104,7 +104,7 @@ def metrics_to_files(
                     daf.write(str(dar) + '\n')
                     da.append(dar)
 
-            space_target = 50 if target_type == 'target' else 95
+            space_target = 50 if target_type == 'target_illuminance' else 95
             pass_fail = [int(val > space_target) for val in da]
 
             sda = sum(pass_fail) / len(pass_fail)

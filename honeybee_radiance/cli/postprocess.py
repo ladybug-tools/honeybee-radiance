@@ -417,7 +417,9 @@ def annual_en17037_metrics(
     """Compute annual EN 17037 metrics in a folder and write them in a subfolder.
 
     \b
-    This command generates multiple files for each input grid.
+    This command generates multiple files for each input grid. Files for target
+    illuminance and minimum illuminance will be calculated for three levels of
+    recommendation: minimum, medium, high.
 
     \b
     Args:
