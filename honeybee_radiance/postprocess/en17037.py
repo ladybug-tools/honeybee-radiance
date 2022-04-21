@@ -5,22 +5,19 @@ import os
 from .annual import filter_schedule_by_hours, _process_input_folder
 
 
-def _metrics(values, occ_pattern, threshold, total_hours):
-    """Calculate annual metrics for a sensor.
+def _daylight_autonomy(values, occ_pattern, threshold, total_hours):
+    """Calculate annual daylight autonomy for a sensor.
 
     Args:
         values: Hourly illuminance values as numbers.
         occ_pattern: A list of 0 and 1 values for hours of occupancy.
         threshold: Threshold value for daylight autonomy.
-        total_occupied_hours: An integer for the total number of occupied hours,
+        total_hours: An integer for the total number of occupied hours,
             which can be used to avoid having to sum occ pattern each time.
 
     Returns:
         daylight autonomy
     """
-    def _percentage(in_v, occ_hours):
-        return round(100.0 * in_v / occ_hours, 2)
-
     da = 0
     for is_occ, value in zip(occ_pattern, values):
         if is_occ == 0:
@@ -28,10 +25,10 @@ def _metrics(values, occ_pattern, threshold, total_hours):
         if value > threshold:
             da += 1
 
-    return _percentage(da, total_hours)
+    return round(100.0 * da / total_hours, 2)
 
 
-def metrics_to_files(
+def en17037_metrics_to_files(
     ill_file, occ_pattern, output_folder, grid_name=None, total_hours=None
 ):
     """Compute annual EN 17037 metrics for an ill file and write the results to a folder.
@@ -100,7 +97,7 @@ def metrics_to_files(
             with open(ill_file) as results, open(da_file, 'w') as daf:
                 for pt_res in results:
                     values = (float(res) for res in pt_res.split())
-                    dar = _metrics(values, occ_pattern, threshold, total_hours)
+                    dar = _daylight_autonomy(values, occ_pattern, threshold, total_hours)
                     daf.write(str(dar) + '\n')
                     da.append(dar)
 
@@ -154,7 +151,7 @@ def en17037_to_folder(
 
     for grid in grids:
         ill_file = os.path.join(results_folder, '%s.ill' % grid['full_id'])
-        da_folders = metrics_to_files(
+        da_folders = en17037_metrics_to_files(
             ill_file, occ_pattern, metrics_folder, grid['full_id'], total_occ
         )
 
