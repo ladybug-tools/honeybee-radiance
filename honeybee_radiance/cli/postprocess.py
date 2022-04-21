@@ -401,7 +401,7 @@ def annual_metrics(
 )
 @click.argument(
     'schedule',
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True)
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--grids-filter', '-gf', help='A pattern to filter the grids.', default='*',
@@ -428,6 +428,8 @@ def annual_en17037_metrics(
         schedule: An annual schedule for 8760 hours of the year as a list of values. This
             should be a daylight hours schedule.
     """
+    with open(schedule) as hourly_schedule:
+        schedule = [int(float(v)) for v in hourly_schedule]
     try:
         en17037_to_folder(folder, schedule, grids_filter, sub_folder)
     except Exception:

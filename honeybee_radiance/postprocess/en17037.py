@@ -1,7 +1,6 @@
 """Functions for post-processing EN 17037 daylight outputs."""
 import json
 import os
-import re
 
 from .annual import filter_schedule_by_hours, _process_input_folder
 
@@ -60,13 +59,13 @@ def metrics_to_files(
         os.makedirs(output_folder)
 
     recommendations = {
-        'minimum': {
+        'minimum_illuminance': {
             'minimum': 100,
             'medium': 300,
             'high': 500
         }
         ,
-        'target': {
+        'target_illuminance': {
             'minimum': 300,
             'medium': 500,
             'high': 750
@@ -74,6 +73,7 @@ def metrics_to_files(
     }
 
     grid_name = grid_name or os.path.split(ill_file)[-1][-4:]
+    da_folders = []
 
     for target_type, thresholds in recommendations.items():
         type_folder = os.path.join(output_folder, target_type)
@@ -100,7 +100,6 @@ def metrics_to_files(
             with open(ill_file) as results, open(da_file, 'w') as daf:
                 for pt_res in results:
                     values = (float(res) for res in pt_res.split())
-                    #assert False, [float(res) for res in pt_res.split()]
                     dar = _metrics(values, occ_pattern, threshold, total_hours)
                     daf.write(str(dar) + '\n')
                     da.append(dar)
@@ -111,6 +110,10 @@ def metrics_to_files(
             sda = sum(pass_fail) / len(pass_fail)
             with open(sda_file, 'w') as sdaf:
                 sdaf.write(str(sda))
+
+            da_folders.append(os.path.join(level_folder, 'da'))
+
+    return da_folders
 
 
 # TODO - support a list of schedules/schedule folder to match the input grids
@@ -148,18 +151,18 @@ def en17037_to_folder(
     metrics_folder = os.path.join(results_folder, sub_folder)
     if not os.path.isdir(metrics_folder):
         os.makedirs(metrics_folder)
-    assert False, sum(occ_pattern)
+
     for grid in grids:
         ill_file = os.path.join(results_folder, '%s.ill' % grid['full_id'])
-        metrics_to_files(
+        da_folders = metrics_to_files(
             ill_file, occ_pattern, metrics_folder, grid['full_id'], total_occ
         )
 
     # copy info.json to all results folders
-    # for folder_name in ['da', 'cda', 'udi_lower', 'udi', 'udi_upper']:
-    #     grid_info = os.path.join(metrics_folder, folder_name, 'grids_info.json')
-    #     with open(grid_info, 'w') as outf:
-    #         json.dump(grids, outf)
+    for folder_name in da_folders:
+        grid_info = os.path.join(metrics_folder, folder_name, 'grids_info.json')
+        with open(grid_info, 'w') as outf:
+            json.dump(grids, outf, indent=2)
 
     # create info for available results. This file will be used by honeybee-vtk for
     # results visualization
@@ -174,14 +177,14 @@ def en17037_to_folder(
 
 
 def _annual_daylight_en17037_config():
-    """Return vtk-config for annual daylight. """
+    """Return vtk-config for annual daylight EN 17037. """
     cfg = {
         "data": [
             {
-                "identifier": "Useful Daylight Illuminance Lower",
+                "identifier": "Daylight Autonomy - target 300 lux",
                 "object_type": "grid",
                 "unit": "Percentage",
-                "path": "udi_lower",
+                "path": "target_illuminance/minimum/da",
                 "hide": False,
                 "legend_parameters": {
                     "hide_legend": False,
@@ -191,75 +194,68 @@ def _annual_daylight_en17037_config():
                 },
             },
             {
-                "identifier": "Useful Daylight Illuminance Upper",
+                "identifier": "Daylight Autonomy - target 500 lux",
                 "object_type": "grid",
                 "unit": "Percentage",
-                "path": "udi_upper",
+                "path": "target_illuminance/medium/da",
                 "hide": False,
                 "legend_parameters": {
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "glare_study",
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True,
-                    },
+                    "color_set": "nuanced",
                 },
             },
             {
-                "identifier": "Useful Daylight Illuminance",
+                "identifier": "Daylight Autonomy - target 750 lux",
                 "object_type": "grid",
                 "unit": "Percentage",
-                "path": "udi",
+                "path": "target_illuminance/high/da",
                 "hide": False,
                 "legend_parameters": {
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "annual_comfort",
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True,
-                    },
+                    "color_set": "nuanced",
                 },
             },
             {
-                "identifier": "Continuous Daylight Autonomy",
+                "identifier": "Daylight Autonomy - minimum 100 lux",
                 "object_type": "grid",
                 "unit": "Percentage",
-                "path": "cda",
+                "path": "minimum_illuminance/minimum/da",
                 "hide": False,
                 "legend_parameters": {
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "annual_comfort",
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True,
-                    },
+                    "color_set": "nuanced",
                 },
             },
             {
-                "identifier": "Daylight Autonomy",
+                "identifier": "Daylight Autonomy - minimum 300 lux",
                 "object_type": "grid",
                 "unit": "Percentage",
-                "path": "da",
+                "path": "minimum_illuminance/medium/da",
                 "hide": False,
                 "legend_parameters": {
                     "hide_legend": False,
                     "min": 0,
                     "max": 100,
-                    "color_set": "annual_comfort",
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True,
-                    },
+                    "color_set": "nuanced",
+                },
+            },
+            {
+                "identifier": "Daylight Autonomy - minimum 500 lux",
+                "object_type": "grid",
+                "unit": "Percentage",
+                "path": "minimum_illuminance/high/da",
+                "hide": False,
+                "legend_parameters": {
+                    "hide_legend": False,
+                    "min": 0,
+                    "max": 100,
+                    "color_set": "nuanced",
                 },
             },
         ]
