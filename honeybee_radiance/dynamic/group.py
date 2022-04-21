@@ -142,7 +142,7 @@ class DynamicShadeGroup(object):
                     states.append(obj.properties.radiance._states[-1])
                 except IndexError:  # no states assigned; create default a dummy state
                     st = RadianceShadeState()
-                    st._parent  = obj
+                    st._parent = obj
                     states.append(st)
         return states
 
@@ -316,8 +316,9 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 Add a ``-`` in front of the input for left-handed coordinates. For more
                 information see rfluxmtx docs.
                 https://www.radiance-online.org/learning/documentation/manual-pages/pdfs/rfluxmtx.pdf/at_download/file
-            up_direction: Orient the "up" direction for the hemisphere using the indicated
-                axis or direction vector. Valid inputs are [-]{X|Y|Z|ux,uy,uz}. Default: Y
+            up_direction: Orient the "up" direction for the hemisphere using the
+                indicated axis or a direction vector. Valid inputs include the
+                following. [-]{X|Y|Z|ux,uy,uz}. (Default: Y).
 
         Returns:
             RfluxmtxControlParameters
@@ -332,7 +333,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 raise ValueError(
                     'Rfluxmtx control parameters can only be generated for states '
                     'with BSDF modifier. Current modifier: %s is a %s.' % (
-                    state.modifier, self.modifier.__class__.__name__)
+                        state.modifier, self.modifier.__class__.__name__)
                 )
         up_direction = tuple(up_direction)
         return RfluxmtxControlParameters(sampling, up_direction)
@@ -361,7 +362,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                     states.append(obj.properties.radiance._states[-1])
                 except IndexError:  # no states assigned; create default a dummy state
                     st = RadianceSubFaceState()
-                    st._parent  = obj
+                    st._parent = obj
                     states.append(st)
         return states
 
