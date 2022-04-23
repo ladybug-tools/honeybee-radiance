@@ -39,7 +39,7 @@ def octree():
     'the octree or they should simply be excluded, letting light pass through.'
 )
 @click.option(
-    '--fist-shade-state/--exclude-shade-groups', ' /-xs', help='Flag to note whether '
+    '--first-shade-state/--exclude-shade-groups', ' /-xs', help='Flag to note whether '
     'dynamic shade groups should be included in the octree as the first shade state '
     'or they should simply be excluded.', default=True, show_default=True
 )
@@ -56,7 +56,7 @@ def octree():
     help='A flag to show the command without running it.'
 )
 def create_octree_from_folder(
-    folder, output, default, include_aperture, black_groups, fist_shade_state,
+    folder, output, default, include_aperture, black_groups, first_shade_state,
     add_before, add_after, dry_run
 ):
     """Generate a static octree from a folder.
@@ -81,7 +81,7 @@ def create_octree_from_folder(
                 scene_files += group_files
             except Exception:
                 pass  # no aperture groups available in the model
-        if fist_shade_state:
+        if first_shade_state:
             try:
                 dyn_folder = model_folder.dynamic_scene_folder(full=True)
                 dyn_shades = model_folder.dynamic_scene()
@@ -286,7 +286,7 @@ def create_octree_from_abstracted_groups(folder, sun_path, output_folder):
                     'diff': os.path.basename(diff_file)
                 }
                 # command for the octree with suns
-                if sun_path:
+                if sun_path and os.path.isfile(sun_path):
                     spec_sun_file = os.path.join(sub_folder, 'spec_sun.oct')
                     spec_sun_scene_files = [sun_path] + spec_scene_files
                     cmd_ss = Oconv(output=spec_sun_file, inputs=spec_sun_scene_files)
@@ -355,7 +355,7 @@ def create_octree_from_shade_trans_groups(folder, sun_path, output_folder):
             # get the static scene files
             scene_files = model_folder.scene_files(black_out=False)
             try:
-                aperture_files = model_folder.aperture_files(black_out=True)
+                aperture_files = model_folder.aperture_files(black_out=False)
                 scene_files += aperture_files
             except Exception:
                 pass  # no apertures available in the model
@@ -382,7 +382,7 @@ def create_octree_from_shade_trans_groups(folder, sun_path, output_folder):
                     'default': os.path.basename(oct_file)
                 }
                 # command for the octree with suns
-                if sun_path:
+                if sun_path and os.path.isfile(sun_path):
                     sun_file = os.path.join(
                         output_folder, '{}_sun.oct'.format(s_grp.identifier))
                     sun_scene_files = [sun_path] + grp_scene_files
