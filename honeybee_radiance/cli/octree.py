@@ -341,7 +341,7 @@ def create_octree_from_shade_trans_groups(folder, sun_path, output_folder):
         output_folder = os.path.join(model_folder.folder, output_folder)
         if not os.path.isdir(output_folder):
             os.mkdir(output_folder)
-        group_info_file = os.path.join(output_folder, 'group_info.json')
+        group_info_file = os.path.join(output_folder, 'trans_info.json')
         group_info, groups_exist = [], True
         try:
             grp_folder = model_folder.dynamic_scene_folder()
