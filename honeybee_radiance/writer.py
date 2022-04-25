@@ -645,11 +645,15 @@ def _write_static_files(
         if punched_verts:
             for face in geometry:
                 modifier = face.properties.radiance.modifier
-                rad_poly = Polygon(face.identifier, face.punched_vertices, modifier)
+                geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
+                    else face.vertices
+                rad_poly = Polygon(face.identifier, geo, modifier)
                 face_strs.append(rad_poly.to_radiance(minimal, False, False))
             for face, mod_name in zip(geometry_blk, mod_names):
                 modifier = mod_combs[mod_name][0]
-                rad_poly = Polygon(face.identifier, face.punched_vertices, modifier)
+                geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
+                    else face.vertices
+                rad_poly = Polygon(face.identifier, geo, modifier)
                 face_strs.append(rad_poly.to_radiance(minimal, False, False))
         else:
             for face in geometry:

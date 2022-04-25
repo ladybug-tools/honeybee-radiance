@@ -305,7 +305,11 @@ class ModelRadianceProperties(object):
         """Get all Faces in the model separated by their blk property.
 
         This method will also ensure that any faces with Surface boundary condition
-        only have one of such objects in the output lists.
+        are not duplicated in the result but are rather offset from the base face
+        to ensure modifiers on opposite sides of interior Faces are accounted for.
+        Furthermore, this method also ensures that any static interior sub-faces
+        (with Surface
+        boundary condition) only have one of such objects in the output lists.
 
         Returns:
             A tuple with 2 lists:
@@ -324,6 +328,12 @@ class ModelRadianceProperties(object):
                     face.move(face.normal * offset)
                 else:
                     interior_faces.add(face.boundary_condition.boundary_condition_object)
+                    for subf in face.apertures + face.doors:
+                        if subf.properties.radiance.dynamic_group_identifier is None:
+                            if subf.properties.radiance._modifier_blk:
+                                faces_blk.append(subf)
+                            else:
+                                faces.append(subf)
             if face.properties.radiance._modifier_blk:
                 faces_blk.append(face)
             else:
@@ -331,11 +341,9 @@ class ModelRadianceProperties(object):
         return faces, faces_blk
 
     def subfaces_by_blk(self):
-        """Get model sub-faces (Apertures, Doors) separated by their blk property.
+        """Get model exterior sub-faces (Apertures, Doors) grouped by their blk property.
 
         Dynamic sub-faces will be excluded from the output lists.
-        This method will also ensure that any interior sub-faces (with Surface
-        boundary condition) only have one of such objects in the output lists.
 
         Returns:
             A tuple with 2 lists:
@@ -347,14 +355,11 @@ class ModelRadianceProperties(object):
         """
         subfaces = []
         subfaces_blk = []
-        interior_ids = set()
         for subf in self.host.apertures + self.host.doors:
             if subf.properties.radiance.dynamic_group_identifier:
                 continue  # sub-face will be accounted for in the dynamic objects
             if isinstance(subf.boundary_condition, Surface):
-                if subf.identifier in interior_ids:
-                    continue
-                interior_ids.add(subf.boundary_condition.boundary_condition_object)
+                continue  # static interior apertures are part of the scene
             if subf.properties.radiance._modifier_blk:
                 subfaces_blk.append(subf)
             else:
