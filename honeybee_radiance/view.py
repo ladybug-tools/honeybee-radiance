@@ -852,6 +852,8 @@ class View(object):
             _n_view.v_size = _vv
             _n_view.shift = _vs
             _n_view.lift = _vl
+            _n_view._fore_clip = self._fore_clip
+            _n_view._aft_clip = self._aft_clip
             try:
                 _n_view.display_name = '%s_%d' % (self.display_name, view_count)
             except UnicodeEncodeError:  # character no found on machine
