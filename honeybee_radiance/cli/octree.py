@@ -44,6 +44,11 @@ def octree():
     'or they should simply be excluded.', default=True, show_default=True
 )
 @click.option(
+    '--include-ies/--exclude-ies',  ' /-xi', default=True,
+    show_default=True,
+    help='Flag to note whether IES files should be included in the octree.'
+)
+@click.option(
     '--add-before', type=click.STRING, multiple=True, default=None, show_default=True,
     help='Path for a file to be added to octree before scene files.'
 )
@@ -57,7 +62,7 @@ def octree():
 )
 def create_octree_from_folder(
     folder, output, default, include_aperture, black_groups, first_shade_state,
-    add_before, add_after, dry_run
+    include_ies, add_before, add_after, dry_run
 ):
     """Generate a static octree from a folder.
 
@@ -90,6 +95,14 @@ def create_octree_from_folder(
                 scene_files += shd_g_files
             except Exception:
                 pass  # no shade groups available in the model
+        if include_ies:
+            try:
+                ies_folder = model_folder.ies_folder()
+                for fp in os.listdir(ies_folder):
+                    if fp.endswith('rad'):
+                        scene_files += os.path.join(ies_folder, fp)
+            except Exception:
+                pass  # no aperture groups available in the model
         if add_after:
             scene_files += list(add_after)
         if add_before:
