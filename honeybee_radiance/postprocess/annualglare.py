@@ -187,8 +187,8 @@ def _glare_autonomy(values, occ_pattern, glare_threshold, total_hours):
         occ_pattern: A list of 0 and 1 values for hours of occupancy.
         glare_threshold: A fractional number for the threshold of DGP above which
             conditions are considered to induce glare. Default: 0.4.
-        total_occupied_hours: An integer for the total number of occupied hours,
-            which can be used to avoid having to sum occ pattern each time.
+        total_hours: An integer for the total number of occupied hours, which can be used
+            to avoid having to sum occ pattern each time.
 
     Returns:
         glare autonomy
@@ -196,13 +196,16 @@ def _glare_autonomy(values, occ_pattern, glare_threshold, total_hours):
     def _percentage(in_v, occ_hours):
         return round(100.0 * in_v / occ_hours, 2)
 
-    ga = 0
-
+    ga_above = 0
+    # count hours above glare threshold
     for is_occ, value in zip(occ_pattern, values):
         if is_occ == 0:
             continue
-        if value < glare_threshold:
-            ga += 1
+        if value > glare_threshold:
+            ga_above += 1
+
+    # get the number of glare free hours
+    ga = total_hours - ga_above
 
     return _percentage(ga, total_hours)
 
