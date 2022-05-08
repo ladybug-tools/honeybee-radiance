@@ -118,6 +118,54 @@ def test_check_duplicate_modifier_identifiers():
         model.properties.radiance.check_duplicate_modifier_identifiers(True)
 
 
+def check_sensor_grid_rooms_in_model():
+    """Test the check_sensor_grid_rooms_in_model."""
+    first_floor = Room.from_box('FirstFloor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('SecondFloor', 10, 10, 3, origin=Point3D(0, 0, 3))
+    for face in first_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    for face in second_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    Room.solve_adjacency([first_floor, second_floor], 0.01)
+    model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor])
+    
+    model.properties.radiance.sensor_grids = \
+        [r.properties.radiance.generate_sensor_grid(1) for r in model.rooms]
+
+    assert model.properties.radiance.check_sensor_grid_rooms_in_model() == ''
+    assert model.properties.radiance.check_sensor_grid_rooms_in_model(False, True) == []
+    
+    model.properties.radiance.sensor_grids[0].room_identifier = 'not_a_room'
+    assert model.properties.radiance.check_sensor_grid_rooms_in_model(False) != ''
+    assert model.properties.radiance.check_sensor_grid_rooms_in_model(False, True) != []
+    with pytest.raises(ValueError):
+        model.properties.radiance.check_sensor_grid_rooms_in_model(True)
+
+
+def check_view_rooms_in_model():
+    """Test the check_view_rooms_in_model."""
+    first_floor = Room.from_box('FirstFloor', 10, 10, 3, origin=Point3D(0, 0, 0))
+    second_floor = Room.from_box('SecondFloor', 10, 10, 3, origin=Point3D(0, 0, 3))
+    for face in first_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    for face in second_floor[1:5]:
+        face.apertures_by_ratio(0.2, 0.01)
+    Room.solve_adjacency([first_floor, second_floor], 0.01)
+    model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor])
+    
+    model.properties.radiance.views = \
+        [r.properties.radiance.generate_view((0, -1, 0)) for r in model.rooms]
+
+    assert model.properties.radiance.check_view_rooms_in_model() == ''
+    assert model.properties.radiance.check_view_rooms_in_model(False, True) == []
+    
+    model.properties.radiance.views[0].room_identifier = 'not_a_room'
+    assert model.properties.radiance.check_view_rooms_in_model(False) != ''
+    assert model.properties.radiance.check_view_rooms_in_model(False, True) != []
+    with pytest.raises(ValueError):
+        model.properties.radiance.check_view_rooms_in_model(True)
+
+
 def test_to_from_dict():
     """Test the Model to_dict and from_dict method with a single zone model."""
     room = Room.from_box('Tiny_House_Room', 5, 10, 3)
