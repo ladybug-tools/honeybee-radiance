@@ -460,79 +460,194 @@ class ModelRadianceProperties(object):
         Args:
             raise_exception: Boolean to note whether a ValueError should be raised
                 if any errors are found. If False, this method will simply
-                return a text string with all errors that were found.
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
 
         Returns:
-            A text string with all errors that were found. This string will be empty
-            of no errors were found.
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
         """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
         msgs = []
         # perform checks for key honeybee model schema rules
-        msgs.append(self.check_duplicate_modifier_identifiers(False))
-        msgs.append(self.check_duplicate_modifier_set_identifiers(False))
-        msgs.append(self.check_duplicate_sensor_grid_identifiers(False))
-        msgs.append(self.check_duplicate_view_identifiers(False))
-        msgs.append(self.check_sensor_grid_rooms_in_model(False))
-        msgs.append(self.check_view_rooms_in_model(False))
+        msgs.append(self.check_duplicate_modifier_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_modifier_set_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sensor_grid_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_view_identifiers(False, detailed))
+        msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
+        msgs.append(self.check_view_rooms_in_model(False, detailed))
         # output a final report of errors or raise an exception
-        full_msgs = [msg for msg in msgs if msg != '']
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
         full_msg = '\n'.join(full_msgs)
         if raise_exception and len(full_msgs) != 0:
             raise ValueError(full_msg)
         return full_msg
 
-    def check_duplicate_modifier_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate Modifier identifiers in the model."""
+    def check_duplicate_modifier_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate Modifier identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
         return check_duplicate_identifiers(
-            self.modifiers, raise_exception, 'Radiance Modifier')
+            self.modifiers, raise_exception, 'Radiance Modifier',
+            detailed, '010001', 'Radiance')
 
-    def check_duplicate_modifier_set_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate ModifierSet identifiers in the model."""
+    def check_duplicate_modifier_set_identifiers(
+            self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate ModifierSet identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
         return check_duplicate_identifiers(
-            self.modifier_sets, raise_exception, 'ModifierSet')
+            self.modifier_sets, raise_exception, 'ModifierSet',
+            detailed, '010002', 'Radiance')
 
-    def check_duplicate_sensor_grid_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate SensorGrid identifiers in the model."""
+    def check_duplicate_sensor_grid_identifiers(
+            self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate SensorGrid identifiers in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
         return check_duplicate_identifiers(
-            self.sensor_grids, raise_exception, 'SensorGrid')
+            self.sensor_grids, raise_exception, 'SensorGrid',
+            detailed, '010003', 'Radiance')
 
-    def check_duplicate_view_identifiers(self, raise_exception=True):
-        """Check that there are no duplicate View identifiers in the model."""
-        return check_duplicate_identifiers(self.views, raise_exception, 'View')
+    def check_duplicate_view_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate View identifiers in the model.
 
-    def check_sensor_grid_rooms_in_model(self, raise_exception=True):
-        """Check that the room_identifiers of SenorGrids are in the model."""
-        grid_ids = [grid.room_identifier for grid in self.sensor_grids
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if duplicate identifiers are found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        return check_duplicate_identifiers(
+            self.views, raise_exception, 'View', detailed, '010004', 'Radiance')
+
+    def check_sensor_grid_rooms_in_model(self, raise_exception=True, detailed=False):
+        """Check that the room_identifiers of SenorGrids are in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised if
+                SensorGrids reference Rooms that are not in the Model. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        # gather a list of all the missing rooms
+        grid_ids = [(grid, grid.room_identifier) for grid in self.sensor_grids
                     if grid.room_identifier is not None]
         room_ids = set(room.identifier for room in self.host.rooms)
-        missing_rooms = set()
+        missing_rooms = [] if detailed else set()
         for grid in grid_ids:
-            if grid not in room_ids:
-                missing_rooms.add(grid)
+            if grid[1] not in room_ids:
+                if detailed:
+                    missing_rooms.append(grid[0])
+                else:
+                    missing_rooms.add(grid[1])
+        # if missing rooms were found, then report the issue
         if len(missing_rooms) != 0:
-            msg = 'The model has the following missing rooms referenced by sensor ' \
-                'grids:\n{}'.format('\n'.join(missing_rooms))
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            if detailed:
+                all_err = []
+                for grid in missing_rooms:
+                    msg = 'SensorGrid "{}" has a room_identifier that is not in the ' \
+                        'Model: "{}"'.format(grid.identifier, grid.room_identifier)
+                    error_dict = {
+                        'code': '010005',
+                        'type': 'Radiance',
+                        'element_type': 'SensorGrid',
+                        'element_id': grid.identifier,
+                        'element_name': grid.display_name,
+                        'message': msg
+                    }
+                    all_err.append(error_dict)
+                return all_err
+            else:
+                msg = 'The model has the following missing rooms referenced by sensor ' \
+                    'grids:\n{}'.format('\n'.join(missing_rooms))
+                if raise_exception:
+                    raise ValueError(msg)
+                return msg
+        return [] if detailed else ''
 
-    def check_view_rooms_in_model(self, raise_exception=True):
-        """Check that the room_identifiers of Views are in the model."""
-        view_ids = [view.room_identifier for view in self.views
+    def check_view_rooms_in_model(self, raise_exception=True, detailed=False):
+        """Check that the room_identifiers of Views are in the model.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised if
+                Views reference Rooms that are not in the Model. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A string with the message or a list with a dictionary if detailed is True.
+        """
+        detailed = False if raise_exception else detailed
+        # gather a list of all the missing rooms
+        view_ids = [(view, view.room_identifier) for view in self.views
                     if view.room_identifier is not None]
         room_ids = set(room.identifier for room in self.host.rooms)
-        missing_rooms = set()
+        missing_rooms = [] if detailed else set()
         for view in view_ids:
-            if view not in room_ids:
-                missing_rooms.add(view)
+            if view[1] not in room_ids:
+                if detailed:
+                    missing_rooms.append(view[0])
+                else:
+                    missing_rooms.add(view[1])
         if len(missing_rooms) != 0:
-            msg = 'The model has the following missing rooms referenced by ' \
-                'views:\n{}'.format('\n'.join(missing_rooms))
-            if raise_exception:
-                raise ValueError(msg)
-            return msg
-        return ''
+            if detailed:
+                all_err = []
+                for view in missing_rooms:
+                    msg = 'View "{}" has a room_identifier that is not in the ' \
+                        'Model: "{}"'.format(view.identifier, view.room_identifier)
+                    error_dict = {
+                        'code': '010006',
+                        'type': 'Radiance',
+                        'element_type': 'View',
+                        'element_id': view.identifier,
+                        'element_name': view.display_name,
+                        'message': msg
+                    }
+                    all_err.append(error_dict)
+                return all_err
+            else:
+                msg = 'The model has the following missing rooms referenced by ' \
+                    'views:\n{}'.format('\n'.join(missing_rooms))
+                if raise_exception:
+                    raise ValueError(msg)
+                return msg
+        return [] if detailed else ''
 
     def apply_properties_from_dict(self, data):
         """Apply the radiance properties of a dictionary to the host Model of this object.
