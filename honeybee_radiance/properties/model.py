@@ -454,7 +454,7 @@ class ModelRadianceProperties(object):
         for view in self._views:
             view.scale(factor, origin)
 
-    def check_all(self, raise_exception=True):
+    def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model radiance properties.
 
         Args:
