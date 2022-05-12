@@ -158,7 +158,7 @@ def modifier_sets_by_id(modifier_set_ids, none_defaults, abridged, output_file):
     'ModelRadianceProperties. Note that this standards folder MUST contain these '
     'subfolders. Each sub-folder can contain JSON files of objects following '
     'honeybee schema or RAD/MAT files (if appropriate). If None, the honeybee '
-    'default standards folder will be used.',type=click.Path(
+    'default standards folder will be used.', type=click.Path(
         exists=True, file_okay=False, dir_okay=True, resolve_path=True)
 )
 @click.option(
@@ -187,7 +187,7 @@ def to_model_properties(standards_folder, output_file):
         # load modifier sets from the standards folder
         mod_set_folder = os.path.join(folder, 'modifiersets')
         all_mod_sets, misc_m = load_modifiersets_from_folder(mod_set_folder, all_m)
-        all_mods = set(list(all_m.values()) + misc_m)        
+        all_mods = set(list(all_m.values()) + misc_m)
 
         # add all object dictionaries into one object
         base = {'type': 'ModelRadianceProperties'}

@@ -112,7 +112,7 @@ def glare_autonomy_from_folder(results_folder, schedule=None, glare_threshold=0.
     ga = []
 
     grids, sun_up_hours = _process_input_folder(results_folder, grids_filter)
-    occ_pattern, total_occ = \
+    occ_pattern, total_occ, sun_down_occ_hours = \
         filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
 
     for grid in grids:
@@ -148,7 +148,7 @@ def glare_autonomy_to_folder(
 
     """
     grids, sun_up_hours = _process_input_folder(results_folder, grids_filter)
-    occ_pattern, total_occ = \
+    occ_pattern, total_occ, sun_down_occ_hours = \
         filter_schedule_by_hours(sun_up_hours=sun_up_hours, schedule=schedule)
 
     metrics_folder = os.path.join(results_folder, sub_folder)
