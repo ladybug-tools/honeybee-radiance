@@ -584,8 +584,9 @@ class ModelRadianceProperties(object):
                     msg = 'SensorGrid "{}" has a room_identifier that is not in the ' \
                         'Model: "{}"'.format(grid.identifier, grid.room_identifier)
                     error_dict = {
+                        'type': 'ValidationError',
                         'code': '010005',
-                        'type': 'Radiance',
+                        'extension_type': 'Radiance',
                         'element_type': 'SensorGrid',
                         'element_id': grid.identifier,
                         'element_name': grid.display_name,
@@ -632,8 +633,9 @@ class ModelRadianceProperties(object):
                     msg = 'View "{}" has a room_identifier that is not in the ' \
                         'Model: "{}"'.format(view.identifier, view.room_identifier)
                     error_dict = {
+                        'type': 'ValidationError',
                         'code': '010006',
-                        'type': 'Radiance',
+                        'extension_type': 'Radiance',
                         'element_type': 'View',
                         'element_id': view.identifier,
                         'element_name': view.display_name,
