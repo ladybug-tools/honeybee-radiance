@@ -56,11 +56,18 @@ def filter_schedule_by_hours(sun_up_hours, schedule=None):
         occ_pattern -- A filtered version of the annual schedule that only
             includes the sun-up-hours.
 
-        total_hours -- A number for the total occupied hours of the schedule.
+        total_hours -- An integer for the total occupied hours of the schedule.
+
+        sun_down_occ_hours -- An integer for the number of occupied hours where
+            the sun is down and there's no possibility of being daylit or
+            expereincing glare.
     """
     schedule = schedule or generate_default_schedule()
     occ_pattern = [schedule[int(h)] for h in sun_up_hours]
-    return occ_pattern, sum(schedule)
+    sun_down_sch = schedule[:]  # copy the schedule in place
+    for h in reversed(sun_up_hours):
+        sun_down_sch.pop(int(h))
+    return occ_pattern, sum(schedule), sum(sun_down_sch)
 
 
 def _process_input_folder(folder, filter_pattern):
