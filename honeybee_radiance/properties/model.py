@@ -501,7 +501,7 @@ class ModelRadianceProperties(object):
         """
         return check_duplicate_identifiers(
             self.modifiers, raise_exception, 'Radiance Modifier',
-            detailed, '010001', 'Radiance')
+            detailed, '010001', 'Radiance', error_type='Duplicate Modifier Identifier')
 
     def check_duplicate_modifier_set_identifiers(
             self, raise_exception=True, detailed=False):
@@ -518,7 +518,8 @@ class ModelRadianceProperties(object):
         """
         return check_duplicate_identifiers(
             self.modifier_sets, raise_exception, 'ModifierSet',
-            detailed, '010002', 'Radiance')
+            detailed, '010002', 'Radiance',
+            error_type='Duplicate ModifierSet Identifier')
 
     def check_duplicate_sensor_grid_identifiers(
             self, raise_exception=True, detailed=False):
@@ -535,7 +536,7 @@ class ModelRadianceProperties(object):
         """
         return check_duplicate_identifiers(
             self.sensor_grids, raise_exception, 'SensorGrid',
-            detailed, '010003', 'Radiance')
+            detailed, '010003', 'Radiance', error_type='Duplicate SensorGrid Identifier')
 
     def check_duplicate_view_identifiers(self, raise_exception=True, detailed=False):
         """Check that there are no duplicate View identifiers in the model.
@@ -550,7 +551,8 @@ class ModelRadianceProperties(object):
             A string with the message or a list with a dictionary if detailed is True.
         """
         return check_duplicate_identifiers(
-            self.views, raise_exception, 'View', detailed, '010004', 'Radiance')
+            self.views, raise_exception, 'View', detailed, '010004', 'Radiance',
+            error_type='Duplicate View Identifier')
 
     def check_sensor_grid_rooms_in_model(self, raise_exception=True, detailed=False):
         """Check that the room_identifiers of SenorGrids are in the model.
@@ -586,6 +588,7 @@ class ModelRadianceProperties(object):
                     error_dict = {
                         'type': 'ValidationError',
                         'code': '010005',
+                        'error_type': 'SensorGrid Room Not In Model',
                         'extension_type': 'Radiance',
                         'element_type': 'SensorGrid',
                         'element_id': grid.identifier,
@@ -635,6 +638,7 @@ class ModelRadianceProperties(object):
                     error_dict = {
                         'type': 'ValidationError',
                         'code': '010006',
+                        'error_type': 'View Room Not In Model',
                         'extension_type': 'Radiance',
                         'element_type': 'View',
                         'element_id': view.identifier,
