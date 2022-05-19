@@ -187,6 +187,17 @@ def test_to_and_from_dict():
     assert sg_dict == sensor_from.to_dict()
 
 
+def test_to_radial_grid():
+    positions = [[0, 0, 0], [0, 0, 5], [0, 0, 10]]
+    plane_normal = [0, 0, 1]
+    sg = SensorGrid.from_planar_positions('test_grid', positions, plane_normal)
+    assert len(sg) == 3
+
+    new_sg = sg.to_radial_grid(dir_count=8)
+    assert len(new_sg) == 3 * 8
+    assert new_sg.identifier == sg.identifier
+
+
 def test_split_single_grid():
     """Test splitting a sensor grid."""
     sensor_grid = SensorGrid.from_file('./tests/assets/grid/sensor_grid_split.pts')
