@@ -729,6 +729,41 @@ class SensorGrid(object):
         return futil.write_to_file_by_name(
             folder, identifier, json.dumps(self.to_dict()), mkdir)
 
+    def to_radial_grid(self, dir_count=8, start_vector=Vector3D(0, -1, 0),
+                       mesh_radius=0):
+        """Get a radial sensor grid using the positions of this grid as a base.
+
+        All properties of this grid will be transferred to the new grid, including
+        the identifier, room_identifier, etc. The mesh will be recomputed based
+        on the input mesh_radius but any base_geometry will be transferred.
+
+        Note that calling this method on a SensorGrid that is already formatted
+        as a radial grid will result in a lot of unwanted duplication of sensors.
+
+        Args:
+            dir_count: A positive integer for the number of radial directions
+                to be generated around each position. (Default: 8).
+            start_vector: A Vector3D to set the start direction of the generated
+                directions. This can be used to orient the resulting sensors to
+                specific parts of the scene. It can also change the elevation of the
+                resulting directions since this start vector will always be rotated in
+                the XY plane to generate the resulting directions. (Default: (0, -1, 0)).
+            mesh_radius: An optional number that can be used to generate a Mesh3D
+                that is aligned with the resulting sensors and will automatically
+                be assigned to the grid's mesh property. Such meshes will resemble
+                a circle around each sensor with the specified radius and will
+                contain triangular faces that can be colored with simulation results.
+                If zero, no mesh will be generated for the sensor grid. (Default: 0).
+        """
+        new_grid = SensorGrid.from_positions_radial(
+            self.identifier, self.positions, dir_count, start_vector, mesh_radius)
+        new_grid._display_name = self._display_name
+        new_grid._room_identifier = self._room_identifier
+        new_grid.group_identifier = self.group_identifier
+        new_grid._light_path = self._light_path
+        new_grid._base_geometry = self._base_geometry
+        return new_grid
+
     def move(self, moving_vec):
         """Move this sensor grid along a vector.
 
