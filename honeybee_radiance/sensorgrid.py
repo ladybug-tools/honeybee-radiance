@@ -160,7 +160,8 @@ class SensorGrid(object):
             identifier: Text string for a unique SensorGrid ID. Must not contain spaces
                 or special characters. This will be used to identify the object across
                 a model and in the exported Radiance files.
-            faces: An array of ladybug_geometry Face3D.
+            faces: An array of ladybug_geometry Face3Ds from which a SensorGrid will
+                be generated.
             x_dim: The x dimension of the grid cells as a number.
             y_dim: The y dimension of the grid cells as a number. Default is None,
                 which will assume the same cell dimension for y as is set for x.
@@ -171,7 +172,14 @@ class SensorGrid(object):
                 normal direction of the face will be used as the direction of the
                 sensor grids.
         """
-        meshes = [face.mesh_grid(x_dim, y_dim, offset, flip) for face in faces]
+        meshes = []
+        for face in faces:
+            try:
+                meshes.append(face.mesh_grid(x_dim, y_dim, offset, flip))
+            except AssertionError:  # tiny geometry not compatible with quad faces
+                continue
+        assert len(meshes) > 0, 'None of the Face3Ds input to SensorGrid.from_face3d ' \
+            'can produce a quad grid at the specified grid dimensions.'
         if len(meshes) == 1:
             s_grid = cls.from_mesh3d(identifier, meshes[0])
         elif len(meshes) > 1:
@@ -805,6 +813,43 @@ class SensorGrid(object):
     def duplicate(self):
         """Get a copy of this object."""
         return self.__copy__()
+
+    @staticmethod
+    def from_face3d_arrays(
+            base_identifier, face_arrays, x_dim, y_dim=None, offset=0, flip=False):
+        """Get an array of SensorGrids from an matrix (list of lists) of Face3Ds.
+
+        This method uses the from_face3d classmethod but includes checks to
+        catch cases where not of the input Face3Ds can support the generation of
+        quad grids. In this case, the invalid SensorGrid will not be generated
+        and will be excluded form the output list of SensorGrids.
+
+        Args:
+            base_identifier: Text string for a unique SensorGrid ID, which will be used
+                as a base for all of the output SensorGrid IDs. Must not contain spaces
+                or special characters.
+            faces: An matrix (list of lists) of ladybug_geometry Face3Ds from which
+                SensorGrids will be generated.
+            x_dim: The x dimension of the grid cells as a number.
+            y_dim: The y dimension of the grid cells as a number. Default is None,
+                which will assume the same cell dimension for y as is set for x.
+            offset: A number for how far to offset the grid from the base face.
+            flip: Set to True to have the mesh normals reversed from the direction of
+                this face and to have the offset input move the mesh in the opposite
+                direction from this face normal. Defaults to False, which means the
+                normal direction of the face will be used as the direction of the
+                sensor grids.
+        """
+        grids = []
+        for i, faces in enumerate(face_arrays):
+            grid_id = '{}_{}'.format(base_identifier, i)
+            try:
+                grids.append(
+                    SensorGrid.from_face3d(grid_id, faces, x_dim, y_dim, offset, flip)
+                )
+            except AssertionError:  # none of the Face3Ds make a valid grid
+                continue
+        return grids
 
     @staticmethod
     def radial_positions_mesh(
