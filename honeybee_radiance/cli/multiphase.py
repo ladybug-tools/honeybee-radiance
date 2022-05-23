@@ -590,7 +590,8 @@ def prepare_dynamic_command(
 
     def get_dynamic_octrees_and_grids(
         model_folder=model_folder, grid_count=grid_count, phase=phase,
-        octree_folder=octree_folder, grid_folder=grid_folder
+        octree_folder=octree_folder, grid_folder=grid_folder,
+        exclude_static=exclude_static
         ):
         scene_mapping = model_folder.octree_scene_mapping(
             exclude_static=exclude_static, phase=phase
@@ -650,10 +651,11 @@ def prepare_dynamic_command(
             json.dump(dynamic_mapping, fp, indent=2)
 
     try:
-        if model_folder.has_aperture_group:
+        if model_folder.has_aperture_group or not exclude_static:
             get_dynamic_octrees_and_grids(
                 model_folder=model_folder, grid_count=grid_count, phase=phase,
-                octree_folder=octree_folder, grid_folder=grid_folder
+                octree_folder=octree_folder, grid_folder=grid_folder,
+                exclude_static=exclude_static
             )
         else:
             # no aperture groups, write empty files
