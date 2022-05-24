@@ -12,6 +12,7 @@ from .modifier.material import BSDF
 from .lib.modifiers import black
 
 import os
+import sys
 import json
 import shutil
 import re
@@ -419,8 +420,13 @@ def _write_sensor_grids(folder, model, grids_filter, full_match=False):
 
         # write information file for all the grids.
         grids_info_file = os.path.join(folder, '_info.json')
-        with open(grids_info_file, 'w') as fp:
-            json.dump(grids_info, fp, indent=2)
+        if (sys.version_info < (3, 0)):  # we need to manually encode it as UTF-8
+            with open(grids_info_file, 'wb') as fp:
+                info_str = json.dumps(grids_info, indent=2, ensure_ascii=False)
+                fp.write(info_str.encode('utf-8'))
+        else:
+            with open(grids_info_file, 'w', encoding='utf-8') as fp:
+                json.dump(grids_info, fp, indent=2, ensure_ascii=False)
 
         # write input grids info
         model_grids_info = []
@@ -718,7 +724,7 @@ def _unique_modifier_blk_combinations(geometry_objects):
         -   modifier_combs: A dictionary of modifiers with identifiers of
             modifiers as keys and tuples with two modifiers as values. Each
             item in the dictionary represents a unique combination of modifier
-            and modifer_blk found in the objects. Both modifiers in the pair
+            and modifier_blk found in the objects. Both modifiers in the pair
             have the same identifier (making them write-able into a radiance
             folder). The first item in the tuple is the true modifier while
             the second one is the modifier_blk.
