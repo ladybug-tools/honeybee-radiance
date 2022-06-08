@@ -245,30 +245,64 @@ class Folders(object):
 
     def _radiance_version_from_cli(self):
         """Get the Radiance version properties by making a call to a Radiance command."""
+        # check mkpmap version since this avoids interference with Accelerad
+        # more information about this is here: https://discourse.ladybug.tools/t/
+        # is-it-possible-to-get-lbt-1-2-0-working-with-accelerad/13789/9
         rad_exe = os.path.join(self.radbin_path, 'mkpmap.exe') if os.name == 'nt' \
             else os.path.join(self.radbin_path, 'mkpmap')
+        if not os.path.isfile(rad_exe):  # old Radiance without the mkpmap executable
+            rad_exe = os.path.join(self.radbin_path, 'rtrace.exe') if os.name == 'nt' \
+                else os.path.join(self.radbin_path, 'rtrace')
         cmds = [rad_exe, '-version']
         use_shell = True if os.name == 'nt' else False
         process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
         stdout = process.communicate()
         base_str = str(stdout[0]).replace("b'", '').replace(r"\r\n'", '')
         self._radiance_version_str = base_str  # set the version string
-        try:  # try to parse the version into a list of integers
-            ver_nums = base_str.split('(')[-1].split(')')[0].split('.')
-            ver_array = []
-            for i in ver_nums:
-                val = int(i) if i.isnumeric() else i
-                ver_array.append(val)
-            self._radiance_version = tuple(ver_array)
-        except Exception:
-            pass  # failed to parse the version into values; possibly a custom build
-        try:  # try to parse the date into a list of integers
-            date_pattern = re.compile(r'(\d*\-\d*\-\d*)')
-            ver_date = re.search(date_pattern, base_str)
-            self._radiance_version_date = \
-                tuple(int(v) for v in ver_date.group(0).split('-'))
-        except Exception:
-            pass  # failed to parse the date into values; possibly a custom build
+        if 'NREL' in base_str:  # parse using NREL's version conventions
+            try:  # try to parse the version into a list of integers
+                ver_nums = base_str.split(' ')[1].split('.')
+                ver_array = []
+                for i in ver_nums:
+                    val = int(i) if i.isnumeric() else i
+                    ver_array.append(val)
+                self._radiance_version = tuple(ver_array)
+            except Exception:
+                pass  # failed to parse the version into values; possibly a custom build
+            if self._radiance_version and self._radiance_version[:2] >= (5, 2):
+                try:  # try to parse the date into a list of integers
+                    date_pattern = re.compile(r'(\d*\-\d*\-\d*)')
+                    ver_date = re.search(date_pattern, base_str)
+                    self._radiance_version_date = \
+                        tuple(int(v) for v in ver_date.group(0).split('-'))
+                except Exception:
+                    pass  # failed to parse the date into values; possibly a custom build
+            else:
+                try:  # try to parse the date into a list of integers
+                    date_pattern = re.compile(r'(\d*\.\d*\.\d*\))')
+                    ver_date = re.search(date_pattern, base_str)
+                    self._radiance_version_date = \
+                        tuple(int(v) for v in
+                              ver_date.group(0).replace(')', '').split('.'))
+                except Exception:
+                    pass  # failed to parse the date into values; possibly a custom build
+        else:
+            try:  # try to parse the version into a list of integers
+                ver_nums = base_str.split('(')[-1].split(')')[0].split('.')
+                ver_array = []
+                for i in ver_nums:
+                    val = int(i) if i.isnumeric() else i
+                    ver_array.append(val)
+                self._radiance_version = tuple(ver_array)
+            except Exception:
+                pass  # failed to parse the version into values; possibly a custom build
+            try:  # try to parse the date into a list of integers
+                date_pattern = re.compile(r'(\d*\-\d*\-\d*)')
+                ver_date = re.search(date_pattern, base_str)
+                self._radiance_version_date = \
+                    tuple(int(v) for v in ver_date.group(0).split('-'))
+            except Exception:
+                pass  # failed to parse the date into values; possibly a custom build
 
     @staticmethod
     def _find_radiance_folder():
