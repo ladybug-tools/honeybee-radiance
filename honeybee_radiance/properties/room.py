@@ -1,5 +1,7 @@
 # coding=utf-8
 """Room Radiance Properties."""
+import math
+
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 from honeybee.facetype import Floor, Wall
 from honeybee.typing import clean_rad_string
@@ -349,9 +351,15 @@ class RoomRadianceProperties(object):
             pattern = []
             for pt in floor_grid.face_centroids:
                 for wg in wall_geos:
-                    if wg.plane.distance_to_point(pt) <= wall_offset:
-                        pattern.append(False)
-                        break
+                    close_pt = wg.plane.closest_point(pt)
+                    p_dist = pt.distance_to_point(close_pt)
+                    if p_dist <= wall_offset:
+                        close_pt_2d = wg.plane.xyz_to_xy(close_pt)
+                        g_dist = wg.polygon2d.distance_to_point(close_pt_2d)
+                        f_dist = math.sqrt(p_dist ** 2 + g_dist ** 2)
+                        if f_dist <= wall_offset:
+                            pattern.append(False)
+                            break
                 else:
                     pattern.append(True)
             try:
