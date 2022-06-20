@@ -148,9 +148,9 @@ class ModelRadianceProperties(object):
         for face in self.host.faces:  # check all orphaned Face modifiers
             self._check_and_add_face_modifier(face, modifiers)
         for ap in self.host.orphaned_apertures:  # check all Aperture modifiers
-            self._check_and_add_obj_modifier(ap, modifiers)
+            self._check_and_add_dynamic_obj_modifier(ap, modifiers)
         for dr in self.host.orphaned_doors:  # check all Door modifiers
-            self._check_and_add_obj_modifier(dr, modifiers)
+            self._check_and_add_dynamic_obj_modifier(dr, modifiers)
         return list(set(modifiers))
 
     @property
