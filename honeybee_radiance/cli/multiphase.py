@@ -509,7 +509,7 @@ def dmtx_group_command(
         sys.exit(0)
 
 
-@multi_phase.command('prepare-dynamic')
+@multi_phase.command('prepare-multiphase')
 @click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.argument('grid-count', type=int)
 @click.option(
@@ -547,7 +547,7 @@ def dmtx_group_command(
     help='A flag to indicate if static apertures should be excluded or icluded. If '
     'excluded static apertures will not be treated as its own dynamic state.'
 )
-def prepare_dynamic_command(
+def prepare_multiphase_command(
     folder, grid_count, grid_divisor, min_sensor_count, sun_path, phase, octree_folder,
     grid_folder, exclude_static
     ):
@@ -562,6 +562,9 @@ def prepare_dynamic_command(
     Sensor grids will be redistributed if they are to be used in a two phase simulation.
     A subfolder for each light path will be created. In this folder the redistributed
     grids are found.
+
+    If the model folder have aperture groups, a file with states information for each
+    grid will be written.
 
     \b
     Args:
@@ -588,7 +591,24 @@ def prepare_dynamic_command(
         5: ['two_phase', 'three_phase', 'five_phase']
     }
 
-    def get_dynamic_octrees_and_grids(
+    def _get_grid_states(model_folder=model_folder):
+        states_info = model_folder.aperture_groups_states()
+        grid_info = model_folder.grid_info()
+        grid_states = {}
+
+        for grid in grid_info:
+            grid_states[grid['identifier']] = {}
+            light_paths = [lp[0] for lp in grid['light_path']]
+            for light_path in light_paths:
+                if light_path != 'static_apertures':
+                    grid_states[grid['identifier']][light_path] = \
+                        [s['identifier'] for s in states_info[light_path]]
+
+        grid_states_output = os.path.join(model_folder.folder, 'grid_states.json')
+        with open(grid_states_output, 'w') as fp:
+            json.dump(grid_states, fp, indent=2)
+
+    def _get_octrees_and_grids(
         model_folder=model_folder, grid_count=grid_count, phase=phase,
         octree_folder=octree_folder, grid_folder=grid_folder,
         exclude_static=exclude_static
@@ -652,13 +672,15 @@ def prepare_dynamic_command(
 
     try:
         if model_folder.has_aperture_group or not exclude_static:
-            get_dynamic_octrees_and_grids(
+            _get_octrees_and_grids(
                 model_folder=model_folder, grid_count=grid_count, phase=phase,
                 octree_folder=octree_folder, grid_folder=grid_folder,
                 exclude_static=exclude_static
             )
+            if model_folder.has_aperture_group:
+                _get_grid_states(model_folder=model_folder)
         else:
-            # no aperture groups, write empty files
+            # no aperture groups and static excluded, write empty files
             dynamic_mapping = []
             for study in phases[phase]:
                 study_type = []
