@@ -2,16 +2,16 @@
 from honeybee.boundarycondition import Surface
 
 
-def light_path_from_room(model, room_identifier, static_name='static_apertures'):
+def light_path_from_room(model, room_identifier, static_name='__static_apertures__'):
     """Get the dynamic aperture groups that need to be simulated for a room in a model.
     
     Args:
         model: A honeybee Model object which will be used to identify the aperture
             groups that are needed to simulate a single room.
-        room_identifier: Text string for the identifer of the Room in the model
+        room_identifier: Text string for the identifier of the Room in the model
             for which the light path will be computed.
         static_name: An optional name to be used to refer to static apertures
-            found within the model. (Default: 'static_apertures').
+            found within the model. (Default: '__static_apertures__').
 
     Returns:
         A list of lists where each sub-list contains the identifiers of the aperture
@@ -43,7 +43,7 @@ def light_path_from_room(model, room_identifier, static_name='static_apertures')
 
         print(light_path_from_room(model, room1.identifier))
 
-        >> [['SouthWindow1'], ['static_apertures', 'NorthWindow2']]
+        >> [['SouthWindow1'], ['__static_apertures__', 'NorthWindow2']]
     """
     # get the Room object from the Model
     room = model.rooms_by_identifier([room_identifier])[0]
@@ -56,7 +56,7 @@ def light_path_from_room(model, room_identifier, static_name='static_apertures')
             if s_face.properties.radiance._dynamic_group_identifier:
                 grp_id = s_face.properties.radiance._dynamic_group_identifier
             else:
-                grp_id = 'static_apertures'
+                grp_id = static_name
             if isinstance(s_face.boundary_condition, Surface):
                 adj_room = s_face.boundary_condition.boundary_condition_objects[-1]
                 adj_rooms.add((grp_id, adj_room))
@@ -78,7 +78,7 @@ def light_path_from_room(model, room_identifier, static_name='static_apertures')
                 if s_face.properties.radiance._dynamic_group_identifier:
                     rm_grp_ids.add(s_face.properties.radiance._dynamic_group_identifier)
                 else:
-                    rm_grp_ids.add('static_apertures')
+                    rm_grp_ids.add(static_name)
         base_grp_id = room_tup[0]
         for g_id in rm_grp_ids:
             if g_id != base_grp_id:  # group has already been accounted for
