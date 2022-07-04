@@ -26,13 +26,13 @@ def test_light_path_from_room_interior():
 
     lp = light_path_from_room(model, room1.identifier)
     assert ['SouthWindow1'] in lp
-    assert ['static_apertures', 'NorthWindow2'] in lp
+    assert ['__static_apertures__', 'NorthWindow2'] in lp
 
     room1[1].apertures_by_ratio(0.4, 0.01)  # outdoor north window
     lp = light_path_from_room(model, room1.identifier)
     assert ['SouthWindow1'] in lp
-    assert ['static_apertures'] in lp
-    assert ['static_apertures', 'NorthWindow2'] in lp
+    assert ['__static_apertures__'] in lp
+    assert ['__static_apertures__', 'NorthWindow2'] in lp
 
 
 def test_grid_and_view_info_dict():

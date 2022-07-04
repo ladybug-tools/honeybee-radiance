@@ -600,7 +600,7 @@ def prepare_multiphase_command(
             grid_states[grid['identifier']] = {}
             light_paths = [lp[0] for lp in grid['light_path']]
             for light_path in light_paths:
-                if light_path != 'static_apertures':
+                if light_path != '__static_apertures__':
                     grid_states[grid['identifier']][light_path] = \
                         [s['identifier'] for s in states_info[light_path]]
 
