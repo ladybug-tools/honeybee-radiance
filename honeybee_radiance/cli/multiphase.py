@@ -618,11 +618,12 @@ def prepare_multiphase_command(
             )
         if not os.path.isdir(octree_folder):
             os.mkdir(octree_folder)
-        dynamic_mapping = []
+        dynamic_mapping = {
+            'two_phase': [],
+            'three_phase': [],
+            'five_phase': []
+        }
         for study, states in scene_mapping.items():
-            if study not in phases[phase]:
-                continue
-
             if study == 'two_phase':
                 grid_info_dict = {}
                 grid_mapping = model_folder.grid_mapping(
@@ -642,12 +643,10 @@ def prepare_multiphase_command(
                         min_sensor_count, grid_info=grid_info)
                     grid_info_dict[light_path['identifier']] = out_grid_info
 
-            study_type = []
             for state in states:
                 info, commands = _generate_octrees_info(
                     state, octree_folder, study, sun_path
                     )
-                study_type.append(info)
 
                 for cmd in commands:
                     env = None
@@ -660,11 +659,13 @@ def prepare_multiphase_command(
                 if study == 'two_phase':
                     info['sensor_grids_folder'] = state['light_path']
                     info['sensor_grids_info'] = grid_info_dict[state['light_path']]
-                    
-            dynamic_mapping.append({study: study_type})
+
+                dynamic_mapping[study].append(info)
+
+        for study, study_info in dynamic_mapping.items():
             dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
             with open(dynamic_output, 'w') as fp:
-                json.dump(study_type, fp, indent=2)
+                json.dump(study_info, fp, indent=2)
 
         dynamic_output = os.path.join(model_folder.folder, 'multi_phase.json')
         with open(dynamic_output, 'w') as fp:
