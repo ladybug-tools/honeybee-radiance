@@ -678,8 +678,7 @@ def prepare_multiphase_command(
                 octree_folder=octree_folder, grid_folder=grid_folder,
                 exclude_static=exclude_static
             )
-            if model_folder.has_aperture_group:
-                _get_grid_states(model_folder=model_folder)
+            _get_grid_states(model_folder=model_folder)
         else:
             # no aperture groups and static excluded, write empty files
             dynamic_mapping = []
