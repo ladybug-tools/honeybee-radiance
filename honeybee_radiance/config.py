@@ -76,7 +76,13 @@ class Folders(object):
         self._radbin_path = r_path
         if r_path:
             self._radiance_path = os.path.split(r_path)[0]
-            self._radlib_path = os.path.join(self._radiance_path, 'lib')
+            radlib_path = os.path.join(self._radiance_path, 'lib')
+            if os.path.isdir(radlib_path):
+                self._radlib_path = radlib_path
+            elif os.environ.get('RAYPATH'):
+                self._radlib_path = os.environ.get('RAYPATH')
+            else:
+                self._radlib_path = None
             if not self.mute:
                 print("Path to Radiance is set to: %s" % self._radiance_path)
         else:
@@ -338,7 +344,13 @@ class Folders(object):
             test_path = '/usr/local/radiance'
             rad_path = test_path if os.path.isdir(test_path) else None
 
-        if not rad_path:  # No Radiance installations were found
+        # check the environment variables
+        if not rad_path:
+            rad_bin_path = os.environ.get('BINPATH')
+            if rad_bin_path is not None:
+                return rad_bin_path
+        
+        if not rad_path:  # no Radiance installations were found
             return None
 
         # return the path to the executable

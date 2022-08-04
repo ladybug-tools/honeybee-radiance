@@ -802,12 +802,12 @@ def _filter_by_pattern(input_objects, filter, full_match=False):
     if not full_match:
         patterns = [
             re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
-            ]
+        ]
     else:
         patterns = [
             re.compile(f) if f.startswith('^') and f.endswith('$') else
             re.compile('^%s$' % f) for f in filter
-            ]
+        ]
     indexes = []
 
     for count, obj in enumerate(input_objects):

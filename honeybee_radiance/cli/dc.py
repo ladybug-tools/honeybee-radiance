@@ -57,7 +57,7 @@ def dc():
 @click.option(
     '--multiply-by', help='A value to multiply by all the results. This input is '
     'helpful to adjust the values for runs with different timesteps if required. '
-    'This value will be multiplied by the values provided by converstion input.',
+    'This value will be multiplied by the values provided by conversion input.',
     type=click.FLOAT, default=1
 )
 @click.option(
