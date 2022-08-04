@@ -24,12 +24,12 @@ def octree():
     ' is provided it should be relative to project folder.'
 )
 @click.option(
-    '--default/--black',  ' /-b', default=True, show_default=True,
+    '--default/--black', ' /-b', default=True, show_default=True,
     help='Flag to note whether the octree should be created completely with '
     'black materials.'
 )
 @click.option(
-    '--include-aperture/--exclude-aperture',  ' /-xa', default=True,
+    '--include-aperture/--exclude-aperture', ' /-xa', default=True,
     show_default=True,
     help='Flag to note whether static apertures should be included in the octree.'
 )
@@ -44,7 +44,7 @@ def octree():
     'or they should simply be excluded.', default=True, show_default=True
 )
 @click.option(
-    '--include-ies/--exclude-ies',  ' /-xi', default=True,
+    '--include-ies/--exclude-ies', ' /-xi', default=True,
     show_default=True,
     help='Flag to note whether IES files should be included in the octree.'
 )

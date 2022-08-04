@@ -142,7 +142,8 @@ class Light(Material):
             modifier=modifier,
             dependencies=dependencies
         )
-        if 'display_name' in primitive_dict and primitive_dict['display_name'] is not None:
+        if 'display_name' in primitive_dict and \
+                primitive_dict['display_name'] is not None:
             cls_.display_name = primitive_dict['display_name']
 
         # this might look redundant but it is NOT. see glass for explanation.
