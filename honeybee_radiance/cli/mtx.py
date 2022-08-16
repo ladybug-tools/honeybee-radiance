@@ -64,7 +64,7 @@ def two_matrix_operations(
 
     \b
     Args:
-        first-mtx: Path to fist matrix.
+        first-mtx: Path to first matrix.
         second-mtx: Path to second matrix.
     """
     try:
