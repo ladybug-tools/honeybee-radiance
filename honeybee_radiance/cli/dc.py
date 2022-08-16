@@ -14,7 +14,7 @@ from honeybee_radiance.reader import sensor_count_from_file
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to run daylight contribution calculations in Radiance.')
+@click.group(help='Commands to run daylight contribution/ coefficient calculations in Radiance.')
 def dc():
     pass
 
