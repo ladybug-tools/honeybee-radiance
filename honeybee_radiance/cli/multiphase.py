@@ -544,12 +544,17 @@ def dmtx_group_command(
     default='grid', show_default=True)
 @click.option(
     '--exclude-static/--include-static', is_flag=True, default=True,
-    help='A flag to indicate if static apertures should be excluded or icluded. If '
+    help='A flag to indicate if static apertures should be excluded or included. If '
     'excluded static apertures will not be treated as its own dynamic state.'
+)
+@click.option(
+    '--default-states/--all-states', is_flag=True, default=False,
+    help='A flag to indicate if the command should generate octrees and grids for all '
+    'aperture group states or just the default states of aperture groups.'
 )
 def prepare_multiphase_command(
     folder, grid_count, grid_divisor, min_sensor_count, sun_path, phase, octree_folder,
-    grid_folder, exclude_static
+    grid_folder, exclude_static, default_states
     ):
     """This command prepares the model folder for simulations with aperture groups. It
     will generate a set of octrees and sensor grids that are unique to each state of each
@@ -612,12 +617,12 @@ def prepare_multiphase_command(
             json.dump(grid_states, fp, indent=2)
 
     def _get_octrees_and_grids(
-        model_folder=model_folder, grid_count=grid_count, phase=phase,
-        octree_folder=octree_folder, grid_folder=grid_folder,
-        exclude_static=exclude_static
+        model_folder, grid_count, phase, octree_folder, grid_folder,
+        exclude_static, default_states
         ):
         scene_mapping = model_folder.octree_scene_mapping(
-            exclude_static=exclude_static, phase=phase
+            exclude_static=exclude_static, phase=phase,
+            default_states=default_states
             )
         if not os.path.isdir(octree_folder):
             os.mkdir(octree_folder)
@@ -677,9 +682,8 @@ def prepare_multiphase_command(
     try:
         if model_folder.has_aperture_group or not exclude_static:
             _get_octrees_and_grids(
-                model_folder=model_folder, grid_count=grid_count, phase=phase,
-                octree_folder=octree_folder, grid_folder=grid_folder,
-                exclude_static=exclude_static
+                model_folder, grid_count, phase, octree_folder, grid_folder,
+                exclude_static, default_states
             )
             _get_grid_states(model_folder=model_folder)
         else:
