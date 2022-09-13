@@ -652,6 +652,12 @@ def prepare_multiphase_command(
                     grid_info_dict[light_path['identifier']] = out_grid_info
 
             for state in states:
+                light_path = state['light_path']
+                if (light_path == '__static_apertures__'and
+                    not light_path in grid_info_dict):
+                    # in this case we do not want to generate an octree
+                    continue
+                
                 info, commands = _generate_octrees_info(
                     state, octree_folder, study, sun_path
                     )
@@ -665,8 +671,8 @@ def prepare_multiphase_command(
 
                 # add grid information and folder if two_phase
                 if study == 'two_phase':
-                    info['sensor_grids_folder'] = state['light_path']
-                    info['sensor_grids_info'] = grid_info_dict[state['light_path']]
+                    info['sensor_grids_folder'] = light_path
+                    info['sensor_grids_info'] = grid_info_dict[light_path]
 
                 dynamic_mapping[study].append(info)
 
