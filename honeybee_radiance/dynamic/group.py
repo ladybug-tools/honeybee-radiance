@@ -292,7 +292,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                 })
         return states_list
 
-    def rfluxmtx_control_params(self, sampling=None, up_direction=None):
+    def rfluxmtx_control_params(self, state_index=0, sampling=None, up_direction=None):
         """Create a formatted Rfluxmtx control parameters string.
 
         The optional values are sampling and up_direction. If these values are not
@@ -324,7 +324,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
             RfluxmtxControlParameters
 
         """
-        state = self.states_by_index(0)[0]
+        state = self.states_by_index(state_index)[0]
         if up_direction is None:
             up_direction = state.vmtx_geometry.plane.y
         if sampling is None:
@@ -438,7 +438,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
                      unique_glow.to_radiance(minimal)]
 
         # use first state to add the header
-        header = self.rfluxmtx_control_params()
+        header = self.rfluxmtx_control_params(state_index=state_index)
         state_str.append(header.to_radiance())
 
         for state in states:
