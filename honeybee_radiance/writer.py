@@ -605,7 +605,7 @@ def _write_mtx_files(folder, sub_folder, group, states_json_list, minimal=False)
 
     # write the single mtx file if everything is default
     if one_mtx and tmxt_valid:
-        mtx_str = group.vmtx_to_radiance(0, minimal)
+        mtx_str = group.vmtx_to_radiance(state_i, minimal)
         write_to_file_by_name(dest, mtx_file, mtx_str)
 
 
