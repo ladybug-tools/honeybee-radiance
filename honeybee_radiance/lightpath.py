@@ -1,5 +1,6 @@
 """Utilities to determine the path of light taken through interior spaces of a model."""
 from honeybee.boundarycondition import Surface
+from honeybee.facetype import AirBoundary
 
 
 def light_path_from_room(model, room_identifier, static_name='__static_apertures__'):
@@ -45,42 +46,56 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
 
         >> [['SouthWindow1'], ['__static_apertures__', 'NorthWindow2']]
     """
-    # get the Room object from the Model
-    room = model.rooms_by_identifier([room_identifier])[0]
+    def _get_room_light_path(model, room_identifier, static_name):
+        # get the Room object from the Model
+        room = model.rooms_by_identifier([room_identifier])[0]
 
-    # gather all of the dynamic groups that the Room has in its apertures
-    grp_ids = set()
-    adj_rooms = set()
-    for face in room.faces:
-        for s_face in face.apertures + face.doors:
-            if s_face.properties.radiance._dynamic_group_identifier:
-                grp_id = s_face.properties.radiance._dynamic_group_identifier
-            else:
-                grp_id = static_name
-            if isinstance(s_face.boundary_condition, Surface):
-                adj_room = s_face.boundary_condition.boundary_condition_objects[-1]
-                adj_rooms.add((grp_id, adj_room))
-            else:
-                grp_ids.add(grp_id)
-
-    # if there are no interior apertures, return the list as it is
-    light_path = [[grp_id] for grp_id in grp_ids]
-    if len(adj_rooms) == 0:
-        return light_path
-
-    # loop through adjacent rooms and gather their aperture groups
-    # TODO: Make this part recursive to trace the light path more than one room away.
-    room_objs = model.rooms_by_identifier([room_tup[1] for room_tup in adj_rooms])
-    for room_obj, room_tup in zip(room_objs, adj_rooms):
-        rm_grp_ids = set()
-        for face in room_obj.faces:
+        # gather all of the dynamic groups that the Room has in its apertures
+        grp_ids = set()
+        adj_rooms = set()
+        for face in room.faces:
             for s_face in face.apertures + face.doors:
                 if s_face.properties.radiance._dynamic_group_identifier:
-                    rm_grp_ids.add(s_face.properties.radiance._dynamic_group_identifier)
+                    grp_id = s_face.properties.radiance._dynamic_group_identifier
                 else:
-                    rm_grp_ids.add(static_name)
-        base_grp_id = room_tup[0]
-        for g_id in rm_grp_ids:
-            if g_id != base_grp_id:  # group has already been accounted for
-                light_path.append([base_grp_id, g_id])
+                    grp_id = static_name
+                if isinstance(s_face.boundary_condition, Surface):
+                    adj_room = s_face.boundary_condition.boundary_condition_objects[-1]
+                    adj_rooms.add((grp_id, adj_room))
+                else:
+                    grp_ids.add(grp_id)
+                    
+        # if there are no interior apertures, return the list as it is
+        light_path = [[grp_id] for grp_id in grp_ids]
+        if len(adj_rooms) == 0:
+            return room, light_path
+
+        # loop through adjacent rooms and gather their aperture groups
+        # TODO: Make this part recursive to trace the light path more than one room away.
+        room_objs = model.rooms_by_identifier([room_tup[1] for room_tup in adj_rooms])
+        for room_obj, room_tup in zip(room_objs, adj_rooms):
+            rm_grp_ids = set()
+            for face in room_obj.faces:
+                for s_face in face.apertures + face.doors:
+                    if s_face.properties.radiance._dynamic_group_identifier:
+                        rm_grp_ids.add(s_face.properties.radiance._dynamic_group_identifier)
+                    else:
+                        rm_grp_ids.add(static_name)
+            base_grp_id = room_tup[0]
+            for g_id in rm_grp_ids:
+                if g_id != base_grp_id:  # group has already been accounted for
+                    light_path.append([base_grp_id, g_id])
+
+        return room, light_path
+
+    room, light_path = _get_room_light_path(model, room_identifier, static_name)
+
+    # rooms with air boundaries should inherit the light path of rooms adjacent
+    # to the air boundary
+    for face in room.faces:
+        if isinstance(face.type, AirBoundary):
+            adj_room = face.boundary_condition.boundary_condition_objects[-1]
+            lp = _get_room_light_path(model, adj_room, static_name)[1]
+            light_path.extend(lp)
+
     return light_path
