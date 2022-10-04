@@ -90,12 +90,20 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
 
     room, light_path = _get_room_light_path(model, room_identifier, static_name)
 
+    air_boundary_rooms = set()
     # rooms with air boundaries should inherit the light path of rooms adjacent
     # to the air boundary
-    for face in room.faces:
-        if isinstance(face.type, AirBoundary):
-            adj_room = face.boundary_condition.boundary_condition_objects[-1]
-            lp = _get_room_light_path(model, adj_room, static_name)[1]
-            light_path.extend(lp)
+    def _check_air_boundary(model, room, light_path, static_name):
+        air_boundary_rooms.add(room.identifier)
+        for face in room.faces:
+            if isinstance(face.type, AirBoundary):
+                adj_room = face.boundary_condition.boundary_condition_objects[-1]
+                if not adj_room in air_boundary_rooms:
+                    air_boundary_rooms.add(adj_room)
+                    room, lp = _get_room_light_path(model, adj_room, static_name)
+                    light_path.extend(lp)
+                    _check_air_boundary(model, room, light_path, static_name)
+
+    _check_air_boundary(model, room, light_path, static_name)
 
     return light_path
