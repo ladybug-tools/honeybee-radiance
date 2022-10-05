@@ -14,7 +14,7 @@ from honeybee_radiance.reader import sensor_count_from_file
 _logger = logging.getLogger(__name__)
 
 
-@click.group(help='Commands to run daylight contribution calculations in Radiance.')
+@click.group(help='Commands to run daylight contribution/ coefficient calculations in Radiance.')
 def dc():
     pass
 
@@ -42,7 +42,7 @@ def dc():
     'These values will overwrite user input rad parameters.'
 )
 @click.option(
-    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    '--output', '-o', show_default=True, help='Path to output file (.mtx or .dc). If a relative path'
     ' is provided it should be relative to project folder.'
 )
 @click.option(
@@ -183,7 +183,7 @@ def rcontrib_command_with_postprocess(
     'These values will overwrite user input rad parameters.'
 )
 @click.option(
-    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    '--output', '-o', show_default=True, help='Path to output file (.mtx or .dc). If a relative path'
     ' is provided it should be relative to project folder.'
 )
 @click.option(
@@ -312,7 +312,7 @@ def rfluxmtx_command_with_postprocess(
     'These values will overwrite user input rad parameters.'
 )
 @click.option(
-    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    '--output', '-o', show_default=True, help='Path to output file (.mtx or .dc). If a relative path'
     ' is provided it should be relative to project folder.'
 )
 @click.option(

@@ -20,7 +20,7 @@ def octree():
 @octree.command('from-folder')
 @click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.option(
-    '--output', '-o', show_default=True, help='Path to output file. If a relative path'
+    '--output', '-o', show_default=True, help='Path to output file (.oct). If a relative path'
     ' is provided it should be relative to project folder.'
 )
 @click.option(

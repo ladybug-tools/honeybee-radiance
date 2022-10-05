@@ -64,7 +64,7 @@ def two_matrix_operations(
 
     \b
     Args:
-        first-mtx: Path to fist matrix.
+        first-mtx: Path to first matrix.
         second-mtx: Path to second matrix.
     """
     try:
@@ -148,7 +148,7 @@ def three_matrix_operations(
     first_mtx, second_mtx, third_mtx, operator_one, operator_two, keep_header,
     conversion, output_mtx, output_format, dry_run
         ):
-    """Operations between two Radiance matrices.
+    """Operations between three Radiance matrices.
 
     \b
     Args:

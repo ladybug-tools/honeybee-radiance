@@ -36,7 +36,7 @@ def sky():
               'unspecified, the time will be interpreted as solar time at the '
               'given longitude.')
 @click.option('--sky-type', '-type', type=int, default=0, show_default=True, help='An '
-              'integer from 0..5 to indicate CIE Sky Type. 0 = Sunny with sun, 1 = Sunny'
+              'integer from 0-5 to indicate CIE Sky Type. 0 = Sunny with sun, 1 = Sunny'
               ' without sun, 2 = Intermediate with sun, 3 = Intermediate without sun, '
               '4 = Cloudy sky, 5 = Uniform cloudy sky.')
 @click.option('--north', '-n', type=float, default=0, show_default=True, help='A '
