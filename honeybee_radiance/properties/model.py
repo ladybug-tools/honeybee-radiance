@@ -5,7 +5,7 @@ from ..view import View
 from ..dynamic.group import DynamicShadeGroup, DynamicSubFaceGroup
 from ..modifierset import ModifierSet
 from ..mutil import dict_to_modifier  # imports all modifiers classes
-from ..modifier.material import BSDF
+from ..modifier.material import aBSDF, BSDF
 from ..lib.modifiers import black, generic_context
 from ..lib.modifiersets import generic_modifier_set_visible
 
@@ -177,7 +177,7 @@ class ModelRadianceProperties(object):
         Model.blk_modifiers.
         """
         all_mods = self.modifiers + self.blk_modifiers
-        return list(set(mod for mod in all_mods if isinstance(mod, BSDF)))
+        return list(set(mod for mod in all_mods if isinstance(mod, (aBSDF, BSDF))))
 
     @property
     def modifier_sets(self):

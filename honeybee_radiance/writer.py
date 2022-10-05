@@ -8,7 +8,7 @@ from honeybee_radiance_folder.folder import ModelFolder
 import honeybee_radiance_folder.config as folder_config
 
 from .geometry import Polygon
-from .modifier.material import BSDF
+from .modifier.material import aBSDF, BSDF
 from .lib.modifiers import black
 
 import os
@@ -675,12 +675,12 @@ def _write_static_files(
         mod_strs = []
         mod_blk_strs = []
         for mod in modifiers:
-            if isinstance(mod, BSDF):
+            if isinstance(mod, (aBSDF, BSDF)):
                 _process_bsdf_modifier(mod, mod_strs, minimal)
             else:
                 mod_strs.append(mod.to_radiance(minimal))
         for mod in modifiers_blk:
-            if isinstance(mod, BSDF):
+            if isinstance(mod, (aBSDF, BSDF)):
                 _process_bsdf_modifier(mod, mod_strs, minimal)
             else:
                 mod_blk_strs.append(mod.to_radiance(minimal))
