@@ -64,7 +64,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                     adj_rooms.add((grp_id, adj_room))
                 else:
                     grp_ids.add(grp_id)
-                    
+
         # if there are no interior apertures, return the list as it is
         light_path = [[grp_id] for grp_id in grp_ids]
         if len(adj_rooms) == 0:
@@ -85,6 +85,9 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
             for g_id in rm_grp_ids:
                 if g_id != base_grp_id:  # group has already been accounted for
                     light_path.append([base_grp_id, g_id])
+            if (len(rm_grp_ids) == 1 and static_name in rm_grp_ids and
+                not static_name in grp_ids):
+                light_path.append([static_name])
 
         return room, light_path
 
