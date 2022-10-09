@@ -602,14 +602,14 @@ def prepare_multiphase_command(
         grid_states = {}
 
         for grid in grid_info:
-            grid_states[grid['identifier']] = {}
+            grid_states[grid['full_id']] = {}
             try:
                 light_paths = [lp[0] for lp in grid['light_path']]
             except KeyError:
                 light_paths = []
             for light_path in light_paths:
                 if light_path != '__static_apertures__':
-                    grid_states[grid['identifier']][light_path] = \
+                    grid_states[grid['full_id']][light_path] = \
                         [s['identifier'] for s in states_info[light_path]]
 
         grid_states_output = os.path.join(model_folder.folder, 'grid_states.json')

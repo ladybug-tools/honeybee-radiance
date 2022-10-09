@@ -197,7 +197,7 @@ def three_phase_combinations(
 
         grid_mapper = {}
         for grid in rec_data:
-            grid_mapper[grid['identifier']] = {}
+            grid_mapper[grid['full_id']] = {}
             for apt in grid['aperture_groups']:
                 for group in send_data:
                     if apt in group['aperture_groups']:
@@ -207,7 +207,7 @@ def three_phase_combinations(
                     # this should never happen for a valid radiance folder
                     raise ValueError('Unrecognizable aperture group: %s' % apt)
 
-                grid_mapper[grid['identifier']][apt] = \
+                grid_mapper[grid['full_id']][apt] = \
                     [s['identifier'] for s in states[apt]]
 
         # create all the possible combinations
@@ -223,9 +223,9 @@ def three_phase_combinations(
                         dict(
                             # create an identifier from the mix of grid and state
                             identifier='%s..%s' % (
-                                grid['identifier'], info['identifier']
+                                grid['full_id'], info['identifier']
                             ),
-                            grid_id = grid['identifier'],
+                            grid_id = grid['full_id'],
                             state_id = info['identifier'],
                             tmtx=info['tmtx'],
                             vmtx=vmtx,
