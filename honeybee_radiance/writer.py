@@ -681,7 +681,7 @@ def _write_static_files(
                 mod_strs.append(mod.to_radiance(minimal))
         for mod in modifiers_blk:
             if isinstance(mod, (aBSDF, BSDF)):
-                _process_bsdf_modifier(mod, mod_strs, minimal)
+                _process_bsdf_modifier(mod, mod_blk_strs, minimal)
             else:
                 mod_blk_strs.append(mod.to_radiance(minimal))
 
