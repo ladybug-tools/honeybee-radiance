@@ -653,7 +653,7 @@ def prepare_multiphase_command(
 
             for state in states:
                 light_path = state['light_path']
-                if (light_path == '__static_apertures__'and
+                if (light_path == '__static_apertures__' and
                     not light_path in grid_info_dict):
                     # in this case we do not want to generate an octree
                     continue
