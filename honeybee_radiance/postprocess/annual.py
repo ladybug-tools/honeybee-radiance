@@ -60,7 +60,7 @@ def filter_schedule_by_hours(sun_up_hours, schedule=None):
 
         sun_down_occ_hours -- An integer for the number of occupied hours where
             the sun is down and there's no possibility of being daylit or
-            expereincing glare.
+            experiencing glare.
     """
     schedule = schedule or generate_default_schedule()
     occ_pattern = [schedule[int(h)] for h in sun_up_hours]
