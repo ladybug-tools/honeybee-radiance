@@ -117,7 +117,8 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                         s_face_light_path.extend(_s_face_light_path)
                 else:
                     s_light_path_duplicate.append(light_path_id)
-                    s_face_light_path.append(s_light_path_duplicate)
+                    if not s_light_path_duplicate in s_face_light_path:
+                        s_face_light_path.append(s_light_path_duplicate)
 
         return s_face_light_path
     
@@ -145,6 +146,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 light_path.extend(s_face_light_path)
             else:
                 # no boundary condition, tracing ends here
-                light_path.append(s_light_path)
+                if not s_light_path in light_path:
+                    light_path.append(s_light_path)
 
     return light_path
