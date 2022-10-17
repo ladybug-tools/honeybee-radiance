@@ -50,8 +50,6 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
     """
     #TODO: Consider to modify light path if there are two consecutive
     #      items, such as ['__static_apertures__', '__static_apertures__'].
-    #      Only static apertures should be able to appear twice in the same
-    #      sub light_path.
     def get_adjacent_room(face):
         """Get the adjacent Room of a Face.
 
@@ -98,7 +96,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
             if isinstance(face.type, AirBoundary):
                 adj_s_faces = adj_s_faces + (face,)
             for adj_s_face in adj_s_faces:
-                s_light_path_duplicate = s_light_path.copy()
+                s_light_path_duplicate = list(s_light_path)
                 if isinstance(adj_s_face, (Aperture, Door)):
                     if adj_s_face.properties.radiance._dynamic_group_identifier:
                         light_path_id = \
