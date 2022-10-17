@@ -47,7 +47,7 @@ _default_modifiers = {
 
 @lockable
 class ModifierSet(object):
-    """Set containting all radiance modifiers needed to create a radiance model.
+    """Set containing all radiance modifiers needed to create a radiance model.
 
     ModifierSets can be used to establish templates that are applied broadly
     across a Model, like a color scheme used consistently throughout a building.
@@ -340,7 +340,7 @@ class ModifierSet(object):
             raise NotImplementedError(
                 'Boundary condition {} is not recognized for doors in '
                 'ModifierSet'.format(boundary_condition)
-                )
+            )
 
     def get_shade_modifier(self, is_indoor=False):
         """Get a modifier object that will be assigned to a shade.
@@ -1088,5 +1088,4 @@ class DoorModifierSet(_BaseSet):
 
     def __repr__(self):
         return 'Door Modifier Set: [Exterior: {}] [Interior: {}]'.format(
-                self.exterior_modifier.display_name,
-                self.interior_modifier.display_name)
+            self.exterior_modifier.display_name, self.interior_modifier.display_name)

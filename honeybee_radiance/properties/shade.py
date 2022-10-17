@@ -58,7 +58,8 @@ class ShadeRadianceProperties(_DynamicRadianceProperties):
         if self._modifier:  # set by user
             return self._modifier
         elif not self._host.has_parent:  # orphaned shade
-            return generic_context
+            return generic_context if self._host.is_detached else \
+                generic_modifier_set_visible.shade_set.exterior_modifier
         else:  # shade with a parent modifier set
             m_set = self._parent_modifier_set(self._host.parent)
             if m_set is None:
@@ -146,7 +147,7 @@ class ShadeRadianceProperties(_DynamicRadianceProperties):
         return obj
 
     def _apply_states_from_dict(self, abridged_data, modifiers):
-        """Apply statess from an Abridged dictionary.
+        """Apply states from an Abridged dictionary.
 
         Args:
             abridged_data: An Abridged dictionary (typically coming from a Model).

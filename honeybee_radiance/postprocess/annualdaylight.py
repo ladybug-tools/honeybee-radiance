@@ -82,7 +82,7 @@ def metrics(ill_file, occ_pattern, threshold=300, min_t=100, max_t=3000,
 
     Returns:
         Tuple(List, List, List, List, List) -- 5 lists for daylight autonomy,
-        continuous daylight automony, lower than useful daylight illuminance,
+        continuous daylight autonomy, lower than useful daylight illuminance,
         useful daylight illuminance and higher than useful daylight illuminance.
         Number of results in each list matches the number of lines in ill input file.
 
@@ -115,7 +115,7 @@ def metrics_to_files(ill_file, occ_pattern, output_folder, threshold=300,
     """Compute annual metrics for an ill file and write the results to a folder.
 
     This function generates 5 different files or daylight autonomy, continuous daylight
-    automony, lower than useful daylight illuminance, useful daylight illuminance and
+    autonomy, lower than useful daylight illuminance, useful daylight illuminance and
     higher than useful daylight illuminance.
 
     Args:
@@ -202,7 +202,7 @@ def metrics_from_folder(results_folder, schedule=None, threshold=300,
     Returns:
         Tuple[Tuple] - There will be a tuple for each input sensor grid which is a
         Tuple(List, List, List, List, List) -- 5 lists for daylight autonomy,
-        continuous daylight automony, lower than useful daylight illuminance,
+        continuous daylight autonomy, lower than useful daylight illuminance,
         useful daylight illuminance and higher than useful daylight illuminance.
         Number of results in each list matches the number of lines in ill input file.
 

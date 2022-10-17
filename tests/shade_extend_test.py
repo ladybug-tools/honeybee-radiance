@@ -5,7 +5,7 @@ from honeybee.aperture import Aperture
 from honeybee_radiance.properties.shade import ShadeRadianceProperties
 from honeybee_radiance.dynamic import RadianceShadeState, StateGeometry
 from honeybee_radiance.modifier import Modifier
-from honeybee_radiance.modifier.material import Plastic, Glass
+from honeybee_radiance.modifier.material import Glass
 
 from honeybee_radiance.lib.modifiers import generic_interior_shade, \
     generic_exterior_shade, generic_context, black
@@ -20,7 +20,7 @@ import pytest
 def test_radiance_properties():
     """Test the existence of the Shade radiance properties."""
     shade = Shade.from_vertices(
-        'overhang', [[0, 0, 3], [1, 0, 3], [1, 1, 3], [0, 1, 3]])
+        'overhang', [[0, 0, 3], [1, 0, 3], [1, 1, 3], [0, 1, 3]], is_detached=True)
 
     assert hasattr(shade.properties, 'radiance')
     assert isinstance(shade.properties.radiance, ShadeRadianceProperties)
@@ -39,9 +39,11 @@ def test_radiance_properties():
 def test_default_properties():
     """Test the auto-assigning of shade properties."""
     out_shade = Shade.from_vertices(
-        'overhang', [[0, 0, 3], [1, 0, 3], [1, 1, 3], [0, 1, 3]])
+        'overhang', [[0, 0, 3], [1, 0, 3], [1, 1, 3], [0, 1, 3]],
+        is_detached=True)
     in_shade = Shade.from_vertices(
-        'light_shelf', [[0, 0, 3], [-1, 0, 3], [-1, -1, 3], [0, -1, 3]])
+        'light_shelf', [[0, 0, 3], [-1, 0, 3], [-1, -1, 3], [0, -1, 3]],
+        is_detached=True)
     aperture = Aperture.from_vertices(
         'parent_aperture', [[0, 0, 0], [0, 10, 0], [0, 10, 3], [0, 0, 3]])
 
@@ -78,7 +80,8 @@ def test_duplicate():
 
     assert shade_original.properties.radiance.host is shade_original
     assert shade_dup_1.properties.radiance.host is shade_dup_1
-    assert shade_original.properties.radiance.host is not shade_dup_1.properties.radiance.host
+    assert shade_original.properties.radiance.host is not \
+        shade_dup_1.properties.radiance.host
 
     assert shade_original.properties.radiance.modifier == \
         shade_dup_1.properties.radiance.modifier

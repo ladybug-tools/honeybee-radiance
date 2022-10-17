@@ -712,6 +712,8 @@ class ModelRadianceProperties(object):
         del gs['identifier']
         g_mods = self.global_modifier_set.modifiers_unique
         gs['modifiers'] = [mod.to_dict() for mod in g_mods]
+        gs['context_modifier'] = generic_context.identifier
+        gs['modifiers'].append(generic_context.to_dict())
         base['radiance']['global_modifier_set'] = gs
 
         # add all ModifierSets to the dictionary
