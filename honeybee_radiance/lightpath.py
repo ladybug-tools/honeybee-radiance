@@ -1,6 +1,8 @@
 """Utilities to determine the path of light taken through interior spaces of a model."""
 from honeybee.boundarycondition import Surface
 from honeybee.facetype import AirBoundary
+from honeybee.aperture import Aperture
+from honeybee.door import Door
 
 
 def light_path_from_room(model, room_identifier, static_name='__static_apertures__'):
@@ -46,88 +48,103 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
 
         >> [['SouthWindow1'], ['__static_apertures__', 'NorthWindow2']]
     """
-    def trace_light_path():
-        return None
+    #TODO: Consider to modify light path if there are two consecutive
+    #      items, such as ['__static_apertures__', '__static_apertures__'].
+    #      Only static apertures should be able to appear twice in the same
+    #      sub light_path.
+    def get_adjacent_room(face):
+        """Get the adjacent Room of a Face.
+
+        Args:
+            face: A Face object for which to find the adjacent room.
+
+        Returns:
+            A Room object.
+        """
+        adj_room_identifier = \
+            face.boundary_condition.boundary_condition_objects[-1]
+        adj_room = model.rooms_by_identifier([adj_room_identifier])[0]
+        
+        return adj_room
+        
+    def trace_light_path(s_face, s_light_path, parent_room):
+        """Trace light path recursively.
+        
+        This function will return the light path for a single face (Aperture,
+        Door, or AirBoundary). The function will trace the light path
+        recursively meaning that it will enter rooms adjacent to interior
+        Apertures and Doors as well as AirBoundaries.
+
+        Args:
+            s_face: The Aperture, Door, or AirBoundary for which to trace the
+                light path.
+            s_light_path: The base light path of the s_face. This is a single
+                item list which contains the dynamic group identifier or the
+                static name, however, if s_face is an AirBoundary the list will
+                be empty.
+            parent_room: A Room object. This Room is the parent Room of the
+                s_face. In this function the parent room is used to check that
+                we do not go back into the parent room, and enter a infinite
+                recursive loop.
+        
+        Returns:
+            A list of lists where each sub-list contains the identifiers of the
+            ApertureGroups through which light is passing.
+        """
+        s_face_light_path = []
+        room = get_adjacent_room(s_face)
+        for face in room.faces:
+            adj_s_faces = face.apertures + face.doors
+            if isinstance(face.type, AirBoundary):
+                adj_s_faces = adj_s_faces + (face,)
+            for adj_s_face in adj_s_faces:
+                s_light_path_duplicate = s_light_path.copy()
+                if isinstance(adj_s_face, (Aperture, Door)):
+                    if adj_s_face.properties.radiance._dynamic_group_identifier:
+                        light_path_id = \
+                            adj_s_face.properties.radiance._dynamic_group_identifier
+                    else:
+                        light_path_id = static_name
+                if isinstance(adj_s_face.boundary_condition, Surface):
+                    adj_room = get_adjacent_room(adj_s_face)
+                    # check that parent room and adjacent room are not the same
+                    if not parent_room.identifier == adj_room.identifier:
+                        if isinstance(adj_s_face, (Aperture, Door)):
+                            # do not append if face is an AirBoundary
+                            s_light_path_duplicate.append(light_path_id)
+                        _s_face_light_path = trace_light_path(
+                            adj_s_face, s_light_path_duplicate, room)
+                        s_face_light_path.extend(_s_face_light_path)
+                else:
+                    s_light_path_duplicate.append(light_path_id)
+                    s_face_light_path.append(s_light_path_duplicate)
+
+        return s_face_light_path
     
     light_path = []
-    
     room = model.rooms_by_identifier([room_identifier])[0]
-    
     for face in room.faces:
-        if isinstance(face.type, AirBoundary):
-            print('fff')
         s_faces = face.apertures + face.doors
+        if isinstance(face.type, AirBoundary):
+            s_faces = s_faces + (face,)
         for s_face in s_faces:
-            if s_face.properties.radiance._dynamic_group_identifier:
-                light_path_id = s_face.properties.radiance._dynamic_group_identifier
+            if isinstance(s_face, (Aperture, Door)):
+                # create base light path if Aperture or Door
+                if s_face.properties.radiance._dynamic_group_identifier:
+                    s_light_path = \
+                        [s_face.properties.radiance._dynamic_group_identifier]
+                else:
+                    s_light_path = [static_name]
             else:
-                light_path_id = static_name
+                # else AirBoundary, no light path id
+                s_light_path = []
             if isinstance(s_face.boundary_condition, Surface):
-                trace_light_path()
+                # boundary condition, trace light path recursively for s_face
+                s_face_light_path = \
+                    trace_light_path(s_face, s_light_path, room)
+                light_path.extend(s_face_light_path)
             else:
-                light_path.append([light_path_id])
-                
-    # def _get_room_light_path(model, room_identifier, static_name):
-    #     # get the Room object from the Model
-    #     room = model.rooms_by_identifier([room_identifier])[0]
-
-    #     # gather all of the dynamic groups that the Room has in its apertures
-    #     grp_ids = set()
-    #     adj_rooms = set()
-    #     for face in room.faces:
-    #         for s_face in face.apertures + face.doors:
-    #             if s_face.properties.radiance._dynamic_group_identifier:
-    #                 grp_id = s_face.properties.radiance._dynamic_group_identifier
-    #             else:
-    #                 grp_id = static_name
-    #             if isinstance(s_face.boundary_condition, Surface):
-    #                 adj_room = s_face.boundary_condition.boundary_condition_objects[-1]
-    #                 adj_rooms.add((grp_id, adj_room))
-    #             else:
-    #                 grp_ids.add(grp_id)
-
-    #     # if there are no interior apertures, return the list as it is
-    #     light_path = [[grp_id] for grp_id in grp_ids]
-    #     if len(adj_rooms) == 0:
-    #         return room, light_path
-
-    #     # loop through adjacent rooms and gather their aperture groups
-    #     # TODO: Make this part recursive to trace the light path more than one room away.
-    #     room_objs = model.rooms_by_identifier([room_tup[1] for room_tup in adj_rooms])
-    #     for room_obj, room_tup in zip(room_objs, adj_rooms):
-    #         rm_grp_ids = set()
-    #         for face in room_obj.faces:
-    #             for s_face in face.apertures + face.doors:
-    #                 if s_face.properties.radiance._dynamic_group_identifier:
-    #                     rm_grp_ids.add(s_face.properties.radiance._dynamic_group_identifier)
-    #                 else:
-    #                     rm_grp_ids.add(static_name)
-    #         base_grp_id = room_tup[0]
-    #         for g_id in rm_grp_ids:
-    #             if g_id != base_grp_id:  # group has already been accounted for
-    #                 light_path.append([base_grp_id, g_id])
-    #         if (len(rm_grp_ids) == 1 and static_name in rm_grp_ids and
-    #             not static_name in grp_ids):
-    #             light_path.append([static_name])
-
-    #     return room, light_path
-
-    # room, light_path = _get_room_light_path(model, room_identifier, static_name)
-
-    # air_boundary_rooms = set()
-    # # rooms with air boundaries should inherit the light path of rooms adjacent
-    # # to the air boundary
-    # def _check_air_boundary(model, room, light_path, static_name):
-    #     air_boundary_rooms.add(room.identifier)
-    #     for face in room.faces:
-    #         if isinstance(face.type, AirBoundary):
-    #             adj_room = face.boundary_condition.boundary_condition_objects[-1]
-    #             if not adj_room in air_boundary_rooms:
-    #                 air_boundary_rooms.add(adj_room)
-    #                 room, lp = _get_room_light_path(model, adj_room, static_name)
-    #                 light_path.extend(lp)
-    #                 _check_air_boundary(model, room, light_path, static_name)
-
-    # _check_air_boundary(model, room, light_path, static_name)
+                # no boundary condition, tracing ends here
+                light_path.append(s_light_path)
 
     return light_path

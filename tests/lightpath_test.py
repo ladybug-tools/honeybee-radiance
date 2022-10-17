@@ -6,6 +6,8 @@ from honeybee.room import Room
 from honeybee.model import Model
 from ladybug_geometry.geometry3d.pointvector import Point3D
 
+from .assets.light_path.light_path import room_light_path_dict
+
 
 def test_light_path_from_room_interior():
     """Test the light_path_from_room method with interior apertures."""
@@ -71,3 +73,15 @@ def test_grid_and_view_info_dict():
     view.light_path = [['SouthWindow1'], ['SouthWindow2']]
     folder_dict = view.info_dict(model)
     assert folder_dict['light_path'] == [['SouthWindow1'], ['SouthWindow2']]
+
+
+def test_large_light_path_model():
+    """Test the large light path model with multiple interior Apertures."""
+    model = Model.from_hbjson('./tests/assets/model/large_light_path_model.hbjson')
+    for room in model.rooms:
+        room_display_name = room.display_name
+        light_path = light_path_from_room(model, room.identifier)
+
+        check_light_path = room_light_path_dict[room_display_name]
+        for lp in light_path:
+            assert lp in check_light_path
