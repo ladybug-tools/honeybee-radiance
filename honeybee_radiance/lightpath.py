@@ -109,18 +109,24 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                     if not parent_room.identifier == adj_room.identifier:
                         if isinstance(adj_s_face, (Aperture, Door)):
                             # do not append if face is an AirBoundary
-                            s_light_path_duplicate.append(light_path_id)
+                            if not s_light_path_duplicate:
+                                s_light_path_duplicate.append(light_path_id)
+                            elif not light_path_id == s_light_path_duplicate[-1]:
+                                s_light_path_duplicate.append(light_path_id)
                         _s_face_light_path = trace_light_path(
                             adj_s_face, s_light_path_duplicate, room)
                         s_face_light_path.extend(_s_face_light_path)
                 else:
-                    s_light_path_duplicate.append(light_path_id)
+                    if not s_light_path_duplicate:
+                        s_light_path_duplicate.append(light_path_id)
+                    elif not light_path_id == s_light_path_duplicate[-1]:
+                        s_light_path_duplicate.append(light_path_id)
                     if not s_light_path_duplicate in s_face_light_path:
                         s_face_light_path.append(s_light_path_duplicate)
 
         return s_face_light_path
     
-    light_path = []
+    _light_path = []
     room = model.rooms_by_identifier([room_identifier])[0]
     for face in room.faces:
         s_faces = face.apertures + face.doors
@@ -141,10 +147,16 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 # boundary condition, trace light path recursively for s_face
                 s_face_light_path = \
                     trace_light_path(s_face, s_light_path, room)
-                light_path.extend(s_face_light_path)
+                _light_path.extend(s_face_light_path)
             else:
                 # no boundary condition, tracing ends here
-                if not s_light_path in light_path:
-                    light_path.append(s_light_path)
+                if not s_light_path in _light_path:
+                    _light_path.append(s_light_path)
 
+    # remove any duplicates
+    light_path = []
+    for lp in _light_path:
+        if not lp in light_path:
+            light_path.append(lp)
+    
     return light_path
