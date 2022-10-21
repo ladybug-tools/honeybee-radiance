@@ -570,7 +570,7 @@ def electric_lighting(
         # optional input - only check if the file exist otherwise ignore
         if base_schedule and os.path.isfile(base_schedule):
             with open(base_schedule) as hourly_schedule:
-                schedule = [int(float(v)) for v in hourly_schedule]
+                schedule = [float(v) for v in hourly_schedule]
         else:
             schedule = None
 
