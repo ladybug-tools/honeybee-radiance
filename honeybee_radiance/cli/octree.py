@@ -73,7 +73,10 @@ def create_octree_from_folder(
     model_folder = ModelFolder.from_model_folder(folder)
     try:
         black_out = False if default else True
-        scene_files = model_folder.scene_files(black_out=black_out)
+        try:
+            scene_files = model_folder.scene_files(black_out=black_out)
+        except Exception: # no scene files available in the model
+            scene_files = []
         if include_aperture:  # no black out here
             try:
                 aperture_files = model_folder.aperture_files()
