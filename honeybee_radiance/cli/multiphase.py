@@ -543,12 +543,12 @@ def dmtx_group_command(
     '--grid-folder', help='Output folder into which the grid files be written.',
     default='grid', show_default=True)
 @click.option(
-    '--exclude-static/--include-static', is_flag=True, default=True,
+    '--exclude-static/--include-static', is_flag=True, default=True, show_default=True,
     help='A flag to indicate if static apertures should be excluded or included. If '
     'excluded static apertures will not be treated as its own dynamic state.'
 )
 @click.option(
-    '--default-states/--all-states', is_flag=True, default=False,
+    '--default-states/--all-states', is_flag=True, default=False, show_default=True,
     help='A flag to indicate if the command should generate octrees and grids for all '
     'aperture group states or just the default states of aperture groups.'
 )
@@ -667,6 +667,7 @@ def prepare_multiphase_command(
                     if folders.env != {}:
                         env = folders.env
                     env = dict(os.environ, **env) if env else None
+                    print(cmd)
                     cmd.run(env=env, cwd=model_folder.folder)
 
                 # add grid information and folder if two_phase
