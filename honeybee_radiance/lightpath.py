@@ -65,7 +65,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
         
         return adj_room
         
-    def trace_light_path(s_face, s_light_path, parent_room):
+    def trace_light_path(s_face, s_light_path, parent_room, passed_rooms = set()):
         """Trace light path recursively.
         
         This function will return the light path for a single face (Aperture,
@@ -84,11 +84,16 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 s_face. In this function the parent room is used to check that
                 we do not go back into the parent room, and enter a infinite
                 recursive loop.
+            passed_rooms: A set of Room objects. This set contains the rooms
+                that have already been processed. This is used to not enter an
+                infinite recursive loop, e.g., if multiple are connected by
+                interior apertures.
         
         Returns:
             A list of lists where each sub-list contains the identifiers of the
             ApertureGroups through which light is passing.
         """
+        passed_rooms.add(parent_room)
         s_face_light_path = []
         room = get_adjacent_room(s_face)
         for face in room.faces:
@@ -105,8 +110,8 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                         light_path_id = static_name
                 if isinstance(adj_s_face.boundary_condition, Surface):
                     adj_room = get_adjacent_room(adj_s_face)
-                    # check that parent room and adjacent room are not the same
-                    if not parent_room.identifier == adj_room.identifier:
+                    # check that adjacent room is not in passed_rooms
+                    if not adj_room in passed_rooms:
                         if isinstance(adj_s_face, (Aperture, Door)):
                             # do not append if face is an AirBoundary
                             if not s_light_path_duplicate:
@@ -114,7 +119,9 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                             elif not light_path_id == s_light_path_duplicate[-1]:
                                 s_light_path_duplicate.append(light_path_id)
                         _s_face_light_path = trace_light_path(
-                            adj_s_face, s_light_path_duplicate, room)
+                            adj_s_face, s_light_path_duplicate, room,
+                            passed_rooms=passed_rooms
+                        )
                         s_face_light_path.extend(_s_face_light_path)
                 else:
                     if not s_light_path_duplicate:
