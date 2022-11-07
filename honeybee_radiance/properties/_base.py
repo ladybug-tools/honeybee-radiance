@@ -6,6 +6,7 @@ from ..dynamic.state import _RadianceState
 from ..lib.modifiers import black
 
 from honeybee.typing import valid_rad_string
+from honeybee.checkdup import is_equivalent
 
 
 class _RadianceProperties(object):
@@ -118,6 +119,18 @@ class _RadianceProperties(object):
         """
         _host = new_host or self._host
         return self.__class__(_host, self._modifier, self._modifier_blk)
+
+    def is_equivalent(self, other):
+        """Check to see if these energy properties are equivalent to another object.
+
+        This will only be True if all properties match (except for the host) and
+        will otherwise be False.
+        """
+        if not is_equivalent(self._modifier, other._modifier):
+            return False
+        if not is_equivalent(self._modifier_blk, other._modifier_blk):
+            return False
+        return True
 
     def _apply_modifiers_from_dict(self, abridged_data, modifiers):
         """Apply modifiers from an Abridged dictionary.
@@ -335,6 +348,23 @@ class _DynamicRadianceProperties(_RadianceProperties):
             new_st._parent = _host
             new_prop._states.append(new_st)
         return new_prop
+
+    def is_equivalent(self, other):
+        """Check to see if these energy properties are equivalent to another object.
+
+        This will only be True if all properties match (except for the host) and
+        will otherwise be False.
+        """
+        if not is_equivalent(self._modifier, other._modifier):
+            return False
+        if not is_equivalent(self._modifier_blk, other._modifier_blk):
+            return False
+        if not is_equivalent(self._dynamic_group_identifier,
+                             other._dynamic_group_identifier):
+            return False
+        if not is_equivalent(self.state_count, other.state_count):
+            return False
+        return True
 
     def _check_state(self, obj):
         assert isinstance(obj, _RadianceState), \
