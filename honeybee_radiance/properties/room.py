@@ -5,6 +5,7 @@ import math
 from ladybug_geometry.geometry3d.pointvector import Vector3D
 from honeybee.facetype import Floor, Wall
 from honeybee.typing import clean_rad_string
+from honeybee.checkdup import is_equivalent
 
 from ..sensorgrid import SensorGrid
 from ..view import View
@@ -328,6 +329,13 @@ class RoomRadianceProperties(object):
         _host = new_host or self._host
         new_room = RoomRadianceProperties(_host, self._modifier_set)
         return new_room
+
+    def is_equivalent(self, other):
+        """Check to see if these Radiance properties are equivalent to another object.
+        """
+        if not is_equivalent(self._modifier_set, other._modifier_set):
+            return False
+        return True
 
     def _base_sensor_mesh(self, x_dim, y_dim, offset, remove_out, wall_offset):
         """Get a base Mesh3D from the Room floors to be used for sensor girds."""
