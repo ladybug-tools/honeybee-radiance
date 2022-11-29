@@ -18,3 +18,4 @@ tox.ini
 *.code-workspace
 honeybee.log*
 tmp/
+build/
