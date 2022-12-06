@@ -225,6 +225,7 @@ def three_phase_combinations(
                             identifier='%s..%s' % (
                                 grid['full_id'], info['identifier']
                             ),
+                            light_path = apt,
                             grid_id = grid['full_id'],
                             state_id = info['identifier'],
                             tmtx=info['tmtx'],
