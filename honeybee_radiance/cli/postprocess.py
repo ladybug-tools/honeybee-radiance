@@ -919,7 +919,7 @@ def sky_view_config(folder, output_file):
     type=click.File('w'), default='-', show_default=True
 )
 def imageless_annual_glare_vis(output_file):
-    """Write a visualization metadata file for daylight factor."""
+    """Write a visualization metadata file for imageless annual glare."""
     vm_data = {
         'type': 'VisualizationMetaData',
         'data_type': Fraction('Glare Autonomy').to_dict(),
