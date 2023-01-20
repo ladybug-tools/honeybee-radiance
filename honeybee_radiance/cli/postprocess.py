@@ -911,3 +911,25 @@ def sky_view_config(folder, output_file):
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('imageless-annual-glare-vis-metadata')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the metadata file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def imageless_annual_glare_vis(output_file):
+    """Write a visualization metadata file for daylight factor."""
+    vm_data = {
+        'type': 'VisualizationMetaData',
+        'data_type': Fraction('Glare Autonomy').to_dict(),
+        'unit': '%',
+        'legend_parameters': LegendParameters(colors=Colorset.glare_study()).to_dict()
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
