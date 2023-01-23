@@ -7,6 +7,8 @@ import shutil
 import json
 
 from ladybug.wea import Wea
+from ladybug.datatype.energyflux import EnergyFlux
+from ladybug.legend import LegendParameters
 
 from .annual import remove_header
 
@@ -81,13 +83,43 @@ def annual_irradiance_to_folder(folder, wea, timestep=1, sub_folder='metrics'):
                 except ValueError:
                     pass  # last line of the file
 
-    # create info for honeybee-vtk results visualization
-    config_file = os.path.join(metrics_folder, 'config.json')
-    cfg = _annual_irradiance_config()
-    with open(config_file, 'w') as outf:
-        json.dump(cfg, outf)
+    metric_info_dict = _annual_irradiance_vis_metadata()
+    for metric, data in metric_info_dict.items():
+        file_path = os.path.join(metrics_folder, metric, 'vis_metadata.json')
+        with open(file_path, 'w') as fp:
+            json.dump(data, fp, indent=4)
 
     return metrics_folder
+
+
+def _annual_irradiance_vis_metadata():
+    """Return visualization metadata for annual irradiance."""
+    cumulative_radiation_lpar = LegendParameters(min=0, max=1400)
+    peak_irradiance_lpar = LegendParameters(min=0, max=200)
+    average_irradiance_lpar = LegendParameters(min=0, max=200)
+
+    metric_info_dict = {
+        'cumulative_radiation': {
+            'type': 'VisualizationMetaData',
+            'data_type': EnergyFlux('Cumulative Radiance').to_dict(),
+            'unit': 'kW/m2',
+            'legend_parameters': cumulative_radiation_lpar.to_dict()
+        },
+        'peak_irradiance': {
+            'type': 'VisualizationMetaData',
+            'data_type': EnergyFlux('Peak Irradiance').to_dict(),
+            'unit': 'W/m2',
+            'legend_parameters': peak_irradiance_lpar.to_dict()
+        },
+        'average_irradiance': {
+            'type': 'VisualizationMetaData',
+            'data_type': EnergyFlux('Average Irradiance').to_dict(),
+            'unit': 'W/m2',
+            'legend_parameters': average_irradiance_lpar.to_dict()
+        }
+    }
+
+    return metric_info_dict
 
 
 def _annual_irradiance_config():
