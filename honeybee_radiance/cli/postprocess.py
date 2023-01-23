@@ -10,6 +10,7 @@ from ladybug.wea import Wea
 from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
+from ladybug.datatype.generic import GenericType
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.en17037 import en17037_to_folder
@@ -836,6 +837,28 @@ def cumulative_radiation_config(output_file):
         output_file.write(json.dumps(cfg, indent=4))
     except Exception:
         _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('direct-sun-hours-vis-metadata')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the metadata file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def direct_sun_hours_vis(output_file):
+    """Write a visualization metadata file for direct sun hours."""
+    vm_data = {
+        'type': 'VisualizationMetaData',
+        'data_type': GenericType('Direct Sun Hours').to_dict(),
+        'unit': 'Hours',
+        'legend_parameters': LegendParameters(colors=Colorset.ecotect()).to_dict()
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
         sys.exit(1)
     else:
         sys.exit(0)
