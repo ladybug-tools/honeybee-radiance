@@ -167,15 +167,6 @@ def glare_autonomy_to_folder(
     with open(grid_info, 'w') as outf:
         json.dump(grids, outf)
 
-    # create info for available results. This file will be used by honeybee-vtk for
-    # results visualization
-    config_file = os.path.join(metrics_folder, 'config.json')
-
-    cfg = _annual_glare_config()
-
-    with open(config_file, 'w') as outf:
-        json.dump(cfg, outf)
-
     return metrics_folder
 
 
@@ -208,31 +199,3 @@ def _glare_autonomy(values, occ_pattern, glare_threshold, total_hours):
     ga = total_hours - ga_above
 
     return _percentage(ga, total_hours)
-
-
-def _annual_glare_config():
-    """Return vtk-config for imageless annual glare."""
-    cfg = {
-        "data": [
-            {
-                "identifier": "Glare Autonomy",
-                "object_type": "grid",
-                "unit": "Percentage",
-                "path": "ga",
-                "hide": False,
-                "legend_parameters": {
-                    "hide_legend": False,
-                    "min": 0,
-                    "max": 100,
-                    "color_set": "original",
-                    "label_parameters": {
-                        "color": [34, 247, 10],
-                        "size": 0,
-                        "bold": True,
-                    },
-                },
-            },
-        ]
-    }
-
-    return cfg
