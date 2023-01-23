@@ -920,11 +920,12 @@ def sky_view_config(folder, output_file):
 )
 def imageless_annual_glare_vis(output_file):
     """Write a visualization metadata file for imageless annual glare."""
+    ga_lpar = LegendParameters(min=0, max=100, colors=Colorset.glare_study())
     vm_data = {
         'type': 'VisualizationMetaData',
         'data_type': Fraction('Glare Autonomy').to_dict(),
         'unit': '%',
-        'legend_parameters': LegendParameters(colors=Colorset.glare_study()).to_dict()
+        'legend_parameters': ga_lpar.to_dict()
     }
     try:
         output_file.write(json.dumps(vm_data, indent=4))
