@@ -10,7 +10,7 @@ from ladybug.wea import Wea
 from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
 from ladybug.datatype.fraction import Fraction
-from ladybug.datatype.generic import GenericType
+from ladybug.datatype.time import Time
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.en17037 import en17037_to_folder
@@ -851,8 +851,8 @@ def direct_sun_hours_vis(output_file):
     """Write a visualization metadata file for direct sun hours."""
     vm_data = {
         'type': 'VisualizationMetaData',
-        'data_type': GenericType('Direct Sun Hours').to_dict(),
-        'unit': 'Hours',
+        'data_type': Time('Direct Sun Hours').to_dict(),
+        'unit': 'hr',
         'legend_parameters': LegendParameters(colors=Colorset.ecotect()).to_dict()
     }
     try:
