@@ -7,8 +7,7 @@ A sunpath can be climate-based or non-climate-based. In non climate-based sunpat
 irradiance values are set to 1e6 for red, green and blue channels.
 
 Use the climate-based sunpath for direct solar radiation studies and use the
-non climate-based sunpath for solaraccess studies.
-
+non climate-based sunpath for solar access studies.
 """
 
 from ..modifier.material import Light
@@ -144,7 +143,7 @@ class Sunpath(object):
                 default sun vectors are coming from sun towards the ground. This option
                 will reverse the direction of the vectors. Reversed sunpath is mainly
                 useful for radiation studies (default: False).
-            split_mod_files: A boolean to split the modifer file into multiple files to
+            split_mod_files: A boolean to split the modifier file into multiple files to
                 ensure none of them includes more than 10,000 modifiers.
 
         Returns:
