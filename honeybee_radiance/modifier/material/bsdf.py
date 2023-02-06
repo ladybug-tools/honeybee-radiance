@@ -90,7 +90,7 @@ class BSDF(aBSDF):
         f_path = n_path if os.path.isabs(n_path) else './{}'.format(n_path)
         self._values[0] = [
             float(self.thickness),
-            f_path,
+            '"{}"'.format(f_path),
             self.up_orientation.x,
             self.up_orientation.y,
             self.up_orientation.z,

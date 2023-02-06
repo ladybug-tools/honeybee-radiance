@@ -88,7 +88,8 @@ class aBSDF(Material):
     def __init__(self, bsdf_file, identifier=None, up_orientation=None, modifier=None, 
                  function_file='.', transform=None, angle_basis=None, dependencies=None):
         """Create aBSDF material."""
-        identifier = identifier or '.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1])
+        identifier = identifier or \
+            '_'.join('.'.join(os.path.split(bsdf_file)[-1].split('.')[:-1]).split(' '))
 
         Material.__init__(self, identifier, modifier=modifier,
                           dependencies=dependencies)
@@ -109,7 +110,7 @@ class aBSDF(Material):
         n_path = os.path.normpath(self.bsdf_file).replace('\\', '/')
         f_path = n_path if os.path.isabs(n_path) else './{}'.format(n_path)
         self._values[0] = [
-            f_path,
+            '"{}"'.format(f_path),
             self.up_orientation.x,
             self.up_orientation.y,
             self.up_orientation.z,
