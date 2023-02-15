@@ -867,9 +867,8 @@ def point_in_time_config(metric, folder, output_file):
 def cumulative_radiation_vis(output_file):
     """Write a visualization metadata file for cumulative radiation."""
     rad_vis_metadata = _annual_irradiance_vis_metadata()
-    vm_data = {
-        'cumulative_radiation': rad_vis_metadata['cumulative_radiation']
-    }
+    vm_data = rad_vis_metadata['cumulative_radiation']
+
     try:
         output_file.write(json.dumps(vm_data, indent=4))
     except Exception:
@@ -910,9 +909,7 @@ def cumulative_radiation_config(output_file):
 def average_irradiance_vis(output_file):
     """Write a visualization metadata file for cumulative radiation."""
     rad_vis_metadata = _annual_irradiance_vis_metadata()
-    vm_data = {
-        'average_irradiance': rad_vis_metadata['average_irradiance']
-    }
+    vm_data = rad_vis_metadata['average_irradiance']
     try:
         output_file.write(json.dumps(vm_data, indent=4))
     except Exception:
