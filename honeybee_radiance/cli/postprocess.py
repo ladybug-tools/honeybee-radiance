@@ -979,6 +979,29 @@ def direct_sun_hours_config(folder, output_file):
         sys.exit(0)
 
 
+@post_process.command('sky-view-vis-metadata')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the metadata file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def sky_view_vis(output_file):
+    """Write a visualization metadata file for sky view."""
+    sky_view_lpar = LegendParameters(min=0, max=100, colors=Colorset.view_study())
+    vm_data = {
+        'type': 'VisualizationMetaData',
+        'data_type': Fraction('Sky View').to_dict(),
+        'unit': '%',
+        'legend_parameters': sky_view_lpar.to_dict()
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @post_process.command('sky-view-config')
 @click.option(
     '--folder', '-f', help='Optional relative path for results folder. This value will '
