@@ -19,7 +19,7 @@ from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
 from honeybee_radiance.postprocess.en17037 import en17037_to_folder
 from honeybee_radiance.postprocess.annualglare import glare_autonomy_to_folder
 from honeybee_radiance.postprocess.annualirradiance import annual_irradiance_to_folder, \
-    _annual_irradiance_config
+    _annual_irradiance_config, _annual_irradiance_vis_metadata
 from honeybee_radiance.postprocess.electriclight import daylight_control_schedules
 from honeybee_radiance.postprocess.leed import leed_illuminance_to_folder
 from honeybee_radiance.postprocess.solartracking import post_process_solar_tracking
@@ -786,7 +786,7 @@ def daylight_fatcor_config(folder, output_file):
 def point_in_time_vis(metric, output_file):
     """Write a visualization metadata file for point-in-time."""
     unit_map = {
-        'illuminance': ['Lux', 0, 3000, Illuminance('Illuminance')],
+        'illuminance': ['lux', 0, 3000, Illuminance('Illuminance')],
         'irradiance': ['W/m2', 0, 300, GenericType('Irradiance', unit='W/m2')],
         'luminance': ['cd/m2', 0, 3000, Luminance('Luminance')],
         'radiance': ['W/m2-sr', 0, 300, GenericType('Radiance', unit='W/m2-sr')]
@@ -859,6 +859,26 @@ def point_in_time_config(metric, folder, output_file):
         sys.exit(0)
 
 
+@post_process.command('cumulative-radiation-vis-metadata')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def cumulative_radiation_vis(output_file):
+    """Write a visualization metadata file for cumulative radiation."""
+    rad_vis_metadata = _annual_irradiance_vis_metadata()
+    vm_data = {
+        'cumulative_radiation': rad_vis_metadata['cumulative_radiation']
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @post_process.command('cumulative-radiation-config')
 @click.option(
     '--output-file', '-o', help='Optional JSON file to output the config file.',
@@ -877,6 +897,26 @@ def cumulative_radiation_config(output_file):
         output_file.write(json.dumps(cfg, indent=4))
     except Exception:
         _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('average-irradiance-vis-metadata')
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def average_irradiance_vis(output_file):
+    """Write a visualization metadata file for cumulative radiation."""
+    rad_vis_metadata = _annual_irradiance_vis_metadata()
+    vm_data = {
+        'average_irradiance': rad_vis_metadata['average_irradiance']
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
         sys.exit(1)
     else:
         sys.exit(0)
