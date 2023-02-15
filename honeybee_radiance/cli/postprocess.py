@@ -9,7 +9,10 @@ import logging
 from ladybug.wea import Wea
 from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
+from ladybug.datatype.generic import GenericType
 from ladybug.datatype.fraction import Fraction
+from ladybug.datatype.illuminance import Illuminance
+from ladybug.datatype.luminance import Luminance
 from ladybug.datatype.time import Time
 
 from honeybee_radiance.postprocess.annualdaylight import metrics_to_folder
@@ -765,6 +768,43 @@ def daylight_fatcor_config(folder, output_file):
         output_file.write(json.dumps(cfg, indent=4))
     except Exception:
         _logger.exception('Failed to write the config file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('point-in-time-vis-metadata')
+@click.option(
+    '--metric', '-m', default='illuminance', show_default=True,
+    help='Text for the type of metric to be output from the calculation. Choose from: '
+    'illuminance, irradiance, luminance, radiance.'
+)
+@click.option(
+    '--output-file', '-o', help='Optional JSON file to output the config file.',
+    type=click.File('w'), default='-', show_default=True
+)
+def point_in_time_vis(metric, output_file):
+    """Write a visualization metadata file for point-in-time."""
+    unit_map = {
+        'illuminance': ['Lux', 0, 3000, Illuminance('Illuminance')],
+        'irradiance': ['W/m2', 0, 300, GenericType('Irradiance', unit='W/m2')],
+        'luminance': ['cd/m2', 0, 3000, Luminance('Luminance')],
+        'radiance': ['W/m2-sr', 0, 300, GenericType('Radiance', unit='W/m2-sr')]
+    }
+    unit_props = unit_map[metric.lower()]
+    
+    vm_data = {
+        'type': 'VisualizationMetaData',
+        'data_type': unit_props[-1].to_dict(),
+        'unit': unit_props[0],
+        'legend_parameters': LegendParameters(
+            colors=Colorset.ecotect(), min=unit_props[1], max=unit_props[2]
+            ).to_dict()
+    }
+    try:
+        output_file.write(json.dumps(vm_data, indent=4))
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata file.')
         sys.exit(1)
     else:
         sys.exit(0)
