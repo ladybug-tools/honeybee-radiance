@@ -525,6 +525,188 @@ def from_rooms_radial(
         sys.exit(0)
 
 
+@grid.command('from-exterior-faces')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the faces. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.1m', show_default=True)
+@click.option('--face-type', '-t', help='Text to specify the type of face that will be '
+              'used to generate grids. Note that only Faces with Outdoors boundary '
+              'conditions will be used, meaning that most Floors will typically '
+              'be excluded unless they represent the underside of a cantilever. '
+              'Choose from Wall, Roof, Floor, All.',
+              type=str, default='Wall', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions under the '
+              '"mesh" property of each grid. Excluding the mesh can reduce size but '
+              'will mean Radiance results cannot be visualized as colored meshes.',
+              default=True)
+@click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
+              'room for which sensor grids should be generated. You can pass multiple '
+              'rooms (each preceded by -r). By default, all rooms get sensor grids '
+              'joined into a single grid.')
+@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
+              'data collection should be in JSON format or the typical CSV-style format '
+              'of the Radiance .pts files.', default=True, show_default=True)
+@click.option('--folder', help='Optional output folder. If specified, the --output-file '
+              'will be ignored and each sensor grid will be written into its own '
+              '.json or .pts file within the folder.', default=None,
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
+@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
+              'string of the sensor grids. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def from_exterior_faces(
+        model_file, grid_size, offset, face_type, include_mesh,
+        room, write_json, folder, output_file):
+    """Generate SensorGrids from the exterior Faces of a honeybee model.
+
+    \b
+    Args:
+        model_file: Full path to a HBJSON or HBPkl Model file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_file(model_file)
+        rooms = None if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        if rooms is None:
+            sg = model.properties.radiance.generate_exterior_face_sensor_grid(
+                grid_size, offset=offset, face_type=face_type)
+            sensor_grids.append(sg)
+        else:
+            for room in rooms:
+                sg = room.properties.radiance.generate_exterior_face_sensor_grid(
+                    grid_size, offset=offset, face_type=face_type)
+                if sg is not None:
+                    sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+
+        # write the sensor grids to the output file or folder
+        if folder is None:
+            if write_json:
+                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
+            else:
+                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
+        else:
+            if write_json:
+                for sg in sensor_grids:
+                    sg.to_json(folder)
+            else:
+                for sg in sensor_grids:
+                    sg.to_file(folder)
+    except Exception as e:
+        _logger.exception('Grid generation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@grid.command('from-exterior-apertures')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the apertures. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.1m', show_default=True)
+@click.option('--aperture-type', '-t', help='Text to specify the type of aperture that '
+              'will be used to generate grids. Note that only Faces with Outdoors '
+              'boundary conditions will be used, meaning that most Floors will typically'
+              ' be excluded unless they represent the underside of a cantilever. '
+              'Choose from Window, Skylight, All.',
+              type=str, default='All', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions under the '
+              '"mesh" property of each grid. Excluding the mesh can reduce size but '
+              'will mean Radiance results cannot be visualized as colored meshes.',
+              default=True)
+@click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
+              'room for which sensor grids should be generated. You can pass multiple '
+              'rooms (each preceded by -r). By default, all rooms get sensor grids '
+              'joined into a single grid.')
+@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
+              'data collection should be in JSON format or the typical CSV-style format '
+              'of the Radiance .pts files.', default=True, show_default=True)
+@click.option('--folder', help='Optional output folder. If specified, the --output-file '
+              'will be ignored and each sensor grid will be written into its own '
+              '.json or .pts file within the folder.', default=None,
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
+@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
+              'string of the sensor grids. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def from_exterior_apertures(
+        model_file, grid_size, offset, aperture_type, include_mesh,
+        room, write_json, folder, output_file):
+    """Generate SensorGrids from the exterior Faces of a honeybee model.
+
+    \b
+    Args:
+        model_file: Full path to a HBJSON or HBPkl Model file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_file(model_file)
+        rooms = None if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        if rooms is None:
+            sg = model.properties.radiance.generate_exterior_aperture_sensor_grid(
+                grid_size, offset=offset, aperture_type=aperture_type)
+            sensor_grids.append(sg)
+        else:
+            for room in rooms:
+                sg = room.properties.radiance.generate_exterior_aperture_sensor_grid(
+                    grid_size, offset=offset, aperture_type=aperture_type)
+                if sg is not None:
+                    sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+
+        # write the sensor grids to the output file or folder
+        if folder is None:
+            if write_json:
+                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
+            else:
+                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
+        else:
+            if write_json:
+                for sg in sensor_grids:
+                    sg.to_json(folder)
+            else:
+                for sg in sensor_grids:
+                    sg.to_file(folder)
+    except Exception as e:
+        _logger.exception('Grid generation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @grid.command('enclosure-info')
 @click.argument('model-json', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))

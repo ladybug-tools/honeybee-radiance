@@ -84,7 +84,153 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall
         # write the Model JSON string
         output_file.write(json.dumps(model.to_dict()))
     except Exception as e:
-        _logger.exception('Model translation failed.\n{}'.format(e))
+        _logger.exception('Adding Model sensor grids failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@edit.command('add-face-sensors')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.1m', show_default=True)
+@click.option('--face-type', '-t', help='Text to specify the type of face that will be '
+              'used to generate grids. Note that only Faces with Outdoors boundary '
+              'conditions will be used, meaning that most Floors will typically '
+              'be excluded unless they represent the underside of a cantilever. '
+              'Choose from Wall, Roof, Floor, All.',
+              type=str, default='Wall', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions '
+              'under the "mesh" property of each grid. Excluding the mesh can greatly '
+              'reduce model size but will mean Radiance results cannot be visualized '
+              'as colored meshes.', default=True)
+@click.option('--room', '-r', multiple=True, help='Room identifier(s) to specify the '
+              'room(s) for which sensor grids should be generated. By default, all '
+              'rooms will get sensor grids.')
+@click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
+              'string of the new model. By default this will be printed out '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def add_face_sensors(
+        model_json, grid_size, offset, face_type, include_mesh, room, output_file):
+    """Add SensorGrids to a honeybee model generated from the Room's floors.
+
+    The grids will have the rooms referenced in their room_identifier property.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_hbjson(model_json)
+        rooms = None if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        if rooms is None:
+            sg = model.properties.radiance.generate_exterior_face_sensor_grid(
+                grid_size, offset=offset, face_type=face_type)
+            sensor_grids.append(sg)
+        else:
+            for room in rooms:
+                sg = room.properties.radiance.generate_exterior_face_sensor_grid(
+                    grid_size, offset=offset, face_type=face_type)
+                if sg is not None:
+                    sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+        model.properties.radiance.add_sensor_grids(sensor_grids)
+
+        # write the Model JSON string
+        output_file.write(json.dumps(model.to_dict()))
+    except Exception as e:
+        _logger.exception('Adding Model sensor grids failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@edit.command('add-aperture-sensors')
+@click.argument('model-json', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the '
+              'the sensor grid should be offset from the floor. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0.1m', show_default=True)
+@click.option('--aperture-type', '-t', help='Text to specify the type of aperture that '
+              'will be used to generate grids. Note that only Faces with Outdoors '
+              'boundary conditions will be used, meaning that most Floors will typically'
+              ' be excluded unless they represent the underside of a cantilever. '
+              'Choose from Window, Skylight, All.',
+              type=str, default='All', show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions '
+              'under the "mesh" property of each grid. Excluding the mesh can greatly '
+              'reduce model size but will mean Radiance results cannot be visualized '
+              'as colored meshes.', default=True)
+@click.option('--room', '-r', multiple=True, help='Room identifier(s) to specify the '
+              'room(s) for which sensor grids should be generated. By default, all '
+              'rooms will get sensor grids.')
+@click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
+              'string of the new model. By default this will be printed out '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def add_aperture_sensors(
+        model_json, grid_size, offset, aperture_type, include_mesh, room, output_file):
+    """Add SensorGrids to a honeybee model generated from the Room's floors.
+
+    The grids will have the rooms referenced in their room_identifier property.
+
+    \b
+    Args:
+        model_json: Full path to a Model JSON file.
+    """
+    try:
+        # re-serialize the Model and extract rooms and units
+        model = Model.from_hbjson(model_json)
+        rooms = None if room is None or len(room) == 0 else \
+            [r for r in model.rooms if r.identifier in room]
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+
+        # loop through the rooms and generate sensor grids
+        sensor_grids = []
+        if rooms is None:
+            sg = model.properties.radiance.generate_exterior_aperture_sensor_grid(
+                grid_size, offset=offset, aperture_type=aperture_type)
+            sensor_grids.append(sg)
+        else:
+            for room in rooms:
+                sg = room.properties.radiance.generate_exterior_aperture_sensor_grid(
+                    grid_size, offset=offset, aperture_type=aperture_type)
+                if sg is not None:
+                    sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+        model.properties.radiance.add_sensor_grids(sensor_grids)
+
+        # write the Model JSON string
+        output_file.write(json.dumps(model.to_dict()))
+    except Exception as e:
+        _logger.exception('Adding Model sensor grids failed.\n{}'.format(e))
         sys.exit(1)
     else:
         sys.exit(0)
@@ -103,7 +249,7 @@ def mirror_model_sensors(model_json, output_file):
     then adding a mirrored sensor grid with the same sensor positions that all
     point downward. In thermal mapping workflows, the upward-pointing grids can
     be used to account for direct and diffuse shortwave irradiance while the
-    downard pointing grids account for ground-reflected shortwave irradiance.
+    downward pointing grids account for ground-reflected shortwave irradiance.
 
     \b
     Args:
