@@ -49,6 +49,27 @@ def test_radiance_properties():
     assert len(model.properties.radiance.modifier_sets) == 0
 
 
+def test_generate_exterior_face_sensor_grid():
+    """Test the generate_exterior_face_sensor_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    model = Model('TinyHouse', [room])
+    sg = model.properties.radiance.generate_exterior_face_sensor_grid(
+        1, face_type='Wall')
+    assert len(sg.sensors) == 60 + 30
+    sg = model.properties.radiance.generate_exterior_face_sensor_grid(
+        0.5, face_type='All')
+    assert len(sg.sensors) == 200 + 240 + 120
+
+
+def test_generate_exterior_aperture_sensor_grid():
+    """Test the generate_exterior_aperture_sensor_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    room[3].apertures_by_ratio(0.4)
+    model = Model('TinyHouse', [room])
+    sg = model.properties.radiance.generate_exterior_aperture_sensor_grid(1)
+    assert len(sg.sensors) != 0
+
+
 def test_check_duplicate_modifier_set_identifiers():
     """Test the check_duplicate_modifier_set_identifiers method."""
     first_floor = Room.from_box('FirstFloor', 10, 10, 3, origin=Point3D(0, 0, 0))

@@ -1,5 +1,10 @@
 # coding=utf-8
 """Model Radiance Properties."""
+from honeybee.extensionutil import model_extension_dicts
+from honeybee.checkdup import check_duplicate_identifiers
+from honeybee.boundarycondition import Surface
+from honeybee.typing import invalid_dict_error, clean_rad_string
+
 from ..sensorgrid import SensorGrid
 from ..view import View
 from ..dynamic.group import DynamicShadeGroup, DynamicSubFaceGroup
@@ -8,11 +13,6 @@ from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import aBSDF, BSDF
 from ..lib.modifiers import black, generic_context
 from ..lib.modifiersets import generic_modifier_set_visible
-
-from honeybee.extensionutil import model_extension_dicts
-from honeybee.checkdup import check_duplicate_identifiers
-from honeybee.boundarycondition import Surface
-from honeybee.typing import invalid_dict_error
 
 try:
     from itertools import izip as zip  # python 2
@@ -453,6 +453,81 @@ class ModelRadianceProperties(object):
             grid.scale(factor, origin)
         for view in self._views:
             view.scale(factor, origin)
+
+    def generate_exterior_face_sensor_grid(
+            self, dimension, offset=0.1, face_type='Wall'):
+        """Get a radiance SensorGrid generated from all exterior Faces of this Model.
+
+        The Face geometry without windows punched into it will be used. This
+        will be None if the Model has no exterior Faces.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base face.
+                Positive numbers indicate an offset towards the exterior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the faces).
+            face_type: Text to specify the type of face that will be used to
+                generate grids. Note that only Faces with Outdoors boundary
+                conditions will be used, meaning that most Floors will typically
+                be excluded unless they represent the underside of a cantilever.
+                Choose from the following. (Default: Wall).
+
+                * Wall
+                * Roof
+                * Floor
+                * All
+
+        Returns:
+            A honeybee_radiance SensorGrid generated from the exterior Faces
+            of the model. Will be None if the Model has no exterior Faces.
+        """
+        # generate the mesh grid from the exterior Faces
+        face_grid = self.host.generate_exterior_face_grid(dimension, offset, face_type)
+        if face_grid is None:  # no valid mesh could be generated
+            return None
+        # create the sensor grid from the mesh
+        f_nm = 'Faces' if face_type.title() == 'All' else face_type.title()
+        grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
+        sensor_grid = SensorGrid.from_mesh3d(clean_rad_string(grid_name), face_grid)
+        sensor_grid.display_name = grid_name
+        return sensor_grid
+
+    def generate_exterior_aperture_sensor_grid(
+            self, dimension, offset=0.1, aperture_type='All'):
+        """Get a radiance SensorGrid generated from all exterior Apertures of this Model.
+
+        This will be None if the Model has no exterior Apertures.
+
+        Args:
+            dimension: The dimension of the grid cells as a number.
+            offset: A number for how far to offset the grid from the base aperture.
+                Positive numbers indicate an offset towards the exterior while
+                negative numbers indicate an offset towards the interior, essentially
+                modeling the value of sun on the building interior. (Default
+                is 0.1, which will offset the grid to be 0.1 unit from the aperture).
+            aperture_type: Text to specify the type of Aperture that will be used to
+                generate grids. Window indicates Apertures in Walls. Choose from
+                the following. (Default: All).
+
+                * Window
+                * Skylight
+                * All
+
+        Returns:
+            A honeybee_radiance SensorGrid generated from the exterior Apertures
+            of the model. Will be None if the Model has no exterior Apertures.
+        """
+        # generate the mesh grid from the exterior Apertures
+        ap_grid = self.host.generate_exterior_aperture_grid(
+            dimension, offset, aperture_type)
+        if ap_grid is None:  # no valid mesh could be generated
+            return None
+        # create the sensor grid from the mesh
+        f_nm = 'Apertures' if aperture_type.title() == 'All' else aperture_type.title()
+        grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
+        sensor_grid = SensorGrid.from_mesh3d(clean_rad_string(grid_name), ap_grid)
+        sensor_grid.display_name = grid_name
+        return sensor_grid
 
     def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model radiance properties.

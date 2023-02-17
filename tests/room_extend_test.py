@@ -59,6 +59,42 @@ def test_set_modifier_set():
         room[3].doors[0].properties.radiance.modifier.r_reflectance = 0.3
 
 
+def test_generate_sensor_grid():
+    """Test the generate_sensor_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    sg = room.properties.radiance.generate_sensor_grid(1)
+    assert len(sg.sensors) == 50
+    sg = room.properties.radiance.generate_sensor_grid(0.5)
+    assert len(sg.sensors) == 200
+
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3, 90)
+    sg = room.properties.radiance.generate_sensor_grid(1)
+    assert len(sg.sensors) == 50
+
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3, 45)
+    mesh_grid = room.properties.radiance.generate_sensor_grid(1)
+    assert len(sg.sensors) == 50
+
+
+def test_generate_exterior_face_grid():
+    """Test the generate_exterior_face_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    sg = room.properties.radiance.generate_exterior_face_sensor_grid(
+        1, face_type='Wall')
+    assert len(sg.sensors) == 60 + 30
+    sg = room.properties.radiance.generate_exterior_face_sensor_grid(
+        0.5, face_type='All')
+    assert len(sg.sensors) == 200 + 240 + 120
+
+
+def test_generate_exterior_aperture_grid():
+    """Test the generate_exterior_aperture_grid method."""
+    room = Room.from_box('ShoeBoxZone', 5, 10, 3)
+    room[3].apertures_by_ratio(0.4)
+    sg = room.properties.radiance.generate_exterior_aperture_sensor_grid(1)
+    assert len(sg.sensors) != 0
+
+
 def test_duplicate():
     """Test what happens to radiance properties when duplicating a Room."""
     custom_set = ModifierSet('Custom_Modifier_Set')

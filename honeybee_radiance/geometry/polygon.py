@@ -140,12 +140,10 @@ class Polygon(Geometry):
         assert 'type' in data, 'Input dictionary is missing "type".'
         if data['type'] != cls.__name__.lower():
             raise ValueError(
-                'Type must be %s not %s.' % (cls.__name__.lower(),
-                    data['type'])
+                'Type must be %s not %s.' % (cls.__name__.lower(), data['type'])
             )
         modifier, dependencies = cls.filter_dict_input(data)
 
-        vertices = data["vertices"]
         new_obj = cls(
             identifier=data["identifier"],
             vertices=data["vertices"],
