@@ -8,6 +8,7 @@ import json
 
 from ladybug.wea import Wea
 from ladybug.datatype.energyflux import EnergyFlux
+from ladybug.datatype.energyintensity import EnergyIntensity
 from ladybug.legend import LegendParameters
 
 from .annual import remove_header
@@ -94,15 +95,15 @@ def annual_irradiance_to_folder(folder, wea, timestep=1, sub_folder='metrics'):
 
 def _annual_irradiance_vis_metadata():
     """Return visualization metadata for annual irradiance."""
-    cumulative_radiation_lpar = LegendParameters(min=0, max=1400)
-    peak_irradiance_lpar = LegendParameters(min=0, max=200)
-    average_irradiance_lpar = LegendParameters(min=0, max=200)
+    cumulative_radiation_lpar = LegendParameters(min=0)
+    peak_irradiance_lpar = LegendParameters(min=0)
+    average_irradiance_lpar = LegendParameters(min=0)
 
     metric_info_dict = {
         'cumulative_radiation': {
             'type': 'VisualizationMetaData',
-            'data_type': EnergyFlux('Cumulative Radiance').to_dict(),
-            'unit': 'kW/m2',
+            'data_type': EnergyIntensity('Cumulative Radiance').to_dict(),
+            'unit': 'kWh/m2',
             'legend_parameters': cumulative_radiation_lpar.to_dict()
         },
         'peak_irradiance': {
