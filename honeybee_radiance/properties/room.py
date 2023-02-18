@@ -165,7 +165,7 @@ class RoomRadianceProperties(object):
         Returns:
             A honeybee_radiance SensorGrid generated from the floors of the room.
             Will be None if the Room has no floors or the criteria for wall_offset
-            and/or remove_out results in all sensors being removed. 
+            and/or remove_out results in all sensors being removed.
         """
         # generate the mesh grid from the floor Faces
         floor_grid = self._base_sensor_mesh(
@@ -255,7 +255,7 @@ class RoomRadianceProperties(object):
                 modeling the value of sun on the building interior. (Default
                 is 0.1, which will offset the grid to be 0.1 unit from the faces).
             aperture_type: Text to specify the type of Aperture that will be used to
-                generate grids. Window indicates Apertures in Walls. Skylights 
+                generate grids. Window indicates Apertures in Walls. Skylights
                 are in parent Roof faces. Choose from the following. (Default: All).
 
                 * Window

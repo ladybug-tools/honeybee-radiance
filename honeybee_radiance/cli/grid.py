@@ -74,7 +74,7 @@ def merge_grid(input_folder, base_name, extension, folder, name):
         input_folder: Input folder.
         base_name: File base name. All of the files must start with base name and
             continue with _ and an integer values.
-        extension: File extention. [Default: .pts]
+        extension: File extension. [Default: .pts]
     """
     try:
         pattern = r'{}_\d+{}'.format(base_name, extension)
@@ -274,7 +274,7 @@ def mirror_grid(grid_file, vector, name, suffix, folder, log_file):
     then adding a mirrored sensor grid with the same sensor positions that all
     point downward. In thermal mapping workflows, the upward-pointing grids can
     be used to account for direct and diffuse shortwave irradiance while the
-    downard pointing grids account for ground-reflected shortwave irradiance.
+    downward pointing grids account for ground-reflected shortwave irradiance.
 
     \b
     Args:
@@ -624,8 +624,8 @@ def from_exterior_faces(
               'or, if no units are provided, the value will be interpreted in the '
               'honeybee model units.', type=str, default='0.5m', show_default=True)
 @click.option('--offset', '-o', help='A number for the distance at which the '
-              'the sensor grid should be offset from the apertures. This can include the '
-              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'the sensor grid should be offset from the apertures. This can include the'
+              ' units of the distance (eg. 3ft) or, if no units are provided, the '
               'value will be interpreted in the honeybee model units.',
               type=str, default='0.1m', show_default=True)
 @click.option('--aperture-type', '-t', help='Text to specify the type of aperture that '
