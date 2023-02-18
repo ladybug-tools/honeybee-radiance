@@ -16,7 +16,7 @@ def edit():
 
 
 @edit.command('add-room-sensors')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
               'cells. This can include the units of the distance (eg. 1ft) '
@@ -49,7 +49,7 @@ def edit():
 @click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
               'string of the new model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall_offset,
+def add_room_sensors(model_file, grid_size, offset, include_mesh, keep_out, wall_offset,
                      room, output_file):
     """Add SensorGrids to a honeybee model generated from the Room's floors.
 
@@ -57,11 +57,11 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_file: Full path to a HBJSON or HBPkl Model file.
     """
     try:
         # re-serialize the Model and extract rooms and units
-        model = Model.from_hbjson(model_json)
+        model = Model.from_file(model_file)
         rooms = model.rooms if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
@@ -91,7 +91,7 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall
 
 
 @edit.command('add-face-sensors')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
               'cells. This can include the units of the distance (eg. 1ft) '
@@ -120,18 +120,16 @@ def add_room_sensors(model_json, grid_size, offset, include_mesh, keep_out, wall
               'string of the new model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
 def add_face_sensors(
-        model_json, grid_size, offset, face_type, include_mesh, room, output_file):
-    """Add SensorGrids to a honeybee model generated from the Room's floors.
-
-    The grids will have the rooms referenced in their room_identifier property.
+        model_file, grid_size, offset, face_type, include_mesh, room, output_file):
+    """Add SensorGrids to a honeybee model generated from the model's faces.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_file: Full path to a HBJSON or HBPkl Model file.
     """
     try:
         # re-serialize the Model and extract rooms and units
-        model = Model.from_hbjson(model_json)
+        model = Model.from_file(model_file)
         rooms = None if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
@@ -164,7 +162,7 @@ def add_face_sensors(
 
 
 @edit.command('add-aperture-sensors')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
               'cells. This can include the units of the distance (eg. 1ft) '
@@ -193,18 +191,16 @@ def add_face_sensors(
               'string of the new model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
 def add_aperture_sensors(
-        model_json, grid_size, offset, aperture_type, include_mesh, room, output_file):
-    """Add SensorGrids to a honeybee model generated from the Room's floors.
-
-    The grids will have the rooms referenced in their room_identifier property.
+        model_file, grid_size, offset, aperture_type, include_mesh, room, output_file):
+    """Add SensorGrids to a honeybee model generated from the model's apertures.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_file: Full path to a HBJSON or HBPkl Model file.
     """
     try:
         # re-serialize the Model and extract rooms and units
-        model = Model.from_hbjson(model_json)
+        model = Model.from_file(model_file)
         rooms = None if room is None or len(room) == 0 else \
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
@@ -237,12 +233,12 @@ def add_aperture_sensors(
 
 
 @edit.command('mirror-model-sensors')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
               'string of the converted model. By default this will be printed out '
               'to stdout', type=click.File('w'), default='-', show_default=True)
-def mirror_model_sensors(model_json, output_file):
+def mirror_model_sensors(model_file, output_file):
     """Mirror a honeybee Model's SensorGrids and format them for thermal mapping.
 
     This involves setting the direction of every sensor to point up (0, 0, 1) and
@@ -253,11 +249,11 @@ def mirror_model_sensors(model_json, output_file):
 
     \b
     Args:
-        model_json: Full path to a Model JSON file.
+        model_file: Full path to a HBJSON or HBPkl Model file.
     """
     try:
         # re-serialize the Model and loop through the sensor grids to reformat them
-        model = Model.from_hbjson(model_json)
+        model = Model.from_file(model_file)
         mirror_grids, up_dir, down_dir = [], None, (0, 0, -1)
         for grid in model.properties.radiance.sensor_grids:
             # ensure that all sensors are pointing upward
