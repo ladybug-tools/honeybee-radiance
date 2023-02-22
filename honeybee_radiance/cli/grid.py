@@ -419,8 +419,8 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
 @grid.command('from-rooms-radial')
 @click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
-@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
-              'cells. This can include the units of the distance (eg. 1ft) '
+@click.option('--grid-size', '-s', help='A number for the dimension of the '
+              'radial grid. This can include the units of the distance (eg. 1ft) '
               'or, if no units are provided, the value will be interpreted in the '
               'honeybee model units.', type=str, default='0.5m', show_default=True)
 @click.option('--offset', '-o', help='A number for the distance at which the '
@@ -543,6 +543,10 @@ def from_rooms_radial(
               'be excluded unless they represent the underside of a cantilever. '
               'Choose from Wall, Roof, Floor, All.',
               type=str, default='Wall', show_default=True)
+@click.option('--full-geometry/--punched-geometry', ' /-p', help='Flag to note whether '
+              'the punched_geometry of the faces should be used with the areas '
+              'of sub-faces removed from the grid or the full geometry should be used.',
+              default=True)
 @click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
@@ -564,7 +568,7 @@ def from_rooms_radial(
               'string of the sensor grids. By default this will be printed '
               'to stdout', type=click.File('w'), default='-', show_default=True)
 def from_exterior_faces(
-        model_file, grid_size, offset, face_type, include_mesh,
+        model_file, grid_size, offset, face_type, full_geometry, include_mesh,
         room, write_json, folder, output_file):
     """Generate SensorGrids from the exterior Faces of a honeybee model.
 
@@ -579,17 +583,20 @@ def from_exterior_faces(
             [r for r in model.rooms if r.identifier in room]
         grid_size = parse_distance_string(grid_size, model.units)
         offset = parse_distance_string(offset, model.units)
+        punched_geometry = not full_geometry
 
         # loop through the rooms and generate sensor grids
         sensor_grids = []
         if rooms is None:
             sg = model.properties.radiance.generate_exterior_face_sensor_grid(
-                grid_size, offset=offset, face_type=face_type)
+                grid_size, offset=offset, face_type=face_type,
+                punched_geometry=punched_geometry)
             sensor_grids.append(sg)
         else:
             for room in rooms:
                 sg = room.properties.radiance.generate_exterior_face_sensor_grid(
-                    grid_size, offset=offset, face_type=face_type)
+                    grid_size, offset=offset, face_type=face_type,
+                    punched_geometry=punched_geometry)
                 if sg is not None:
                     sensor_grids.append(sg)
         if not include_mesh:
