@@ -188,7 +188,7 @@ class RoomRadianceProperties(object):
         return sensor_grid
 
     def generate_exterior_face_sensor_grid(
-            self, dimension, offset=0.1, face_type='Wall'):
+            self, dimension, offset=0.1, face_type='Wall', punched_geometry=False):
         """Get a radiance SensorGrid generated from the exterior Faces of this room.
 
         The Face geometry without windows punched into it will be used. This
@@ -214,6 +214,10 @@ class RoomRadianceProperties(object):
                 * Floor
                 * All
 
+            punched_geometry: Boolean to note whether the punched_geometry of the faces
+                should be used (True) with the areas of sub-faces removed from the grid
+                or the full geometry should be used (False). (Default:False).
+
         Returns:
             A honeybee_radiance SensorGrid generated from the exterior Faces
             of the room. Will be None if the Room has no exterior Faces.
@@ -227,7 +231,8 @@ class RoomRadianceProperties(object):
             s_grid = room.properties.radiance.generate_exterior_face_sensor_grid(0.5)
         """
         # generate the mesh grid from the exterior Faces
-        face_grid = self.host.generate_exterior_face_grid(dimension, offset, face_type)
+        face_grid = self.host.generate_exterior_face_grid(
+            dimension, offset, face_type, punched_geometry)
         if face_grid is None:  # no valid mesh could be generated
             return None
         # create the sensor grid from the mesh
