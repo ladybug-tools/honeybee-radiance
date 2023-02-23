@@ -74,10 +74,20 @@ jobs:
         if: contains(steps.new_release.outputs.tag, '.')
         run: sleep 300s
         shell: bash
-      - name: Update lbt-honeybee
+      - name: Update honeybee-radiance-postprocess
         if: contains(steps.new_release.outputs.tag, '.')
         env:
-          DISPATCH_REPO: ladybug-tools/lbt-honeybee
+          DISPATCH_REPO: ladybug-tools/honeybee-radiance-postprocess
+          DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
+        run: |
+          curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
+          -H "Accept: application/vnd.github.everest-preview+json" \
+          -d '{"event_type": "honeybee_radiance_release", "client_payload": {"version": "${{ steps.new_release.outputs.tag }}"}}' \
+          -u ladybugbot:$DEPS_TOKEN
+      - name: Update dragonfly-radiance
+        if: contains(steps.new_release.outputs.tag, '.')
+        env:
+          DISPATCH_REPO: ladybug-tools/dragonfly-radiance
           DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
         run: |
           curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
@@ -88,16 +98,6 @@ jobs:
         if: contains(steps.new_release.outputs.tag, '.')
         env:
           DISPATCH_REPO: pollination/honeybee-radiance
-          DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
-        run: |
-          curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
-          -H "Accept: application/vnd.github.everest-preview+json" \
-          -d '{"event_type": "honeybee_radiance_release", "client_payload": {"version": "${{ steps.new_release.outputs.tag }}"}}' \
-          -u ladybugbot:$DEPS_TOKEN
-      - name: Update honeybee-radiance-postprocess
-        if: contains(steps.new_release.outputs.tag, '.')
-        env:
-          DISPATCH_REPO: ladybug-tools/honeybee-radiance-postprocess
           DEPS_TOKEN: ${{ secrets.DEPS_UPDATING }}
         run: |
           curl -X POST https://api.github.com/repos/$DISPATCH_REPO/dispatches \
