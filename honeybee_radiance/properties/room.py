@@ -177,9 +177,9 @@ class RoomRadianceProperties(object):
         if mesh_radius is None:
             small_dim = x_dim if y_dim is None else min((x_dim, y_dim))
             mesh_radius = small_dim * 0.45
+        grid_name = '{}_Radial'.format(clean_rad_string(self.host.display_name))
         sensor_grid = SensorGrid.from_mesh3d_radial(
-            clean_rad_string(self.host.display_name), floor_grid, dir_count,
-            start_vector, mesh_radius)
+            grid_name, floor_grid, dir_count, start_vector, mesh_radius)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         sensor_grid.base_geometry = \
@@ -191,8 +191,7 @@ class RoomRadianceProperties(object):
             self, dimension, offset=0.1, face_type='Wall', punched_geometry=False):
         """Get a radiance SensorGrid generated from the exterior Faces of this room.
 
-        The Face geometry without windows punched into it will be used. This
-        will be None if the Room has no exterior Faces.
+        This will be None if the Room has no exterior Faces.
 
         The output grid will have this room referenced in its room_identifier
         property. It will also include a Mesh3D object with faces that align
@@ -236,8 +235,9 @@ class RoomRadianceProperties(object):
         if face_grid is None:  # no valid mesh could be generated
             return None
         # create the sensor grid from the mesh
-        sensor_grid = SensorGrid.from_mesh3d(
-            clean_rad_string(self.host.display_name), face_grid)
+        f_nm = 'Faces' if face_type.title() == 'All' else face_type.title()
+        grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
+        sensor_grid = SensorGrid.from_mesh3d(grid_name, face_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         return sensor_grid
@@ -287,8 +287,9 @@ class RoomRadianceProperties(object):
         if ap_grid is None:  # no valid mesh could be generated
             return None
         # create the sensor grid from the mesh
-        sensor_grid = SensorGrid.from_mesh3d(
-            clean_rad_string(self.host.display_name), ap_grid)
+        f_nm = 'Apertures' if aperture_type.title() == 'All' else aperture_type.title()
+        grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
+        sensor_grid = SensorGrid.from_mesh3d(grid_name, ap_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         return sensor_grid
