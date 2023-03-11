@@ -1,4 +1,4 @@
-honeybee-core==1.54.35
+honeybee-core==1.54.36
 honeybee-radiance-folder==2.11.11
 honeybee-radiance-command==1.22.2
 honeybee-standards==2.0.6
