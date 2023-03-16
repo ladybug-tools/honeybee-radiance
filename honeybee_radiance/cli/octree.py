@@ -498,3 +498,87 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
         info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
 
     return info, commands
+
+
+@octree.command('from-folder-static')
+@click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.option(
+    '--output', '-o', show_default=True, help='Path to output file (.oct). If a relative path'
+    ' is provided it should be relative to project folder.'
+)
+@click.option(
+    '--add-before', type=click.STRING, multiple=True, default=None, show_default=True,
+    help='Path for a file to be added to octree before scene files.'
+)
+@click.option(
+    '--add-after', type=click.STRING, multiple=True, default=None, show_default=True,
+    help='Path for a file to be added to octree after scene files.'
+)
+@click.option(
+    '--dry-run', is_flag=True, default=False, show_default=True,
+    help='A flag to show the command without running it.'
+)
+def create_octree_from_folder(
+    folder, output, add_before, add_after, dry_run
+):
+    """Generate a static octree from a folder.
+    
+    The octree will include the default state of aperture and shade groups if
+    any of those are in the model folder.
+
+    \b
+    Args:
+        folder: Path to a Radiance model folder.
+    """
+    model_folder = ModelFolder.from_model_folder(folder)
+
+    try:
+        scene_files = model_folder.scene_files()
+        try:
+            aperture_files = model_folder.aperture_files()
+            scene_files += aperture_files
+        except Exception:
+            pass  # no apertures available in the model
+        try:
+            ap_group_folder = model_folder.aperture_group_folder(full=True)
+            aperture_groups = model_folder.aperture_groups()
+            ap_g_files = [
+                os.path.relpath(
+                    os.path.join(ap_group_folder, grp.states[0].default), 
+                    model_folder.folder)
+                for grp in aperture_groups
+            ]
+            scene_files += ap_g_files
+        except Exception:
+            pass  # no aperture groups available in the model
+        try:
+            dyn_folder = model_folder.dynamic_scene_folder(full=True)
+            dyn_shades = model_folder.dynamic_scene()
+            shd_g_files = [
+                os.path.relpath(
+                    os.path.join(dyn_folder, grp.states[0].default),
+                    model_folder.folder)
+                for grp in dyn_shades
+            ]
+            scene_files += shd_g_files
+        except Exception:
+            pass  # no shade groups available in the model
+        if add_after:
+            scene_files += list(add_after)
+        if add_before:
+            scene_files = list(add_before) + scene_files
+        cmd = Oconv(output=output, inputs=scene_files)
+        cmd.options.f = True
+        if dry_run:
+            click.echo(cmd)
+        else:
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+            cmd.run(env=env, cwd=model_folder.folder)
+    except Exception:
+        _logger.exception('Failed to generate octree.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
