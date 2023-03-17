@@ -237,7 +237,7 @@ class RoomRadianceProperties(object):
         # create the sensor grid from the mesh
         f_nm = 'Faces' if face_type.title() == 'All' else face_type.title()
         grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
-        sensor_grid = SensorGrid.from_mesh3d(grid_name, face_grid)
+        sensor_grid = SensorGrid.from_mesh3d(clean_rad_string(grid_name), face_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         return sensor_grid
@@ -289,7 +289,7 @@ class RoomRadianceProperties(object):
         # create the sensor grid from the mesh
         f_nm = 'Apertures' if aperture_type.title() == 'All' else aperture_type.title()
         grid_name = '{}_Exterior{}'.format(self.host.display_name, f_nm)
-        sensor_grid = SensorGrid.from_mesh3d(grid_name, ap_grid)
+        sensor_grid = SensorGrid.from_mesh3d(clean_rad_string(grid_name), ap_grid)
         sensor_grid.room_identifier = self.host.identifier
         sensor_grid.display_name = self.host.display_name
         return sensor_grid
