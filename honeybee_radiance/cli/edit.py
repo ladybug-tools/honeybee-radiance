@@ -4,9 +4,12 @@ import sys
 import logging
 import json
 
-from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry.geometry3d import Vector3D, Face3D
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
+from honeybee.typing import clean_rad_string, clean_and_id_rad_string
+
+from honeybee_radiance.sensorgrid import SensorGrid
 
 _logger = logging.getLogger(__name__)
 
@@ -270,7 +273,7 @@ def add_face_sensors(model_file, grid_size, offset, face_type, full_geometry,
               'or, if no units are provided, the value will be interpreted in the '
               'honeybee model units.', type=str, default='0.5m', show_default=True)
 @click.option('--offset', '-o', help='A number for the distance at which the '
-              'the sensor grid should be offset from the floor. This can include the '
+              'the sensor grid should be offset from the apertures. This can include the '
               'units of the distance (eg. 3ft) or, if no units are provided, the '
               'value will be interpreted in the honeybee model units.',
               type=str, default='0.1m', show_default=True)
@@ -319,6 +322,95 @@ def add_aperture_sensors(
                     grid_size, offset=offset, aperture_type=aperture_type)
                 if sg is not None:
                     sensor_grids.append(sg)
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+        model.properties.radiance.add_sensor_grids(sensor_grids)
+
+        # write the Model JSON string
+        output_file.write(json.dumps(model.to_dict()))
+    except Exception as e:
+        _logger.exception('Adding Model sensor grids failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@edit.command('add-face3d-sensors')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.argument('face3d-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-name', '-n', help='Text string for the name of the SensorGrid, '
+              'which will also be used to assign SensorGrid ID. This will be used to '
+              'identify the object across a model and in the exported Radiance files '
+              'so it is recommended that it be relatively unique. If unspecified, '
+              'a random name will be generated.', type=str, default=None)
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              'honeybee model units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the the sensor '
+              'grid should be offset from the base geometry. This can include the '
+              'units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the honeybee model units.',
+              type=str, default='0', show_default=True)
+@click.option('--no-flip/--flip', ' /-fl', help='Flag to note whether the mesh '
+              'normals should be reversed from the direction of the face geometries'
+              'and the --offset move the sensors in the opposite direction from the '
+              'face normals.', default=True, show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions '
+              'under the "mesh" property of each grid. Excluding the mesh can greatly '
+              'reduce model size but will mean Radiance results cannot be visualized '
+              'as colored meshes.', default=True)
+@click.option('--output-file', '-f', help='Optional hbjson file to output the JSON '
+              'string of the new model. By default this will be printed out '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def add_face3d_sensors(
+        model_file, face3d_file, grid_name, grid_size, offset, no_flip,
+        include_mesh, output_file):
+    """Add SensorGrids to a honeybee model generated from a JSON array of Face3D objects.
+
+    \b
+    Args:
+        model_file: Full path to a HBJSON or HBPkl Model file.
+        face3d_file: Full path to a JSON file containing an array of Face3D objects
+            that will be used to generate the sensor grid. This could also be a
+            nested array (list of lists of Face3Ds), in which case a separate
+            SensorGrid will be computed for each sub-list.
+    """
+    try:
+        # re-serialize the Model
+        model = Model.from_file(model_file)
+        
+        # re-serialize the Face3Ds
+        with open(face3d_file) as inf:
+            data = json.load(inf)
+        face_arrays = []
+        for obj in data:
+            if isinstance(obj, list):
+                face_arrays.append([Face3D.from_dict(f) for f in obj])
+            else:  # assume that it is a single Face3D
+                face_arrays.append([Face3D.from_dict(obj)])
+
+        # process all of the other inputs
+        grid_size = parse_distance_string(grid_size, model.units)
+        offset = parse_distance_string(offset, model.units)
+        base_id = clean_rad_string(grid_name) if grid_name is not None \
+            else clean_and_id_rad_string('SensorGrid')
+        flip = not no_flip
+
+        # loop through the Face3Ds and generate sensor grids
+        sensor_grids = []
+        for i, faces in enumerate(face_arrays):
+            grid_id = base_id if len(face_arrays) == 1 else '{}_{}'.format(base_id, i)
+            try:
+                sensor_grids.append(
+                    SensorGrid.from_face3d(grid_id, faces, grid_size, None, offset, flip)
+                )
+            except AssertionError:  # none of the Face3Ds make a valid grid
+                continue
         if not include_mesh:
             for sg in sensor_grids:
                 sg.mesh = None

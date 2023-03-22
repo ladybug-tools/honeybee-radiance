@@ -855,7 +855,7 @@ class SensorGrid(object):
         """Get an array of SensorGrids from an matrix (list of lists) of Face3Ds.
 
         This method uses the from_face3d classmethod but includes checks to
-        catch cases where not of the input Face3Ds can support the generation of
+        catch cases where the input Face3Ds cannot support the generation of
         quad grids. In this case, the invalid SensorGrid will not be generated
         and will be excluded form the output list of SensorGrids.
 
