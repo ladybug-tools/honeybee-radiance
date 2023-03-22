@@ -4,7 +4,7 @@ import json
 from click.testing import CliRunner
 
 from honeybee_radiance.cli.grid import split_grid, merge_grid, from_rooms, \
-    from_rooms_radial
+    from_rooms_radial, from_face3ds
 from honeybee_radiance.sensorgrid import SensorGrid
 
 
@@ -94,4 +94,16 @@ def test_from_rooms_radial():
     sg_dict = json.loads(result.output)
     new_grids = [SensorGrid.from_dict(sg) for sg in sg_dict]
     assert len(new_grids) == 2
+    assert all(isinstance(sg, SensorGrid) for sg in new_grids)
+
+
+def test_from_face3ds():
+    runner = CliRunner()
+    input_file = './tests/assets/model/face3d_array.json'
+
+    result = runner.invoke(from_face3ds, [input_file])
+    assert result.exit_code == 0
+    sg_dict = json.loads(result.output)
+    new_grids = [SensorGrid.from_dict(sg) for sg in sg_dict]
+    assert len(new_grids) == 1
     assert all(isinstance(sg, SensorGrid) for sg in new_grids)

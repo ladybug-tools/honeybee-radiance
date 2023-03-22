@@ -7,12 +7,13 @@ import re
 import json
 import shutil
 
-from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry.geometry3d import Vector3D, Face3D
 from ladybug.futil import preparedir
 from honeybee.model import Model
 from honeybee.units import parse_distance_string
+from honeybee.typing import clean_rad_string, clean_and_id_rad_string
 
-import honeybee_radiance.sensorgrid as sensorgrid
+from honeybee_radiance.sensorgrid import SensorGrid
 from honeybee_radiance_folder.gridutil import redistribute_sensors, \
     restore_original_distribution
 
@@ -45,7 +46,7 @@ def split_grid(grid_file, count, folder, log_file):
             the first three files will have 5 sensors and the last file will have 6.
     """
     try:
-        grid = sensorgrid.SensorGrid.from_file(grid_file)
+        grid = SensorGrid.from_file(grid_file)
         file_count = max(1, int(round(grid.count / count)))
         files = grid.to_files(folder, file_count, mkdir=True)
 
@@ -341,7 +342,7 @@ def mirror_grid(grid_file, vector, name, suffix, folder, log_file):
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
               'will mean Radiance results cannot be visualized as colored meshes.',
-              default=True)
+              default=True, show_default=True)
 @click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
               'check should be run to remove sensor points that lie outside the Room '
               'volume. Note that this can add significantly to the runtime and this '
@@ -432,7 +433,7 @@ def from_rooms(model_file, grid_size, offset, include_mesh, keep_out, wall_offse
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
               'will mean Radiance results cannot be visualized as colored meshes.',
-              default=True)
+              default=True, show_default=True)
 @click.option('--keep-out/--remove-out', ' /-out', help='Flag to note whether an extra '
               'check should be run to remove sensor points that lie outside the Room '
               'volume. Note that this can add significantly to the runtime and this '
@@ -551,7 +552,7 @@ def from_rooms_radial(
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
               'will mean Radiance results cannot be visualized as colored meshes.',
-              default=True)
+              default=True, show_default=True)
 @click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
               'room for which sensor grids should be generated. You can pass multiple '
               'rooms (each preceded by -r). By default, all rooms get sensor grids '
@@ -645,7 +646,7 @@ def from_exterior_faces(
               'include a Mesh3D object that aligns with the grid positions under the '
               '"mesh" property of each grid. Excluding the mesh can reduce size but '
               'will mean Radiance results cannot be visualized as colored meshes.',
-              default=True)
+              default=True, show_default=True)
 @click.option('--room', '-r', multiple=True, help='Room identifier to specify the '
               'room for which sensor grids should be generated. You can pass multiple '
               'rooms (each preceded by -r). By default, all rooms get sensor grids '
@@ -714,8 +715,113 @@ def from_exterior_apertures(
         sys.exit(0)
 
 
+@grid.command('from-face3ds')
+@click.argument('face3d-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option('--grid-name', '-n', help='Text string for the name of the SensorGrid, '
+              'which will also be used to assign SensorGrid ID. This will be used to '
+              'identify the object across a model and in the exported Radiance files '
+              'so it is recommended that it be relatively unique. If unspecified, '
+              'a random name will be generated.', type=str, default=None)
+@click.option('--grid-size', '-s', help='A number for the dimension of the mesh grid '
+              'cells. This can include the units of the distance (eg. 1ft) '
+              'or, if no units are provided, the value will be interpreted in the '
+              '--units.', type=str, default='0.5m', show_default=True)
+@click.option('--offset', '-o', help='A number for the distance at which the the sensor '
+              'grid should be offset from the base geometry. This can include the'
+              ' units of the distance (eg. 3ft) or, if no units are provided, the '
+              'value will be interpreted in the --units.',
+              type=str, default='0', show_default=True)
+@click.option('--units', '-u', help=' Text for the units system in which the Face3D '
+              'geometry exists, which will be used to interpret the --grid-size and '
+              '--offset inputs. Must be (Meters, Millimeters, Feet, Inches, '
+              'Centimeters).', type=str, default='Meters', show_default=True)
+@click.option('--no-flip/--flip', ' /-fl', help='Flag to note whether the mesh '
+              'normals should be reversed from the direction of the face geometries'
+              'and the --offset move the sensors in the opposite direction from the '
+              'face normals.', default=True, show_default=True)
+@click.option('--include-mesh/--exclude-mesh', ' /-xm', help='Flag to note whether to '
+              'include a Mesh3D object that aligns with the grid positions under the '
+              '"mesh" property of each grid. Excluding the mesh can reduce size but '
+              'will mean Radiance results cannot be visualized as colored meshes.',
+              default=True, show_default=True)
+@click.option('--write-json/--write-pts', ' /-pts', help='Flag to note whether output '
+              'data collection should be in JSON format or the typical CSV-style format '
+              'of the Radiance .pts files.', default=True, show_default=True)
+@click.option('--folder', help='Optional output folder. If specified, the --output-file '
+              'will be ignored and each sensor grid will be written into its own '
+              '.json or .pts file within the folder.', default=None,
+              type=click.Path(exists=True, file_okay=False,
+                              dir_okay=True, resolve_path=True))
+@click.option('--output-file', '-f', help='Optional file to output the JSON or CSV '
+              'string of the sensor grids. By default this will be printed '
+              'to stdout', type=click.File('w'), default='-', show_default=True)
+def from_face3ds(
+        face3d_file, grid_name, grid_size, offset, units, no_flip,
+        include_mesh, write_json, folder, output_file):
+    """Generate a SensorGrid from a JSON array of Face3D objects.
+
+    \b
+    Args:
+        face3d_file: Full path to a JSON file containing an array of Face3D objects
+            that will be used to generate the sensor grid. This could also be a
+            nested array (list of lists of Face3Ds), in which case a separate
+            SensorGrid will be computed for each sub-list.
+    """
+    try:
+        # re-serialize the Face3Ds
+        with open(face3d_file) as inf:
+            data = json.load(inf)
+        face_arrays = []
+        for obj in data:
+            if isinstance(obj, list):
+                face_arrays.append([Face3D.from_dict(f) for f in obj])
+            else:  # assume that it is a single Face3D
+                face_arrays.append([Face3D.from_dict(obj)])
+
+        # process all of the other inputs
+        grid_size = parse_distance_string(grid_size, units)
+        offset = parse_distance_string(offset, units)
+        base_id = clean_rad_string(grid_name) if grid_name is not None \
+            else clean_and_id_rad_string('SensorGrid')
+        flip = not no_flip
+
+        # loop through the face3ds and generate sensor grids
+        sensor_grids = []
+        for i, faces in enumerate(face_arrays):
+            grid_id = base_id if len(face_arrays) == 1 else '{}_{}'.format(base_id, i)
+            try:
+                sensor_grids.append(
+                    SensorGrid.from_face3d(grid_id, faces, grid_size, None, offset, flip)
+                )
+            except AssertionError:  # none of the Face3Ds make a valid grid
+                continue
+        if not include_mesh:
+            for sg in sensor_grids:
+                sg.mesh = None
+
+        # write the sensor grids to the output file or folder
+        if folder is None:
+            if write_json:
+                output_file.write(json.dumps([sg.to_dict() for sg in sensor_grids]))
+            else:
+                output_file.write('\n'.join([sg.to_radiance() for sg in sensor_grids]))
+        else:
+            if write_json:
+                for sg in sensor_grids:
+                    sg.to_json(folder)
+            else:
+                for sg in sensor_grids:
+                    sg.to_file(folder)
+    except Exception as e:
+        _logger.exception('Grid generation failed.\n{}'.format(e))
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
 @grid.command('enclosure-info')
-@click.argument('model-json', type=click.Path(
+@click.argument('model-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
 @click.argument('grid-file', type=click.Path(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True))
@@ -731,18 +837,18 @@ def from_exterior_apertures(
     'enclosure JSON. By default this will be printed to stdout',
     type=click.File('w'), default='-'
 )
-def enclosure_info_grid(model_json, grid_file, air_boundary_distance, output_file):
+def enclosure_info_grid(model_file, grid_file, air_boundary_distance, output_file):
     """Get a JSON of radiant enclosure information from a .pts file of a sensor grid.
 
     \b
     Args:
-        model_json: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
         grid-file: Full path to a sensor grid file (.pts).
     """
     try:
         # re-serialize the Model
-        model = Model.from_file(model_json)
-        grid = sensorgrid.SensorGrid.from_file(grid_file)
+        model = Model.from_file(model_file)
+        grid = SensorGrid.from_file(grid_file)
         ab_distance = parse_distance_string(air_boundary_distance, model.units)
         # write out the list of radiant enclosure JSON info
         output_file.write(json.dumps(grid.enclosure_info_dict(model, ab_distance)))
