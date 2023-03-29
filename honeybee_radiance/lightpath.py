@@ -62,9 +62,9 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
         adj_room_identifier = \
             face.boundary_condition.boundary_condition_objects[-1]
         adj_room = model.rooms_by_identifier([adj_room_identifier])[0]
-        
+
         return adj_room
-        
+
     def trace_light_path(s_face, s_light_path, parent_room, passed_rooms = set()):
         """Trace light path recursively.
         
@@ -128,11 +128,11 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                         s_light_path_duplicate.append(light_path_id)
                     elif not light_path_id == s_light_path_duplicate[-1]:
                         s_light_path_duplicate.append(light_path_id)
-                    if not s_light_path_duplicate in s_face_light_path:
+                    if s_light_path_duplicate not in s_face_light_path:
                         s_face_light_path.append(s_light_path_duplicate)
 
         return s_face_light_path
-    
+
     _light_path = []
     room = model.rooms_by_identifier([room_identifier])[0]
     for face in room.faces:
@@ -168,5 +168,5 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
     for lp in _light_path:
         if not lp in light_path:
             light_path.append(lp)
-    
+
     return light_path
