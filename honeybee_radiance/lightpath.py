@@ -155,6 +155,9 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 s_face_light_path = \
                     trace_light_path(s_face, s_light_path, room)
                 _light_path.extend(s_face_light_path)
+            elif not isinstance(s_face, (Aperture, Door)):
+                # if it is AirBoundary but without Surface boundary condition
+                pass
             else:
                 # no boundary condition, tracing ends here
                 if not s_light_path in _light_path:
