@@ -648,11 +648,7 @@ def _write_static_files(
         minimal: Boolean noting whether radiance strings should be written minimally.
     """
     def is_air_boundary(face):
-        if isinstance(face, Face):
-            if isinstance(face.type, AirBoundary):
-                return True
-        else:
-            return False
+        return isinstance(face, Face) and isinstance(face.type, AirBoundary)
 
     if len(geometry) != 0 or len(geometry_blk) != 0:
         # write the strings for the geometry
