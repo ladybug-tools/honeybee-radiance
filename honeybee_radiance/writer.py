@@ -3,12 +3,14 @@
 from honeybee_radiance.sensorgrid import SensorGrid
 from ladybug.futil import write_to_file_by_name, preparedir
 from honeybee.config import folders
+from honeybee.face import Face
 from honeybee.boundarycondition import Surface
+from honeybee.facetype import AirBoundary
 from honeybee_radiance_folder.folder import ModelFolder
 import honeybee_radiance_folder.config as folder_config
 
 from .geometry import Polygon
-from .modifier.material import aBSDF, BSDF
+from .modifier.material import aBSDF, BSDF, Trans
 from .lib.modifiers import black
 
 import os
@@ -645,31 +647,42 @@ def _write_static_files(
         punched_verts: Boolean noting whether punched geometry should be written
         minimal: Boolean noting whether radiance strings should be written minimally.
     """
+    def is_air_boundary(face):
+        if isinstance(face, Face):
+            if isinstance(face.type, AirBoundary):
+                return True
+        else:
+            return False
+
     if len(geometry) != 0 or len(geometry_blk) != 0:
         # write the strings for the geometry
         face_strs = []
         if punched_verts:
             for face in geometry:
-                modifier = face.properties.radiance.modifier
-                geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
-                    else face.vertices
-                rad_poly = Polygon(face.identifier, geo, modifier)
-                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+                if not is_air_boundary(face):
+                    modifier = face.properties.radiance.modifier
+                    geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
+                        else face.vertices
+                    rad_poly = Polygon(face.identifier, geo, modifier)
+                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
             for face, mod_name in zip(geometry_blk, mod_names):
-                modifier = mod_combs[mod_name][0]
-                geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
-                    else face.vertices
-                rad_poly = Polygon(face.identifier, geo, modifier)
-                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+                if not is_air_boundary(face):
+                    modifier = mod_combs[mod_name][0]
+                    geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
+                        else face.vertices
+                    rad_poly = Polygon(face.identifier, geo, modifier)
+                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
         else:
             for face in geometry:
-                modifier = face.properties.radiance.modifier
-                rad_poly = Polygon(face.identifier, face.vertices, modifier)
-                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+                if not is_air_boundary(face):
+                    modifier = face.properties.radiance.modifier
+                    rad_poly = Polygon(face.identifier, face.vertices, modifier)
+                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
             for face, mod_name in zip(geometry_blk, mod_names):
-                modifier = mod_combs[mod_name][0]
-                rad_poly = Polygon(face.identifier, face.vertices, modifier)
-                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+                if not is_air_boundary(face):
+                    modifier = mod_combs[mod_name][0]
+                    rad_poly = Polygon(face.identifier, face.vertices, modifier)
+                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
 
         # write the strings for the modifiers
         mod_strs = []
@@ -677,11 +690,21 @@ def _write_static_files(
         for mod in modifiers:
             if isinstance(mod, (aBSDF, BSDF)):
                 _process_bsdf_modifier(mod, mod_strs, minimal)
+            elif isinstance(mod, Trans):
+                r_values = (mod.r_reflectance, mod.g_reflectance, mod.b_reflectance)
+                if mod.identifier != 'air_boundary' and not \
+                    all(v == 1 for v in r_values):
+                    mod_strs.append(mod.to_radiance(minimal))
             else:
                 mod_strs.append(mod.to_radiance(minimal))
         for mod in modifiers_blk:
             if isinstance(mod, (aBSDF, BSDF)):
                 _process_bsdf_modifier(mod, mod_blk_strs, minimal)
+            elif isinstance(mod, Trans):
+                r_values = (mod.r_reflectance, mod.g_reflectance, mod.b_reflectance)
+                if mod.identifier != 'air_boundary' and not \
+                    all(v == 1 for v in r_values):
+                    mod_strs.append(mod.to_radiance(minimal))
             else:
                 mod_blk_strs.append(mod.to_radiance(minimal))
 
