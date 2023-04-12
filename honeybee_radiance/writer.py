@@ -704,7 +704,7 @@ def _write_static_files(
                 r_values = (mod.r_reflectance, mod.g_reflectance, mod.b_reflectance)
                 if mod.identifier != 'air_boundary' and not \
                     all(v == 1 for v in r_values):
-                    mod_strs.append(mod.to_radiance(minimal))
+                    mod_blk_strs.append(mod.to_radiance(minimal))
             else:
                 mod_blk_strs.append(mod.to_radiance(minimal))
 
