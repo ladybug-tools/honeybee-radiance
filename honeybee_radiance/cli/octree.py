@@ -518,7 +518,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     '--dry-run', is_flag=True, default=False, show_default=True,
     help='A flag to show the command without running it.'
 )
-def create_octree_from_folder(
+def create_static_octree_from_folder(
     folder, output, add_before, add_after, dry_run
 ):
     """Generate a static octree from a folder.
@@ -544,7 +544,7 @@ def create_octree_from_folder(
             aperture_groups = model_folder.aperture_groups()
             ap_g_files = [
                 os.path.relpath(
-                    os.path.join(ap_group_folder, grp.states[0].default), 
+                    os.path.join(ap_group_folder, grp.states[0].default),
                     model_folder.folder)
                 for grp in aperture_groups
             ]
