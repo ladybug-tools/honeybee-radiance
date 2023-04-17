@@ -1,25 +1,29 @@
 """honeybee radiance ray-tracing command commands."""
-import click
 import sys
 import logging
 import os
 import traceback
 import json
 import math
+import subprocess
 from collections import OrderedDict
+import click
 
-from honeybee_radiance.config import folders
-from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
-from honeybee_radiance.reader import sensor_count_from_file
-from honeybee_radiance.sensorgrid import SensorGrid
+from honeybee.model import Model
+from honeybee.aperture import Aperture
+from honeybee.boundarycondition import Outdoors
 from ladybug_geometry.geometry3d.mesh import Mesh3D
-from honeybee_radiance.reader import parse_from_file
 from honeybee_radiance_folder import ModelFolder
 from honeybee_radiance_folder.gridutil import redistribute_sensors
-from honeybee.aperture import Aperture
+from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
+from honeybee_radiance.config import folders
+from honeybee_radiance.reader import sensor_count_from_file
+from honeybee_radiance.sensorgrid import SensorGrid
+from honeybee_radiance.reader import parse_from_file
 from honeybee_radiance.geometry.polygon import Polygon
-from .octree import _generate_octrees_info
+from honeybee_radiance.lightsource.sky.skydome import SkyDome
 
+from .octree import _generate_octrees_info
 from .threephase import three_phase
 
 _logger = logging.getLogger(__name__)
@@ -367,7 +371,7 @@ def dmtx_group_command(
         return ap_groups
 
     def _aperture_view_factor(project_folder, apertures, size=0.2, ambient_division=1000,
-                            receiver='rflux_sky.sky', octree='scene.oct', 
+                            receiver='rflux_sky.sky', octree='scene.oct',
                             calc_folder='dmtx_aperture_grouping'):
         """Calculates the view factor for each aperture by sensor points."""
 
@@ -639,7 +643,7 @@ def prepare_multiphase_command(
                     )
                 if not os.path.isdir(grid_folder):
                     os.mkdir(grid_folder)
-                
+
                 grid_count = int(grid_count / grid_divisor)
                 grid_count = 1 if grid_count < 1 else grid_count
 
@@ -656,7 +660,7 @@ def prepare_multiphase_command(
                 if light_path not in grid_info_dict:
                     # in this case we do not want to generate an octree
                     continue
-                
+
                 info, commands = _generate_octrees_info(
                     state, octree_folder, study, sun_path
                     )
@@ -707,6 +711,353 @@ def prepare_multiphase_command(
 
     except Exception:
         _logger.exception('Failed to generate octrees and grids.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@multi_phase.command('aperture-group')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--octree', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Path to octree file. The octree will be created from the model-file '
+    'if no file is provided.', default=None
+)
+@click.option(
+    '--rflux-sky', type=click.Path(exists=True, file_okay=True, resolve_path=True),
+    help='Path to rflux sky file. The rflux sky file will be created if no file '
+    'is provided.', default=None
+)
+@click.option('--size', '-s', type=float, default=0.2, show_default=True,
+    help='Aperture grid size. A lower number will give a finer grid and more accurate '
+    'results but the calculation time will increase.')
+@click.option('--threshold', '-t', type=float, default=0.001, show_default=True,
+    help='A number that determines if two apertures/aperture groups can be clustered. A '
+    'lower number is more accurate but will also increase the number of aperture groups.')
+@click.option('--ambient-division', '-ad', type=int, default=1000, show_default=True,
+    help='Number of ambient divisions (-ad) for view factor calculation in rfluxmtx. '
+    'Increasing the number will give more accurate results but also increase the '
+    'calculation time.')
+@click.option('--room-based/--no-room-based', '-rb/-nrb', help='Flag to note '
+    'whether the apertures should be grouped on a room basis. If grouped on a room '
+    'basis apertures from different room cannot be in the same group.',
+    default=True, show_default=True)
+@click.option('--output-folder', help='Output folder into which the files be written.',
+    default='aperture_groups', show_default=True)
+@click.option('--output-model', help='Optional name of output HBJSON file as a string. '
+    'If no name is provided the update Model with dynamic group identifiers will be '
+    'written to a HBJSON file.', default=None, show_default=True, type=click.STRING)
+def aperture_group_command(
+    model_file, octree, rflux_sky, size, threshold, ambient_division,
+    room_based, output_folder, output_model
+):
+    """Calculate aperture groups for exterior apertures.
+
+    This command calculates view factor from apertures to sky patches (rfluxmtx). Each
+    aperture is represented by a sensor grid, and the view factor for the whole aperture
+    is the average of the grid. The apertures are grouped based on the threshold.
+    \b
+    Args:
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+    """
+
+    def _index_and_min(distance_matrix):
+        """Return the minimum value of the distance matrix, as well as the index [j, i] of
+        the minimum value of the distance matrix."""
+        min_value = min([min(sublist) for sublist in distance_matrix])
+        for i, _i in enumerate(distance_matrix):
+            for j, _j in enumerate(distance_matrix):
+                if distance_matrix[i][j] == min_value:
+                    index = [j, i]
+                    break
+        return min_value, index
+
+    def _pairwise_maximum(array1, array2):
+        """Return an array of the pairwise maximum of two arrays."""
+        pair_array = [array1, array2]
+        max_array = list(map(max, zip(*pair_array)))
+        return max_array
+
+    def _tranpose_matrix(matrix):
+        """Transposes the distance matrix."""
+        matrix = list(map(list, zip(*matrix)))
+        return matrix
+
+    def _rmse_from_matrix(vf_matrix_dict):
+        """Calculates RMSE."""
+        rmse = []
+        for predicted in vf_matrix_dict.values():
+            r_list = []
+            for observed in vf_matrix_dict.values():
+                error = [(p - o) for p, o in zip(predicted, observed)]
+                square_error = [e ** 2 for e in error]
+                mean_square_error = sum(square_error) / len(square_error)
+                root_mean_square_error = mean_square_error ** 0.5
+                r_list.append(root_mean_square_error)
+            rmse.append(r_list)
+        return rmse
+
+    def _flatten(container):
+        """Flatten an array."""
+        if not isinstance(container, list):
+            container = [container]
+        for i in container:
+            if isinstance(i, (list, tuple)):
+                for j in _flatten(i):
+                    yield j
+            else:
+                yield i
+
+    def _agglomerative_clustering_complete(distance_matrix, ap_names, threshold=0.001):
+        """Cluster apertures based on the threshold."""
+
+        # Fill the diagonal with 9999 so a diagonal of zeros will NOT be stored
+        # as min_value.
+        for i in range(len(distance_matrix)):
+            distance_matrix[i][i] = 9999
+
+        # Create starting list of aperture groups. Each aperture starts as its
+        # own group.
+        ap_groups = ap_names
+
+        # Set the number of samples and the minimum value of the distance
+        # matrix.
+        n_samples = len(distance_matrix)
+
+        # Set the minimum value of the distance matrix and find the indices of
+        # the minimum value in the distance matrix.
+        min_value, index = _index_and_min(distance_matrix)
+
+        while n_samples > 1 and min_value < threshold:
+            # Combine the two groups and place it at index 0, and remove item
+            # at index 1.
+            ap_groups[index[0]] = [ap_groups[index[0]], ap_groups[index[1]]]
+            ap_groups.pop(index[1])
+
+            # Update the values in the distance matrix. We need the maximum
+            # values between the new cluster and all the remaining apertures or
+            # clusters still in the distance matrix.
+            distance_matrix[index[0]] = \
+                _pairwise_maximum(distance_matrix[index[0]], distance_matrix[index[1]])
+            distance_matrix = _tranpose_matrix(distance_matrix)
+            distance_matrix[index[0]] = \
+                _pairwise_maximum(distance_matrix[index[0]], distance_matrix[index[1]])
+
+            # Remove the values at index 1 along both axes.
+            distance_matrix.pop(index[1])
+            distance_matrix = _tranpose_matrix(distance_matrix)
+            distance_matrix.pop(index[1])
+
+            # Update the number of samples that are left in the distance matrix.
+            n_samples -= 1
+            # Update the minimum value and the indices.
+            min_value, index = _index_and_min(distance_matrix)
+
+        return ap_groups
+
+    def _aperture_view_factor(project_folder, apertures, size=0.2, ambient_division=1000,
+                            receiver='rflux_sky.sky', octree='scene.oct',
+                            calc_folder='aperture_grouping'):
+        """Calculates the view factor for each aperture by sensor points."""
+
+        # Instantiate dictionary that will store the sensor count for each
+        # aperture. We need a OrderedDict so that we can split the rfluxmtx
+        # output file by each aperture (sensor count) in the correct order.
+        ap_dict = OrderedDict()
+
+        meshes = []
+        # Create a mesh for each aperture and add the the sensor count to dict.
+        for aperture in apertures:
+            ap_mesh = aperture.geometry.mesh_grid(size, generate_centroids=False)
+            meshes.append(ap_mesh)
+            ap_dict[aperture.identifier] = {'sensor_count': len(ap_mesh.faces)}
+
+        # Create a sensor grid from joined aperture mesh.
+        grid_mesh = SensorGrid.from_mesh3d('aperture_grid', Mesh3D.join_meshes(meshes))
+
+        # Write sensor grid to pts file.
+        sensors = grid_mesh.to_file(os.path.join(project_folder, calc_folder),
+                                    file_name='apertures')
+
+        # Rfluxmtx options.
+        rflux_opt = RfluxmtxOptions()
+        rflux_opt.ad = ambient_division
+        rflux_opt.lw = 1.0 / float(rflux_opt.ad)
+        rflux_opt.I = True
+        rflux_opt.h = True
+
+        # Rfluxmtx command.
+        rflux = Rfluxmtx()
+        rflux.options = rflux_opt
+        rflux.receivers = receiver
+        rflux.sensors = sensors
+        rflux.octree = octree
+        rflux.output = os.path.join(calc_folder, 'apertures_vf.mtx')
+
+        # Run rfluxmtx command.
+        rflux.run(cwd=project_folder)
+
+        # Get the output file of the rfluxmtx command.
+        mtx_file = os.path.join(project_folder, rflux.output)
+
+        return mtx_file, ap_dict
+
+    try:
+        model = Model.from_file(model_file)
+        if not octree:
+            cmds = [
+                'honeybee-radiance', 'translate', 'model-to-rad-folder',
+                model_file, '--minimal'
+            ]
+            use_shell = True if os.name == 'nt' else False
+            subprocess.run(cmds, shell=use_shell)
+
+            octree = 'scene.oct'
+            cmds = [
+                'honeybee-radiance', 'octree', 'from-folder', 'model',
+                '--output', octree, '--exclude-aperture',
+                '--exclude-groups'
+            ]
+            subprocess.run(cmds, shell=use_shell)
+        if not rflux_sky:
+            rflux_sky = SkyDome()
+            rflux_sky = rflux_sky.to_file(folder='.', name='rflux_sky.sky')
+
+        apertures = []
+        room_apertures = {}
+        # Get all room-based apertures with Outdoors boundary condition.
+        for room in model.rooms:
+            for face in room.faces:
+                for ap in face.apertures:
+                    if isinstance(ap.boundary_condition, Outdoors):
+                        apertures.append(ap)
+                        if not room.identifier in room_apertures:
+                            room_apertures[room.identifier] = {}
+                        if not 'aperture_ids' in room_apertures[room.identifier]:
+                            room_apertures[room.identifier]['aperture_ids'] = \
+                                [ap.identifier]
+                        else:
+                            room_apertures[room.identifier]['aperture_ids'].append(ap.identifier)
+                        if not 'display_name' in room_apertures[room.identifier]:
+                            room_apertures[room.identifier]['display_name'] = \
+                                room.display_name
+
+        assert len(apertures) != 0, \
+            'Found no apertures. There should at least be one aperture ' \
+            'in your model.'
+
+        # Calculate view factor.
+        mtx_file, ap_dict = _aperture_view_factor(
+            '.', apertures, size=size, ambient_division=ambient_division,
+            receiver=rflux_sky, octree=octree, calc_folder=output_folder
+        )
+
+        view_factor = []
+        # Read view factor file, convert to one channel output, and divide by
+        # Pi.
+        with open(mtx_file) as mtx_data:
+            for sensor in mtx_data:
+                sensor_split = sensor.strip().split()
+                if len(sensor_split) % 3 == 0:
+                    one_channel = sensor_split[::3]
+                    convert_to_vf = lambda x: float(x) / math.pi
+                    view_factor.append(list(map(convert_to_vf, one_channel)))
+
+        ap_view_factor = OrderedDict()
+        # Split the view factor file by the aperture sensor count.
+        for ap_id, value in ap_dict.items():
+            sensor_count = value['sensor_count']
+            ap_vf, view_factor = view_factor[:sensor_count], view_factor[sensor_count:]
+            ap_view_factor[ap_id] = ap_vf
+
+        ap_view_factor_mean = OrderedDict()
+        # Get the mean view factor per sky patch for each aperture.
+        for ap_id, ap_vf in ap_view_factor.items():
+            ap_t = _tranpose_matrix(ap_vf)
+            ap_view_factor_mean[ap_id] = \
+                [sum(sky_patch) / len(sky_patch) for sky_patch in ap_t]
+
+        if room_based:
+        # Restructure ap_view_factor_mean.
+            _ap_view_factor_mean = {}
+            for room_id, data in room_apertures.items():
+                _ap_view_factor_mean[room_id] = OrderedDict()
+                for ap_id in data['aperture_ids']:
+                    _ap_view_factor_mean[room_id][ap_id] = ap_view_factor_mean[ap_id]
+            ap_view_factor_mean = _ap_view_factor_mean
+
+        # Calculate RMSE between all combinations of averaged aperture view factors.
+        if room_based:
+            rmse = OrderedDict()
+            for room_id, vf_matrix_dict in ap_view_factor_mean.items():
+                _rmse = _rmse_from_matrix(vf_matrix_dict)
+                rmse[room_id] = _rmse
+        else:
+            rmse = _rmse_from_matrix(ap_view_factor_mean)
+
+        # Cluster the apertures by the 'complete method'.
+        if room_based:
+            ap_groups = {}
+            for room_id, _rmse in rmse.items():
+                ap_ids = room_apertures[room_id]['aperture_ids']
+                _ap_groups = _agglomerative_clustering_complete(_rmse, ap_ids, threshold)
+                # Flatten the groups. This will break the inter-cluster
+                # structure, but we do not need to know that.
+                ap_groups[room_id] = [list(_flatten(cluster)) for cluster in _ap_groups]
+        else:
+            ap_name = list(ap_dict.keys())
+            ap_groups = _agglomerative_clustering_complete(rmse, ap_name, threshold)
+            # Flatten the groups. This will break the inter-cluster structure,
+            # but we do not need to know that.
+            ap_groups = [list(_flatten(cluster)) for cluster in ap_groups]
+
+        # Add the aperture group to each aperture in the dictionary.
+        group_names = []
+        group_dict = {}
+        if room_based:
+            for room_id, groups in ap_groups.items():
+                room_dn = room_apertures[room_id]['display_name']
+                for idx, group in enumerate(groups):
+                    group_name = '{}_ApertureGroup_{}'.format(room_dn, idx)
+                    group_names.append(
+                        {'identifier': group_name, 'apertures': group}
+                    )
+                    for ap_id in group:
+                        group_dict[ap_id] = group_name
+        else:
+            for idx, group in enumerate(ap_groups):
+                group_name = "ApertureGroup_{}".format(idx)
+                group_names.append(
+                    {'identifier': group_name, 'apertures': group}
+                )
+                for ap_id in group:
+                    group_dict[ap_id] = group_name
+
+        # Write aperture groups to JSON file.
+        output = os.path.join('.', output_folder, 'aperture_groups.json')
+        with open(output, 'w') as fp:
+            json.dump(group_names, fp, indent=2)
+
+        # Write dynamic group identifiers to JSON file.
+        output = os.path.join('.', output_folder, 'dynamic_group_identifiers.json')
+        with open(output, 'w') as fp:
+            json.dump(group_dict, fp, indent=2)
+
+        # Set the dynamic group identifier and write a new HBJSON.
+        if output_model:
+            for room in model.rooms:
+                for face in room.faces:
+                    for ap in face.apertures:
+                        if isinstance(ap.boundary_condition, Outdoors):
+                            dyn_group_id = group_dict[ap.identifier]
+                            ap.properties.radiance.dynamic_group_identifier = \
+                                dyn_group_id
+            model.to_hbjson(name=output_model, folder='.')
+
+    except Exception:
+        _logger.exception("Failed to run aperture-group command.")
+        traceback.print_exc()
         sys.exit(1)
     else:
         sys.exit(0)
