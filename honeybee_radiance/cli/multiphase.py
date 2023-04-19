@@ -743,6 +743,11 @@ def prepare_multiphase_command(
     'whether the apertures should be grouped on a room basis. If grouped on a room '
     'basis apertures from different room cannot be in the same group.',
     default=True, show_default=True)
+@click.option('--vertical-tolerance', '-vt', type=click.FLOAT, default=None,
+    show_default=True, help='A float value for vertical tolerance between two '
+    'apertures. If the vertical distance between two apertures is larger than '
+    'this tolerance the apertures cannot be grouped. If no value is given the '
+    'vertical grouping will be skipped.')
 @click.option('--output-folder', help='Output folder into which the files be written.',
     default='aperture_groups', show_default=True)
 @click.option('--output-model', help='Optional name of output HBJSON file as a string. '
@@ -750,7 +755,7 @@ def prepare_multiphase_command(
     'written to a HBJSON file.', default=None, show_default=True, type=click.STRING)
 def aperture_group_command(
     model_file, octree, rflux_sky, size, threshold, ambient_division,
-    room_based, output_folder, output_model
+    room_based, vertical_tolerance, output_folder, output_model
 ):
     """Calculate aperture groups for exterior apertures.
 
@@ -809,7 +814,7 @@ def aperture_group_command(
             else:
                 yield i
 
-    def _agglomerative_clustering_complete(distance_matrix, ap_names, threshold=0.001):
+    def _agglomerative_clustering_complete(distance_matrix, apertures, threshold=0.001):
         """Cluster apertures based on the threshold."""
 
         # Fill the diagonal with 9999 so a diagonal of zeros will NOT be stored
@@ -819,7 +824,7 @@ def aperture_group_command(
 
         # Create starting list of aperture groups. Each aperture starts as its
         # own group.
-        ap_groups = ap_names
+        ap_groups = apertures
 
         # Set the number of samples and the minimum value of the distance
         # matrix.
@@ -856,9 +861,11 @@ def aperture_group_command(
 
         return ap_groups
 
-    def _aperture_view_factor(project_folder, apertures, size=0.2, ambient_division=1000,
-                            receiver='rflux_sky.sky', octree='scene.oct',
-                            calc_folder='aperture_grouping'):
+    def _aperture_view_factor(
+        project_folder, apertures, size=0.2, ambient_division=1000,
+        receiver='rflux_sky.sky', octree='scene.oct',
+        calc_folder='aperture_grouping'
+        ):
         """Calculates the view factor for each aperture by sensor points."""
 
         # Instantiate dictionary that will store the sensor count for each
@@ -871,7 +878,11 @@ def aperture_group_command(
         for aperture in apertures:
             ap_mesh = aperture.geometry.mesh_grid(size, generate_centroids=False)
             meshes.append(ap_mesh)
-            ap_dict[aperture.identifier] = {'sensor_count': len(ap_mesh.faces)}
+            ap_dict[aperture.identifier] = \
+                {
+                    'sensor_count': len(ap_mesh.faces),
+                    'aperture': aperture
+                }
 
         # Create a sensor grid from joined aperture mesh.
         grid_mesh = SensorGrid.from_mesh3d('aperture_grid', Mesh3D.join_meshes(meshes))
@@ -934,11 +945,11 @@ def aperture_group_command(
                         apertures.append(ap)
                         if not room.identifier in room_apertures:
                             room_apertures[room.identifier] = {}
-                        if not 'aperture_ids' in room_apertures[room.identifier]:
-                            room_apertures[room.identifier]['aperture_ids'] = \
-                                [ap.identifier]
+                        if not 'apertures' in room_apertures[room.identifier]:
+                            room_apertures[room.identifier]['apertures'] = \
+                                [ap]
                         else:
-                            room_apertures[room.identifier]['aperture_ids'].append(ap.identifier)
+                            room_apertures[room.identifier]['apertures'].append(ap)
                         if not 'display_name' in room_apertures[room.identifier]:
                             room_apertures[room.identifier]['display_name'] = \
                                 room.display_name
@@ -983,7 +994,8 @@ def aperture_group_command(
             _ap_view_factor_mean = {}
             for room_id, data in room_apertures.items():
                 _ap_view_factor_mean[room_id] = OrderedDict()
-                for ap_id in data['aperture_ids']:
+                for ap in data['apertures']:
+                    ap_id = ap.identifier
                     _ap_view_factor_mean[room_id][ap_id] = ap_view_factor_mean[ap_id]
             ap_view_factor_mean = _ap_view_factor_mean
 
@@ -1000,17 +1012,50 @@ def aperture_group_command(
         if room_based:
             ap_groups = {}
             for room_id, _rmse in rmse.items():
-                ap_ids = room_apertures[room_id]['aperture_ids']
-                _ap_groups = _agglomerative_clustering_complete(_rmse, ap_ids, threshold)
+                apertures = room_apertures[room_id]['apertures']
+                _room_ap_groups = _agglomerative_clustering_complete(_rmse, apertures, threshold)
                 # Flatten the groups. This will break the inter-cluster
                 # structure, but we do not need to know that.
-                ap_groups[room_id] = [list(_flatten(cluster)) for cluster in _ap_groups]
+                _room_ap_groups = [list(_flatten(cluster)) for cluster in _room_ap_groups]
+                if vertical_tolerance:
+                    # Check groups by vertical tolerance.
+                    vertical_groups = []
+                    for ap_group in _room_ap_groups:
+                        vert_dist_matrix = []
+                        for ap_1 in ap_group:
+                            vert_dist_list = []
+                            for ap_2 in ap_group:
+                                vert_dist = abs(ap_1.center.z - ap_2.center.z)
+                                vert_dist_list.append(vert_dist)
+                            vert_dist_matrix.append(vert_dist_list)
+                        _ap_groups = _agglomerative_clustering_complete(
+                            vert_dist_matrix, ap_group, vertical_tolerance
+                        )
+                        _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
+                        vertical_groups.extend(_ap_groups)
+                    _room_ap_groups = vertical_groups
+                ap_groups[room_id] = _room_ap_groups
         else:
-            ap_name = list(ap_dict.keys())
-            ap_groups = _agglomerative_clustering_complete(rmse, ap_name, threshold)
+            ap_groups = _agglomerative_clustering_complete(rmse, apertures, threshold)
             # Flatten the groups. This will break the inter-cluster structure,
             # but we do not need to know that.
             ap_groups = [list(_flatten(cluster)) for cluster in ap_groups]
+            if vertical_tolerance:
+                # Check groups by vertical tolerance.
+                vertical_groups = []
+                for ap_group in ap_groups:
+                    vert_dist_matrix = []
+                    for ap_1 in ap_group:
+                        vert_dist_list = []
+                        for ap_2 in ap_group:
+                            vert_dist = abs(ap_1.center.z - ap_2.center.z)
+                            vert_dist_list.append(vert_dist)
+                        vert_dist_matrix.append(vert_dist_list)
+                    _ap_groups = _agglomerative_clustering_complete(
+                        vert_dist_matrix, ap_group, vertical_tolerance)
+                    _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
+                    vertical_groups.extend(_ap_groups)
+                ap_groups = vertical_groups
 
         # Add the aperture group to each aperture in the dictionary.
         group_names = []
@@ -1019,19 +1064,21 @@ def aperture_group_command(
             for room_id, groups in ap_groups.items():
                 room_dn = room_apertures[room_id]['display_name']
                 for idx, group in enumerate(groups):
+                    ap_ids = [ap.identifier for ap in group]
                     group_name = '{}_ApertureGroup_{}'.format(room_dn, idx)
                     group_names.append(
-                        {'identifier': group_name, 'apertures': group}
+                        {'identifier': group_name, 'apertures': ap_ids}
                     )
-                    for ap_id in group:
+                    for ap_id in ap_ids:
                         group_dict[ap_id] = group_name
         else:
             for idx, group in enumerate(ap_groups):
-                group_name = "ApertureGroup_{}".format(idx)
+                ap_ids = [ap.identifier for ap in group]
+                group_name = 'ApertureGroup_{}'.format(idx)
                 group_names.append(
-                    {'identifier': group_name, 'apertures': group}
+                    {'identifier': group_name, 'apertures': ap_ids}
                 )
-                for ap_id in group:
+                for ap_id in ap_ids:
                     group_dict[ap_id] = group_name
 
         # Write aperture groups to JSON file.
