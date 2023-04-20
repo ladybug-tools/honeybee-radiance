@@ -743,6 +743,11 @@ def prepare_multiphase_command(
     'whether the apertures should be grouped on a room basis. If grouped on a room '
     'basis apertures from different room cannot be in the same group.',
     default=True, show_default=True)
+@click.option('--view-factor/--orientation', '-vf/-or', help='Flag to note '
+    'whether the apertures should be grouped by calculating view factors for '
+    'the apertures to a discretized sky or simply by the normal orientation of '
+    'the apertures.',
+    default=True, show_default=True)
 @click.option('--vertical-tolerance', '-vt', type=click.FLOAT, default=None,
     show_default=True, help='A float value for vertical tolerance between two '
     'apertures. If the vertical distance between two apertures is larger than '
@@ -755,7 +760,7 @@ def prepare_multiphase_command(
     'written to a HBJSON file.', default=None, show_default=True, type=click.STRING)
 def aperture_group_command(
     model_file, octree, rflux_sky, size, threshold, ambient_division,
-    room_based, vertical_tolerance, output_folder, output_model
+    room_based, view_factor, vertical_tolerance, output_folder, output_model
 ):
     """Calculate aperture groups for exterior apertures.
 
@@ -958,69 +963,95 @@ def aperture_group_command(
             'Found no apertures. There should at least be one aperture ' \
             'in your model.'
 
-        # Calculate view factor.
-        mtx_file, ap_dict = _aperture_view_factor(
-            '.', apertures, size=size, ambient_division=ambient_division,
-            receiver=rflux_sky, octree=octree, calc_folder=output_folder
-        )
+        if view_factor:
+            # Calculate view factor.
+            mtx_file, ap_dict = _aperture_view_factor(
+                '.', apertures, size=size, ambient_division=ambient_division,
+                receiver=rflux_sky, octree=octree, calc_folder=output_folder
+            )
 
-        view_factor = []
-        # Read view factor file, convert to one channel output, and divide by
-        # Pi.
-        with open(mtx_file) as mtx_data:
-            for sensor in mtx_data:
-                sensor_split = sensor.strip().split()
-                if len(sensor_split) % 3 == 0:
-                    one_channel = sensor_split[::3]
-                    convert_to_vf = lambda x: float(x) / math.pi
-                    view_factor.append(list(map(convert_to_vf, one_channel)))
+            view_factor = []
+            # Read view factor file, convert to one channel output, and divide by
+            # Pi.
+            with open(mtx_file) as mtx_data:
+                for sensor in mtx_data:
+                    sensor_split = sensor.strip().split()
+                    if len(sensor_split) % 3 == 0:
+                        one_channel = sensor_split[::3]
+                        convert_to_vf = lambda x: float(x) / math.pi
+                        view_factor.append(list(map(convert_to_vf, one_channel)))
 
-        ap_view_factor = OrderedDict()
-        # Split the view factor file by the aperture sensor count.
-        for ap_id, value in ap_dict.items():
-            sensor_count = value['sensor_count']
-            ap_vf, view_factor = view_factor[:sensor_count], view_factor[sensor_count:]
-            ap_view_factor[ap_id] = ap_vf
+            ap_view_factor = OrderedDict()
+            # Split the view factor file by the aperture sensor count.
+            for ap_id, value in ap_dict.items():
+                sensor_count = value['sensor_count']
+                ap_vf, view_factor = view_factor[:sensor_count], view_factor[sensor_count:]
+                ap_view_factor[ap_id] = ap_vf
 
-        ap_view_factor_mean = OrderedDict()
-        # Get the mean view factor per sky patch for each aperture.
-        for ap_id, ap_vf in ap_view_factor.items():
-            ap_t = _tranpose_matrix(ap_vf)
-            ap_view_factor_mean[ap_id] = \
-                [sum(sky_patch) / len(sky_patch) for sky_patch in ap_t]
+            ap_view_factor_mean = OrderedDict()
+            # Get the mean view factor per sky patch for each aperture.
+            for ap_id, ap_vf in ap_view_factor.items():
+                ap_t = _tranpose_matrix(ap_vf)
+                ap_view_factor_mean[ap_id] = \
+                    [sum(sky_patch) / len(sky_patch) for sky_patch in ap_t]
 
-        if room_based:
-        # Restructure ap_view_factor_mean.
-            _ap_view_factor_mean = {}
-            for room_id, data in room_apertures.items():
-                _ap_view_factor_mean[room_id] = OrderedDict()
-                for ap in data['apertures']:
-                    ap_id = ap.identifier
-                    _ap_view_factor_mean[room_id][ap_id] = ap_view_factor_mean[ap_id]
-            ap_view_factor_mean = _ap_view_factor_mean
+            if room_based:
+            # Restructure ap_view_factor_mean.
+                _ap_view_factor_mean = {}
+                for room_id, data in room_apertures.items():
+                    _ap_view_factor_mean[room_id] = OrderedDict()
+                    for ap in data['apertures']:
+                        ap_id = ap.identifier
+                        _ap_view_factor_mean[room_id][ap_id] = ap_view_factor_mean[ap_id]
+                ap_view_factor_mean = _ap_view_factor_mean
 
-        # Calculate RMSE between all combinations of averaged aperture view factors.
-        if room_based:
-            rmse = OrderedDict()
-            for room_id, vf_matrix_dict in ap_view_factor_mean.items():
-                _rmse = _rmse_from_matrix(vf_matrix_dict)
-                rmse[room_id] = _rmse
-        else:
-            rmse = _rmse_from_matrix(ap_view_factor_mean)
+            # Calculate RMSE between all combinations of averaged aperture view factors.
+            if room_based:
+                rmse = OrderedDict()
+                for room_id, vf_matrix_dict in ap_view_factor_mean.items():
+                    _rmse = _rmse_from_matrix(vf_matrix_dict)
+                    rmse[room_id] = _rmse
+            else:
+                rmse = _rmse_from_matrix(ap_view_factor_mean)
 
-        # Cluster the apertures by the 'complete method'.
-        if room_based:
-            ap_groups = {}
-            for room_id, _rmse in rmse.items():
-                apertures = room_apertures[room_id]['apertures']
-                _room_ap_groups = _agglomerative_clustering_complete(_rmse, apertures, threshold)
-                # Flatten the groups. This will break the inter-cluster
-                # structure, but we do not need to know that.
-                _room_ap_groups = [list(_flatten(cluster)) for cluster in _room_ap_groups]
+        if view_factor:
+            # Cluster the apertures by the 'complete method'.
+            if room_based:
+                ap_groups = {}
+                for room_id, _rmse in rmse.items():
+                    apertures = room_apertures[room_id]['apertures']
+                    _room_ap_groups = \
+                        _agglomerative_clustering_complete(_rmse, apertures, threshold)
+                    # Flatten the groups. This will break the inter-cluster
+                    # structure, but we do not need to know that.
+                    _room_ap_groups = [list(_flatten(cluster)) for cluster in _room_ap_groups]
+                    if vertical_tolerance:
+                        # Check groups by vertical tolerance.
+                        vertical_groups = []
+                        for ap_group in _room_ap_groups:
+                            vert_dist_matrix = []
+                            for ap_1 in ap_group:
+                                vert_dist_list = []
+                                for ap_2 in ap_group:
+                                    vert_dist = abs(ap_1.center.z - ap_2.center.z)
+                                    vert_dist_list.append(vert_dist)
+                                vert_dist_matrix.append(vert_dist_list)
+                            _ap_groups = _agglomerative_clustering_complete(
+                                vert_dist_matrix, ap_group, vertical_tolerance
+                            )
+                            _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
+                            vertical_groups.extend(_ap_groups)
+                        _room_ap_groups = vertical_groups
+                    ap_groups[room_id] = _room_ap_groups
+            else:
+                ap_groups = _agglomerative_clustering_complete(rmse, apertures, threshold)
+                # Flatten the groups. This will break the inter-cluster structure,
+                # but we do not need to know that.
+                ap_groups = [list(_flatten(cluster)) for cluster in ap_groups]
                 if vertical_tolerance:
                     # Check groups by vertical tolerance.
                     vertical_groups = []
-                    for ap_group in _room_ap_groups:
+                    for ap_group in ap_groups:
                         vert_dist_matrix = []
                         for ap_1 in ap_group:
                             vert_dist_list = []
@@ -1029,33 +1060,79 @@ def aperture_group_command(
                                 vert_dist_list.append(vert_dist)
                             vert_dist_matrix.append(vert_dist_list)
                         _ap_groups = _agglomerative_clustering_complete(
-                            vert_dist_matrix, ap_group, vertical_tolerance
-                        )
+                            vert_dist_matrix, ap_group, vertical_tolerance)
                         _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
                         vertical_groups.extend(_ap_groups)
-                    _room_ap_groups = vertical_groups
-                ap_groups[room_id] = _room_ap_groups
+                    ap_groups = vertical_groups
         else:
-            ap_groups = _agglomerative_clustering_complete(rmse, apertures, threshold)
-            # Flatten the groups. This will break the inter-cluster structure,
-            # but we do not need to know that.
-            ap_groups = [list(_flatten(cluster)) for cluster in ap_groups]
-            if vertical_tolerance:
-                # Check groups by vertical tolerance.
-                vertical_groups = []
-                for ap_group in ap_groups:
-                    vert_dist_matrix = []
-                    for ap_1 in ap_group:
-                        vert_dist_list = []
-                        for ap_2 in ap_group:
-                            vert_dist = abs(ap_1.center.z - ap_2.center.z)
-                            vert_dist_list.append(vert_dist)
-                        vert_dist_matrix.append(vert_dist_list)
-                    _ap_groups = _agglomerative_clustering_complete(
-                        vert_dist_matrix, ap_group, vertical_tolerance)
-                    _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
-                    vertical_groups.extend(_ap_groups)
-                ap_groups = vertical_groups
+            if room_based:
+                ap_groups = {}
+                for room_id, data in room_apertures.items():
+                    _normal_list = []
+                    grouped_apertures = []
+                    for ap in data['apertures']:
+                        # check if normal is already in list
+                        n_bools = [ap.normal.is_equivalent(n, tolerance=0.01)
+                                   for n in _normal_list]
+                        if not any(n_bools):
+                            _normal_list.append(ap.normal)
+                            # append empty list for new group
+                            grouped_apertures.append([])
+                        for idx, n in enumerate(_normal_list):
+                            if n.is_equivalent(ap.normal, tolerance=0.01):
+                                group_index = idx
+                        grouped_apertures[group_index].append(ap)
+                    if vertical_tolerance:
+                        # Check groups by vertical tolerance.
+                        vertical_groups = []
+                        for ap_group in grouped_apertures:
+                            vert_dist_matrix = []
+                            for ap_1 in ap_group:
+                                vert_dist_list = []
+                                for ap_2 in ap_group:
+                                    vert_dist = abs(ap_1.center.z - ap_2.center.z)
+                                    vert_dist_list.append(vert_dist)
+                                vert_dist_matrix.append(vert_dist_list)
+                            _ap_groups = _agglomerative_clustering_complete(
+                                vert_dist_matrix, ap_group, vertical_tolerance
+                            )
+                            _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
+                            vertical_groups.extend(_ap_groups)
+                        grouped_apertures = vertical_groups
+
+                    ap_groups[room_id] = grouped_apertures
+            else:
+                _normal_list = []
+                grouped_apertures = []
+                for ap in apertures:
+                    # check if normal is already in list
+                    n_bools = [ap.normal.is_equivalent(n, tolerance=0.01)
+                               for n in _normal_list]
+                    if not any(n_bools):
+                        _normal_list.append(ap.normal)
+                        # append empty list for new group
+                        grouped_apertures.append([])
+                    for idx, n in enumerate(_normal_list):
+                        if n.is_equivalent(ap.normal, tolerance=0.01):
+                            group_index = idx
+                    grouped_apertures[group_index].append(ap)
+                ap_groups = grouped_apertures  
+                if vertical_tolerance:
+                    # Check groups by vertical tolerance.
+                    vertical_groups = []
+                    for ap_group in ap_groups:
+                        vert_dist_matrix = []
+                        for ap_1 in ap_group:
+                            vert_dist_list = []
+                            for ap_2 in ap_group:
+                                vert_dist = abs(ap_1.center.z - ap_2.center.z)
+                                vert_dist_list.append(vert_dist)
+                            vert_dist_matrix.append(vert_dist_list)
+                        _ap_groups = _agglomerative_clustering_complete(
+                            vert_dist_matrix, ap_group, vertical_tolerance)
+                        _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
+                        vertical_groups.extend(_ap_groups)
+                    ap_groups = vertical_groups
 
         # Add the aperture group to each aperture in the dictionary.
         group_names = []
