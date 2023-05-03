@@ -911,7 +911,8 @@ def _aperture_view_factor_postprocess(mtx_file, ap_dict, room_apertures, room_ba
 
     return rmse
 
-def cluster_view_factor(rmse, room_apertures, threshold, room_based=True, vertical_tolerance=None):
+def cluster_view_factor(rmse, room_apertures, apertures, threshold,
+                        room_based=True, vertical_tolerance=None):
     # Cluster the apertures by the 'complete method'.
     if room_based:
         ap_groups = {}
