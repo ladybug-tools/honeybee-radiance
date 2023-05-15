@@ -86,7 +86,7 @@ def test_move():
 
 def test_rotate():
     v = View('test_view', (0, 0, 0), (1, 0, 0), (0, 0, 1))
-    v.rotate(90, pv.Vector3D(0, 1, 1), pv.Point3D(0, 0, 20))
+    v.rotate(pv.Vector3D(0, 1, 1), 90, pv.Point3D(0, 0, 20))
     assert round(v.position[0], 3) == -14.142
     assert round(v.position[1]) == -10
     assert round(v.position[2]) == 10

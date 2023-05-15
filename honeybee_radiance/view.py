@@ -390,15 +390,15 @@ class View(object):
 
     @property
     def group_identifier(self):
-        """Get or set text for the grid group identifier to which this SensorGrid belongs.
+        """Get or set text for the group identifier to which this View belongs.
 
-        This will be used in the write to radiance folder method to write all the grids
+        This will be used in the write to radiance folder method to write all the views
         with the same group identifier under the same subfolder.
 
         You may use / in name to identify nested view groups. For example
         floor_1/living_room create a view under living_room/floor_1 subfolder.
 
-        If None, the view will be written to the root of grids folder.
+        If None, the view will be written to the root of views folder.
         """
         return self._group_identifier
 
@@ -952,13 +952,12 @@ class View(object):
         position = pv.Point3D(*self.position)
         self.position = tuple(position.move(moving_vec))
 
-    def rotate(self, angle, axis=None, origin=None):
+    def rotate(self, axis, angle, origin=None):
         """Rotate this view by a certain angle around an axis and origin.
 
         Args:
+            axis: Rotation axis as a Vector3D. If None, self.up_vector will be used.
             angle: An angle for rotation in degrees.
-            axis: Rotation axis as a Vector3D. If None, self.up_vector will be
-                used. (Default: None).
             origin: A ladybug_geometry Point3D for the origin around which the
                 object will be rotated. If None, self.position is used. (Default: None).
         """

@@ -40,7 +40,7 @@ def test_move():
 
 def test_rotate():
     sensor = Sensor((0, 0, 0), (1, 0, 0))
-    sensor.rotate(90, pv.Vector3D(0, 1, 1), pv.Point3D(0, 0, 20))
+    sensor.rotate(pv.Vector3D(0, 1, 1), 90, pv.Point3D(0, 0, 20))
     assert round(sensor.pos[0], 3) == -14.142
     assert round(sensor.pos[1]) == -10
     assert round(sensor.pos[2]) == 10

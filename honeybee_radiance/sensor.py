@@ -76,12 +76,12 @@ class Sensor(object):
         """
         self.pos = tuple(pv.Point3D(*self.pos).move(moving_vec))
 
-    def rotate(self, angle, axis, origin):
+    def rotate(self, axis, angle, origin):
         """Rotate this sensor by a certain angle around an axis and origin.
 
         Args:
-            angle: An angle for rotation in degrees.
             axis: Rotation axis as a Vector3D.
+            angle: An angle for rotation in degrees.
             origin: A ladybug_geometry Point3D for the origin around which the
                 object will be rotated.
         """

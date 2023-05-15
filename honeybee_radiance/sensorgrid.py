@@ -383,7 +383,7 @@ class SensorGrid(object):
 
     @property
     def group_identifier(self):
-        """Get or set text for the grid group identifier to which this SensorGrid belongs.
+        """Get or set text for the group identifier to which this SensorGrid belongs.
 
         This will be used in the write to radiance folder method to write all the grids
         with the same group identifier under the same subfolder.
@@ -779,23 +779,23 @@ class SensorGrid(object):
             self._base_geometry = \
                 tuple(face.move(moving_vec) for face in self._base_geometry)
 
-    def rotate(self, angle, axis, origin):
+    def rotate(self, axis, angle, origin):
         """Rotate this sensor grid by a certain angle around an axis and origin.
 
         Args:
-            angle: An angle for rotation in degrees.
             axis: Rotation axis as a Vector3D.
+            angle: An angle for rotation in degrees.
             origin: A ladybug_geometry Point3D for the origin around which the
                 object will be rotated.
         """
         for sens in self._sensors:
-            sens.rotate(angle, axis, origin)
+            sens.rotate(axis, angle, origin)
         r_angle = math.radians(angle)
         if self._mesh is not None:
-            self._mesh = self._mesh.rotate(r_angle, axis, origin)
+            self._mesh = self._mesh.rotate(axis, r_angle, origin)
         if self._base_geometry is not None:
             self._base_geometry = \
-                tuple(face.rotate(r_angle, axis, origin) for face in self._base_geometry)
+                tuple(face.rotate(axis, r_angle, origin) for face in self._base_geometry)
 
     def rotate_xy(self, angle, origin):
         """Rotate this sensor grid counterclockwise in the world XY plane by an angle.
