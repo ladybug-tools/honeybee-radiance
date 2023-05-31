@@ -316,6 +316,11 @@ def rfluxmtx_command_with_postprocess(
     ' is provided it should be relative to project folder.'
 )
 @click.option(
+    '--conversion', help='conversion as a string which will be passed to rmtxop -c. '
+    'This option is useful to post-process the results from 3 RGB components into one '
+    'as part of this command.'
+)
+@click.option(
     '--input-format', help='Format type for input. Valid inputs are a, f and d for '
     'ASCII, float or double.', type=click.Choice(['a', 'f', 'd']), default='a',
     show_default=True, show_choices=True
@@ -335,7 +340,7 @@ def rfluxmtx_command_with_postprocess(
 )
 def rfluxmtx_command_without_postprocess(
     octree, sensor_grid, sky_dome, sensor_count, rad_params, rad_params_locked, output,
-    input_format, output_format, keep_header, dry_run
+    conversion, input_format, output_format, keep_header, dry_run
 ):
     """Run rfluxmtx command without sky matrix.
 
@@ -349,11 +354,8 @@ def rfluxmtx_command_without_postprocess(
         sky-dome: Path to sky dome for coefficient calculation.
     """
     try:
-
         options = RfluxmtxOptions()
         options.fio = input_format + output_format
-        if not keep_header:
-            options.h = True
         # parse input radiance parameters
         if rad_params:
             options.update_from_string(rad_params.strip())
@@ -366,17 +368,28 @@ def rfluxmtx_command_without_postprocess(
 
         options.update_from_string('-aa 0.0 -y {}'.format(sensor_count))
 
-        cmd = Rfluxmtx(options=options, output=output, octree=octree,
-                       sensors=sensor_grid, receivers=sky_dome)
+        # create command.
+        cmd_template = 'rfluxmtx {rad_params} - "{sky_dome}" -i """{octree}""" < ' \
+            '"{sensors}"'
+
+        if conversion and conversion.strip():
+            conversion = ' '.join(str(c ) for c in conversion.split())
+            cmd_template = cmd_template + ' | rmtxop - -c %s' % conversion
+
+        if not keep_header:
+            cmd_template = cmd_template + ' | getinfo - '
+        if output:
+            cmd_template = cmd_template + ' > "{output}"'.format(output=output)
+
+        cmd = cmd_template.format(
+            rad_params=options.to_radiance(), sky_dome=sky_dome, octree=octree,
+            sensors=sensor_grid
+        )
 
         if dry_run:
             click.echo(cmd)
         else:
-            env = None
-            if folders.env != {}:
-                env = folders.env
-            env = dict(os.environ, **env) if env else None
-            cmd.run(env=env)
+            run_command(cmd, env=folders.env)
     except Exception:
         _logger.exception('Failed to run rfluxmtx command.')
         sys.exit(1)
