@@ -410,7 +410,11 @@ def dmtx_group_command(
         rflux.output = os.path.join(calc_folder, 'apertures_vf.mtx')
 
         # Run rfluxmtx command
-        rflux.run(cwd=project_folder)
+        env = None
+        if folders.env != {}:
+            env = folders.env
+        env = dict(os.environ, **env) if env else None
+        rflux.run(env=env, cwd=project_folder)
 
         # Get the output file of the rfluxmtx command.
         mtx_file = os.path.join(project_folder, rflux.output)
@@ -857,7 +861,11 @@ def _aperture_view_factor(
     rflux.output = os.path.join(calc_folder, 'apertures_vf.mtx')
 
     # Run rfluxmtx command.
-    rflux.run(cwd=project_folder)
+    env = None
+    if folders.env != {}:
+        env = folders.env
+    env = dict(os.environ, **env) if env else None
+    rflux.run(env=env, cwd=project_folder)
 
     # Get the output file of the rfluxmtx command.
     mtx_file = os.path.join(project_folder, rflux.output)
