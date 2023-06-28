@@ -518,73 +518,81 @@ def dmtx_group_command(
 
 
 @multi_phase.command('prepare-multiphase')
-@click.argument('folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
+@click.argument(
+    'folder', type=click.Path(exists=True, file_okay=False, dir_okay=True))
 @click.argument('grid-count', type=int)
 @click.option(
-    '--grid-divisor', '-d', help='An optional integer to be divided by the grid-count '
-    'to yield a final number of grids to generate. This is useful in workflows where '
-    'the grid-count is being interpreted as a cpu-count but there are multiple '
-    'processors acting on a single grid. To ignore this limitation set the value '
-    'to 1. Default: 1.', type=int, default=1)
+    '--grid-divisor', '-d', help='An optional integer to be divided by the '
+    'grid-count to yield a final number of grids to generate. This is useful '
+    'in workflows where the grid-count is being interpreted as a cpu-count '
+    'but there are multiple processors acting on a single grid. To ignore '
+    'this limitation set the value to 1. Default: 1.', type=int, default=1)
 @click.option(
-    '--min-sensor-count', '-msc', help='Minimum number of sensors in each output grid. '
-    'Use this number to ensure the number of sensors in output grids never gets very '
-    'small. This input will override the input grid-count when specified. '
-    'To ignore this limitation, set the value to 1. Default: 1.', type=int,
-    default=1)
+    '--min-sensor-count', '-msc', help='Minimum number of sensors in each '
+    'output grid. Use this number to ensure the number of sensors in output '
+    'grids never gets very small. This input will override the input '
+    'grid-count when specified. To ignore this limitation, set the value to '
+    '1. Default: 1.', type=int, default=1)
 @click.option(
     '--sun-path',
-    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+    type=click.Path(
+        exists=True, file_okay=True, dir_okay=False, resolve_path=True),
     default=None, show_default=True,
-    help='Path for a sun-path file that will be added to octrees for direct sunlight '
-    'studies. If sunpath is provided an extra octree for direct_sun will be created.'
+    help='Path for a sun-path file that will be added to octrees for direct '
+    'sunlight studies. If sunpath is provided an extra octree for direct_sun '
+    'will be created.'
 )
 @click.option(
-    '--phase', type=click.Choice(['2', '3', '5']), default='5', show_default=True,
-    help='Select a multiphase study for which octrees will be created. 3-phase includes '
-    '2-phase, and 5-phase includes 3-phase and 2-phase.'
+    '--phase',
+    type=click.Choice(['2', '3', '5']), default='5', show_default=True,
+    help='Select a multiphase study for which octrees will be created. 3-phase '
+    'includes 2-phase, and 5-phase includes 3-phase and 2-phase.'
 )
 @click.option(
-    '--octree-folder', help='Output folder into which the octree files be written.',
-    default='octree', show_default=True)
+    '--octree-folder', default='octree', show_default=True,
+    help='Output folder into which the octree files be written.')
 @click.option(
-    '--grid-folder', help='Output folder into which the grid files be written.',
-    default='grid', show_default=True)
+    '--grid-folder', default='grid', show_default=True,
+    help='Output folder into which the grid files be written.')
 @click.option(
-    '--exclude-static/--include-static', is_flag=True, default=True, show_default=True,
-    help='A flag to indicate if static apertures should be excluded or included. If '
-    'excluded static apertures will not be treated as its own dynamic state.'
+    '--exclude-static/--include-static',
+    is_flag=True, default=True, show_default=True,
+    help='A flag to indicate if static apertures should be excluded or '
+    'included. If excluded static apertures will not be treated as its own '
+    'dynamic state.'
 )
 @click.option(
-    '--default-states/--all-states', is_flag=True, default=False, show_default=True,
-    help='A flag to indicate if the command should generate octrees and grids for all '
-    'aperture group states or just the default states of aperture groups.'
+    '--default-states/--all-states',
+    is_flag=True, default=False, show_default=True,
+    help='A flag to indicate if the command should generate octrees and grids '
+    'for all aperture group states or just the default states of aperture '
+    'groups.'
 )
 def prepare_multiphase_command(
-    folder, grid_count, grid_divisor, min_sensor_count, sun_path, phase, octree_folder,
-    grid_folder, exclude_static, default_states
-    ):
-    """This command prepares the model folder for simulations with aperture groups. It
-    will generate a set of octrees and sensor grids that are unique to each state of each
-    aperture group.
+    folder, grid_count, grid_divisor, min_sensor_count, sun_path, phase,
+    octree_folder, grid_folder, exclude_static, default_states
+):
+    """This command prepares the model folder for simulations with aperture
+    groups. It will generate a set of octrees and sensor grids that are unique
+    to each state of each aperture group.
 
-    This command will generate octrees for both default and direct studies for aperture
-    groups, creating one octree for each light path, i.e., all other light paths are
-    blacked.
+    This command will generate octrees for both default and direct studies for
+    aperture groups, creating one octree for each light path, i.e., all other
+    light paths are blacked.
 
-    Sensor grids will be redistributed if they are to be used in a two phase simulation.
-    A subfolder for each light path will be created. In this folder the redistributed
-    grids are found.
+    Sensor grids will be redistributed if they are to be used in a two phase
+    simulation. A subfolder for each light path will be created. In this folder
+    the redistributed grids are found.
 
-    If the model folder have aperture groups, a file with states information for each
-    grid will be written.
+    If the model folder have aperture groups, a file with states information
+    for each grid will be written.
 
     \b
     Args:
         folder: Path to a Radiance model folder.
         grid_count: Number of output sensor grids to be created. This number
-            is usually equivalent to the number of processes that will be used to run
-            the simulations in parallel.
+            is usually equivalent to the number of processes that will be used
+            to run the simulations in parallel.
     """
     model_folder = ModelFolder.from_model_folder(folder)
 
@@ -595,7 +603,8 @@ def prepare_multiphase_command(
     phase = int(phase)
     if phase == 5 and not sun_path:
         raise RuntimeError(
-            'To generate octrees for a 5 Phase study you must provide a sunpath.'
+            'To generate octrees for a 5 Phase study you must provide a '
+            'sunpath.'
         )
 
     phases = {
@@ -620,14 +629,15 @@ def prepare_multiphase_command(
                     grid_states[grid['full_id']][light_path] = \
                         [s['identifier'] for s in states_info[light_path]]
 
-        grid_states_output = os.path.join(model_folder.folder, 'grid_states.json')
+        grid_states_output = \
+            os.path.join(model_folder.folder, 'grid_states.json')
         with open(grid_states_output, 'w') as fp:
             json.dump(grid_states, fp, indent=2)
 
     def _get_octrees_and_grids(
         model_folder, grid_count, phase, octree_folder, grid_folder,
         exclude_static, default_states
-        ):
+    ):
         scene_mapping = model_folder.octree_scene_mapping(
             exclude_static=exclude_static, phase=phase,
             default_states=default_states
@@ -653,25 +663,30 @@ def prepare_multiphase_command(
 
                 for light_path in grid_mapping['two_phase']:
                     grid_info = light_path['grid']
-                    output_folder = os.path.join(grid_folder, light_path['identifier'])
-                    _grid_count, _sensor_per_grid, out_grid_info = redistribute_sensors(
-                        model_folder.grid_folder(), output_folder, grid_count, 
-                        min_sensor_count, grid_info=grid_info)
+                    output_folder = \
+                        os.path.join(grid_folder, light_path['identifier'])
+                    _grid_count, _sensor_per_grid, out_grid_info = \
+                        redistribute_sensors(model_folder.grid_folder(),
+                                             output_folder, grid_count,
+                                             min_sensor_count,
+                                             grid_info=grid_info)
                     grid_info_dict[light_path['identifier']] = out_grid_info
 
             for state in states:
                 light_path = state['light_path']
                 if light_path not in grid_info_dict:
-                    # in this case we do not want to generate an octree
-                    continue
-
+                    if state['identifier'] == '__three_phase__':
+                        pass
+                    else:
+                        # in this case we do not want to generate an octree for
+                        # this state
+                        continue
                 info, commands = _generate_octrees_info(
                     state, octree_folder, study, sun_path
                     )
-
                 for cmd in commands:
                     env = None
-                    if folders.env != {}:
+                    if folders.env:
                         env = folders.env
                     env = dict(os.environ, **env) if env else None
                     cmd.run(env=env, cwd=model_folder.folder)
@@ -684,7 +699,8 @@ def prepare_multiphase_command(
                 dynamic_mapping[study].append(info)
 
         for study, study_info in dynamic_mapping.items():
-            dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
+            dynamic_output = \
+                os.path.join(model_folder.folder, f'{study}.json')
             with open(dynamic_output, 'w') as fp:
                 json.dump(study_info, fp, indent=2)
 
@@ -705,11 +721,13 @@ def prepare_multiphase_command(
             for study in phases[phase]:
                 study_type = []
                 dynamic_mapping.append({study: study_type})
-                dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
+                dynamic_output = \
+                    os.path.join(model_folder.folder, f'{study}.json')
                 with open(dynamic_output, 'w') as fp:
                     json.dump(study_type, fp, indent=2)
 
-            dynamic_output = os.path.join(model_folder.folder, 'multi_phase.json')
+            dynamic_output = \
+                os.path.join(model_folder.folder, 'multi_phase.json')
             with open(dynamic_output, 'w') as fp:
                 json.dump(dynamic_mapping, fp, indent=2)
 
