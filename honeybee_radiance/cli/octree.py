@@ -425,8 +425,9 @@ def _model_rel(folder, rel_file):
 
 def _generate_octrees_info(state, output_folder='octree', study='two_phase',
                            sun_path=None):
-    """Get octree information for default, direct, and direct sun. The functions also
-    generates the Radiance commands (oconv) for creating the octrees.
+    """Get octree information for default, direct, and direct sun. The
+    functions also generates the Radiance commands (oconv) for creating the
+    octrees.
 
     Example of valid argument 'state':
     {
@@ -462,40 +463,39 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
         scene_files = state['scene_files']
         octree_name = state['identifier']
         output = os.path.join(
-            output_folder, '%s.oct' % octree_name)
+            output_folder, f'{octree_name}.oct')
         cmd = Oconv(output=output, inputs=scene_files)
         cmd.options.f = True
         commands.append(cmd)
 
-        info['octree'] = '%s.oct' % octree_name
+        info['octree'] = f'{octree_name}.oct'
 
     # direct - don't add them for 5 phase
     if 'scene_files_direct' in state and study != 'five_phase':
         scene_files_direct = state['scene_files_direct']
-        octree_direct_name = '%s_direct' % state['identifier']
+        octree_direct_name = f'{state["identifier"]}_direct'
         output_direct = os.path.join(
-            output_folder, '%s.oct' % octree_direct_name)
+            output_folder, f'{octree_direct_name}.oct')
         cmd = Oconv(output=output_direct,
                     inputs=scene_files_direct)
         cmd.options.f = True
         commands.append(cmd)
 
-        info['octree_direct'] = '%s.oct' % octree_direct_name
+        info['octree_direct'] = f'{octree_direct_name}.oct'
 
     # direct sun - don't add them for 3-phase
     if sun_path and study != 'three_phase':
         scene_files_direct = state['scene_files_direct']
         scene_files_direct_sun = [sun_path] + scene_files_direct
-        octree_direct_sun_name = '%s_direct_sun' % state['identifier']
+        octree_direct_sun_name = f'{state["identifier"]}_direct_sun'
         output_direct = \
-            os.path.join(output_folder, '%s.oct' %
-                         octree_direct_sun_name)
+            os.path.join(output_folder, f'{octree_direct_sun_name}.oct')
         cmd = Oconv(output=output_direct,
                     inputs=scene_files_direct_sun)
         cmd.options.f = True
         commands.append(cmd)
 
-        info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
+        info['octree_direct_sun'] = f'{octree_direct_sun_name}.oct'
 
     return info, commands
 
