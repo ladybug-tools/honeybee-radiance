@@ -270,7 +270,7 @@ def rcontrib_command_with_view_postprocess(
         rcontrib = Rcontrib(options=options, octree=octree, sensors=ray_file)
         cmd = rcontrib.to_radiance().replace('\\', '/')
         cmd = '{} | rmtxop -fa - -c .333 .333 .334'.format(cmd)
-        cmd = '{}  | getinfo - > {}'.format(cmd, mtx_file.replace('\\', '/'))
+        cmd = '{}  | getinfo - > "{}"'.format(cmd, mtx_file.replace('\\', '/'))
         run_command(cmd, env=folders.env)
 
         # load the resulting matrix and process the results into view factors
@@ -292,7 +292,7 @@ def rcontrib_command_with_view_postprocess(
             for facs in view_fac_mtx:
                 v_file.write(','.join((str(v) for v in facs)) + '\n')
     except Exception:
-        _logger.exception('Failed to comput view factor contributions.')
+        _logger.exception('Failed to compute view factor contributions.')
         sys.exit(1)
     else:
         sys.exit(0)
