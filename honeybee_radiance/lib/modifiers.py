@@ -54,5 +54,5 @@ def modifier_by_identifier(modifier_identifier):
         return _loaded_modifiers[modifier_identifier]
     except KeyError:
         raise ValueError(
-            '"{}" was not found in the radiancemodifier library.'.format(
+            '"{}" was not found in the radiance modifier library.'.format(
                 modifier_identifier))

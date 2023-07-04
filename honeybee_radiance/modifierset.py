@@ -382,7 +382,7 @@ class ModifierSet(object):
         assert data['type'] == 'ModifierSet', \
             'Expected ModifierSet. Got {}.'.format(data['type'])
 
-        # build each of the sub-construction sets
+        # build each of the sub-modifier sets
         wall_set = WallModifierSet.from_dict(data['wall_set']) if 'wall_set' \
             in data and data['wall_set'] is not None else None
         floor_set = FloorModifierSet.from_dict(data['floor_set']) if 'floor_set' \

@@ -327,7 +327,7 @@ def test_to_dict_multizone_house():
     face_5 = Face('AtticFace5', Face3D(pts_5))
     attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
 
-    mod_set = ModifierSet('Attic_Construction_Set')
+    mod_set = ModifierSet('Attic_Modifier_Set')
     mod_set.floor_set.interior_modifier = Plastic('AtticFloor', 0.4)
     mod_set.roof_ceiling_set.exterior_modifier = Plastic('AtticRoof', 0.6)
     attic.properties.radiance.modifier_set = mod_set
@@ -374,7 +374,7 @@ def test_load_dump_properties_from_dict():
     face_5 = Face('AtticFace5', Face3D(pts_5))
     attic = Room('Attic', [face_1, face_2, face_3, face_4, face_5], 0.01, 1)
 
-    mod_set = ModifierSet('Attic_Construction_Set')
+    mod_set = ModifierSet('Attic_Modifier_Set')
     mod_set.floor_set.interior_modifier = Plastic('AtticFloor', 0.4)
     mod_set.roof_ceiling_set.exterior_modifier = Plastic('AtticRoof', 0.6)
     attic.properties.radiance.modifier_set = mod_set
