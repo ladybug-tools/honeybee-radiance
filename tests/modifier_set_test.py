@@ -64,7 +64,7 @@ def test_modifierset_defaults():
 
 def test_setting_modifier():
     """Test the setting of modifiers on the ModifierSet."""
-    default_set = ModifierSet('Thermal_Mass_Construction_Set')
+    default_set = ModifierSet('Thermal_Mass_Modifier_Set')
     opaque_material_1 = Plastic.from_single_reflectance('test_opaque', 0.5)
     opaque_material_2 = Plastic.from_single_reflectance('test_opaque', 0.45)
     opaque_material_3 = Plastic.from_single_reflectance('test_opaque', 0.55)
@@ -124,7 +124,7 @@ def test_modifierset_equality():
     assert new_default_set is not default_set
     assert new_default_set == default_set
 
-    new_default_set.identifier = 'New_Construction_Set'
+    new_default_set.identifier = 'New_Modifier_Set'
     assert new_default_set != default_set
 
     new_default_set = default_set.duplicate()

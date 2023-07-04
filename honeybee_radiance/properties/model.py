@@ -3,7 +3,8 @@
 from honeybee.extensionutil import model_extension_dicts
 from honeybee.checkdup import check_duplicate_identifiers
 from honeybee.boundarycondition import Surface
-from honeybee.typing import invalid_dict_error, clean_rad_string
+from honeybee.typing import invalid_dict_error, clean_rad_string, clean_and_id_rad_string
+from honeybee.model import Model
 
 from ..sensorgrid import SensorGrid
 from ..view import View
@@ -914,6 +915,76 @@ class ModelRadianceProperties(object):
         data['modifiers'] = [m.to_dict() for m in all_mods]
         data['modifier_sets'] = [ms.to_dict(abridged=True) for ms in all_mod_sets]
         return data
+
+    @staticmethod
+    def reset_resource_ids_in_dict(
+            data, add_uuid=False, reset_modifiers=True, reset_modifier_sets=True):
+        """Reset the identifiers of radiance resource objects in a Model dictionary.
+
+        This is useful when human-readable names are needed when the model is
+        exported to other formats like Rad and the uniqueness of the
+        identifiers is less of a concern.
+
+        Args:
+            data: A dictionary representation of an entire honeybee-core Model.
+                Note that this dictionary must have ModelRadianceProperties in order
+                for this method to successfully edit the radiance properties.
+            add_uuid: Boolean to note whether newly-generated resource object IDs
+                should be derived only from a cleaned display_name (False) or
+                whether this new ID should also have a unique set of 8 characters
+                appended to it to guarantee uniqueness. (Default: False).
+            reset_modifiers: Boolean to note whether the IDs of all modifiers in
+                the model should be reset or kept. (Default: True).
+            reset_modifier_sets: Boolean to note whether the IDs of all modifier
+                sets in the model should be reset or kept. (Default: True).
+
+        Returns:
+            A new Model dictionary with the resource identifiers reset. All references
+            to the reset resources will be correct and valid in the resulting dictionary,
+            assuming that the input is valid.
+        """
+        model = Model.from_dict(data)
+        modifiers, modifier_sets = \
+            model.properties.radiance.load_properties_from_dict(data)
+        res_func = clean_and_id_rad_string if add_uuid else clean_rad_string
+
+        # change the identifiers of the modifiers
+        if reset_modifiers:
+            model_mods = set()
+            for mod in model.properties.radiance.modifiers:
+                mod.unlock()
+                old_id, new_id = mod.identifier, res_func(mod.display_name)
+                mod.identifier = new_id
+                modifiers[old_id].unlock()
+                modifiers[old_id].identifier = new_id
+                model_mods.add(old_id)
+            for old_id, mod in modifiers.items():
+                if old_id not in model_mods:
+                    mod.unlock()
+                    mod.identifier = res_func(mod.display_name)
+
+        # change the identifiers of the modifier_sets
+        if reset_modifier_sets:
+            model_ms = set()
+            for ms in model.properties.radiance.modifier_sets:
+                ms.unlock()
+                old_id, new_id = ms.identifier, res_func(ms.display_name)
+                ms.identifier = new_id
+                modifier_sets[old_id].unlock()
+                modifier_sets[old_id].identifier = new_id
+                model_ms.add(old_id)
+            for old_id, ms in modifier_sets.items():
+                if old_id not in model_ms:
+                    ms.unlock()
+                    ms.identifier = res_func(ms.display_name)
+
+        # create the model dictionary and update any unreferenced resources
+        model_dict = model.to_dict()
+        mr_props = model_dict['properties']['radiance']
+        mr_props['modifiers'] = [mod.to_dict() for mod in modifiers.values()]
+        mr_props['modifier_sets'] = \
+            [ms.to_dict(abridged=True) for ms in modifier_sets.values()]
+        return model_dict
 
     def _check_and_add_room_modifier_shade(self, room, modifiers):
         """Check if a modifier is assigned to a Room's shades and add it to a list."""
