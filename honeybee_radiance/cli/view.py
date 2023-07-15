@@ -195,7 +195,7 @@ def merge_view(input_folder, base_name, extension, view, scale_factor, folder, n
         input_folder: Input folder.
         base_name: File base name. All of the files must start with base name and
             continue with _ and an integer values.
-        extension: File extention. [Default: .unf]
+        extension: File extension. [Default: .unf]
     """
     try:
         # view is an optional input. Make sure we can handle the case that the view
