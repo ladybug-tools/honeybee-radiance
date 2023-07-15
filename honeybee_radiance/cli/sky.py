@@ -354,7 +354,7 @@ def sunpath_from_wea_rad(
 def adjust_sky_for_metric(sky, metric, folder, name):
     """Adjust a sky file to ensure it is suitable for a given metric.
 
-    Specifcally, this ensures that skies being created with gendaylit have a -O
+    Specifically, this ensures that skies being created with gendaylit have a -O
     option that aligns with visible vs. solar energy.
 
     \b

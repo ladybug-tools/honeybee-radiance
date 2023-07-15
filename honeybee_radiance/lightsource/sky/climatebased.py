@@ -123,8 +123,8 @@ class ClimateBased(_PointInTime):
             longitude: Location longitude between -180 (west) and 180 (east).
             time_zone: Time zone between -12 hours (west) and +14 hours (east). If
                 None, the time will be interpreted as solar time at the given longitude.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             direct_normal_irradiance: Direct normal irradiance (W/m2).
             diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
@@ -148,8 +148,8 @@ class ClimateBased(_PointInTime):
 
         Args:
             location: A Ladybug location.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             direct_normal_irradiance: Direct normal irradiance (W/m2).
             diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
@@ -171,8 +171,8 @@ class ClimateBased(_PointInTime):
 
         Args:
             wea: A Ladybug wea object.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
@@ -196,7 +196,7 @@ class ClimateBased(_PointInTime):
 
         Args:
             wea: A Ladybug wea object.
-            month: An intger between 1-12 for month.
+            month: An integer between 1-12 for month.
             hour: A float number larger or equal to 0 and smaller than 24.
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
@@ -223,8 +223,8 @@ class ClimateBased(_PointInTime):
 
         Args:
             epw: A Ladybug EPW objects.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in
@@ -249,7 +249,7 @@ class ClimateBased(_PointInTime):
 
         Args:
             epw: A Ladybug EPW objects.
-            month: An intger between 1-12 for month.
+            month: An integer between 1-12 for month.
             hour: A float number larger or equal to 0 and smaller than 24.
             north_angle: North angle in degrees. A number between -360 and 360 for the
                 counterclockwise difference between the North and the positive Y-axis in

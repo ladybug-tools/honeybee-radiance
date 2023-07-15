@@ -160,8 +160,8 @@ class CIE(_PointInTime):
             longitude: Location longitude between -180 (west) and 180 (east).
             time_zone: Time zone between -12 hours (west) and +14 hours (east). If
                 None, the time will be interpreted as solar time at the given longitude.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             sky_type: An integer between 0..5 to indicate CIE Sky Type.
 
@@ -195,8 +195,8 @@ class CIE(_PointInTime):
 
         Args:
             location: A Ladybug location.
-            month: An intger between 1-12 for month.
-            day: An intger between 1 to 28-31 depending on the input month.
+            month: An integer between 1-12 for month.
+            day: An integer between 1 to 28-31 depending on the input month.
             hour: A float number larger or equal to 0 and smaller than 24.
             sky_type: An integer between 0..5 to indicate CIE Sky Type.
 
