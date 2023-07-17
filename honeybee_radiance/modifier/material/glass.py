@@ -416,8 +416,9 @@ class Glass(Material):
     def _transmissivity_from_transmittance(transmittance):
         """Get transmissivity from a transmittance value"""
         try:
-            return (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
-                    0.9166530661) / 0.0036261119 / transmittance
+            tms = (math.sqrt(0.8402528435 + 0.0072522239 * (transmittance ** 2)) -
+                   0.9166530661) / 0.0036261119 / transmittance
+            return tms if tms > 0 else 0
         except ZeroDivisionError:
             return 0
 
