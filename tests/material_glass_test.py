@@ -148,3 +148,6 @@ def test_from_single_transmittance():
     assert round(gl.r_transmittance, 2) == 0.4
     assert round(gl.g_transmittance, 2) == 0.4
     assert round(gl.b_transmittance, 2) == 0.4
+
+    gl = Glass.from_single_transmittance('gl_small', 0.0000000001)
+    assert gl.r_transmittance >= 0
