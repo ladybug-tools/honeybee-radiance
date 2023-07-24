@@ -699,8 +699,7 @@ def prepare_multiphase_command(
                 dynamic_mapping[study].append(info)
 
         for study, study_info in dynamic_mapping.items():
-            dynamic_output = \
-                os.path.join(model_folder.folder, f'{study}.json')
+            dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
             with open(dynamic_output, 'w') as fp:
                 json.dump(study_info, fp, indent=2)
 
@@ -721,8 +720,7 @@ def prepare_multiphase_command(
             for study in phases[phase]:
                 study_type = []
                 dynamic_mapping.append({study: study_type})
-                dynamic_output = \
-                    os.path.join(model_folder.folder, f'{study}.json')
+                dynamic_output = os.path.join(model_folder.folder, '%s.json' % study)
                 with open(dynamic_output, 'w') as fp:
                     json.dump(study_type, fp, indent=2)
 
