@@ -672,8 +672,8 @@ class ModelRadianceProperties(object):
                         'error_type': 'SensorGrid Room Not In Model',
                         'extension_type': 'Radiance',
                         'element_type': 'SensorGrid',
-                        'element_id': grid.identifier,
-                        'element_name': grid.display_name,
+                        'element_id': [grid.identifier],
+                        'element_name': [grid.display_name],
                         'message': msg
                     }
                     all_err.append(error_dict)
@@ -722,8 +722,8 @@ class ModelRadianceProperties(object):
                         'error_type': 'View Room Not In Model',
                         'extension_type': 'Radiance',
                         'element_type': 'View',
-                        'element_id': view.identifier,
-                        'element_name': view.display_name,
+                        'element_id': [view.identifier],
+                        'element_name': [view.display_name],
                         'message': msg
                     }
                     all_err.append(error_dict)
