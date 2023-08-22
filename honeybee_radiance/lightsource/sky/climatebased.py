@@ -30,6 +30,9 @@ class ClimateBased(_PointInTime):
         direct_normal_irradiance: Direct normal irradiance (W/m2).
         diffuse_horizontal_irradiance: Diffuse horizontal irradiance (W/m2).
         ground_reflectance: Average ground reflectance (Default: 0.2).
+        is_colored: Boolean to note whether the sky will be rendered in full
+            color (True) or it will simple be a grey sky with the same average
+            value as the colored sky (False). (Default: False).
 
     Properties:
         * altitude
@@ -39,23 +42,28 @@ class ClimateBased(_PointInTime):
         * ground_hemisphere
         * sky_hemisphere
         * ground_reflectance
+        * is_colored
         * is_point_in_time
         * is_climate_based
     """
 
     __slots__ = (
         '_altitude', '_azimuth', '_diffuse_horizontal_irradiance',
-        '_direct_normal_irradiance'
+        '_direct_normal_irradiance', '_is_colored'
     )
 
-    def __init__(self, altitude, azimuth, direct_normal_irradiance,
-                 diffuse_horizontal_irradiance, ground_reflectance=0.2):
+    def __init__(
+            self, altitude, azimuth,
+            direct_normal_irradiance, diffuse_horizontal_irradiance,
+            ground_reflectance=0.2, is_colored=False
+        ):
         """Create a climate-based standard sky."""
         _PointInTime.__init__(self, ground_reflectance)
         self.altitude = altitude
         self.azimuth = azimuth
         self.direct_normal_irradiance = direct_normal_irradiance
         self.diffuse_horizontal_irradiance = diffuse_horizontal_irradiance
+        self.is_colored = is_colored
 
     @property
     def altitude(self):
@@ -87,7 +95,7 @@ class ClimateBased(_PointInTime):
 
     @property
     def direct_normal_irradiance(self):
-        """Get and set direct normal irradiance (W/m2).
+        """Get or set direct normal irradiance (W/m2).
         """
         return self._direct_normal_irradiance
 
@@ -98,7 +106,7 @@ class ClimateBased(_PointInTime):
 
     @property
     def diffuse_horizontal_irradiance(self):
-        """Get and set diffuse horizontal irradiance (W/m2).
+        """Get or set diffuse horizontal irradiance (W/m2).
         """
         return self._diffuse_horizontal_irradiance
 
@@ -108,15 +116,26 @@ class ClimateBased(_PointInTime):
         self._diffuse_horizontal_irradiance = value
 
     @property
+    def is_colored(self):
+        """Get or set a boolean for whether the sky is rendered in full color."""
+        return self._is_colored
+
+    @is_colored.setter
+    def is_colored(self, value):
+        self._is_colored = bool(value)
+
+    @property
     def is_climate_based(self):
         """Return True if the sky is created based on values from weather data."""
         return True
 
     @classmethod
     def from_lat_long(
-        cls, latitude, longitude, time_zone, month, day, hour, direct_normal_irradiance,
-            diffuse_horizontal_irradiance, north_angle=0, ground_reflectance=0.2):
-        """Create sky with certain illuminance.
+        cls, latitude, longitude, time_zone, month, day, hour,
+        direct_normal_irradiance, diffuse_horizontal_irradiance,
+        north_angle=0, ground_reflectance=0.2, is_colored=False
+    ):
+        """Create a climate based sky from latitude, longitude and a date/time.
 
         Args:
             latitude: Location latitude between -90 and 90.
@@ -132,18 +151,25 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         #  calculate altitude and azimuth using ladybug's sunpath
         sp = Sunpath(latitude, longitude, time_zone, north_angle)
         sun = sp.calculate_sun(month, day, hour)
         return cls(
-            sun.altitude, sun.azimuth_from_y_axis, direct_normal_irradiance,
-            diffuse_horizontal_irradiance, ground_reflectance)
+            sun.altitude, sun.azimuth_from_y_axis,
+            direct_normal_irradiance, diffuse_horizontal_irradiance,
+            ground_reflectance, is_colored
+        )
 
     @classmethod
     def from_location(
-        cls, location, month, day, hour, direct_normal_irradiance,
-            diffuse_horizontal_irradiance, north_angle=0, ground_reflectance=0.2):
+        cls, location, month, day, hour,
+        direct_normal_irradiance, diffuse_horizontal_irradiance,
+        north_angle=0, ground_reflectance=0.2, is_colored=False
+    ):
         """Create a standard climate-based sky for a location.
 
         Args:
@@ -157,16 +183,22 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         assert isinstance(location, Location), \
             'location must be from type Location not {}'.format(type(location))
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, day, hour,
             direct_normal_irradiance, diffuse_horizontal_irradiance, north_angle,
-            ground_reflectance)
+            ground_reflectance, is_colored)
 
     @classmethod
-    def from_wea(cls, wea, month, day, hour, north_angle=0, ground_reflectance=0.2):
+    def from_wea(
+        cls, wea, month, day, hour, north_angle=0,
+        ground_reflectance=0.2, is_colored=False
+    ):
         """Create a standard climate-based sky from a Wea.
 
         Args:
@@ -178,6 +210,9 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         assert isinstance(wea, Wea), \
             'wea must be from type Wea not {}'.format(type(wea))
@@ -187,11 +222,12 @@ class ClimateBased(_PointInTime):
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, day, hour,
             direct_normal_irradiance, diffuse_horizontal_irradiance, north_angle,
-            ground_reflectance)
+            ground_reflectance, is_colored)
 
     @classmethod
-    def from_wea_monthly_average(cls, wea, month, hour, north_angle=0,
-                                 ground_reflectance=0.2):
+    def from_wea_monthly_average(
+        cls, wea, month, hour, north_angle=0, ground_reflectance=0.2, is_colored=False
+    ):
         """Create a monthly averaged climate-based sky from a Wea and a hour of the day.
 
         Args:
@@ -202,6 +238,9 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         assert isinstance(wea, Wea), \
             'wea must be from type Wea not {}'.format(type(wea))
@@ -215,10 +254,13 @@ class ClimateBased(_PointInTime):
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, 15, hour,
             dir_normal_irradiance, dif_horizontal_irradiance, north_angle,
-            ground_reflectance)
+            ground_reflectance, is_colored)
 
     @classmethod
-    def from_epw(cls, epw, month, day, hour, north_angle=0, ground_reflectance=0.2):
+    def from_epw(
+        cls, epw, month, day, hour, north_angle=0,
+        ground_reflectance=0.2, is_colored=False
+    ):
         """Create a standard climate-based sky from a EPW.
 
         Args:
@@ -230,6 +272,9 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         assert isinstance(epw, EPW), \
             'epw must be from type EPW not {}'.format(type(epw))
@@ -240,12 +285,13 @@ class ClimateBased(_PointInTime):
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, day, hour,
             direct_normal_irradiance, diffuse_horizontal_irradiance, north_angle,
-            ground_reflectance)
+            ground_reflectance, is_colored)
 
     @classmethod
-    def from_epw_monthly_average(cls, epw, month, hour, north_angle=0,
-                                 ground_reflectance=0.2):
-        """Create a monthly averaged climate-based sky from an EWP and a hour of the day.
+    def from_epw_monthly_average(
+        cls, epw, month, hour, north_angle=0, ground_reflectance=0.2, is_colored=False
+    ):
+        """Create a monthly averaged climate-based sky from an EPW and a hour of the day.
 
         Args:
             epw: A Ladybug EPW objects.
@@ -255,6 +301,9 @@ class ClimateBased(_PointInTime):
                 counterclockwise difference between the North and the positive Y-axis in
                 degrees. 90 is West and 270 is East (Default: 0).
             ground_reflectance: Average ground reflectance (Default: 0.2).
+            is_colored: Boolean to note whether the sky will be rendered in full
+                color (True) or it will simple be a grey sky with the same average
+                value as the colored sky (False). (Default: False).
         """
         assert isinstance(epw, EPW), \
             'epw must be from type EPW not {}'.format(type(epw))
@@ -266,7 +315,7 @@ class ClimateBased(_PointInTime):
         dh = epw.diffuse_horizontal_radiation.filter_by_analysis_period(a_period).average
         return cls.from_lat_long(
             location.latitude, location.longitude, location.time_zone, month, 15, hour,
-            dn, dh, north_angle, ground_reflectance)
+            dn, dh, north_angle, ground_reflectance, is_colored)
 
     @classmethod
     def from_dict(cls, data):
@@ -283,7 +332,8 @@ class ClimateBased(_PointInTime):
                 'azimuth': 0.0,
                 'direct_normal_irradiance': 800,
                 'diffuse_horizontal_irradiance': 120,
-                'ground_reflectance': 0.2  # optional float for ground reflectance
+                'ground_reflectance': 0.2,  # optional float for ground reflectance
+                'is_colored': True  # boolean for whether the sky is colored
             }
 
         """
@@ -293,9 +343,11 @@ class ClimateBased(_PointInTime):
             'Input type must be ClimateBased not %s' % data['type']
 
         gr = data['ground_reflectance'] if 'ground_reflectance' in data else 0.2
+        ic = data['is_colored'] if 'is_colored' in data else False
         return cls(
             data['altitude'], data['azimuth'],
-            data['direct_normal_irradiance'], data['diffuse_horizontal_irradiance'], gr
+            data['direct_normal_irradiance'], data['diffuse_horizontal_irradiance'],
+            gr, ic
         )
 
     @classmethod
@@ -346,6 +398,7 @@ class ClimateBased(_PointInTime):
         pars.add_argument('-dni', action='store', dest='dni', type=float, default=0)
         pars.add_argument('-dhi', action='store', dest='dhi', type=float, default=0)
         pars.add_argument('-g', action='store', dest='g', type=float, default=0.2)
+        pars.add_argument('-c', action='store_true', dest='c', default=False)
 
         # create the sky object
         if dtime is None:
@@ -361,7 +414,7 @@ class ClimateBased(_PointInTime):
             props = pars.parse_args(split_str[4:])
             return cls.from_lat_long(
                 props.lat, props.lon, props.tz, dtime.month, dtime.day,
-                dtime.float_hour, props.dni, props.dhi, props.n, props.g)
+                dtime.float_hour, props.dni, props.dhi, props.n, props.g, props.c)
 
     # TODO: add support for additional parameters
     # TODO: add gendaylit to radiance-command and use it for validating inputs
@@ -374,10 +427,11 @@ class ClimateBased(_PointInTime):
                 * 1 = output in W/m2/sr solar
                 * 2 = output in lm/m2/sr luminance
         """
+        full_color = ' -C' if self.is_colored else ''
         output = typing.int_in_range(output_type, 0, 2, 'Sky output type')
-        command = '!gendaylit -ang %.6f %.6f -O %d -W %d %d -g %.3f' % (
+        command = '!gendaylit -ang %.6f %.6f -O %d -W %d %d -g %.3f%s' % (
             self.altitude, self.azimuth - 180.0, output, self.direct_normal_irradiance,
-            self._diffuse_horizontal_irradiance, self.ground_reflectance
+            self._diffuse_horizontal_irradiance, self.ground_reflectance, full_color
         )
 
         return '%s\n\n%s\n\n%s\n' % (
@@ -386,7 +440,7 @@ class ClimateBased(_PointInTime):
 
     def to_dict(self):
         """Translate sky to a dictionary."""
-        return {
+        base = {
             'type': 'ClimateBased',
             'altitude': self.altitude,
             'azimuth': self.azimuth,
@@ -396,6 +450,9 @@ class ClimateBased(_PointInTime):
             'ground_hemisphere': self.ground_hemisphere.to_dict(),
             'sky_hemisphere': self.sky_hemisphere.to_dict()
         }
+        if self.is_colored:
+            base['is_colored'] = True
+        return base
 
     def to_file(self, folder, name=None, mkdir=False):
         """Write sky hemisphere to a sky_hemisphere.rad Radiance file.
@@ -425,6 +482,7 @@ class ClimateBased(_PointInTime):
             or value.diffuse_horizontal_irradiance != \
             self.diffuse_horizontal_irradiance \
             or self.ground_reflectance != value.ground_reflectance \
+            or self.is_colored != value.is_colored \
             or self.ground_hemisphere != value.ground_hemisphere \
                 or self.sky_hemisphere != value.sky_hemisphere:
             return False
@@ -435,8 +493,9 @@ class ClimateBased(_PointInTime):
 
     def __repr__(self):
         """Sky representation."""
-        return 'climate-based -alt {} -az {} -dni {} -dhi {} -g {}'.format(
+        is_colored = ' -c' if self.is_colored else ''
+        return 'climate-based -alt {} -az {} -dni {} -dhi {} -g {}{}'.format(
             self.altitude, self.azimuth,
             self.direct_normal_irradiance, self.diffuse_horizontal_irradiance,
-            self.ground_reflectance
+            self.ground_reflectance, is_colored
         )
