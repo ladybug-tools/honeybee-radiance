@@ -20,7 +20,7 @@ def string_to_sky(sky_string, raise_exception=True):
             sky. This can be a minimal representation of the sky (eg.
             "cie -alt 71.6 -az 185.2 -type 0"). Or it can be a detailed specification of
             time and location (eg. "cie 21 Jun 12:00 -lat 41.78 -lon -87.75 -type 0").
-        raise_exception: Boolean to note whether an excpetion should be raised
+        raise_exception: Boolean to note whether an exception should be raised
             if the object is not identified as a sky. Default: True.
 
     Returns:

@@ -405,7 +405,7 @@ class ClimateBased(_PointInTime):
             pars.add_argument('-alt', action='store', dest='alt', type=float, default=90)
             pars.add_argument('-az', action='store', dest='az', type=float, default=0)
             props = pars.parse_args(split_str[1:])
-            return cls(props.alt, props.az, props.dni, props.dhi, props.g)
+            return cls(props.alt, props.az, props.dni, props.dhi, props.g, props.c)
         else:
             pars.add_argument('-lat', action='store', dest='lat', type=float, default=0)
             pars.add_argument('-lon', action='store', dest='lon', type=float, default=0)
