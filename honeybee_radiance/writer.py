@@ -815,17 +815,19 @@ def _filter_by_pattern(input_objects, filter, full_match=False):
     """Filter model grids and views based on user input."""
     if not filter or filter == '*':
         return input_objects
+    elif len(filter) == 1 and filter[0].replace('"', '').replace("'", '').strip() == '*':
+        return input_objects
 
     if not isinstance(filter, (list, tuple)):
         filter = [filter]
     if not full_match:
         patterns = [
-            re.compile(f.replace('*', '.+').replace('?', '.')) for f in filter
+            re.compile(f.strip().replace('*', '.+').replace('?', '.')) for f in filter
         ]
     else:
         patterns = [
-            re.compile(f) if f.startswith('^') and f.endswith('$') else
-            re.compile('^%s$' % f) for f in filter
+            re.compile(f.strip()) if f.startswith('^') and f.endswith('$') else
+            re.compile('^%s$' % f.strip()) for f in filter
         ]
     indexes = []
 
