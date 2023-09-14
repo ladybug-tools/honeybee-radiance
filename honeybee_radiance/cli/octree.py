@@ -461,6 +461,12 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     # default
     if 'scene_files' in state:
         scene_files = state['scene_files']
+        if len(' '.join(scene_files)) > 8000:
+            xform_file = os.path.join(state['identifier'] + '.rad')
+            with open(xform_file, 'w') as xf:
+                for fp in scene_files:
+                    xf.write('!xform ./%s\n' % fp)
+            scene_files = [xform_file]
         octree_name = state['identifier']
         output = os.path.join(
             output_folder, '%s.oct' % octree_name)
@@ -473,6 +479,12 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     # direct - don't add them for 5 phase
     if 'scene_files_direct' in state and study != 'five_phase':
         scene_files_direct = state['scene_files_direct']
+        if len(' '.join(scene_files_direct)) > 8000:
+            xform_file = os.path.join('%s_%s' % ('direct', state['identifier'] + '.rad'))
+            with open(xform_file, 'w') as xf:
+                for fp in scene_files_direct:
+                    xf.write('!xform ./%s\n' % fp)
+            scene_files_direct = [xform_file]
         octree_direct_name = '%s_direct' % state['identifier']
         output_direct = os.path.join(
             output_folder, '%s.oct' % octree_direct_name)
@@ -486,6 +498,13 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     # direct sun - don't add them for 3-phase
     if sun_path and study != 'three_phase':
         scene_files_direct = state['scene_files_direct']
+        if len(' '.join(scene_files_direct)) > 8000:
+            xform_file = os.path.join('%s_%s' % ('direct', state['identifier'] + '.rad'))
+            if not os.path.exists(xform_file):
+                with open(xform_file, 'w') as xf:
+                    for fp in scene_files_direct:
+                        xf.write('!xform ./%s\n' % fp)
+            scene_files_direct = [xform_file]
         scene_files_direct_sun = [sun_path] + scene_files_direct
         octree_direct_sun_name = '%s_direct_sun' % state['identifier']
         output_direct = \
