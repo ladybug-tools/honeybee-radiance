@@ -1067,7 +1067,7 @@ def cluster_output(ap_groups, room_apertures, room_based=True):
     group_dict = {}
     if room_based:
         for room_id, groups in ap_groups.items():
-            room_dn = room_apertures[room_id]['display_name']
+            room_dn = room_apertures[room_id]['identifier']
             for idx, group in enumerate(groups):
                 ap_ids = [ap.identifier for ap in group]
                 group_name = '{}_ApertureGroup_{}'.format(room_dn, idx)
