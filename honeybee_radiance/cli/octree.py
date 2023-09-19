@@ -462,7 +462,9 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     if 'scene_files' in state:
         scene_files = state['scene_files']
         if len(' '.join(scene_files)) > 8000:
-            xform_file = os.path.join(state['identifier'] + '.rad')
+            if not os.path.isdir('xform'):
+                os.mkdir('xform')
+            xform_file = os.path.join('xform', state['identifier'] + '.rad')
             with open(xform_file, 'w') as xf:
                 for fp in scene_files:
                     xf.write('!xform ./%s\n' % fp)
@@ -480,7 +482,9 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     if 'scene_files_direct' in state and study != 'five_phase':
         scene_files_direct = state['scene_files_direct']
         if len(' '.join(scene_files_direct)) > 8000:
-            xform_file = os.path.join('%s_%s' % ('direct', state['identifier'] + '.rad'))
+            if not os.path.isdir('xform'):
+                os.mkdir('xform')
+            xform_file = os.path.join('xform', '%s_%s' % ('_'.join([state['identifier'], 'direct']), '.rad'))
             with open(xform_file, 'w') as xf:
                 for fp in scene_files_direct:
                     xf.write('!xform ./%s\n' % fp)
@@ -499,7 +503,9 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     if sun_path and study != 'three_phase':
         scene_files_direct = state['scene_files_direct']
         if len(' '.join(scene_files_direct)) > 8000:
-            xform_file = os.path.join('%s_%s' % ('direct', state['identifier'] + '.rad'))
+            if not os.path.isdir('xform'):
+                os.mkdir('xform')
+            xform_file = os.path.join('xform', '%s_%s' % ('_'.join([state['identifier'], 'direct']), '.rad'))
             if not os.path.exists(xform_file):
                 with open(xform_file, 'w') as xf:
                     for fp in scene_files_direct:
