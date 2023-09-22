@@ -489,7 +489,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
                 os.mkdir('scene')
             scene_file = os.path.join('scene', '_'.join([state['identifier'], 'direct']) + '.rad')
             scene_description = []
-            for sf in scene_files:
+            for sf in scene_files_direct:
                 with open(sf, 'r') as sf:
                     scene_description.append(sf.read())
             with open(scene_file, 'w') as sf:
@@ -513,7 +513,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
                 os.mkdir('scene')
             scene_file = os.path.join('scene', '_'.join([state['identifier'], 'direct']) + '.rad')
             scene_description = []
-            for sf in scene_files:
+            for sf in scene_files_direct:
                 with open(sf, 'r') as sf:
                     scene_description.append(sf.read())
             with open(scene_file, 'w') as sf:
