@@ -8,6 +8,9 @@ from ..writer import _filter_by_pattern
 def generate_default_schedule(weekday=None, weekend=None):
     """Create a list of 8760 values based on a daily schedule for weekend and weekday.
 
+    The default is set to align with IES LM 83 23, which assumes 8am-6pm for all
+    365 days of the year.
+
     Args:
         weekday: A list of 24 values for each hour of a weekday. The values can
             be 0 or 1.
@@ -18,9 +21,10 @@ def generate_default_schedule(weekday=None, weekend=None):
         List -- A list of 8760 values for the year.
 
     """
-    weekend = weekend or [0] * 24
+    weekend = weekend or \
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
     weekday = weekday or \
-        [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0]
     assert len(weekend) == 24, 'Weekend list should be 24 values.'
     assert len(weekday) == 24, 'Weekend list should be 24 values.'
     weekend = [0 if v == 0 else 1 for v in weekend]
