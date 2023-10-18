@@ -125,7 +125,7 @@ class DynamicShadeGroup(object):
         one state object per dynamic object.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
         """
         # make sure that the state_index is valid
@@ -153,7 +153,7 @@ class DynamicShadeGroup(object):
         to simulate the state, including all geometry and modifiers.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
             direct: Boolean to note whether to write the "direct" version of the
                 state. (Default: False)
@@ -345,7 +345,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         one state object per dynamic object.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
         """
         # make sure that the state_index is valid
@@ -404,7 +404,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         simulation.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
         """
         bsdf_mods = []
@@ -424,7 +424,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         The resulting string has all geometry geometry and the white_glow modifier.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
             minimal: Boolean to note whether the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
@@ -451,7 +451,7 @@ class DynamicSubFaceGroup(DynamicShadeGroup):
         The resulting string has all geometry geometry and the white_glow modifier.
 
         Args:
-            state_index: An interger from 0 up to the state_count - 1 , which notes
+            state_index: An integer from 0 up to the state_count - 1 , which notes
                 the state of the group for which a rad string will be produced.
             minimal: Boolean to note whether the radiance string should be written
                 in a minimal format (with spaces instead of line breaks). Default: False.
