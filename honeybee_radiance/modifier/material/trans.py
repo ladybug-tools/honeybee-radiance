@@ -234,6 +234,11 @@ class Trans(Material):
             transmitted_spec=0.0, modifier=None, dependencies=None):
         """Create trans material from reflected specularity.
 
+        This method assumes that all of the input fractions for reflectance and
+        transmittance are absolute fractions of the total amount of light hitting
+        the modifier. This is different than how Radiance natively interprets
+        the properties.
+
         Note:
         https://radiance-online.org//community/workshops/2010-freiburg/PDF/DavidMead.pdf
 
@@ -294,9 +299,16 @@ class Trans(Material):
         a1 = cr / ((1 - rs) * (1 - a6))
 
         if a3 > 1 or a2 > 1 or a1 > 1:
+            if a1 > 1:
+                channel, val = 'Red', a1
+            elif a2 > 1:
+                channel, val = 'Green', a2
+            else:
+                channel, val = 'Blue', a3
             raise ValueError(
-                'This material is physically impossible to create!\n'
-                'You need to adjust the inputs for diffuse reflectance values.')
+                'This material has a physically impossible reflectance value for '
+                'the {} channel\nwhen specular and diffuse fractions are added '
+                '({}).'.format(channel, val))
 
         return cls(identifier, a1, a2, a3, a4, a5, a6, a7, modifier,
                    dependencies=dependencies)
@@ -358,7 +370,7 @@ class Trans(Material):
                 should be between 0 and 1 (Default: 0).
             is_specular: Boolean to note if the reflected component is specular (True)
                 or diffuse (False). (Default: False).
-            is_diffusing: Boolean to note if the tranmitted component is diffused (True)
+            is_diffusing: Boolean to note if the transmitted component is diffused (True)
                 instead of specular like glass (False). (Default: True).
             roughness: Roughness is specified as the rms slope of surface facets. A value
                 of 0 corresponds to a perfectly smooth surface, and a value of 1 would be
