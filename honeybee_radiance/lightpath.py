@@ -1,5 +1,5 @@
 """Utilities to determine the path of light taken through interior spaces of a model."""
-from honeybee.boundarycondition import Surface
+from honeybee.boundarycondition import Surface, Outdoors
 from honeybee.facetype import AirBoundary
 from honeybee.aperture import Aperture
 from honeybee.door import Door
@@ -65,7 +65,9 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
 
         return adj_room
 
-    def trace_light_path(s_face, s_light_path, parent_room, passed_rooms = set()):
+    def trace_light_path(
+            s_face, s_light_path, parent_room, passed_rooms = set(),
+            static_name='__static_apertures__'):
         """Trace light path recursively.
         
         This function will return the light path for a single face (Aperture,
@@ -88,6 +90,8 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 that have already been processed. This is used to not enter an
                 infinite recursive loop, e.g., if multiple are connected by
                 interior apertures.
+            static_name: An optional name to be used to refer to static apertures
+                found within the model. (Default: '__static_apertures__').
         
         Returns:
             A list of lists where each sub-list contains the identifiers of the
@@ -123,6 +127,11 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                             passed_rooms=passed_rooms
                         )
                         s_face_light_path.extend(_s_face_light_path)
+                elif not isinstance(adj_s_face, (Aperture, Door)) and \
+                    isinstance(adj_s_face.boundary_condition, Outdoors):
+                    # if not Aperture or Door (i.e. AirBoundary), we just pass
+                    # if the boundary condition is Outdoors
+                    pass
                 else:
                     if not s_light_path_duplicate:
                         s_light_path_duplicate.append(light_path_id)
