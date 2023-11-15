@@ -22,6 +22,30 @@ import itertools
 from collections import defaultdict
 
 
+def shade_mesh_to_rad(shade_mesh, blk=False):
+    """Generate a RAD string representation of a ShadeMesh.
+
+    Note that the resulting string does not include modifier definitions.
+
+    Args:
+        shade: A honeybee ShadeMesh for which a RAD representation will be returned.
+        blk: Boolean to note whether the "blacked out" version of the Shade should
+            be output, which is useful for direct studies and isolation studies
+            to understand the contribution of individual apertures.
+    """
+    rad_prop = shade_mesh.properties.radiance
+    modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
+    base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
+    shd_id = shade_mesh.identifier
+    geo_strs = []
+    for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
+        coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
+        poly_id = '{}_{}'.format(shd_id, fi)
+        geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
+        geo_strs.append(geo_str)
+    return '\n'.join(geo_strs)
+
+
 def shade_to_rad(shade, blk=False, minimal=False):
     """Generate a RAD string representation of a Shade.
 
@@ -236,11 +260,12 @@ def model_to_rad(model, blk=False, minimal=False):
                 model_str.append(shade_to_rad(shd, blk, minimal))
 
     # write all orphaned Shades into the file
-    shades = model.orphaned_shades
-    if len(shades) != 0:
+    if len(model.orphaned_shades) != 0 or len(model.shade_meshes):
         model_str.append('#   ============= CONTEXT SHADES =============\n')
-        for shd in shades:
+        for shd in model.orphaned_shades:
             model_str.append(shade_to_rad(shd, blk, minimal))
+        for shd_msh in model.shade_meshes:
+            model_str.append(shade_mesh_to_rad(shd_msh, blk))
 
     return '\n\n'.join(model_str), '\n\n'.join(modifier_str)
 
@@ -293,21 +318,31 @@ def model_to_rad_folder(
     mods, mods_blk, mod_combs, mod_names = _collect_modifiers(aps, aps_blk, True)
     _write_static_files(
         folder, model_folder.aperture_folder(full=True), 'aperture',
-        aps, aps_blk, mods, mods_blk, mod_combs, mod_names, False, minimal)
+        aps, aps_blk, mods, mods_blk, mod_combs, mod_names, 'Face3D', minimal)
 
     # gather and write static faces
     faces, faces_blk = model.properties.radiance.faces_by_blk()
     f_mods, f_mods_blk, mod_combs, mod_names = _collect_modifiers(faces, faces_blk)
     _write_static_files(
         folder, model_folder.scene_folder(full=True), 'envelope',
-        faces, faces_blk, f_mods, f_mods_blk, mod_combs, mod_names, True, minimal)
+        faces, faces_blk, f_mods, f_mods_blk, mod_combs, mod_names,
+        'PunchedFace3D', minimal)
 
     # gather and write static shades
     shades, shades_blk = model.properties.radiance.shades_by_blk()
     s_mods, s_mods_blk, mod_combs, mod_names = _collect_modifiers(shades, shades_blk)
     _write_static_files(
         folder, model_folder.scene_folder(full=True), 'shades',
-        shades, shades_blk, s_mods, s_mods_blk, mod_combs, mod_names, False, minimal)
+        shades, shades_blk, s_mods, s_mods_blk, mod_combs, mod_names, 'Face3D', minimal)
+
+    # gather and write static shade meshes
+    shade_meshes, shade_meshes_blk = model.properties.radiance.shade_meshes_by_blk()
+    sm_mods, sm_mods_blk, mod_combs, mod_names = \
+        _collect_modifiers(shade_meshes, shade_meshes_blk)
+    _write_static_files(
+        folder, model_folder.scene_folder(full=True), 'shade_meshes',
+        shade_meshes, shade_meshes_blk, sm_mods, sm_mods_blk,
+        mod_combs, mod_names, 'Mesh3D', minimal)
 
     # write dynamic sub-face groups (apertures and doors)
     ext_dict = {}
@@ -627,7 +662,7 @@ def _write_dynamic_json(folder, sub_folder, json_dict):
 
 def _write_static_files(
         folder, sub_folder, file_id, geometry, geometry_blk, modifiers, modifiers_blk,
-        mod_combs, mod_names, punched_verts=False, minimal=False):
+        mod_combs, mod_names, geo_type='Face3D', minimal=False):
     """Write out the three files that need to go into any static radiance model folder.
 
     This includes a .rad, .mat, and .blk file for the folder.
@@ -644,7 +679,8 @@ def _write_static_files(
         modifiers_blk: A list of modifier_blk to write.
         mod_combs: Dictionary of modifiers from _unique_modifier_blk_combinations method.
         mod_names: Modifier names from the _unique_modifier_blk_combinations method.
-        punched_verts: Boolean noting whether punched geometry should be written
+        geo_type: Text for the type of static geometry being written (either Face3D,
+            PunchedFace3D, or Mesh3D).
         minimal: Boolean noting whether radiance strings should be written minimally.
     """
     def is_air_boundary(face):
@@ -653,7 +689,35 @@ def _write_static_files(
     if len(geometry) != 0 or len(geometry_blk) != 0:
         # write the strings for the geometry
         face_strs = []
-        if punched_verts:
+        if geo_type == 'Face3D':
+            for face in geometry:
+                modifier = face.properties.radiance.modifier
+                rad_poly = Polygon(face.identifier, face.vertices, modifier)
+                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+            for face, mod_name in zip(geometry_blk, mod_names):
+                modifier = mod_combs[mod_name][0]
+                rad_poly = Polygon(face.identifier, face.vertices, modifier)
+                face_strs.append(rad_poly.to_radiance(minimal, False, False))
+        elif geo_type == 'Mesh3D':
+            for shade_mesh in geometry:
+                modifier = shade_mesh.properties.radiance.modifier
+                base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
+                shd_id = shade_mesh.identifier
+                for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
+                    coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
+                    poly_id = '{}_{}'.format(shd_id, fi)
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
+                    face_strs.append(geo_str)
+            for shade_mesh, mod_name in zip(geometry_blk, mod_names):
+                modifier = mod_combs[mod_name][0]
+                base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
+                shd_id = shade_mesh.identifier
+                for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
+                    coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
+                    poly_id = '{}_{}'.format(shd_id, fi)
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
+                    face_strs.append(geo_str)
+        else:  # assume that it is punched Face3D
             for face in geometry:
                 if not is_air_boundary(face):
                     modifier = face.properties.radiance.modifier
@@ -667,17 +731,6 @@ def _write_static_files(
                     geo = face.punched_vertices if hasattr(face, 'punched_vertices') \
                         else face.vertices
                     rad_poly = Polygon(face.identifier, geo, modifier)
-                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
-        else:
-            for face in geometry:
-                if not is_air_boundary(face):
-                    modifier = face.properties.radiance.modifier
-                    rad_poly = Polygon(face.identifier, face.vertices, modifier)
-                    face_strs.append(rad_poly.to_radiance(minimal, False, False))
-            for face, mod_name in zip(geometry_blk, mod_names):
-                if not is_air_boundary(face):
-                    modifier = mod_combs[mod_name][0]
-                    rad_poly = Polygon(face.identifier, face.vertices, modifier)
                     face_strs.append(rad_poly.to_radiance(minimal, False, False))
 
         # write the strings for the modifiers
