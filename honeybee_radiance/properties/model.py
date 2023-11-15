@@ -127,6 +127,8 @@ class ModelRadianceProperties(object):
             self._check_and_add_dynamic_obj_modifier_blk(dr, modifiers)
         for shade in self.host.shades:
             self._check_and_add_dynamic_obj_modifier_blk(shade, modifiers)
+        for sm in self.host.shade_meshes:  # check all ShadeMesh modifiers
+            self._check_and_add_obj_modifier_blk(sm, modifiers)
         return list(set(modifiers))
 
     @property
@@ -156,7 +158,8 @@ class ModelRadianceProperties(object):
 
     @property
     def shade_modifiers(self):
-        """A list of all unique modifiers assigned to Shades in the model."""
+        """A list of all unique modifiers assigned to Shade and ShadeMeshes in the model.
+        """
         modifiers = []
         for room in self.host.rooms:
             self._check_and_add_room_modifier_shade(room, modifiers)
@@ -168,6 +171,8 @@ class ModelRadianceProperties(object):
             self._check_and_add_obj_modifier_shade(dr, modifiers)
         for shade in self.host.orphaned_shades:
             self._check_and_add_orphaned_shade_modifier(shade, modifiers)
+        for shade_mesh in self.host.shade_meshes:
+            self._check_and_add_shade_mesh_modifier(shade_mesh, modifiers)
         return list(set(modifiers))
 
     @property
@@ -319,8 +324,7 @@ class ModelRadianceProperties(object):
 
             -   faces_blk: A list of all opaque faces that have a unique modifier_blk.
         """
-        faces = []
-        faces_blk = []
+        faces, faces_blk = [], []
         interior_faces, offset = set(), self.host.tolerance * -2
         for face in self.host.faces:
             if isinstance(face.boundary_condition, Surface):
@@ -354,8 +358,7 @@ class ModelRadianceProperties(object):
 
             -   subfaces_blk: A list of all sub-faces that have a unique modifier_blk.
         """
-        subfaces = []
-        subfaces_blk = []
+        subfaces, subfaces_blk = [], []
         for subf in self.host.apertures + self.host.doors:
             if subf.properties.radiance.dynamic_group_identifier:
                 continue  # sub-face will be accounted for in the dynamic objects
@@ -380,8 +383,7 @@ class ModelRadianceProperties(object):
 
             -   shades_blk: A list of all opaque shades that have a unique modifier_blk.
         """
-        shades = []
-        shades_blk = []
+        shades, shades_blk = [], []
         for shade in self.host.shades:
             if shade.properties.radiance.dynamic_group_identifier:
                 continue  # shade will be accounted for in the dynamic objects
@@ -390,6 +392,25 @@ class ModelRadianceProperties(object):
             else:
                 shades.append(shade)
         return shades, shades_blk
+
+    def shade_meshes_by_blk(self):
+        """Get all ShadeMeshes in the model separated by their blk property.
+
+        Returns:
+            A tuple with 2 lists:
+
+            -   shade_meshes: A list of all shade meshes without a unique
+                modifier_blk (just using the default black or transparent modifier).
+
+            -   shade_meshes_blk: A list of all shade meshes that have a unique modifier_blk.
+        """
+        shade_meshes, shade_meshes_blk = [], []
+        for shade in self.host.shade_meshes:
+            if shade.properties.radiance._modifier_blk:
+                shade_meshes_blk.append(shade)
+            else:
+                shade_meshes.append(shade)
+        return shade_meshes, shade_meshes_blk
 
     def move(self, moving_vec):
         """Move all sensor_grid and view geometry along a vector.
@@ -1070,8 +1091,10 @@ class ModelRadianceProperties(object):
             if not self._instance_in_array(mod, modifiers):
                 modifiers.append(mod)
         else:
-            if not self._instance_in_array(generic_context, modifiers):
-                modifiers.append(generic_context)
+            def_mod = generic_context if obj.is_detached else \
+                generic_modifier_set_visible.shade_set.exterior_modifier
+            if not self._instance_in_array(def_mod, modifiers):
+                modifiers.append(def_mod)
         for st in obj.properties.radiance._states:
             stm = (st._modifier, st._modifier_direct) + \
                 tuple(s.modifier for s in st._shades)
@@ -1079,6 +1102,18 @@ class ModelRadianceProperties(object):
                 if mod is not None:
                     if not self._instance_in_array(mod, modifiers):
                         modifiers.append(mod)
+
+    def _check_and_add_shade_mesh_modifier(self, obj, modifiers):
+        """Check if a modifier is assigned to an object and add it to a list."""
+        mod = obj.properties.radiance._modifier
+        if mod is not None:
+            if not self._instance_in_array(mod, modifiers):
+                modifiers.append(mod)
+        else:
+            def_mod = generic_context if obj.is_detached else \
+                generic_modifier_set_visible.shade_set.exterior_modifier
+            if not self._instance_in_array(def_mod, modifiers):
+                modifiers.append(def_mod)
 
     @staticmethod
     def _instance_in_array(object_instance, object_array):
