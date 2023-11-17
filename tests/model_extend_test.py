@@ -3,6 +3,7 @@ from honeybee.model import Model
 from honeybee.room import Room
 from honeybee.face import Face
 from honeybee.shade import Shade
+from honeybee.shademesh import ShadeMesh
 from honeybee.aperture import Aperture
 from honeybee.door import Door
 from honeybee.boundarycondition import Ground, Outdoors
@@ -17,9 +18,7 @@ from honeybee_radiance.modifier.material import Plastic, Glass, Trans, BSDF
 
 from honeybee_radiance_folder.folder import ModelFolder
 from ladybug.futil import nukedir
-from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
-from ladybug_geometry.geometry3d.plane import Plane
-from ladybug_geometry.geometry3d.face import Face3D
+from ladybug_geometry.geometry3d import Point3D, Vector3D, Plane, Face3D, Mesh3D
 
 import os
 import pytest
@@ -36,12 +35,17 @@ def test_radiance_properties():
     fritted_glass_trans = Glass.from_single_transmittance('FrittedGlass', 0.35)
     south_face.apertures[0].outdoor_shades[0].properties.radiance.modifier = \
         fritted_glass_trans
-    model = Model('TinyHouse', [room])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+    
+    model = Model('TinyHouse', [room], shade_meshes=[awning_1])
 
     assert hasattr(model.properties, 'radiance')
     assert isinstance(model.properties.radiance, ModelRadianceProperties)
     assert isinstance(model.properties.host, Model)
-    assert len(model.properties.radiance.modifiers) == 1
+    assert len(model.properties.radiance.modifiers) == 2
     assert len(model.properties.radiance.blk_modifiers) == 1
     for mat in model.properties.radiance.modifiers:
         assert isinstance(mat, Modifier)
@@ -224,7 +228,15 @@ def test_to_from_dict():
     tree_trans = Glass.from_single_transmittance('TreeTransmittance', 0.75)
     tree_canopy.properties.radiance.modifier = tree_trans
 
-    model = Model('TinyHouse', [room], orphaned_shades=[tree_canopy])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+    bright_awning = Plastic.from_single_reflectance('BrightAwning', 0.7)
+    awning_1.properties.radiance.modifier = bright_awning
+
+    model = Model(
+        'TinyHouse', [room], orphaned_shades=[tree_canopy], shade_meshes=[awning_1])
     model_dict = model.to_dict(included_prop=['radiance'])
     new_model = Model.from_dict(model_dict)
     assert model_dict == new_model.to_dict(included_prop=['radiance'])
@@ -237,6 +249,8 @@ def test_to_from_dict():
     assert new_model.rooms[0][1].apertures[0].properties.radiance.modifier == triple_pane
     assert new_model.rooms[0][1].apertures[0].is_operable
     assert len(new_model.orphaned_shades) == 1
+    assert bright_awning in new_model.properties.radiance.modifiers
+    assert new_model.shade_meshes[0].properties.radiance.modifier == bright_awning
 
     assert new_model.rooms[0][0].type == face_types.floor
     assert new_model.rooms[0][1].type == face_types.wall
@@ -478,13 +492,22 @@ def test_writer_to_rad():
     table = Shade('Table', table_geo)
     room.add_indoor_shade(table)
 
-    model = Model('Tiny_House', [room], orphaned_shades=[tree_canopy])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+    bright_awning = Plastic.from_single_reflectance('BrightAwning', 0.7)
+    awning_1.properties.radiance.modifier = bright_awning
+
+    model = Model('Tiny_House', [room], orphaned_shades=[tree_canopy], shade_meshes=[awning_1])
 
     assert hasattr(model.to, 'rad')
     rad_string = model.to.rad(model)
     assert len(rad_string) == 2
     assert 'outdoor_light_shelf_0.5' in rad_string[1]
+    assert 'BrightAwning' in rad_string[1]
     assert 'Front_Door' in rad_string[0]
+    assert 'Awning_1' in rad_string[0]
 
 
 def test_writer_to_rad_folder():
@@ -536,7 +559,15 @@ def test_writer_to_rad_folder():
     west_face.apertures_by_ratio(0.1, 0.01)
     Room.solve_adjacency([room, garage], 0.01)
 
-    model = Model('Tiny_House', [room, garage], orphaned_shades=[tree_canopy])
+    pts = (Point3D(0, 0, 4), Point3D(0, 2, 4), Point3D(2, 2, 4),
+           Point3D(2, 0, 4), Point3D(4, 0, 4))
+    mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
+    awning_1 = ShadeMesh('Awning_1', mesh)
+    bright_awning = Plastic.from_single_reflectance('BrightAwning', 0.7)
+    awning_1.properties.radiance.modifier = bright_awning
+
+    model = Model(
+        'Tiny_House', [room, garage], orphaned_shades=[tree_canopy], shade_meshes=[awning_1])
 
     folder = os.path.abspath('./tests/assets/model/rad_folder')
     model.to.rad_folder(model, folder)
@@ -555,6 +586,9 @@ def test_writer_to_rad_folder():
     assert os.path.isfile(os.path.join(scene_dir, 'shades.rad'))
     assert os.path.isfile(os.path.join(scene_dir, 'shades.mat'))
     assert os.path.isfile(os.path.join(scene_dir, 'shades.blk'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shade_meshes.rad'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shade_meshes.mat'))
+    assert os.path.isfile(os.path.join(scene_dir, 'shade_meshes.blk'))
 
     # clean up the folder
     nukedir(folder, rmdir=True)

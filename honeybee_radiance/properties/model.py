@@ -791,7 +791,9 @@ class ModelRadianceProperties(object):
             if d_dict is not None:
                 door.properties.radiance.apply_properties_from_dict(
                     d_dict, modifiers)
-        for shade, s_dict in zip(self.host.shades, shd_e_dicts):
+        # apply properties to the Shades with separation of Shades from ShadeMesh
+        all_shades = self.host.shades + self.host._shade_meshes
+        for shade, s_dict in zip(all_shades, shd_e_dicts):
             if s_dict is not None:
                 shade.properties.radiance.apply_properties_from_dict(
                     s_dict, modifiers)

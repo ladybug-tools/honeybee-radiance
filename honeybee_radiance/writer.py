@@ -35,14 +35,26 @@ def shade_mesh_to_rad(shade_mesh, blk=False):
     """
     rad_prop = shade_mesh.properties.radiance
     modifier = rad_prop.modifier_blk if blk else rad_prop.modifier
-    base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
+    base_geo = modifier.identifier + ' polygon {} 0 0 9 {}'
     shd_id = shade_mesh.identifier
     geo_strs = []
-    for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
-        coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
-        poly_id = '{}_{}'.format(shd_id, fi)
-        geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
-        geo_strs.append(geo_str)
+    str_vertices = tuple(tuple(str(v) for v in pt.to_array())
+                         for pt in shade_mesh.vertices)
+    for fi, f_geo in enumerate(shade_mesh.faces):
+        if len(f_geo) == 3:
+            coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+            poly_id = '{}_{}'.format(shd_id, fi)
+            geo_str = base_geo.format(poly_id, ' '.join(coords))
+            geo_strs.append(geo_str)
+        else:  # triangulate planar quads
+            pts1 = (f_geo[0], f_geo[1], f_geo[2])
+            pts2 = (f_geo[2], f_geo[3], f_geo[0])
+            coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
+            coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
+            for ti, coords in enumerate((coords1, coords2)):
+                poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
+                geo_str = base_geo.format(poly_id, ' '.join(coords))
+                geo_strs.append(geo_str)
     return '\n'.join(geo_strs)
 
 
@@ -700,23 +712,47 @@ def _write_static_files(
                 face_strs.append(rad_poly.to_radiance(minimal, False, False))
         elif geo_type == 'Mesh3D':
             for shade_mesh in geometry:
+                str_vertices = tuple(tuple(str(v) for v in pt.to_array())
+                                     for pt in shade_mesh.vertices)
                 modifier = shade_mesh.properties.radiance.modifier
-                base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
+                base_geo = modifier.identifier + ' polygon {} 0 0 9 {}'
                 shd_id = shade_mesh.identifier
-                for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
-                    coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
-                    poly_id = '{}_{}'.format(shd_id, fi)
-                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
-                    face_strs.append(geo_str)
+                for fi, f_geo in enumerate(shade_mesh.faces):
+                    if len(f_geo) == 3:
+                        coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+                        poly_id = '{}_{}'.format(shd_id, fi)
+                        geo_str = base_geo.format(poly_id, ' '.join(coords))
+                        face_strs.append(geo_str)
+                    else:  # triangulate planar quads
+                        pts1 = (f_geo[0], f_geo[1], f_geo[2])
+                        pts2 = (f_geo[2], f_geo[3], f_geo[0])
+                        coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
+                        coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
+                        for ti, coords in enumerate((coords1, coords2)):
+                            poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
+                            geo_str = base_geo.format(poly_id, ' '.join(coords))
+                            face_strs.append(geo_str)
             for shade_mesh, mod_name in zip(geometry_blk, mod_names):
+                str_vertices = tuple(tuple(str(v) for v in pt.to_array())
+                                     for pt in shade_mesh.vertices)
                 modifier = mod_combs[mod_name][0]
                 base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
                 shd_id = shade_mesh.identifier
-                for fi, f_geo in enumerate(shade_mesh.geometry.face_vertices):
-                    coords = tuple(str(v) for pt in f_geo for v in pt.to_array())
-                    poly_id = '{}_{}'.format(shd_id, fi)
-                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
-                    face_strs.append(geo_str)
+                for fi, f_geo in enumerate(shade_mesh.faces):
+                    if len(f_geo) == 3:
+                        coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+                        poly_id = '{}_{}'.format(shd_id, fi)
+                        geo_str = base_geo.format(poly_id, ' '.join(coords))
+                        face_strs.append(geo_str)
+                    else:  # triangulate planar quads
+                        pts1 = (f_geo[0], f_geo[1], f_geo[2])
+                        pts2 = (f_geo[2], f_geo[3], f_geo[0])
+                        coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
+                        coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
+                        for ti, coords in enumerate((coords1, coords2)):
+                            poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
+                            geo_str = base_geo.format(poly_id, ' '.join(coords))
+                            face_strs.append(geo_str)
         else:  # assume that it is punched Face3D
             for face in geometry:
                 if not is_air_boundary(face):
