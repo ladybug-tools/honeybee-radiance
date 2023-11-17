@@ -759,7 +759,10 @@ def _write_static_files(
 
         # write the three files for the model sub-folder
         dest = os.path.join(folder, sub_folder)
-        write_to_file_by_name(dest, '{}.rad'.format(file_id), '\n\n'.join(face_strs))
+        if geo_type == 'Mesh3D':  # write minimum specification to reduce file size
+            write_to_file_by_name(dest, '{}.rad'.format(file_id), '\n'.join(face_strs))
+        else:
+            write_to_file_by_name(dest, '{}.rad'.format(file_id), '\n\n'.join(face_strs))
         write_to_file_by_name(dest, '{}.mat'.format(file_id), '\n\n'.join(mod_strs))
         write_to_file_by_name(dest, '{}.blk'.format(file_id), '\n\n'.join(mod_blk_strs))
 

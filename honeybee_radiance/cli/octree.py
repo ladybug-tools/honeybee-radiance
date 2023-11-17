@@ -10,6 +10,7 @@ from honeybee_radiance_command.oconv import Oconv
 from honeybee_radiance.config import folders
 
 _logger = logging.getLogger(__name__)
+OCTREE_RES = 32768  # resolution of the octree to use
 
 
 @click.group(help='Commands to generate Radiance octree.')
@@ -109,6 +110,7 @@ def create_octree_from_folder(
             scene_files = list(add_before) + scene_files
         cmd = Oconv(output=output, inputs=scene_files)
         cmd.options.f = True
+        cmd.options.r = OCTREE_RES
         if dry_run:
             click.echo(cmd)
         else:
@@ -308,6 +310,7 @@ def create_octree_from_abstracted_groups(folder, sun_path, output_folder):
                 # run all of the commands to create the octrees
                 for cmd in cmds:
                     cmd.options.f = True
+                    cmd.options.r = OCTREE_RES
                     cmd.run(env=env, cwd=model_folder.folder)
                 group_info.append(grp_info_dict)
 
@@ -405,6 +408,7 @@ def create_octree_from_shade_trans_groups(folder, sun_path, output_folder):
                 # run all of the commands to create the octrees
                 for cmd in cmds:
                     cmd.options.f = True
+                    cmd.options.r = OCTREE_RES
                     cmd.run(env=env, cwd=model_folder.folder)
                 group_info.append(grp_info_dict)
 
@@ -477,6 +481,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
             output_folder, '%s.oct' % octree_name)
         cmd = Oconv(output=output, inputs=scene_files)
         cmd.options.f = True
+        cmd.options.r = OCTREE_RES
         commands.append(cmd)
 
         info['octree'] = '%s.oct' % octree_name
@@ -501,6 +506,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
         cmd = Oconv(output=output_direct,
                     inputs=scene_files_direct)
         cmd.options.f = True
+        cmd.options.r = OCTREE_RES
         commands.append(cmd)
 
         info['octree_direct'] = '%s.oct' % octree_direct_name
@@ -527,6 +533,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
         cmd = Oconv(output=output_direct,
                     inputs=scene_files_direct_sun)
         cmd.options.f = True
+        cmd.options.r = OCTREE_RES
         commands.append(cmd)
 
         info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name
@@ -603,6 +610,7 @@ def create_static_octree_from_folder(
             scene_files = list(add_before) + scene_files
         cmd = Oconv(output=output, inputs=scene_files)
         cmd.options.f = True
+        cmd.options.r = OCTREE_RES
         if dry_run:
             click.echo(cmd)
         else:
