@@ -24,6 +24,7 @@ from .mtx import mtxop
 from .multiphase import multi_phase
 from .glare import dcglare
 from .schedule import schedule
+from .study import study
 
 
 _logger = logging.getLogger(__name__)
@@ -79,6 +80,7 @@ radiance.add_command(mtxop)
 radiance.add_command(multi_phase)
 radiance.add_command(dcglare)
 radiance.add_command(schedule)
+radiance.add_command(study)
 
 # add radiance sub-commands to honeybee CLI
 main.add_command(radiance)
