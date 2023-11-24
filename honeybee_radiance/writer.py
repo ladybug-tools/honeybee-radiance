@@ -41,20 +41,10 @@ def shade_mesh_to_rad(shade_mesh, blk=False):
     str_vertices = tuple(tuple(str(v) for v in pt.to_array())
                          for pt in shade_mesh.vertices)
     for fi, f_geo in enumerate(shade_mesh.faces):
-        if len(f_geo) == 3:
-            coords = tuple(v for pt in f_geo for v in str_vertices[pt])
-            poly_id = '{}_{}'.format(shd_id, fi)
-            geo_str = base_geo.format(poly_id, ' '.join(coords))
-            geo_strs.append(geo_str)
-        else:  # triangulate planar quads
-            pts1 = (f_geo[0], f_geo[1], f_geo[2])
-            pts2 = (f_geo[2], f_geo[3], f_geo[0])
-            coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
-            coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
-            for ti, coords in enumerate((coords1, coords2)):
-                poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
-                geo_str = base_geo.format(poly_id, ' '.join(coords))
-                geo_strs.append(geo_str)
+        coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+        poly_id = '{}_{}'.format(shd_id, fi)
+        geo_str = base_geo.format(poly_id, ' '.join(coords))
+        geo_strs.append(geo_str)
     return '\n'.join(geo_strs)
 
 
@@ -325,6 +315,19 @@ def model_to_rad_folder(
     model_folder = ModelFolder(folder, 'model', config_file)
     model_folder.write(folder_type=-1, cfg=folder_config.minimal, overwrite=True)
 
+    # determine the number of places to which mesh vertices will be rounded
+    dec_count = 3  # default value when there is no tolerance
+    str_tol = str(model.tolerance).split('.')
+    if len(str_tol) == 2 and str_tol[0] == '0':
+        str_tol = str_tol[-1]
+        dec_count = 0
+        for dig in str_tol:
+            if dig == '0':
+                dec_count += 1
+            else:
+                dec_count += 1
+                break
+
     # gather and write static apertures to the folder
     aps, aps_blk = model.properties.radiance.subfaces_by_blk()
     mods, mods_blk, mod_combs, mod_names = _collect_modifiers(aps, aps_blk, True)
@@ -354,7 +357,7 @@ def model_to_rad_folder(
     _write_static_files(
         folder, model_folder.scene_folder(full=True), 'shade_meshes',
         shade_meshes, shade_meshes_blk, sm_mods, sm_mods_blk,
-        mod_combs, mod_names, 'Mesh3D', minimal)
+        mod_combs, mod_names, 'Mesh3D', minimal, dec_count)
 
     # write dynamic sub-face groups (apertures and doors)
     ext_dict = {}
@@ -674,7 +677,7 @@ def _write_dynamic_json(folder, sub_folder, json_dict):
 
 def _write_static_files(
         folder, sub_folder, file_id, geometry, geometry_blk, modifiers, modifiers_blk,
-        mod_combs, mod_names, geo_type='Face3D', minimal=False):
+        mod_combs, mod_names, geo_type='Face3D', minimal=False, decimal_count=3):
     """Write out the three files that need to go into any static radiance model folder.
 
     This includes a .rad, .mat, and .blk file for the folder.
@@ -694,6 +697,7 @@ def _write_static_files(
         geo_type: Text for the type of static geometry being written (either Face3D,
             PunchedFace3D, or Mesh3D).
         minimal: Boolean noting whether radiance strings should be written minimally.
+        decimal_count: Integer for the number of decimal places to round mesh vertices
     """
     def is_air_boundary(face):
         return isinstance(face, Face) and isinstance(face.type, AirBoundary)
@@ -711,48 +715,29 @@ def _write_static_files(
                 rad_poly = Polygon(face.identifier, face.vertices, modifier)
                 face_strs.append(rad_poly.to_radiance(minimal, False, False))
         elif geo_type == 'Mesh3D':
+            tol_f_str = '{:.' + str(decimal_count) + 'f}'
             for shade_mesh in geometry:
-                str_vertices = tuple(tuple(str(v) for v in pt.to_array())
+                str_vertices = tuple(tuple(tol_f_str.format(v) for v in pt.to_array())
                                      for pt in shade_mesh.vertices)
                 modifier = shade_mesh.properties.radiance.modifier
-                base_geo = modifier.identifier + ' polygon {} 0 0 9 {}'
+                base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
                 shd_id = shade_mesh.identifier
                 for fi, f_geo in enumerate(shade_mesh.faces):
-                    if len(f_geo) == 3:
-                        coords = tuple(v for pt in f_geo for v in str_vertices[pt])
-                        poly_id = '{}_{}'.format(shd_id, fi)
-                        geo_str = base_geo.format(poly_id, ' '.join(coords))
-                        face_strs.append(geo_str)
-                    else:  # triangulate planar quads
-                        pts1 = (f_geo[0], f_geo[1], f_geo[2])
-                        pts2 = (f_geo[2], f_geo[3], f_geo[0])
-                        coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
-                        coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
-                        for ti, coords in enumerate((coords1, coords2)):
-                            poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
-                            geo_str = base_geo.format(poly_id, ' '.join(coords))
-                            face_strs.append(geo_str)
+                    coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+                    poly_id = '{}_{}'.format(shd_id, fi)
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
+                    face_strs.append(geo_str)
             for shade_mesh, mod_name in zip(geometry_blk, mod_names):
-                str_vertices = tuple(tuple(str(v) for v in pt.to_array())
+                str_vertices = tuple(tuple(tol_f_str.format(v) for v in pt.to_array())
                                      for pt in shade_mesh.vertices)
                 modifier = mod_combs[mod_name][0]
                 base_geo = modifier.identifier + ' polygon {} 0 0 {} {}'
                 shd_id = shade_mesh.identifier
                 for fi, f_geo in enumerate(shade_mesh.faces):
-                    if len(f_geo) == 3:
-                        coords = tuple(v for pt in f_geo for v in str_vertices[pt])
-                        poly_id = '{}_{}'.format(shd_id, fi)
-                        geo_str = base_geo.format(poly_id, ' '.join(coords))
-                        face_strs.append(geo_str)
-                    else:  # triangulate planar quads
-                        pts1 = (f_geo[0], f_geo[1], f_geo[2])
-                        pts2 = (f_geo[2], f_geo[3], f_geo[0])
-                        coords1 = tuple(v for pt in pts1 for v in str_vertices[pt])
-                        coords2 = tuple(v for pt in pts2 for v in str_vertices[pt])
-                        for ti, coords in enumerate((coords1, coords2)):
-                            poly_id = '{}_{}_{}'.format(shd_id, fi, ti)
-                            geo_str = base_geo.format(poly_id, ' '.join(coords))
-                            face_strs.append(geo_str)
+                    coords = tuple(v for pt in f_geo for v in str_vertices[pt])
+                    poly_id = '{}_{}'.format(shd_id, fi)
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
+                    face_strs.append(geo_str)
         else:  # assume that it is punched Face3D
             for face in geometry:
                 if not is_air_boundary(face):
