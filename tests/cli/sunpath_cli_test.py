@@ -3,7 +3,7 @@
 import uuid
 from click.testing import CliRunner
 from honeybee_radiance.cli.sunpath import sunpath_from_location, \
-    sunpath_from_epw, parse_hours_from_suns
+    sunpath_from_epw, parse_hours_from_suns, sunpath_from_wea_rad
 from honeybee_radiance.cli.util import get_hoys
 import os
 
@@ -63,6 +63,38 @@ def test_sunpath_reversed():
          '--reverse-vectors']
     )
     assert result.exit_code == 0
+
+
+def test_sunpath_rad():
+    name = str(uuid.uuid4())
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_wea_rad,
+        [
+            './tests/assets/wea/denver.wea', '--folder', folder, '--name', name
+        ]
+    )
+    assert result.exit_code == 0
+    # check the file is created
+    assert os.path.isfile(os.path.join(folder, '%s.mod' % name))
+    assert os.path.isfile(os.path.join(folder, '%s.mtx' % name))
+
+
+def test_sunpath_rad_epw():
+    name = str(uuid.uuid4())
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_wea_rad,
+        [
+            './tests/assets/epw/denver.epw', '--folder', folder, '--name', name
+        ]
+    )
+    assert result.exit_code == 0
+    # check the file is created
+    assert os.path.isfile(os.path.join(folder, '%s.mod' % name))
+    assert os.path.isfile(os.path.join(folder, '%s.mtx' % name))
 
 
 def test_sunpath_hours():
