@@ -6,6 +6,7 @@ import logging
 import json
 
 from ladybug.dt import DateTime
+from ladybug.epw import EPW
 from ladybug.futil import write_to_file_by_name
 from ladybug.wea import Wea
 from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
@@ -290,11 +291,16 @@ def sunpath_from_wea_rad(
 
     \b
     Args:
-        wea: Path to a wea file.
+        wea: Path to a wea file. This can also be an epw file.
     """
     try:
         if not os.path.exists(folder):
             os.makedirs(folder)
+        try:
+            epw = EPW(wea)
+            wea = epw.to_wea(os.path.join(folder, 'epw_to_wea.wea'))
+        except:
+            pass
         output = os.path.join(folder, '%s.mtx' % name)
         opt = GendaymtxOptions()
         opt.r = north
