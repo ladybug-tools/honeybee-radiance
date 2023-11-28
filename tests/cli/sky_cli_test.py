@@ -2,7 +2,8 @@
 
 from click.testing import CliRunner
 from honeybee_radiance.cli.sky import sky_cie, sky_climate_based, \
-    sky_with_certain_irrad, sky_with_certain_illum, sky_dome, leed_illuminance
+    sky_with_certain_irrad, sky_with_certain_illum, sky_dome, \
+    sunpath_from_wea_rad, leed_illuminance
 from ladybug.futil import nukedir
 
 import uuid
@@ -90,6 +91,36 @@ def test_sky_dome():
     assert result.exit_code == 0
     # check the file is created
     assert os.path.isfile(os.path.join(folder, name))
+
+
+def test_sunpath_rad():
+    name = str(uuid.uuid4())
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_wea_rad,
+        [
+            './tests/assets/wea/denver.wea', '--folder', folder, '--name', name
+        ]
+    )
+    assert result.exit_code == 0
+    # check the file is created
+    assert os.path.isfile(os.path.join(folder, '%s.mtx' % name))
+
+
+def test_sunpath_rad_epw():
+    name = str(uuid.uuid4())
+    folder = './tests/assets/temp'
+    runner = CliRunner()
+    result = runner.invoke(
+        sunpath_from_wea_rad,
+        [
+            './tests/assets/epw/denver.epw', '--folder', folder, '--name', name
+        ]
+    )
+    assert result.exit_code == 0
+    # check the file is created
+    assert os.path.isfile(os.path.join(folder, '%s.mtx' % name))
 
 
 def test_leed_illuminance():
