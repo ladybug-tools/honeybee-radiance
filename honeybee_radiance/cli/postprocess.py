@@ -271,7 +271,7 @@ def cumulative_radiation(average_irradiance, wea, timestep, output):
     """
     try:
         try:
-            wea_file = os.path.join('.', 'epw_to_wea.wea')
+            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
         except Exception:
             pass
@@ -327,7 +327,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
     """
     try:
         try:
-            wea_file = os.path.join('.', 'epw_to_wea.wea')
+            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
         except Exception:
             pass

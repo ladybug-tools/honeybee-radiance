@@ -25,6 +25,20 @@ def test_annual_irradiance():
     nukedir(result_dir, rmdir=True)
 
 
+def test_annual_irradiance_epw():
+    runner = CliRunner()
+    input_folder = './tests/assets/irrad_result'
+    wea_file = './tests/assets/epw/denver.epw'
+    sub_folder = 'metrics'
+    result_dir = os.path.join(input_folder, sub_folder)
+    cmd_args = [input_folder, wea_file, '--sub-folder', sub_folder]
+
+    result = runner.invoke(annual_irradiance, cmd_args)
+    assert result.exit_code == 0
+    assert os.path.isdir(result_dir)
+    nukedir(result_dir, rmdir=True)
+
+
 def test_leed_illuminance():
     runner = CliRunner()
     input_folder = './tests/assets/leed'
