@@ -267,7 +267,7 @@ def cumulative_radiation(average_irradiance, wea, timestep, output):
             This input matrix must be in ASCII format.
         wea: The .wea file that was used in the irradiance simulation. This
             will be used to determine the duration of the analysis for computing
-            cumulative radiation.
+            cumulative radiation. This can also be an .epw file.
     """
     try:
         try:
