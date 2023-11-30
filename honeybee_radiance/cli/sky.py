@@ -295,11 +295,12 @@ def sunpath_from_wea_rad(
     try:
         if not os.path.exists(folder):
             os.makedirs(folder)
-        try:
-            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
-            wea = Wea.from_epw_file(wea).write(wea_file)
-        except Exception:
-            pass
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(_wea_file)
         output = os.path.join(folder, '%s.mtx' % name)
         opt = GendaymtxOptions()
         opt.r = north
@@ -412,11 +413,12 @@ def leed_illuminance(wea, north, folder, name, log_file):
             an .epw
     """
     try:
-        try:
-            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
-            wea = Wea.from_epw_file(wea).write(wea_file)
-        except Exception:
-            pass
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(_wea_file)
         # get HOYs for the time around the equinoxes
         mar_9, sep_9 = DateTime(3, 21, 9).hoy, DateTime(9, 21, 9).hoy
         mar_3, sep_3 = DateTime(3, 21, 15).hoy, DateTime(9, 21, 15).hoy
