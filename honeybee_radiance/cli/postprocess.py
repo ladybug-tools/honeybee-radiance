@@ -7,6 +7,7 @@ import shutil
 import logging
 
 from ladybug.wea import Wea
+from ladybug.epw import EPW
 from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
 from ladybug.datatype.generic import GenericType
@@ -318,9 +319,14 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
         folder: Results folder from an annual irradiance recipe.
         wea: The .wea file that was used in the annual irradiance simulation. This
             will be used to determine the duration of the analysis for computing
-            cumulative radiation.
+            cumulative radiation. This can also be an .epw file.
     """
     try:
+        try:
+            wea_file = os.path.join(folder, 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
+        except Exception:
+            pass
         annual_irradiance_to_folder(folder, wea, timestep, sub_folder)
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')
