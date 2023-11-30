@@ -408,9 +408,15 @@ def leed_illuminance(wea, north, folder, name, log_file):
     \b
     Args:
         wea: Path to a Typical Meteorological Year (TMY) .wea file. The file must
-            be annual with a timestep of 1 for a non-leap year.
+            be annual with a timestep of 1 for a non-leap year. This can also be
+            an .epw file.
     """
     try:
+        try:
+            wea_file = os.path.join('.', 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(wea_file)
+        except Exception:
+            pass
         # get HOYs for the time around the equinoxes
         mar_9, sep_9 = DateTime(3, 21, 9).hoy, DateTime(9, 21, 9).hoy
         mar_3, sep_3 = DateTime(3, 21, 15).hoy, DateTime(9, 21, 15).hoy
