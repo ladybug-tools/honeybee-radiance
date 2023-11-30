@@ -296,7 +296,7 @@ def sunpath_from_wea_rad(
         if not os.path.exists(folder):
             os.makedirs(folder)
         try:
-            wea_file = os.path.join(folder, 'epw_to_wea.wea')
+            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea).write(wea_file)
         except Exception:
             pass
@@ -409,11 +409,11 @@ def leed_illuminance(wea, north, folder, name, log_file):
     Args:
         wea: Path to a Typical Meteorological Year (TMY) .wea file. The file must
             be annual with a timestep of 1 for a non-leap year. This can also be
-            an .epw file.
+            an .epw
     """
     try:
         try:
-            wea_file = os.path.join('.', 'epw_to_wea.wea')
+            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea).write(wea_file)
         except Exception:
             pass

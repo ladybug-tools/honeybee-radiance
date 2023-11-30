@@ -136,3 +136,18 @@ def test_leed_illuminance():
     for sky in out_files:
         assert os.path.isfile(sky['full_path'])
     nukedir(folder)
+
+
+def test_leed_illuminance_epw():
+    wea_file = './tests/assets/epw/denver.epw'
+    folder = './tests/assets/temp/leed'
+    runner = CliRunner()
+    result = runner.invoke(
+        leed_illuminance, [wea_file, '--folder', folder]
+    )
+    assert result.exit_code == 0
+    out_files = json.loads(result.output)
+    # check the files are created
+    for sky in out_files:
+        assert os.path.isfile(sky['full_path'])
+    nukedir(folder)

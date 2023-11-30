@@ -200,7 +200,7 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
         if not os.path.exists(folder):
             os.makedirs(folder)
         try:
-            wea_file = os.path.join(folder, 'epw_to_wea.wea')
+            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea).write(wea_file)
         except Exception:
             pass
