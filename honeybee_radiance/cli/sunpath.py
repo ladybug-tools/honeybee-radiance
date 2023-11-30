@@ -7,7 +7,6 @@ from honeybee_radiance_command.gendaymtx import Gendaymtx, GendaymtxOptions
 from honeybee_radiance_command._command_util import run_command
 
 from honeybee_radiance.lightsource.sunpath import Sunpath
-from ladybug.epw import EPW
 from ladybug.location import Location
 from ladybug.wea import Wea
 import logging
@@ -201,9 +200,9 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
         if not os.path.exists(folder):
             os.makedirs(folder)
         try:
-            epw = EPW(wea)
-            wea = epw.to_wea(os.path.join(folder, 'epw_to_wea.wea'))
-        except:
+            wea_file = os.path.join(folder, 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(wea_file)
+        except Exception:
             pass
         opt = GendaymtxOptions()
         opt.n = True
