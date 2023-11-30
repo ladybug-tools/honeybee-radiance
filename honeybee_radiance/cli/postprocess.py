@@ -7,7 +7,6 @@ import shutil
 import logging
 
 from ladybug.wea import Wea
-from ladybug.epw import EPW
 from ladybug.legend import LegendParameters
 from ladybug.color import Colorset
 from ladybug.datatype.generic import GenericType
@@ -271,6 +270,11 @@ def cumulative_radiation(average_irradiance, wea, timestep, output):
             cumulative radiation.
     """
     try:
+        try:
+            wea_file = os.path.join('.', 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
+        except Exception:
+            pass
         # parse the Wea and the average_irradiance matrix
         conversion = Wea.count_timesteps(wea) / (timestep * 1000)
         first_line, input_file = remove_header(average_irradiance)
@@ -323,7 +327,7 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
     """
     try:
         try:
-            wea_file = os.path.join(folder, 'epw_to_wea.wea')
+            wea_file = os.path.join('.', 'epw_to_wea.wea')
             wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
         except Exception:
             pass
