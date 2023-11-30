@@ -270,11 +270,12 @@ def cumulative_radiation(average_irradiance, wea, timestep, output):
             cumulative radiation. This can also be an .epw file.
     """
     try:
-        try:
-            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
-            wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
-        except Exception:
-            pass
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea, timestep).write(_wea_file)
         # parse the Wea and the average_irradiance matrix
         conversion = Wea.count_timesteps(wea) / (timestep * 1000)
         first_line, input_file = remove_header(average_irradiance)
@@ -326,11 +327,12 @@ def annual_irradiance(folder, wea, timestep, sub_folder):
             cumulative radiation. This can also be an .epw file.
     """
     try:
-        try:
-            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
-            wea = Wea.from_epw_file(wea, timestep=timestep).write(wea_file)
-        except Exception:
-            pass
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea, timestep).write(_wea_file)
         annual_irradiance_to_folder(folder, wea, timestep, sub_folder)
     except Exception:
         _logger.exception('Failed to compute irradiance metrics.')

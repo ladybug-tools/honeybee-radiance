@@ -199,11 +199,12 @@ def sunpath_from_wea_rad(wea, north, folder, name, visible, log_file, dry_run):
     try:
         if not os.path.exists(folder):
             os.makedirs(folder)
-        try:
-            wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
-            wea = Wea.from_epw_file(wea).write(wea_file)
-        except Exception:
-            pass
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(_wea_file)
         opt = GendaymtxOptions()
         opt.n = True
         opt.D = os.path.join(folder, name + '.mtx').replace('\\', '//')
