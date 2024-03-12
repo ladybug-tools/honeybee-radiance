@@ -38,6 +38,12 @@ def study_info(wea, timestep, folder, name):
     """
     try:
         study_info = {}
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            wea = Wea.from_epw_file(wea).write(_wea_file)
         wea = Wea.from_file(wea, timestep=timestep)
         study_info['timestep'] = timestep
         study_info['study_hours'] = wea.hoys
