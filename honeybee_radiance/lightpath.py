@@ -149,17 +149,29 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
         if isinstance(face.type, AirBoundary):
             s_faces = s_faces + (face,)
         for s_face in s_faces:
-            if isinstance(s_face, (Aperture, Door)):
+            if isinstance(s_face, Aperture):
                 # create base light path if Aperture or Door
                 if s_face.properties.radiance._dynamic_group_identifier:
                     s_light_path = \
                         [s_face.properties.radiance._dynamic_group_identifier]
                 else:
                     s_light_path = [static_name]
+            elif isinstance(s_face, Door):
+                if s_face.is_glass:
+                    if s_face.properties.radiance._dynamic_group_identifier:
+                        s_light_path = \
+                            [s_face.properties.radiance._dynamic_group_identifier]
+                    else:
+                        s_light_path = [static_name]
+                else:
+                    s_light_path = []
             else:
                 # else AirBoundary, no light path id
                 s_light_path = []
             if isinstance(s_face.boundary_condition, Surface):
+                if isinstance(s_face, Door):
+                    if not s_face.is_glass:
+                        break
                 # boundary condition, trace light path recursively for s_face
                 s_face_light_path = \
                     trace_light_path(s_face, s_light_path, room)
@@ -168,10 +180,12 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 # if it is AirBoundary but without Surface boundary condition
                 pass
             else:
+                if isinstance(s_face, Door):
+                    break
                 # no boundary condition, tracing ends here
                 if not s_light_path in _light_path:
                     _light_path.append(s_light_path)
-
+    print(_light_path)
     # remove any duplicates
     light_path = []
     for lp in _light_path:
