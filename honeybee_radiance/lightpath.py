@@ -106,12 +106,21 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 adj_s_faces = adj_s_faces + (face,)
             for adj_s_face in adj_s_faces:
                 s_light_path_duplicate = list(s_light_path)
-                if isinstance(adj_s_face, (Aperture, Door)):
+                if isinstance(adj_s_face, Aperture):
                     if adj_s_face.properties.radiance._dynamic_group_identifier:
                         light_path_id = \
                             adj_s_face.properties.radiance._dynamic_group_identifier
                     else:
                         light_path_id = static_name
+                elif isinstance(adj_s_face, Door):
+                    if adj_s_face.is_glass:
+                        if adj_s_face.properties.radiance._dynamic_group_identifier:
+                            light_path_id = \
+                                [adj_s_face.properties.radiance._dynamic_group_identifier]
+                        else:
+                            light_path_id = static_name
+                    else:
+                        break
                 if isinstance(adj_s_face.boundary_condition, Surface):
                     adj_room = get_adjacent_room(adj_s_face)
                     # check that adjacent room is not in passed_rooms
@@ -185,7 +194,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 # no boundary condition, tracing ends here
                 if not s_light_path in _light_path:
                     _light_path.append(s_light_path)
-    print(_light_path)
+
     # remove any duplicates
     light_path = []
     for lp in _light_path:
