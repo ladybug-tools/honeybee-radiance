@@ -617,7 +617,7 @@ def prepare_multiphase_command(
         5: ['two_phase', 'three_phase', 'five_phase']
     }
 
-    def _get_grid_states(model_folder=model_folder):
+    def _get_grid_states(model_folder):
         states_info = model_folder.aperture_groups_states()
         grid_info = model_folder.grid_info()
         grid_states = {}
@@ -625,13 +625,14 @@ def prepare_multiphase_command(
         for grid in grid_info:
             grid_states[grid['full_id']] = {}
             try:
-                light_paths = [lp[0] for lp in grid['light_path']]
+                light_paths = grid['light_path']
             except KeyError:
                 light_paths = []
             for light_path in light_paths:
-                if light_path != '__static_apertures__':
-                    grid_states[grid['full_id']][light_path] = \
-                        [s['identifier'] for s in states_info[light_path]]
+                for elem in light_path:
+                    if elem != '__static_apertures__':
+                        grid_states[grid['full_id']][elem] = \
+                            [s['identifier'] for s in states_info[elem]]
 
         grid_states_output = \
             os.path.join(model_folder.folder, 'grid_states.json')
@@ -646,6 +647,9 @@ def prepare_multiphase_command(
             exclude_static=exclude_static, phase=phase,
             default_states=default_states
             )
+        grid_mapping = model_folder.grid_mapping(
+            exclude_static=exclude_static, phase=phase
+            )
         if not os.path.isdir(octree_folder):
             os.mkdir(octree_folder)
         dynamic_mapping = {
@@ -656,9 +660,7 @@ def prepare_multiphase_command(
         for study, states in scene_mapping.items():
             if study == 'two_phase':
                 grid_info_dict = {}
-                grid_mapping = model_folder.grid_mapping(
-                    exclude_static=exclude_static, phase=phase
-                    )
+                
                 if not os.path.isdir(grid_folder):
                     os.mkdir(grid_folder)
 
