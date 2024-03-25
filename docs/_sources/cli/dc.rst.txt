@@ -1,0 +1,6 @@
+dc
+==
+
+.. click:: honeybee_radiance.cli.dc:dc
+   :prog: honeybee-radiance dc
+   :show-nested:
