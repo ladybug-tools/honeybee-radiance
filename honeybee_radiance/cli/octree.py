@@ -589,7 +589,19 @@ def create_static_octree_from_folder(
                     model_folder.folder)
                 for grp in aperture_groups
             ]
-            scene_files += ap_g_files
+            if len(' '.join(ap_g_files)) > 8000:
+                if not os.path.isdir('scene'):
+                    os.mkdir('scene')
+                scene_file = os.path.join('scene', 'aperture_groups' + '.rad')
+                scene_description = []
+                for sf in ap_g_files:
+                    with open(sf, 'r') as sf:
+                        scene_description.append(sf.read())
+                with open(scene_file, 'w') as sf:
+                    sf.write('\n'.join(scene_description))
+                scene_files += [scene_file]
+            else:
+                scene_files += ap_g_files
         except Exception:
             pass  # no aperture groups available in the model
         try:
