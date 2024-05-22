@@ -8,7 +8,7 @@ import logging
 
 from ladybug.wea import Wea
 from ladybug.legend import LegendParameters
-from ladybug.color import Colorset
+from ladybug.color import Colorset, Color
 from ladybug.datatype.generic import GenericType
 from ladybug.datatype.fraction import Fraction
 from ladybug.datatype.illuminance import Illuminance
@@ -1066,6 +1066,68 @@ def imageless_annual_glare_vis(output_file):
         output_file.write(json.dumps(vm_data, indent=4))
     except Exception:
         _logger.exception('Failed to write the visualization metadata file.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@post_process.command('leed-daylight-option-two-vis-metadata')
+@click.option(
+    '--output-folder', '-o', help='Output folder for vis metadata files.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True),
+    default='visualization', show_default=True
+)
+def leed_daylight_option_two_vis(output_folder):
+    """Write five visualization metadata files for LEED Daylight Option Two."""
+    ill_lpar = LegendParameters(min=300, max=3000, colors=Colorset.ecotect())
+    colors = [Color(220, 0, 0), Color(0, 220, 0)]
+    pass_fail_lpar = \
+        LegendParameters(min=0, max=1, colors=colors, segment_count=2, title='Pass/Fail')
+    pass_fail_lpar.ordinal_dictionary = {0: "Fail", 1: "Pass"}
+
+    metric_info_dict = {
+        'illuminance-9am': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance 9am').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        },
+        'illuminance-3pm': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance 3pm').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        },
+        'pass-fail-9am': {
+            'type': 'VisualizationMetaData',
+            'data_type': GenericType('Pass/Fail 9am', '').to_dict(),
+            'unit': '',
+            'legend_parameters': pass_fail_lpar.to_dict()
+        },
+        'pass-fail-3pm': {
+            'type': 'VisualizationMetaData',
+            'data_type': GenericType('Pass/Fail 3pm', '').to_dict(),
+            'unit': '',
+            'legend_parameters': pass_fail_lpar.to_dict()
+        },
+        'pass-fail-combined': {
+            'type': 'VisualizationMetaData',
+            'data_type': GenericType('Pass/Fail', '').to_dict(),
+            'unit': '',
+            'legend_parameters': pass_fail_lpar.to_dict()
+        }
+    }
+    try:
+        if not os.path.exists(output_folder):
+            os.mkdir(output_folder)
+        for metric, data in metric_info_dict.items():
+            if not os.path.exists(os.path.join(output_folder, metric)):
+                os.mkdir(os.path.join(output_folder, metric))
+            file_path = os.path.join(output_folder, metric, 'vis_metadata.json')
+            with open(file_path, 'w') as fp:
+                json.dump(data, fp, indent=4)
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata files.')
         sys.exit(1)
     else:
         sys.exit(0)
