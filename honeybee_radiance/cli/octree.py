@@ -99,9 +99,10 @@ def create_octree_from_folder(
         if include_ies:
             try:
                 ies_folder = model_folder.ies_folder()
-                for fp in os.listdir(ies_folder):
-                    if fp.endswith('rad'):
-                        scene_files += os.path.join(ies_folder, fp)
+                ies_files = [os.path.join(ies_folder, fp)
+                             for fp in os.listdir(ies_folder)
+                             if fp.endswith('rad')]
+                scene_files += ies_files
             except Exception:
                 pass  # no aperture groups available in the model
         if add_after:
