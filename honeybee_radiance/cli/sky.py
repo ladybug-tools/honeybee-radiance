@@ -465,3 +465,78 @@ def leed_illuminance(wea, north, folder, name, log_file):
     except Exception:
         _logger.exception('Failed to create LEED skies.')
         sys.exit(1)
+
+
+@sky.command('abnt-nbr-15575')
+@click.argument('wea', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True))
+@click.option(
+    '--north', '-n', type=float, default=0, show_default=True, help='A '
+    'number between -360 and 360 for the counterclockwise difference between '
+    'the North and the positive Y-axis in degrees. 90 is West; 270 is East')
+@click.option('--folder', type=click.Path(
+    exists=False, file_okay=False, dir_okay=True, resolve_path=True), default='.',
+    help='Output folder for the two generated .sky files.')
+@click.option(
+    '--log-file', help='Optional log file to output the information about the two '
+    'generated sky files. By default the list will be printed out to stdout',
+    type=click.File('w'), default='-')
+def abnt_nbr_15575(wea, north, folder, log_file):
+    """Generate four CIE skies for ABNT NBR 15575.
+
+    The four skies are:
+        - April 23rd at 9:30AM and 3:30PM.
+        - October 23rd at 9:30AM and 3:30PM.
+
+    \b
+    Args:
+        wea: Path to a Typical Meteorological Year (TMY) .wea file. This can
+            also be an .epw. The file is only used to extract the location.
+    """
+    try:
+        with open(wea) as inf:
+            first_word = inf.read(5)
+        is_wea = True if first_word == 'place' else False
+        if not is_wea:
+            wea = Wea.from_epw_file(wea)
+
+        sky_obj_4_930am = hbsky.CIE.from_location(
+            wea.location, 4, 23, 9.5, sky_type=5, north_angle=north)
+        sky_obj_4_330pm = hbsky.CIE.from_location(
+            wea.location, 4, 23, 15.5, sky_type=5, north_angle=north)
+        sky_obj_10_930am = hbsky.CIE.from_location(
+            wea.location, 10, 23, 9.5, sky_type=5, north_angle=north)
+        sky_obj_10_330pm = hbsky.CIE.from_location(
+            wea.location, 10, 23, 15.5, sky_type=5, north_angle=north)
+
+        # write out the sky files and the log file
+        output_4_930am = sky_obj_4_930am.to_file(folder, '4_930AM.sky', True)
+        output_4_330pm = sky_obj_4_330pm.to_file(folder, '4_330PM.sky', True)
+        output_10_930am = sky_obj_10_930am.to_file(folder, '10_930AM.sky', True)
+        output_10_330pm = sky_obj_10_330pm.to_file(folder, '10_330PM.sky', True)
+        files = [
+            {
+                'id': '4_930AM.sky',
+                'path': os.path.relpath(output_4_930am, folder),
+                'full_path': output_4_930am
+            },
+            {
+                'id': '4_330PM.sky',
+                'path': os.path.relpath(output_4_330pm, folder),
+                'full_path': output_4_330pm
+            },
+            {
+                'id': '10_930AM.sky',
+                'path': os.path.relpath(output_10_930am, folder),
+                'full_path': output_10_930am
+            },
+            {
+                'id': '10_330PM.sky',
+                'path': os.path.relpath(output_10_330pm, folder),
+                'full_path': output_10_330pm
+            }
+        ]
+        log_file.write(json.dumps(files))
+    except Exception:
+        _logger.exception('Failed to create ABNT NBR 15575 skies.')
+        sys.exit(1)
