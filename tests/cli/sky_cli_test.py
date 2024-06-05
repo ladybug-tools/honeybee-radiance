@@ -3,7 +3,7 @@
 from click.testing import CliRunner
 from honeybee_radiance.cli.sky import sky_cie, sky_climate_based, \
     sky_with_certain_irrad, sky_with_certain_illum, sky_dome, \
-    sunpath_from_wea_rad, leed_illuminance
+    sunpath_from_wea_rad, leed_illuminance, abnt_nbr_15575
 from ladybug.futil import nukedir
 
 import uuid
@@ -144,6 +144,36 @@ def test_leed_illuminance_epw():
     runner = CliRunner()
     result = runner.invoke(
         leed_illuminance, [wea_file, '--folder', folder]
+    )
+    assert result.exit_code == 0
+    out_files = json.loads(result.output)
+    # check the files are created
+    for sky in out_files:
+        assert os.path.isfile(sky['full_path'])
+    nukedir(folder)
+
+
+def test_abnt_nbr_15575():
+    wea_file = './tests/assets/wea/denver.wea'
+    folder = './tests/assets/temp/leed'
+    runner = CliRunner()
+    result = runner.invoke(
+        abnt_nbr_15575, [wea_file, '--folder', folder]
+    )
+    assert result.exit_code == 0
+    out_files = json.loads(result.output)
+    # check the files are created
+    for sky in out_files:
+        assert os.path.isfile(sky['full_path'])
+    nukedir(folder)
+
+
+def test_abnt_nbr_15575_epw():
+    wea_file = './tests/assets/epw/denver.epw'
+    folder = './tests/assets/temp/leed'
+    runner = CliRunner()
+    result = runner.invoke(
+        abnt_nbr_15575, [wea_file, '--folder', folder]
     )
     assert result.exit_code == 0
     out_files = json.loads(result.output)
