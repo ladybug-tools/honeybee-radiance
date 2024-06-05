@@ -499,6 +499,8 @@ def abnt_nbr_15575(wea, north, folder, log_file):
         is_wea = True if first_word == 'place' else False
         if not is_wea:
             wea = Wea.from_epw_file(wea)
+        else:
+            wea = Wea.from_file(wea)
 
         sky_obj_4_930am = hbsky.CIE.from_location(
             wea.location, 4, 23, 9.5, sky_type=5, north_angle=north)
@@ -516,22 +518,22 @@ def abnt_nbr_15575(wea, north, folder, log_file):
         output_10_330pm = sky_obj_10_330pm.to_file(folder, '10_330PM.sky', True)
         files = [
             {
-                'id': '4_930AM.sky',
+                'id': '4_930AM',
                 'path': os.path.relpath(output_4_930am, folder),
                 'full_path': output_4_930am
             },
             {
-                'id': '4_330PM.sky',
+                'id': '4_330PM',
                 'path': os.path.relpath(output_4_330pm, folder),
                 'full_path': output_4_330pm
             },
             {
-                'id': '10_930AM.sky',
+                'id': '10_930AM',
                 'path': os.path.relpath(output_10_930am, folder),
                 'full_path': output_10_930am
             },
             {
-                'id': '10_330PM.sky',
+                'id': '10_330PM',
                 'path': os.path.relpath(output_10_330pm, folder),
                 'full_path': output_10_330pm
             }
