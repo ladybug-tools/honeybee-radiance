@@ -494,7 +494,7 @@ def abnt_nbr_15575(wea, north, folder, log_file):
             also be an .epw. The file is only used to extract the location.
     """
     try:
-        with open(wea) as inf:
+        with open(wea, errors='ignore') as inf:
             first_word = inf.read(5)
         is_wea = True if first_word == 'place' else False
         if not is_wea:
