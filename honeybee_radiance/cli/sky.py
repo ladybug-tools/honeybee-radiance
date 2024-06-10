@@ -476,7 +476,7 @@ def leed_illuminance(wea, north, folder, name, log_file):
     'the North and the positive Y-axis in degrees. 90 is West; 270 is East.')
 @click.option('--folder', type=click.Path(
     exists=False, file_okay=False, dir_okay=True, resolve_path=True), default='.',
-    help='Output folder for the two generated .sky files.')
+    help='Output folder for the four generated .sky files.')
 @click.option(
     '--log-file', help='Optional log file to output the information about the '
     'four generated sky files. By default the list will be printed out to stdout.',
