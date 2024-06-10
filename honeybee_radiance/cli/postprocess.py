@@ -1131,3 +1131,55 @@ def leed_daylight_option_two_vis(output_folder):
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+@post_process.command('abnt-nbr-15575-daylight-vis-metadata')
+@click.option(
+    '--output-folder', '-o', help='Output folder for vis metadata files.',
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, resolve_path=True),
+    default='visualization', show_default=True
+)
+def abnt_nbr_15575_daylight_vis(output_folder):
+    """Write four visualization metadata files for ABNT NBR 15575."""
+    ill_lpar = LegendParameters(min=60, max=1000, colors=Colorset.ecotect())
+
+    metric_info_dict = {
+        '4_930AM': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance April 23rd 9:30am').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        },
+        '4_330PM': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance April 23rd 3:30pm').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        },
+        '10_930AM': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance October 23rd 9:30am').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        },
+        '10_330PM': {
+            'type': 'VisualizationMetaData',
+            'data_type': Illuminance('Illuminance October 23rd 3:30pm').to_dict(),
+            'unit': 'lux',
+            'legend_parameters': ill_lpar.to_dict()
+        }
+    }
+    try:
+        if not os.path.exists(output_folder):
+            os.mkdir(output_folder)
+        for metric, data in metric_info_dict.items():
+            if not os.path.exists(os.path.join(output_folder, metric)):
+                os.mkdir(os.path.join(output_folder, metric))
+            file_path = os.path.join(output_folder, metric, 'vis_metadata.json')
+            with open(file_path, 'w') as fp:
+                json.dump(data, fp, indent=4)
+    except Exception:
+        _logger.exception('Failed to write the visualization metadata files.')
+        sys.exit(1)
+    else:
+        sys.exit(0)
