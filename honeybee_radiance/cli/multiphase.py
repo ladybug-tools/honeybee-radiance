@@ -26,6 +26,8 @@ from honeybee_radiance.lightsource.sky.skydome import SkyDome
 from honeybee_radiance.dynamic.multiphase import aperture_view_factor, \
     aperture_view_factor_postprocess, cluster_view_factor, \
     cluster_orientation, cluster_output
+from honeybee_radiance.dynamic import StateGeometry, RadianceSubFaceState
+from honeybee_radiance.modifier.material.trans import Trans
 
 from .octree import _generate_octrees_info
 from .threephase import three_phase
@@ -277,6 +279,7 @@ def dmtx_group_command(
     This command calculates view factor from apertures to sky patches (rfluxmtx). Each
     aperture is represented by a sensor grid, and the view factor for the whole aperture
     is the average of the grid. The apertures are grouped based on the threshold.
+
     \b
     Args:
         folder: Path to a Radiance model folder.
@@ -793,6 +796,7 @@ def aperture_group_command(
     This command calculates view factor from apertures to sky patches (rfluxmtx). Each
     aperture is represented by a sensor grid, and the view factor for the whole aperture
     is the average of the grid. The apertures are grouped based on the threshold.
+
     \b
     Args:
         model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
@@ -885,6 +889,96 @@ def aperture_group_command(
 
     except Exception:
         _logger.exception("Failed to run aperture-group command.")
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        sys.exit(0)
+
+
+@multi_phase.command('add-aperture-group-blinds')
+@click.argument('model-file', type=click.Path(
+    exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
+@click.option(
+    '--distance', '-d',
+    help='Distance from the aperture parent surface to the blind surface.',
+    default=0.001, type=float, show_default=True
+)
+@click.option('--output-model', help='Optional name of output HBJSON file as a '
+    'string. If no name is provided the name will be the identifier of the '
+    'model with "blinds" as suffix.',
+    default=None, show_default=True, type=click.STRING
+)
+def add_aperture_group_blinds_command(
+    model_file, distance, output_model
+):
+    """Add a state geometry to aperture groups.
+
+    This command adds state geometry to all aperture groups in the model. The
+    geometry is the same as the aperture geometry but the modifier is changed.
+    The geometry is translate by a distance which by default is 0.01 in model
+    units.
+
+    \b
+    Args:
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+    """
+    try:
+        model: Model = Model.from_file(model_file)
+
+        unique_aperture_groups = {}
+        # first gather all apertures and group by dynamic group identifier
+        for ap in model.apertures:
+            if isinstance(ap.boundary_condition, Outdoors):
+                dgi = ap.properties.radiance.dynamic_group_identifier
+                if dgi is not None:
+                    ap.properties.radiance.remove_states()
+                    if dgi in unique_aperture_groups:
+                        unique_aperture_groups[dgi].append(ap)
+                    else:
+                        unique_aperture_groups[dgi] = [ap]
+
+        for apertures in unique_aperture_groups.values():
+            shades = []
+            # create the shades
+            for ap in apertures:
+                vec = ap.normal * distance
+                in_vec = vec.reverse()
+                base_geo = ap.geometry.move(in_vec)
+                base_geo = base_geo.scale(1.001, base_geo.center)
+                diff_ref = 0.1
+                trans_mod = Trans.from_reflected_specularity(
+                    identifier='generic-blind-trans', r_reflectance=diff_ref,
+                    g_reflectance=diff_ref, b_reflectance=diff_ref,
+                    transmitted_diff=0.05, transmitted_spec=0
+                )
+                # state geometry
+                state_geo = StateGeometry('{}_blind'.format(ap.identifier), base_geo, trans_mod)
+                shades.append(state_geo)
+            
+            # blind state
+            blind_state = RadianceSubFaceState(shades=shades)
+
+            # default state and blind state
+            states = [RadianceSubFaceState(), blind_state]
+            apertures[0].properties.radiance.states = [state.duplicate() for state in states]
+
+            # remove shades from following apertures to ensure they aren't double-counted
+            states_wo_shades = []
+            for state in states:
+                new_state = state.duplicate()
+                new_state.remove_shades()
+                states_wo_shades.append(new_state)
+            for ap in apertures[1:]:
+                ap.properties.radiance.states = \
+                    [state.duplicate() for state in states_wo_shades]
+
+        if output_model is None:
+            output_model = '{}_blinds'.format(model.identifier)
+        model.to_hbjson(output_model, '.')
+
+    except Exception:
+        _logger.exception("Failed to run add-aperture-group-blinds command.")
         traceback.print_exc()
         sys.exit(1)
     else:
