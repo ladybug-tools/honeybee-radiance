@@ -1141,30 +1141,31 @@ def leed_daylight_option_two_vis(output_folder):
 )
 def abnt_nbr_15575_daylight_vis(output_folder):
     """Write four visualization metadata files for ABNT NBR 15575."""
-    ill_lpar = LegendParameters(min=48, max=1000, colors=Colorset.ecotect())
+    ill_lpar = LegendParameters(min=48, max=1000, colors=Colorset.ecotect(),
+                                title='Iluminância')
 
     metric_info_dict = {
         '4_930AM': {
             'type': 'VisualizationMetaData',
-            'data_type': Illuminance('Illuminance April 23rd 9:30am').to_dict(),
+            'data_type': Illuminance('23 de abril 9:30h').to_dict(),
             'unit': 'lux',
             'legend_parameters': ill_lpar.to_dict()
         },
         '4_330PM': {
             'type': 'VisualizationMetaData',
-            'data_type': Illuminance('Illuminance April 23rd 3:30pm').to_dict(),
+            'data_type': Illuminance('23 de abril 15:30h').to_dict(),
             'unit': 'lux',
             'legend_parameters': ill_lpar.to_dict()
         },
         '10_930AM': {
             'type': 'VisualizationMetaData',
-            'data_type': Illuminance('Illuminance October 23rd 9:30am').to_dict(),
+            'data_type': Illuminance('23 de outubro 9:30h').to_dict(),
             'unit': 'lux',
             'legend_parameters': ill_lpar.to_dict()
         },
         '10_330PM': {
             'type': 'VisualizationMetaData',
-            'data_type': Illuminance('Illuminance October 23rd 3:30pm').to_dict(),
+            'data_type': Illuminance('23 de outubro 15:30h').to_dict(),
             'unit': 'lux',
             'legend_parameters': ill_lpar.to_dict()
         }
