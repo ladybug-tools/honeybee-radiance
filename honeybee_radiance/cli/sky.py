@@ -502,14 +502,15 @@ def abnt_nbr_15575(wea, north, folder, log_file):
         else:
             wea = Wea.from_file(wea)
 
+        sky_type = 3
         sky_obj_4_930am = hbsky.CIE.from_location(
-            wea.location, 4, 23, 9.5, sky_type=5, north_angle=north)
+            wea.location, 4, 23, 9.5, sky_type=sky_type, north_angle=north)
         sky_obj_4_330pm = hbsky.CIE.from_location(
-            wea.location, 4, 23, 15.5, sky_type=5, north_angle=north)
+            wea.location, 4, 23, 15.5, sky_type=sky_type, north_angle=north)
         sky_obj_10_930am = hbsky.CIE.from_location(
-            wea.location, 10, 23, 9.5, sky_type=5, north_angle=north)
+            wea.location, 10, 23, 9.5, sky_type=sky_type, north_angle=north)
         sky_obj_10_330pm = hbsky.CIE.from_location(
-            wea.location, 10, 23, 15.5, sky_type=5, north_angle=north)
+            wea.location, 10, 23, 15.5, sky_type=sky_type, north_angle=north)
 
         # write out the sky files and the log file
         output_4_930am = sky_obj_4_930am.to_file(folder, '4_930AM.sky', True)
