@@ -904,24 +904,31 @@ def aperture_group_command(
     help='Distance from the aperture parent surface to the blind surface.',
     default=0.001, type=float, show_default=True
 )
+@click.option(
+    '--scale', '-s',
+    help='Scaling value to scale blind geometry at the center point of the '
+    'aperture.',
+    default=1.001, type=float, show_default=True
+)
 @click.option('--output-model', help='Optional name of output HBJSON file as a '
     'string. If no name is provided the name will be the identifier of the '
     'model with "blinds" as suffix.',
     default=None, show_default=True, type=click.STRING
 )
 def add_aperture_group_blinds_command(
-    model_file, distance, output_model
+    model_file, distance, scale, output_model
 ):
     """Add a state geometry to aperture groups.
 
     This command adds state geometry to all aperture groups in the model. The
     geometry is the same as the aperture geometry but the modifier is changed.
-    The geometry is translate by a distance which by default is 0.01 in model
+    The geometry is translate by a distance which by default is 0.001 in model
     units.
 
     \b
     Args:
-        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl
+            (HBpkl) file.
     """
     try:
         model: Model = Model.from_file(model_file)
@@ -945,7 +952,7 @@ def add_aperture_group_blinds_command(
                 vec = ap.normal * distance
                 in_vec = vec.reverse()
                 base_geo = ap.geometry.move(in_vec)
-                base_geo = base_geo.scale(1.001, base_geo.center)
+                base_geo = base_geo.scale(scale, base_geo.center)
                 diff_ref = 0.1
                 trans_mod = Trans.from_reflected_specularity(
                     identifier='generic-blind-trans', r_reflectance=diff_ref,
@@ -955,7 +962,7 @@ def add_aperture_group_blinds_command(
                 # state geometry
                 state_geo = StateGeometry('{}_blind'.format(ap.identifier), base_geo, trans_mod)
                 shades.append(state_geo)
-            
+
             # blind state
             blind_state = RadianceSubFaceState(shades=shades)
 
