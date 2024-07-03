@@ -900,6 +900,11 @@ def aperture_group_command(
     exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
+    '--diffuse-transmission', '-dt',
+    help='Distance from the aperture parent surface to the blind surface.',
+    default=0.05, type=float, show_default=True
+)
+@click.option(
     '--distance', '-d',
     help='Distance from the aperture parent surface to the blind surface.',
     default=0.001, type=float, show_default=True
@@ -916,7 +921,7 @@ def aperture_group_command(
     default=None, show_default=True, type=click.STRING
 )
 def add_aperture_group_blinds_command(
-    model_file, distance, scale, output_model
+    model_file, diffuse_transmission, distance, scale, output_model
 ):
     """Add a state geometry to aperture groups.
 
@@ -952,12 +957,18 @@ def add_aperture_group_blinds_command(
                 vec = ap.normal * distance
                 in_vec = vec.reverse()
                 base_geo = ap.geometry.move(in_vec)
-                base_geo = base_geo.scale(scale, base_geo.center)
-                diff_ref = 0.1
+                if base_geo.is_convex:
+                    base_geo = base_geo.scale(scale, base_geo.centroid)
+                else:
+                    plane = base_geo.plane
+                    origin = base_geo.polygon2d.pole_of_inaccessibility(0.01)
+                    origin_xyz = plane.xy_to_xyz(origin)
+                    base_geo = base_geo.scale(scale, origin_xyz)
+                diff_ref = 0.2
                 trans_mod = Trans.from_reflected_specularity(
                     identifier='generic-blind-trans', r_reflectance=diff_ref,
                     g_reflectance=diff_ref, b_reflectance=diff_ref,
-                    transmitted_diff=0.05, transmitted_spec=0
+                    transmitted_diff=diffuse_transmission, transmitted_spec=0
                 )
                 # state geometry
                 state_geo = StateGeometry('{}_blind'.format(ap.identifier), base_geo, trans_mod)
