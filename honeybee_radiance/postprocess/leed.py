@@ -152,7 +152,7 @@ def _space_by_space_summary(
     if len(grid_areas) == len(pass_fail_9):
         all_data = zip(grids, grid_areas, pass_fail_comb, pass_fail_9, pass_fail_3)
         for gr, gr_a, res_c, res_9, res_3 in all_data:
-            csv_row = [gr['full_id'], gr['count']]
+            csv_row = [gr['name'], gr['count']]
             total_a = sum(gr_a)
             csv_row.append(round(total_a * units_conversion, 3))
             csv_row.append(round(csv_row[2] / 0.305, 3))
@@ -164,7 +164,7 @@ def _space_by_space_summary(
     else:
         all_data = zip(grids, pass_fail_comb, pass_fail_9, pass_fail_3)
         for gr, res_c, res_9, res_3 in all_data:
-            csv_row = [gr['full_id'], gr['count']]
+            csv_row = [gr['name'], gr['count']]
             total_count = csv_row[1]
             csv_row.append(round(100 * (sum(res_9) / total_count), 2))
             csv_row.append(round(100 * (sum(res_3) / total_count), 2))
