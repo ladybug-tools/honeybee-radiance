@@ -901,7 +901,8 @@ def aperture_group_command(
 )
 @click.option(
     '--diffuse-transmission', '-dt',
-    help='Distance from the aperture parent surface to the blind surface.',
+    help='Diffuse transmission of the aperture group blinds. Default is 0.05 '
+    '(5%).',
     default=0.05, type=float, show_default=True
 )
 @click.option(
@@ -927,8 +928,8 @@ def add_aperture_group_blinds_command(
 
     This command adds state geometry to all aperture groups in the model. The
     geometry is the same as the aperture geometry but the modifier is changed.
-    The geometry is translate by a distance which by default is 0.001 in model
-    units.
+    The geometry is translated inward by a distance which by default is 0.001
+    in model units.
 
     \b
     Args:
