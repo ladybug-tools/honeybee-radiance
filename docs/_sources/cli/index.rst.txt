@@ -1,0 +1,34 @@
+CLI Docs
+========
+
+Installation
+------------
+
+To check if the command line interface is installed correctly use `honeybee-radiance --help`.
+
+Commands
+--------
+.. toctree::
+   :maxdepth: 1
+
+   main
+   viewfactor
+   study
+   setconfig
+   translate
+   postprocess
+   view
+   sky
+   multiphase
+   dc
+   grid
+   lib
+   rpict
+   glare
+   sunpath
+   edit
+   threephase
+   mtx
+   schedule
+   octree
+   raytrace

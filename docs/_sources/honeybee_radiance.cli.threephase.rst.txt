@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.threephase module
+========================================
+
+.. automodule:: honeybee_radiance.cli.threephase
+   :members:
+   :undoc-members:
+   :show-inheritance:
