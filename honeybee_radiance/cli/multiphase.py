@@ -906,6 +906,12 @@ def aperture_group_command(
     default=0.05, type=float, show_default=True
 )
 @click.option(
+    '--specular-transmission', '-dt',
+    help='Specular transmission of the aperture group blinds. Default is 0 '
+    '(0%).',
+    default=0, type=float, show_default=True
+)
+@click.option(
     '--distance', '-d',
     help='Distance from the aperture parent surface to the blind surface.',
     default=0.001, type=float, show_default=True
@@ -922,7 +928,7 @@ def aperture_group_command(
     default=None, show_default=True, type=click.STRING
 )
 def add_aperture_group_blinds_command(
-    model_file, diffuse_transmission, distance, scale, output_model
+    model_file, diffuse_transmission, specular_transmission, distance, scale, output_model
 ):
     """Add a state geometry to aperture groups.
 
@@ -969,8 +975,8 @@ def add_aperture_group_blinds_command(
                 trans_mod = Trans.from_reflected_specularity(
                     identifier='generic-blind-trans', r_reflectance=diff_ref,
                     g_reflectance=diff_ref, b_reflectance=diff_ref,
-                    transmitted_diff=diffuse_transmission, transmitted_spec=0
-                )
+                    transmitted_diff=diffuse_transmission,
+                    transmitted_spec=specular_transmission)
                 # state geometry
                 state_geo = StateGeometry('{}_blind'.format(ap.identifier), base_geo, trans_mod)
                 shades.append(state_geo)
