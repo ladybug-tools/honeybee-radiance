@@ -57,7 +57,7 @@ def split_modifiers(
     original input files from this folder and the results generated based on the modifiers
     in this folder.
 
-    ``_dist_info.json`` file includes an array of JSON objects. Each object has
+    ``_redist_info.json`` file includes an array of JSON objects. Each object has
     the distribution information, which in comparison to the command to split grids
     is much simpler.
 
@@ -95,7 +95,7 @@ def split_modifiers(
 
         start_index = 0
         dist_info = []
-        print(dist_count)
+        out_dist_info = []
         for i in range(dist_count):
             end_index = start_index + mod_per_dist + (1 if i <= remainder else 0)
 
@@ -104,6 +104,12 @@ def split_modifiers(
             dist_info.append(
                 {
                     'dist_info': [{'identifier': i}]
+                }
+            )
+            out_dist_info.append(
+                {
+                    'identifier': str(i),
+                    'count': len(lines_to_write)
                 }
             )
             # create a file and write the lines
@@ -116,6 +122,10 @@ def split_modifiers(
         dist_info_file = os.path.join(output_folder, '_redist_info.json')
         with open(dist_info_file, 'w') as dist_out_file:
             json.dump(dist_info, dist_out_file, indent=2)
+
+        dist_info_file = os.path.join(output_folder, '_info.json')
+        with open(dist_info_file, 'w') as dist_out_file:
+            json.dump(out_dist_info, dist_out_file, indent=2)
     except Exception:
         _logger.exception('Failed to distribute sensor grids in folder.')
         sys.exit(1)
