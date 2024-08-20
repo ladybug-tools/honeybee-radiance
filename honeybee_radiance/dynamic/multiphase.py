@@ -280,6 +280,7 @@ def cluster_orientation(room_apertures, apertures, room_based=True, vertical_tol
         for room_id, data in room_apertures.items():
             _normal_list = []
             grouped_apertures = []
+            ap_groups[room_id] = {}
             for ap in data['apertures']:
                 # check if normal is already in list
                 n_bools = [ap.normal.is_equivalent(n, tolerance=0.01)
@@ -310,7 +311,8 @@ def cluster_orientation(room_apertures, apertures, room_based=True, vertical_tol
                     vertical_groups.extend(_ap_groups)
                 grouped_apertures = vertical_groups
 
-            ap_groups[room_id] = grouped_apertures
+            ap_groups[room_id]['aperture_groups'] = grouped_apertures
+            ap_groups[room_id]['display_name'] = data['display_name']
     else:
         _normal_list = []
         grouped_apertures = []
@@ -352,10 +354,10 @@ def cluster_output(ap_groups, room_apertures, room_based=True):
     group_names = []
     group_dict = {}
     if room_based:
-        for room_id, groups in ap_groups.items():
-            for idx, group in enumerate(groups):
+        for room_id, data in ap_groups.items():
+            for idx, group in enumerate(data['aperture_groups']):
                 ap_ids = [ap.identifier for ap in group]
-                group_name = '{}_ApertureGroup_{}'.format(room_id, idx)
+                group_name = '{}_ApertureGroup_{}'.format(data['display_name'], idx)
                 group_names.append(
                     {'identifier': group_name, 'apertures': ap_ids}
                 )

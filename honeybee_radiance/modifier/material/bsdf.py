@@ -83,7 +83,7 @@ class BSDF(aBSDF):
         self.thickness = thickness or 0
         aBSDF.__init__(self, bsdf_file, identifier, up_orientation, modifier, 
                  function_file, transform, angle_basis, dependencies)
-        
+
     def _update_values(self):
         "update value dictionaries."
         n_path = os.path.normpath(self.bsdf_file).replace('\\', '/')
