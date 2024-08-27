@@ -3,6 +3,7 @@ import click
 import sys
 import logging
 import os
+import shutil
 import json
 
 from ladybug.wea import Wea
@@ -43,6 +44,8 @@ def study_info(wea, timestep, folder, name):
         is_wea = True if first_word == 'place' else False
         if not is_wea:
             _wea_file = os.path.join(os.path.dirname(wea), 'epw_to_wea.wea')
+            if os.path.splitext(wea)[-1] != '.epw':
+                wea = shutil.copyfile(wea, os.path.splitext(wea)[0] + '.epw')
             wea = Wea.from_epw_file(wea).write(_wea_file)
         wea = Wea.from_file(wea, timestep=timestep)
         study_info['timestep'] = timestep
