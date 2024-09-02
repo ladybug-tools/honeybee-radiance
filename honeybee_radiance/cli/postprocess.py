@@ -1142,7 +1142,7 @@ def leed_daylight_option_two_vis(output_folder):
 def abnt_nbr_15575_daylight_vis(output_folder):
     """Write four visualization metadata files for ABNT NBR 15575."""
     ill_lpar = LegendParameters(min=48, max=1000, colors=Colorset.ecotect(),
-                                title='Iluminancia')
+                                title='Iluminância')
 
     metric_info_dict = {
         '4_930AM': {
