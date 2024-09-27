@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from ladybug_geometry.geometry3d.mesh import Mesh3D
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
+from honeybee.typing import clean_rad_string
 
 from honeybee_radiance.config import folders
 from honeybee_radiance.sensorgrid import SensorGrid
@@ -225,16 +226,17 @@ def cluster_view_factor(rmse, room_apertures, apertures, threshold,
     if room_based:
         ap_groups = {}
         for room_id, _rmse in rmse.items():
+            ap_groups[room_id] = {}
             apertures = room_apertures[room_id]['apertures']
             _room_ap_groups = \
                 _agglomerative_clustering_complete(_rmse, apertures, threshold)
             # Flatten the groups. This will break the inter-cluster
             # structure, but we do not need to know that.
-            _room_ap_groups = [list(_flatten(cluster)) for cluster in _room_ap_groups]
+            grouped_apertures = [list(_flatten(cluster)) for cluster in _room_ap_groups]
             if vertical_tolerance:
                 # Check groups by vertical tolerance.
                 vertical_groups = []
-                for ap_group in _room_ap_groups:
+                for ap_group in grouped_apertures:
                     vert_dist_matrix = []
                     for ap_1 in ap_group:
                         vert_dist_list = []
@@ -247,8 +249,10 @@ def cluster_view_factor(rmse, room_apertures, apertures, threshold,
                     )
                     _ap_groups = [list(_flatten(cluster)) for cluster in _ap_groups]
                     vertical_groups.extend(_ap_groups)
-                _room_ap_groups = vertical_groups
-            ap_groups[room_id] = _room_ap_groups
+                grouped_apertures = vertical_groups
+
+            ap_groups[room_id]['aperture_groups'] = grouped_apertures
+            ap_groups[room_id]['display_name'] = room_apertures[room_id]['display_name']
     else:
         ap_groups = _agglomerative_clustering_complete(rmse, apertures, threshold)
         # Flatten the groups. This will break the inter-cluster structure,
@@ -358,6 +362,7 @@ def cluster_output(ap_groups, room_apertures, room_based=True):
             for idx, group in enumerate(data['aperture_groups']):
                 ap_ids = [ap.identifier for ap in group]
                 group_name = '{}_ApertureGroup_{}'.format(data['display_name'], idx)
+                group_name = clean_rad_string(group_name)
                 group_names.append(
                     {'identifier': group_name, 'apertures': ap_ids}
                 )
@@ -367,6 +372,7 @@ def cluster_output(ap_groups, room_apertures, room_based=True):
         for idx, group in enumerate(ap_groups):
             ap_ids = [ap.identifier for ap in group]
             group_name = 'ApertureGroup_{}'.format(idx)
+            group_name = clean_rad_string(group_name)
             group_names.append(
                 {'identifier': group_name, 'apertures': ap_ids}
             )
