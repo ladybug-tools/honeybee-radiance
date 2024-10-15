@@ -17,7 +17,7 @@ def test_two_phase_command_dgp():
     output = './tests/assets/temp/screenviews.dgp'
     output_folder = './tests/assets/temp'
     cmd_args = [
-        dc_direct, dc_total, sky_mtx, view_rays, 
+        dc_direct, dc_total, sky_mtx, view_rays,
         '--output', output
     ]
 
@@ -25,6 +25,7 @@ def test_two_phase_command_dgp():
     assert result.exit_code == 0
     assert os.path.isfile(output)
     nukedir(output_folder)
+
 
 def test_two_phase_command_dgp_ga():
     runner = CliRunner()
