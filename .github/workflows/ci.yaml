@@ -21,12 +21,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: install radiance
         run: |
-          wget https://github.com/LBNL-ETA/Radiance/releases/download/947ea88a/Radiance_947ea88a_Linux.zip
-          unzip Radiance_947ea88a_Linux.zip
-          tar -xzvf radiance-5.4.947ea88a29-Linux.tar.gz
-          sudo cp -r radiance-5.4.947ea88a29-Linux/usr/local/radiance/bin/* /usr/local/bin
+          wget https://github.com/LBNL-ETA/Radiance/releases/download/rad5R4/Radiance_4ee32974_Linux.zip
+          unzip Radiance_4ee32974_Linux.zip
+          tar -xzvf radiance-5.4.4ee32974b1-Linux.tar.gz
+          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/bin/* /usr/local/bin
           sudo mkdir /usr/local/lib/ray
-          sudo cp -r radiance-5.4.947ea88a29-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
+          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
       - name: install python dependencies
         run: |
           python -m pip install --upgrade pip
