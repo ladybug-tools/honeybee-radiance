@@ -24,9 +24,11 @@ jobs:
           wget https://github.com/LBNL-ETA/Radiance/releases/download/rad5R4/Radiance_4ee32974_Linux.zip
           unzip Radiance_4ee32974_Linux.zip
           tar -xzvf radiance-5.4.4ee32974b1-Linux.tar.gz
-          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/bin/* /usr/local/bin
-          sudo mkdir /usr/local/lib/ray
-          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/lib/* /usr/local/lib/ray
+          sudo mkdir /usr/local/radiance
+          sudo mkdir /usr/local/radiance/bin
+          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/bin/* /usr/local/radiance/bin
+          sudo mkdir /usr/local/radiance/lib
+          sudo cp -r radiance-5.4.4ee32974b1-Linux/usr/local/radiance/lib/* /usr/local/radiance/lib
       - name: install python dependencies
         run: |
           python -m pip install --upgrade pip

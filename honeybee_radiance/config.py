@@ -349,7 +349,7 @@ class Folders(object):
             rad_bin_path = os.environ.get('BINPATH')
             if rad_bin_path is not None:
                 return rad_bin_path
-        
+
         if not rad_path:  # no Radiance installations were found
             return None
 

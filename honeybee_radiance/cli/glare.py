@@ -87,8 +87,8 @@ def two_phase_command(
 
         # create command.
         dcglare = Dcglare(
-            options=options, output=output, dc_direct=dc_direct, dc_total=dc_total,
-            sky_matrix=sky_mtx
+            options=options, output=output,
+            dc_direct=dc_direct, dc_total=dc_total, sky_matrix=sky_mtx
         )
 
         if dry_run:
