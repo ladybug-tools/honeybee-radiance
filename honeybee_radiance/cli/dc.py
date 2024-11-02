@@ -21,13 +21,13 @@ def dc():
 
 @dc.command('scontrib')
 @click.argument(
-    'octree', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'octree', type=click.Path(exists=True, file_okay=True)
 )
 @click.argument(
-    'sensor-grid', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'sensor-grid', type=click.Path(exists=True, file_okay=True)
 )
 @click.argument(
-    'modifiers', type=click.Path(exists=True, file_okay=True, resolve_path=True)
+    'modifiers', type=click.Path(exists=True, file_okay=True)
 )
 @click.option(
     '--sensor-count', type=click.INT, show_default=True,
@@ -118,12 +118,15 @@ def rcontrib_command_with_postprocess(
         else:
             options.update_from_string('-aa 0.0 -V+ -y {}'.format(sensor_count))
 
-        options.M = modifiers
-        # create command.
-        rcontrib = Rcontrib(
-            options=options, octree=octree, sensors=sensor_grid
-        )
-        cmd = rcontrib.to_radiance().replace('\\', '/')
+        modifiers = os.path.relpath(modifiers)
+        if modifiers.startswith('..'):
+            pass
+        else:
+            modifiers = f'./{modifiers}'
+        cmd = 'rcontrib {options} -M {modifiers} {octree} < {sensor_grid}'.format(
+            options=options.to_radiance(),
+            modifiers=modifiers, octree=octree, sensor_grid=sensor_grid)
+        cmd = cmd.replace("\\", "/")
 
         if conversion and conversion.strip():
             if multiply_by != 1:
