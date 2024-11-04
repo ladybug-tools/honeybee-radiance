@@ -535,6 +535,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
                     inputs=scene_files_direct_sun)
         cmd.options.f = True
         cmd.options.r = OCTREE_RES
+
         commands.append(cmd)
 
         info['octree_direct_sun'] = '%s.oct' % octree_direct_sun_name

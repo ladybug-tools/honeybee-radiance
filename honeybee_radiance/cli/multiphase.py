@@ -543,7 +543,7 @@ def dmtx_group_command(
 @click.option(
     '--sun-path',
     type=click.Path(
-        exists=True, file_okay=True, dir_okay=False, resolve_path=True),
+        exists=True, file_okay=True, dir_okay=False, resolve_path=False),
     default=None, show_default=True,
     help='Path for a sun-path file that will be added to octrees for direct '
     'sunlight studies. If sunpath is provided an extra octree for direct_sun '
@@ -663,7 +663,7 @@ def prepare_multiphase_command(
         for study, states in scene_mapping.items():
             if study == 'two_phase':
                 grid_info_dict = {}
-                
+
                 if not os.path.isdir(grid_folder):
                     os.mkdir(grid_folder)
 
