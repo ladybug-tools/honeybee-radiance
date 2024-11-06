@@ -7,7 +7,7 @@ import json
 
 from honeybee_radiance_command.dctimestep import Dctimestep, DctimestepOptions
 from honeybee_radiance_command.rmtxop import Rmtxop, RmtxopOptions
-from honeybee_radiance_command.getinfo import Getinfo, GetinfoOptions
+from honeybee_radiance_command.getinfo import Getinfo
 from honeybee_radiance.config import folders
 from honeybee_radiance_command._command_util import run_command
 
@@ -225,9 +225,9 @@ def three_phase_combinations(
                             identifier='%s..%s' % (
                                 grid['full_id'], info['identifier']
                             ),
-                            light_path = apt,
-                            grid_id = grid['full_id'],
-                            state_id = info['identifier'],
+                            light_path=apt,
+                            grid_id=grid['full_id'],
+                            state_id=info['identifier'],
                             tmtx=info['tmtx'],
                             vmtx=vmtx,
                             dmtx=dmtx

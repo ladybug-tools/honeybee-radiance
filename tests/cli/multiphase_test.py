@@ -1,11 +1,14 @@
 """Test cli multiphase module."""
 import os
-
+import json
 from click.testing import CliRunner
 
 from ladybug.futil import nukedir
+from ladybug.commandutil import run_command_function
+from honeybee.model import Model
 
-from honeybee_radiance.cli.multiphase import view_matrix_command, flux_transfer_command 
+from honeybee_radiance.cli.multiphase import view_matrix_command, \
+    flux_transfer_command, aperture_group_cli, aperture_group
 
 
 def test_view_matrix_command():
@@ -48,3 +51,25 @@ def test_flux_transfer_command():
     assert os.path.isfile(output)
     assert os.path.getsize(output) > 0
     nukedir(output_folder)
+
+
+def test_aperture_group_cli():
+    runner = CliRunner()
+    input_model = './tests/assets/model/two_rooms_no_grids.hbjson'
+    output_folder = './tests/assets/multi_phase/test_aperture_group'
+    result = runner.invoke(
+        aperture_group_cli, [input_model, '--output-folder', output_folder])
+    assert result.exit_code == 0
+    model_dict = json.loads(result.output)
+    new_model = Model.from_dict(model_dict)
+    assert len(new_model.properties.radiance.dynamic_subface_groups) == 7
+    nukedir(output_folder)
+
+
+def test_aperture_group():
+    input_model = './tests/assets/model/two_rooms_no_grids.hbjson'
+    cmd_args = [input_model]
+    model_str = run_command_function(aperture_group, cmd_args)
+    model_dict = json.loads(model_str)
+    new_model = Model.from_dict(model_dict)
+    assert len(new_model.properties.radiance.dynamic_subface_groups) == 7

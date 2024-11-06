@@ -9,13 +9,16 @@ import subprocess
 from collections import OrderedDict
 import click
 
+from ladybug_geometry.geometry3d.mesh import Mesh3D
+from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
 from honeybee.aperture import Aperture
 from honeybee.boundarycondition import Outdoors
-from ladybug_geometry.geometry3d.mesh import Mesh3D
+from honeybee.config import folders as hb_folders
 from honeybee_radiance_folder import ModelFolder
 from honeybee_radiance_folder.gridutil import redistribute_sensors
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
+from honeybee_radiance_command.oconv import Oconv
 
 from honeybee_radiance.config import folders
 from honeybee_radiance.reader import sensor_count_from_file
@@ -39,7 +42,9 @@ _logger = logging.getLogger(__name__)
 def multi_phase():
     pass
 
+
 multi_phase.add_command(three_phase)
+
 
 @multi_phase.command("view-matrix")
 @click.argument(
@@ -127,7 +132,7 @@ def view_matrix_command(
             if not os.path.isdir(parent):
                 os.mkdir(parent)
 
-        if options.o.value != None:
+        if options.o.value is not None:
             parent = os.path.dirname(options.o.value)
             if not os.path.isdir(parent):
                 os.mkdir(parent)
@@ -189,9 +194,9 @@ def flux_transfer_command(
     """Calculate flux transfer matrix for a sender file per receiver.
 
     This command calculates a flux transfer matrix for the given sender and receiver
-    files. This can be used to calculate a flux transfer matrix for input and output 
-    apertures on a light pipe, or a flux transfer matrix from an aperture to a 
-    discretized sky (daylight matrix). 
+    files. This can be used to calculate a flux transfer matrix for input and output
+    apertures on a light pipe, or a flux transfer matrix from an aperture to a
+    discretized sky (daylight matrix).
 
     \b
     Args:
@@ -200,7 +205,7 @@ def flux_transfer_command(
             a hemisphere sampling type. If the command is used to calculate e.g. daylight
             matrix the sender file represents an aperture or multiple apertures.
         receiver_file: Path to receiver file. The controlling parameters in the receiver
-            file must follow the form: #@rfluxmtx variable=value. At minimum it must 
+            file must follow the form: #@rfluxmtx variable=value. At minimum it must
             specify a hemisphere sampling type. If the command is used to calculate e.g.
             daylight matrix the receiver file represents the ground and sky.
         octree: Path to octree file.
@@ -250,20 +255,24 @@ def flux_transfer_command(
     "rflux_sky", type=click.Path(exists=True, file_okay=True, resolve_path=True)
 )
 @click.option(
-    "--name", help="Name of output JSON file.", show_default=True, 
+    "--name", help="Name of output JSON file.", show_default=True,
     default='dmx_aperture_groups'
 )
-@click.option("--size", "-s", type=float, default=0.2, show_default=True,
+@click.option(
+    "--size", "-s", type=float, default=0.2, show_default=True,
     help="Aperture grid size. A lower number will give a finer grid and more accurate"
     " results but the calculation time will increase.")
-@click.option("--threshold", "-t", type=float, default=0.001, show_default=True,
+@click.option(
+    "--threshold", "-t", type=float, default=0.001, show_default=True,
     help="A number that determines if two apertures/aperture groups can be clustered. A"
     " higher number is more accurate but will also increase the number of aperture groups.")
-@click.option("--ambient-division", "-ad", type=int, default=1000, show_default=True,
+@click.option(
+    "--ambient-division", "-ad", type=int, default=1000, show_default=True,
     help="Number of ambient divisions (-ad) for view factor calculation in rfluxmtx."
     " Increasing the number will give more accurate results but also increase the"
     " calculation time.")
-@click.option("--output-folder", help="Output folder into which the files be written.", 
+@click.option(
+    "--output-folder", help="Output folder into which the files be written.",
     default="dmtx_aperture_groups", show_default=True)
 def dmtx_group_command(
     folder,
@@ -377,9 +386,10 @@ def dmtx_group_command(
 
         return ap_groups
 
-    def _aperture_view_factor(project_folder, apertures, size=0.2, ambient_division=1000,
-                            receiver='rflux_sky.sky', octree='scene.oct',
-                            calc_folder='dmtx_aperture_grouping'):
+    def _aperture_view_factor(
+            project_folder, apertures, size=0.2, ambient_division=1000,
+            receiver='rflux_sky.sky', octree='scene.oct',
+            calc_folder='dmtx_aperture_grouping'):
         """Calculates the view factor for each aperture by sensor points."""
 
         # Instantiate dictionary that will store the sensor count for each aperture. We need
@@ -758,36 +768,45 @@ def prepare_multiphase_command(
     help='Path to rflux sky file. The rflux sky file will be created if no file '
     'is provided.', default=None
 )
-@click.option('--size', '-s', type=float, default=0.2, show_default=True,
+@click.option(
+    '--size', '-s', type=float, default=0.2, show_default=True,
     help='Aperture grid size. A lower number will give a finer grid and more accurate '
     'results but the calculation time will increase.')
-@click.option('--threshold', '-t', type=float, default=0.001, show_default=True,
+@click.option(
+    '--threshold', '-t', type=float, default=0.001, show_default=True,
     help='A number that determines if two apertures/aperture groups can be clustered. A '
     'lower number is more accurate but will also increase the number of aperture groups.')
-@click.option('--ambient-division', '-ad', type=int, default=1000, show_default=True,
+@click.option(
+    '--ambient-division', '-ad', type=int, default=1000, show_default=True,
     help='Number of ambient divisions (-ad) for view factor calculation in rfluxmtx. '
     'Increasing the number will give more accurate results but also increase the '
     'calculation time.')
-@click.option('--room-based/--no-room-based', '-rb/-nrb', help='Flag to note '
+@click.option(
+    '--room-based/--no-room-based', '-rb/-nrb', help='Flag to note '
     'whether the apertures should be grouped on a room basis. If grouped on a room '
     'basis apertures from different room cannot be in the same group.',
     default=True, show_default=True)
-@click.option('--view-factor/--orientation', '-vf/-or', help='Flag to note '
+@click.option(
+    '--view-factor/--orientation', '-vf/-or', help='Flag to note '
     'whether the apertures should be grouped by calculating view factors for '
     'the apertures to a discretized sky or simply by the normal orientation of '
     'the apertures.',
     default=True, show_default=True)
-@click.option('--vertical-tolerance', '-vt', type=click.FLOAT, default=None,
+@click.option(
+    '--vertical-tolerance', '-vt', type=click.FLOAT, default=None,
     show_default=True, help='A float value for vertical tolerance between two '
     'apertures. If the vertical distance between two apertures is larger than '
     'this tolerance the apertures cannot be grouped. If no value is given the '
     'vertical grouping will be skipped.')
-@click.option('--output-folder', help='Output folder into which the files be written.',
-    default='aperture_groups', show_default=True)
-@click.option('--output-model', help='Optional name of output HBJSON file as a string. '
-    'If no name is provided the update Model with dynamic group identifiers will be '
-    'written to a HBJSON file.', default=None, show_default=True, type=click.STRING)
-def aperture_group_command(
+@click.option(
+    '--output-folder', help='Output folder into which the files be written.',
+    default='.', show_default=True,
+    type=click.Path(file_okay=False, dir_okay=True, resolve_path=True))
+@click.option(
+    '--output-model', help='Optional file to output the string of the model '
+    'with aperture groups assigned. By default, it will be printed out to stdout.',
+    type=click.File('w'), default='-', show_default=True)
+def aperture_group_cli(
     model_file, octree, rflux_sky, size, threshold, ambient_division,
     room_based, view_factor, vertical_tolerance, output_folder, output_model
 ):
@@ -802,97 +821,170 @@ def aperture_group_command(
         model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
     """
     try:
-        model = Model.from_file(model_file)
-        if not octree:
-            cmds = [
-                'honeybee-radiance', 'translate', 'model-to-rad-folder',
-                model_file, '--minimal'
-            ]
-            use_shell = True if os.name == 'nt' else False
-            subprocess.run(cmds, shell=use_shell)
+        # process all of the CLI input so that it can be passed to the function
+        no_room_based = not room_based
+        orientation = not view_factor
 
-            octree = 'scene.oct'
-            cmds = [
-                'honeybee-radiance', 'octree', 'from-folder', 'model',
-                '--output', octree, '--exclude-aperture',
-                '--exclude-groups'
-            ]
-            subprocess.run(cmds, shell=use_shell)
-        if not rflux_sky:
-            rflux_sky = SkyDome()
-            rflux_sky = rflux_sky.to_file(folder='.', name='rflux_sky.sky')
-
-        apertures = []
-        room_apertures = {}
-        # Get all room-based apertures with Outdoors boundary condition.
-        for room in model.rooms:
-            for face in room.faces:
-                for ap in face.apertures:
-                    if isinstance(ap.boundary_condition, Outdoors):
-                        apertures.append(ap)
-                        if not room.identifier in room_apertures:
-                            room_apertures[room.identifier] = {}
-                        if not 'apertures' in room_apertures[room.identifier]:
-                            room_apertures[room.identifier]['apertures'] = \
-                                [ap]
-                        else:
-                            room_apertures[room.identifier]['apertures'].append(ap)
-                        if not 'display_name' in room_apertures[room.identifier]:
-                            room_apertures[room.identifier]['display_name'] = \
-                                room.display_name
-
-        assert len(apertures) != 0, \
-            'Found no Honeybee Apertures. There should at least be one Aperture ' \
-            'in your model.'
-
-        if view_factor:
-            # Calculate view factor.
-            mtx_file, ap_dict = aperture_view_factor(
-                '.', apertures, size=size, ambient_division=ambient_division,
-                receiver=rflux_sky, octree=octree, calc_folder=output_folder
-            )
-            rmse = aperture_view_factor_postprocess(
-                mtx_file, ap_dict, room_apertures, room_based
-            )
-
-        if view_factor:
-            ap_groups = cluster_view_factor(
-                rmse, room_apertures, threshold, room_based, vertical_tolerance)
-        else:
-            ap_groups = cluster_orientation(
-                room_apertures, apertures, room_based, vertical_tolerance
-            )
-
-        group_names, group_dict = \
-            cluster_output(ap_groups, room_apertures, room_based)
-
-        # Write aperture groups to JSON file.
-        dyn_gr = os.path.join('.', output_folder, 'aperture_groups.json')
-        with open(dyn_gr, 'w') as fp:
-            json.dump(group_names, fp, indent=2)
-
-        # Write dynamic group identifiers to JSON file.
-        dyn_gr_ids = os.path.join('.', output_folder, 'dynamic_group_identifiers.json')
-        with open(dyn_gr_ids, 'w') as fp:
-            json.dump(group_dict, fp, indent=2)
-
-        # Set the dynamic group identifier and write a new HBJSON.
-        if output_model:
-            for room in model.rooms:
-                for face in room.faces:
-                    for ap in face.apertures:
-                        if isinstance(ap.boundary_condition, Outdoors):
-                            dyn_group_id = group_dict[ap.identifier]
-                            ap.properties.radiance.dynamic_group_identifier = \
-                                dyn_group_id
-            model.to_hbjson(name=output_model, folder='.')
-
+        # pass the input to the function
+        aperture_group(model_file, octree, rflux_sky, size, threshold, ambient_division,
+                       no_room_based, orientation, vertical_tolerance,
+                       output_folder, output_model)
     except Exception:
         _logger.exception("Failed to run aperture-group command.")
         traceback.print_exc()
         sys.exit(1)
     else:
         sys.exit(0)
+
+
+def aperture_group(
+    model_file, octree=None, rflux_sky=None,
+    size=0.2, threshold=0.001, ambient_division=1000,
+    no_room_based=False, orientation=False, vertical_tolerance=None,
+    output_folder=None, output_model=None,
+    room_based=True, view_factor=True
+):
+    """Automatically calculate aperture groups for exterior apertures.
+
+    This function calculates view factor from apertures to sky patches (rfluxmtx). Each
+    aperture is represented by a sensor grid, and the view factor for the whole aperture
+    is the average of the grid. The apertures are grouped based on the threshold.
+
+    Args:
+        model_file: Full path to a Model JSON file (HBJSON) or a Model pkl (HBpkl) file.
+        octree: Path to octree file. The octree will be created from the model
+            file if no file is provided.
+        rflux_sky: Path to rflux sky file. The rflux sky file will be created
+            if no file is provided.
+        size: Aperture grid size. A lower number will give a finer grid and more
+            accurate results but the calculation time will increase. (Default: 0.2).
+        threshold: A number that determines if two apertures/aperture groups can
+            be clustered. A lower number is more accurate but will also increase
+            the number of aperture groups. (Default: 0.001).
+        ambient_division: Number of ambient divisions (-ad) for view factor
+            calculation in rfluxmtx. Increasing the number will give more accurate
+            results but also increase the calculation time. (Default: 1000).
+        no_room_based: Boolean to note whether the apertures should be grouped
+            on a room basis. If grouped on a room basis apertures from different
+            room cannot be in the same group. (Default: False).
+        orientation: Boolean to note whether the apertures should be grouped by
+            calculating view factors for the apertures to a discretized sky or
+            simply by the normal orientation of the apertures. (Default: False).
+        vertical_tolerance: A float value for vertical tolerance between two apertures.
+            If the vertical distance between two apertures is larger than this
+            tolerance the apertures cannot be grouped. If None, the vertical
+            grouping will be skipped. (Default: None).
+        output_folder: Output folder into which the files be written. If None,
+            the files will be written into a folder called aperture_groups
+            within the default simulation folder.
+        output_model: Optional file to output the JSON string of the Model with
+            aperture groups set. If None, the string will simply be returned from
+            this method.
+    """
+    # serialize the model, set the output folder, and process simpler attributes
+    model = Model.from_file(model_file)
+    if output_folder is None:
+        output_folder = os.path.join(hb_folders.default_simulation_folder,
+                                     'aperture_groups')
+    if not os.path.isdir(output_folder):
+        os.makedirs(output_folder)
+    room_based = not no_room_based
+    view_factor = not orientation
+
+    # Get all room-based apertures with Outdoors boundary condition
+    apertures = []
+    room_apertures = {}
+    for room in model.rooms:
+        for face in room.faces:
+            for ap in face.apertures:
+                if isinstance(ap.boundary_condition, Outdoors):
+                    apertures.append(ap)
+                    if room.identifier not in room_apertures:
+                        room_apertures[room.identifier] = {}
+                    if 'apertures' not in room_apertures[room.identifier]:
+                        room_apertures[room.identifier]['apertures'] = \
+                            [ap]
+                    else:
+                        room_apertures[room.identifier]['apertures'].append(ap)
+                    if 'display_name' not in room_apertures[room.identifier]:
+                        room_apertures[room.identifier]['display_name'] = \
+                            room.display_name
+
+    assert len(apertures) != 0, \
+        'Found no Honeybee Apertures. There should at least be one Aperture ' \
+        'in the model to compute aperture groups.'
+
+    if view_factor:
+        if not octree:
+            # write octree
+            model_content, modifier_content = model.to.rad(model, minimal=True)
+            scene_file, mat_file = 'scene.rad', 'scene.mat'
+            write_to_file_by_name(output_folder, scene_file, model_content)
+            write_to_file_by_name(output_folder, mat_file, modifier_content)
+            octree = 'scene.oct'
+            oconv = Oconv(inputs=[mat_file, scene_file], output=octree)
+            oconv.options.f = True
+
+            # run Oconv command
+            env = None
+            if folders.env != {}:
+                env = folders.env
+            env = dict(os.environ, **env) if env else None
+            oconv.run(env, cwd=output_folder)
+
+        if not rflux_sky:
+            rflux_sky = SkyDome()
+            rflux_sky = rflux_sky.to_file(output_folder, name='rflux_sky.sky')
+
+        # Calculate view factor.
+        mtx_file, ap_dict = aperture_view_factor(
+            output_folder, apertures, size=size, ambient_division=ambient_division,
+            receiver=rflux_sky, octree=octree, calc_folder=output_folder
+        )
+        rmse = aperture_view_factor_postprocess(
+            mtx_file, ap_dict, room_apertures, room_based
+        )
+
+    # cluster apertures into groups
+    if view_factor:
+        ap_groups = cluster_view_factor(
+            rmse, room_apertures, apertures, threshold, room_based, vertical_tolerance)
+    else:
+        ap_groups = cluster_orientation(
+            room_apertures, apertures, room_based, vertical_tolerance
+        )
+
+    # process clusters
+    group_names, group_dict = \
+        cluster_output(ap_groups, room_apertures, room_based)
+
+    # Write aperture groups to JSON file.
+    dyn_gr = os.path.join(output_folder, 'aperture_groups.json')
+    with open(dyn_gr, 'w') as fp:
+        json.dump(group_names, fp, indent=2)
+
+    # Write dynamic group identifiers to JSON file.
+    dyn_gr_ids = os.path.join(output_folder, 'dynamic_group_identifiers.json')
+    with open(dyn_gr_ids, 'w') as fp:
+        json.dump(group_dict, fp, indent=2)
+
+    # Set the dynamic group identifier
+    for room in model.rooms:
+        for face in room.faces:
+            for ap in face.apertures:
+                if isinstance(ap.boundary_condition, Outdoors):
+                    dyn_group_id = group_dict[ap.identifier]
+                    ap.properties.radiance.dynamic_group_identifier = \
+                        dyn_group_id
+
+    # return the more with the dynamic groups
+    if output_model is None:
+        return json.dumps(model.to_dict())
+    elif isinstance(output_model, str):
+        with open(output_model, 'w') as of:
+            of.write(json.dumps(model.to_dict()))
+    else:
+        output_model.write(json.dumps(model.to_dict()))
 
 
 @multi_phase.command('add-aperture-group-blinds')
@@ -922,7 +1014,8 @@ def aperture_group_command(
     'aperture.',
     default=1.001, type=float, show_default=True
 )
-@click.option('--output-model', help='Optional name of output HBJSON file as a '
+@click.option(
+    '--output-model', help='Optional name of output HBJSON file as a '
     'string. If no name is provided the name will be the identifier of the '
     'model with "blinds" as suffix.',
     default=None, show_default=True, type=click.STRING
