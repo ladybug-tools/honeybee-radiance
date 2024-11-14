@@ -5,30 +5,23 @@ import os
 import traceback
 import json
 import math
-import subprocess
 from collections import OrderedDict
 import click
 
 from ladybug_geometry.geometry3d.mesh import Mesh3D
-from ladybug.futil import write_to_file_by_name
 from honeybee.model import Model
 from honeybee.aperture import Aperture
 from honeybee.boundarycondition import Outdoors
-from honeybee.config import folders as hb_folders
 from honeybee_radiance_folder import ModelFolder
 from honeybee_radiance_folder.gridutil import redistribute_sensors
 from honeybee_radiance_command.rfluxmtx import RfluxmtxOptions, Rfluxmtx
-from honeybee_radiance_command.oconv import Oconv
 
 from honeybee_radiance.config import folders
 from honeybee_radiance.reader import sensor_count_from_file
 from honeybee_radiance.sensorgrid import SensorGrid
 from honeybee_radiance.reader import parse_from_file
 from honeybee_radiance.geometry.polygon import Polygon
-from honeybee_radiance.lightsource.sky.skydome import SkyDome
-from honeybee_radiance.dynamic.multiphase import aperture_view_factor, \
-    aperture_view_factor_postprocess, cluster_view_factor, \
-    cluster_orientation, cluster_output
+from honeybee_radiance.dynamic.multiphase import automatic_aperture_grouping
 from honeybee_radiance.dynamic import StateGeometry, RadianceSubFaceState
 from honeybee_radiance.modifier.material.trans import Trans
 
@@ -469,7 +462,9 @@ def dmtx_group_command(
                 sensor_split = sensor.strip().split()
                 if len(sensor_split) % 3 == 0:
                     one_channel = sensor_split[::3]
-                    convert_to_vf = lambda x: float(x) / math.pi
+
+                    def convert_to_vf(x):
+                        return float(x) / math.pi
                     view_factor.append(list(map(convert_to_vf, one_channel)))
 
         ap_view_factor = []
@@ -881,101 +876,15 @@ def aperture_group(
             aperture groups set. If None, the string will simply be returned from
             this method.
     """
-    # serialize the model, set the output folder, and process simpler attributes
+    # serialize the model and process simpler attributes
     model = Model.from_file(model_file)
-    if output_folder is None:
-        output_folder = os.path.join(hb_folders.default_simulation_folder,
-                                     'aperture_groups')
-    if not os.path.isdir(output_folder):
-        os.makedirs(output_folder)
     room_based = not no_room_based
     view_factor = not orientation
 
-    # Get all room-based apertures with Outdoors boundary condition
-    apertures = []
-    room_apertures = {}
-    for room in model.rooms:
-        for face in room.faces:
-            for ap in face.apertures:
-                if isinstance(ap.boundary_condition, Outdoors):
-                    apertures.append(ap)
-                    if room.identifier not in room_apertures:
-                        room_apertures[room.identifier] = {}
-                    if 'apertures' not in room_apertures[room.identifier]:
-                        room_apertures[room.identifier]['apertures'] = \
-                            [ap]
-                    else:
-                        room_apertures[room.identifier]['apertures'].append(ap)
-                    if 'display_name' not in room_apertures[room.identifier]:
-                        room_apertures[room.identifier]['display_name'] = \
-                            room.display_name
-
-    assert len(apertures) != 0, \
-        'Found no Honeybee Apertures. There should at least be one Aperture ' \
-        'in the model to compute aperture groups.'
-
-    if view_factor:
-        if not octree:
-            # write octree
-            model_content, modifier_content = model.to.rad(model, minimal=True)
-            scene_file, mat_file = 'scene.rad', 'scene.mat'
-            write_to_file_by_name(output_folder, scene_file, model_content)
-            write_to_file_by_name(output_folder, mat_file, modifier_content)
-            octree = 'scene.oct'
-            oconv = Oconv(inputs=[mat_file, scene_file], output=octree)
-            oconv.options.f = True
-
-            # run Oconv command
-            env = None
-            if folders.env != {}:
-                env = folders.env
-            env = dict(os.environ, **env) if env else None
-            oconv.run(env, cwd=output_folder)
-
-        if not rflux_sky:
-            rflux_sky = SkyDome()
-            rflux_sky = rflux_sky.to_file(output_folder, name='rflux_sky.sky')
-
-        # Calculate view factor.
-        mtx_file, ap_dict = aperture_view_factor(
-            output_folder, apertures, size=size, ambient_division=ambient_division,
-            receiver=rflux_sky, octree=octree, calc_folder=output_folder
-        )
-        rmse = aperture_view_factor_postprocess(
-            mtx_file, ap_dict, room_apertures, room_based
-        )
-
-    # cluster apertures into groups
-    if view_factor:
-        ap_groups = cluster_view_factor(
-            rmse, room_apertures, apertures, threshold, room_based, vertical_tolerance)
-    else:
-        ap_groups = cluster_orientation(
-            room_apertures, apertures, room_based, vertical_tolerance
-        )
-
-    # process clusters
-    group_names, group_dict = \
-        cluster_output(ap_groups, room_apertures, room_based)
-
-    # Write aperture groups to JSON file.
-    dyn_gr = os.path.join(output_folder, 'aperture_groups.json')
-    with open(dyn_gr, 'w') as fp:
-        json.dump(group_names, fp, indent=2)
-
-    # Write dynamic group identifiers to JSON file.
-    dyn_gr_ids = os.path.join(output_folder, 'dynamic_group_identifiers.json')
-    with open(dyn_gr_ids, 'w') as fp:
-        json.dump(group_dict, fp, indent=2)
-
-    # Set the dynamic group identifier
-    for room in model.rooms:
-        for face in room.faces:
-            for ap in face.apertures:
-                if isinstance(ap.boundary_condition, Outdoors):
-                    dyn_group_id = group_dict[ap.identifier]
-                    ap.properties.radiance.dynamic_group_identifier = \
-                        dyn_group_id
+    # perform the automatic aperture grouping
+    model = automatic_aperture_grouping(
+        model, octree, rflux_sky, size, threshold, ambient_division,
+        room_based, view_factor, vertical_tolerance, working_folder=output_folder)
 
     # return the more with the dynamic groups
     if output_model is None:
