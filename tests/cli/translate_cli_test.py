@@ -7,8 +7,8 @@ from click.testing import CliRunner
 from ladybug.futil import nukedir
 
 from honeybee_radiance.cli.translate import (
-    model_to_rad_folder,
-    model_to_rad,
+    model_to_rad_folder_cli,
+    model_to_rad_cli,
     modifier_to_rad,
     modifier_from_rad,
     model_radiant_enclosure_info,
@@ -20,7 +20,7 @@ def test_model_to_rad_folder():
     input_hb_model = "./tests/assets/model/model_radiance_dynamic_states.hbjson"
     output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    result = runner.invoke(model_to_rad_folder_cli, [input_hb_model])
     assert result.exit_code == 0
     assert os.path.isdir(output_hb_model)
     nukedir(output_hb_model, True)
@@ -31,7 +31,7 @@ def test_rfluxmtx_control_params():
     input_hb_model = "./tests/assets/model/room_w_dynamic_skylight.hbjson"
     output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    result = runner.invoke(model_to_rad_folder_cli, [input_hb_model])
     assert result.exit_code == 0
     assert os.path.isdir(output_hb_model)
     skylight_file = os.path.join(output_hb_model, 'aperture_group', 'skylight..mtx.rad')
@@ -48,7 +48,7 @@ def test_model_to_rad_folder_joined_grid():
     input_hb_model = "./tests/assets/model/two_rooms_same_grid_identifier.hbjson"
     output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    result = runner.invoke(model_to_rad_folder_cli, [input_hb_model])
     assert result.exit_code == 0
     assert os.path.isdir(output_hb_model)
 
@@ -67,7 +67,7 @@ def test_model_to_rad_folder_model_grid_info():
     input_hb_model = "./tests/assets/model/dup_grid_id.hbjson"
     output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model])
+    result = runner.invoke(model_to_rad_folder_cli, [input_hb_model])
     assert result.exit_code == 0
     assert os.path.isdir(output_hb_model)
 
@@ -138,7 +138,7 @@ def test_model_to_rad_folder_no_grids():
     input_hb_model = "./tests/assets/model/two_rooms_no_grids.hbjson"
     output_hb_model = "./tests/assets/model/model"
 
-    result = runner.invoke(model_to_rad_folder, [input_hb_model, "--grid-check"])
+    result = runner.invoke(model_to_rad_folder_cli, [input_hb_model, "--grid-check"])
     assert result.exit_code == 1
     nukedir(output_hb_model, True)
 
@@ -149,7 +149,7 @@ def test_model_to_rad_folder_grid_filter():
     output_hb_model = "./tests/assets/temp/model"
 
     result = runner.invoke(
-        model_to_rad_folder,
+        model_to_rad_folder_cli,
         [input_hb_model, "--folder", output_hb_model, "-g", "?pertures/*"],
     )
     assert result.exit_code == 0
@@ -168,9 +168,9 @@ def test_model_to_rad_folder_grid_filter_full_match():
     output_hb_model = "./tests/assets/temp/model"
 
     result = runner.invoke(
-        model_to_rad_folder,
+        model_to_rad_folder_cli,
         [input_hb_model, "--folder", output_hb_model, "-g", "Room_1", "-g", "Room_6",
-        "--full-match"],
+         "--full-match"]
     )
     assert result.exit_code == 0
     assert os.path.isdir(os.path.join(output_hb_model, "model"))
@@ -186,12 +186,12 @@ def test_model_to_rad():
     runner = CliRunner()
     input_hb_model = "./tests/assets/model/model_complete_multiroom_radiance.hbjson"
 
-    result = runner.invoke(model_to_rad, [input_hb_model])
+    result = runner.invoke(model_to_rad_cli, [input_hb_model])
     assert result.exit_code == 0
 
     output_hb_model = "./tests/assets/model/model_complete_multiroom_radiance.rad"
     result = runner.invoke(
-        model_to_rad, [input_hb_model, "--output-file", output_hb_model]
+        model_to_rad_cli, [input_hb_model, "--output-file", output_hb_model]
     )
     assert result.exit_code == 0
     assert os.path.isfile(output_hb_model)
