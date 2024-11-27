@@ -556,6 +556,58 @@ class ModelRadianceProperties(object):
         sensor_grid.display_name = grid_name
         return sensor_grid
 
+    def check_for_extension(self, raise_exception=True, detailed=False):
+        """Check that the Model is valid for Radiance simulation.
+
+        This process includes all relevant honeybee-core checks as well as checks
+        that apply only for Radiance.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any errors are found. If False, this method will simply
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        msgs = []
+        tol = self.host.tolerance
+        ang_tol = self.host.angle_tolerance
+
+        # perform checks for duplicate identifiers, which might mess with other checks
+        msgs.append(self.host.check_all_duplicate_identifiers(False, detailed))
+
+        # perform several checks for the Honeybee schema geometry rules
+        msgs.append(self.host.check_planar(tol, False, detailed))
+        msgs.append(self.host.check_self_intersecting(tol, False, detailed))
+        msgs.append(self.host.check_degenerate_rooms(tol, False, detailed))
+
+        # perform geometry checks related to parent-child relationships
+        msgs.append(self.host.check_sub_faces_valid(tol, ang_tol, False, detailed))
+        msgs.append(self.host.check_sub_faces_overlapping(tol, False, detailed))
+        msgs.append(self.host.check_rooms_solid(tol, ang_tol, False, detailed))
+
+        # perform checks that are specific to Radiance
+        msgs.append(self.check_duplicate_modifier_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_modifier_set_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sensor_grid_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_view_identifiers(False, detailed))
+        msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
+        msgs.append(self.check_view_rooms_in_model(False, detailed))
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
     def check_all(self, raise_exception=True, detailed=False):
         """Check all of the aspects of the Model radiance properties.
 
