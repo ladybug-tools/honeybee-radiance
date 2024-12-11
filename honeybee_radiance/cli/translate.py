@@ -6,6 +6,7 @@ import logging
 import json
 import zipfile
 
+from ladybug.commandutil import process_content_to_output
 from honeybee_radiance.reader import string_to_dicts
 from honeybee_radiance.mutil import dict_to_modifier, modifier_class_from_type_string
 
@@ -224,9 +225,7 @@ def model_to_rad(model_file, blk=False, minimal=False, output_file=None, maximal
     rad_str = '\n\n'.join(rad_str_list)
 
     # write out the rad string
-    if output_file is None:
-        return rad_str
-    output_file.write(rad_str)
+    return process_content_to_output(rad_str, output_file)
 
 
 @translate.command('model-radiant-enclosure-info')
