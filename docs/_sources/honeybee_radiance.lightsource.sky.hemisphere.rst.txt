@@ -1,0 +1,7 @@
+honeybee\_radiance.lightsource.sky.hemisphere module
+====================================================
+
+.. automodule:: honeybee_radiance.lightsource.sky.hemisphere
+   :members:
+   :undoc-members:
+   :show-inheritance:
