@@ -41,7 +41,6 @@ class SensorGrid(object):
         * base_geometry
         * group_identifier
         * full_identifier
-
     """
 
     __slots__ = ('_identifier', '_display_name', '_sensors', '_room_identifier',
@@ -312,6 +311,43 @@ class SensorGrid(object):
                 sensors.append(Sensor.from_raw_values(*l.split()))
 
         return cls(identifier, sensors)
+
+    @classmethod
+    def from_merged_grids(cls, grids):
+        """Create a SensorGrid by merging together several SensorGrid objects.
+
+        The first SensorGrid in the input grids will be used to set global properties
+        of the result like identifiers and display_names.
+
+        Args:
+            grids: A list of SensorGrid objects to be merged together into a singe
+                resulting SensorGrid.
+        """
+        # check the inputs
+        assert len(grids) != 0, 'At least one SensorGrid is needed to use ' \
+            'SensorGrid.from_merged_grids.'
+        for grid in grids:
+            assert isinstance(grid, SensorGrid), 'Expected  SensorGrid for ' \
+                'from_merged_grids. Got {}.'.format(type(grid))
+        # merge the sensors, meshes, and base geometry together
+        sensors, meshes, base_geo = [], [], []
+        for grid in grids:
+            sensors.extend(grid.sensors)
+            if grid.mesh is not None:
+                meshes.extend(grid.mesh)
+            if grid.base_geometry is not None:
+                base_geo.extend(grid.base_geometry)
+        mesh = Mesh3D.join_meshes(meshes) if len(meshes) == len(grids) else None
+        base_geo = tuple(base_geo) if len(base_geo) != 0 else None
+        # create the new grid and set all properties based on the first one
+        new_grid = cls(grids[0].identifier, sensors)
+        new_grid.mesh = mesh
+        new_grid.base_geometry = base_geo
+        new_grid._display_name = grids[0]._display_name
+        new_grid._room_identifier = grids[0]._room_identifier
+        new_grid._group_identifier = grids[0]._group_identifier
+        new_grid._light_path = grids[0]._light_path
+        return new_grid
 
     @property
     def identifier(self):
