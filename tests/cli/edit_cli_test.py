@@ -23,7 +23,6 @@ def test_reset_resource_ids():
     assert new_con_set.identifier != old_id
 
 
-
 def test_add_room_sensors():
     runner = CliRunner()
     input_hb_model = './tests/assets/model/model_radiance_dynamic_states.hbjson'

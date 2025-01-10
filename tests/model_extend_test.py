@@ -39,7 +39,7 @@ def test_radiance_properties():
            Point3D(2, 0, 4), Point3D(4, 0, 4))
     mesh = Mesh3D(pts, [(0, 1, 2, 3), (2, 3, 4)])
     awning_1 = ShadeMesh('Awning_1', mesh)
-    
+
     model = Model('TinyHouse', [room], shade_meshes=[awning_1])
 
     assert hasattr(model.properties, 'radiance')
@@ -153,13 +153,13 @@ def check_sensor_grid_rooms_in_model():
         face.apertures_by_ratio(0.2, 0.01)
     Room.solve_adjacency([first_floor, second_floor], 0.01)
     model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor])
-    
+
     model.properties.radiance.sensor_grids = \
         [r.properties.radiance.generate_sensor_grid(1) for r in model.rooms]
 
     assert model.properties.radiance.check_sensor_grid_rooms_in_model() == ''
     assert model.properties.radiance.check_sensor_grid_rooms_in_model(False, True) == []
-    
+
     model.properties.radiance.sensor_grids[0].room_identifier = 'not_a_room'
     assert model.properties.radiance.check_sensor_grid_rooms_in_model(False) != ''
     assert model.properties.radiance.check_sensor_grid_rooms_in_model(False, True) != []
@@ -177,13 +177,13 @@ def check_view_rooms_in_model():
         face.apertures_by_ratio(0.2, 0.01)
     Room.solve_adjacency([first_floor, second_floor], 0.01)
     model = Model('Multi_Zone_Single_Family_House', [first_floor, second_floor])
-    
+
     model.properties.radiance.views = \
         [r.properties.radiance.generate_view((0, -1, 0)) for r in model.rooms]
 
     assert model.properties.radiance.check_view_rooms_in_model() == ''
     assert model.properties.radiance.check_view_rooms_in_model(False, True) == []
-    
+
     model.properties.radiance.views[0].room_identifier = 'not_a_room'
     assert model.properties.radiance.check_view_rooms_in_model(False) != ''
     assert model.properties.radiance.check_view_rooms_in_model(False, True) != []
@@ -913,3 +913,16 @@ def test_writer_to_rad_folder_sensor_grids_views():
 
     # clean up the folder
     nukedir(folder, rmdir=True)
+
+
+def test_check_duplicate_sensor_grid_identifiers():
+    """Test the check_duplicate_sensor_grid_identifiers method."""
+    input_hb_model = './tests/assets/model/duplicate_sensor_grid_model.hbjson'
+    model = Model.from_file(input_hb_model)
+
+    assert model.properties.radiance.check_duplicate_sensor_grid_identifiers(False) != ''
+    assert len(model.properties.radiance.sensor_grids) == 43
+
+    model.properties.radiance.merge_duplicate_identifier_grids()
+    assert model.properties.radiance.check_duplicate_sensor_grid_identifiers(False) == ''
+    assert len(model.properties.radiance.sensor_grids) == 1

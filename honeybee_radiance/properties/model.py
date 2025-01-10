@@ -809,6 +809,33 @@ class ModelRadianceProperties(object):
                 return msg
         return [] if detailed else ''
 
+    def merge_duplicate_identifier_grids(self):
+        """Merge SensorGrids in the Model with the same identifier together.
+
+        This is one automated way of fixing check_duplicate_sensor_grid_identifiers
+        failures. In this case, it will be assumed that the user intended to
+        make the sensor grids with the same identifier apart of the same
+        SensorGrid object. The other possible way to address SensorGrids with
+        duplicate identifiers is to give each grid a unique identifier if the
+        truly are meant to be separate.
+        """
+        # first group all grids with the same identifier
+        grid_dict = {}
+        for grid in self.sensor_grids:
+            try:
+                grid_dict[grid.identifier].append(grid)
+            except KeyError:
+                grid_dict[grid.identifier] = [grid]
+        # merge girds together if they have the same ID
+        merged_grids = []
+        for grids in grid_dict.values():
+            if len(grids) == 1:
+                merged_grids.append(grids[0])
+            else:
+                merged_grid = SensorGrid.from_merged_grids(grids)
+                merged_grids.append(merged_grid)
+        self.sensor_grids = merged_grids
+
     def apply_properties_from_dict(self, data):
         """Apply the radiance properties of a dictionary to the host Model of this object.
 
