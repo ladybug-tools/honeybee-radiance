@@ -924,13 +924,18 @@ def aperture_group(
     default=1.001, type=float, show_default=True
 )
 @click.option(
+    '--create-groups', '-cg', default=False, show_default=True, is_flag=True,
+    help='Flag to note whether aperture groups should be created if none exists.'
+)
+@click.option(
     '--output-model', help='Optional name of output HBJSON file as a '
     'string. If no name is provided the name will be the identifier of the '
     'model with "blinds" as suffix.',
     default=None, show_default=True, type=click.STRING
 )
 def add_aperture_group_blinds_command(
-    model_file, diffuse_transmission, specular_transmission, distance, scale, output_model
+    model_file, diffuse_transmission, specular_transmission, distance, scale,
+    create_groups, output_model
 ):
     """Add a state geometry to aperture groups.
 
@@ -947,17 +952,29 @@ def add_aperture_group_blinds_command(
     try:
         model: Model = Model.from_file(model_file)
 
-        unique_aperture_groups = {}
-        # first gather all apertures and group by dynamic group identifier
-        for ap in model.apertures:
-            if isinstance(ap.boundary_condition, Outdoors):
-                dgi = ap.properties.radiance.dynamic_group_identifier
-                if dgi is not None:
-                    ap.properties.radiance.remove_states()
-                    if dgi in unique_aperture_groups:
-                        unique_aperture_groups[dgi].append(ap)
-                    else:
-                        unique_aperture_groups[dgi] = [ap]
+        def get_unique_aperture_groups(model):
+            unique_aperture_groups = {}
+            for ap in model.apertures:
+                if isinstance(ap.boundary_condition, Outdoors):
+                    dgi = ap.properties.radiance.dynamic_group_identifier
+                    if dgi is not None:
+                        ap.properties.radiance.remove_states()
+                        if dgi in unique_aperture_groups:
+                            unique_aperture_groups[dgi].append(ap)
+                        else:
+                            unique_aperture_groups[dgi] = [ap]
+
+            return unique_aperture_groups
+
+        unique_aperture_groups = get_unique_aperture_groups(model)
+
+        if not unique_aperture_groups and create_groups:  # no aperture groups, create them
+            model_dict = aperture_group(model_file, no_room_based=False)
+            model = Model.from_dict(json.loads(model_dict))
+        else:
+            raise ValueError('No aperture groups found in the model.')
+
+        unique_aperture_groups = get_unique_aperture_groups(model)
 
         for apertures in unique_aperture_groups.values():
             shades = []
