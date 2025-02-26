@@ -969,8 +969,8 @@ def add_aperture_group_blinds_command(
         unique_aperture_groups = get_unique_aperture_groups(model)
 
         if not unique_aperture_groups and create_groups:  # no aperture groups, create them
-            model_dict = aperture_group(model_file, no_room_based=False)
-            model = Model.from_dict(json.loads(model_dict))
+            model = automatic_aperture_grouping(
+                model, room_based=True, view_factor_or_orientation=False)
         else:
             raise ValueError('No aperture groups found in the model.')
 
