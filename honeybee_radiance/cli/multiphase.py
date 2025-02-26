@@ -968,13 +968,20 @@ def add_aperture_group_blinds_command(
 
         unique_aperture_groups = get_unique_aperture_groups(model)
 
-        if not unique_aperture_groups and create_groups:  # no aperture groups, create them
+        if unique_aperture_groups:
+            # there are aperture groups in the model already
+            pass
+        elif not unique_aperture_groups and create_groups:  # no aperture groups, create them
             model = automatic_aperture_grouping(
                 model, room_based=True, view_factor_or_orientation=False)
+            unique_aperture_groups = get_unique_aperture_groups(model)
         else:
-            raise ValueError('No aperture groups found in the model.')
+            raise ValueError(
+                'No aperture groups found in the model. Either provide a model with aperture groups or '
+                'use the --create-groups option to calculate the aperture groups as part of this command.'
+            )
 
-        unique_aperture_groups = get_unique_aperture_groups(model)
+        
 
         for apertures in unique_aperture_groups.values():
             shades = []
