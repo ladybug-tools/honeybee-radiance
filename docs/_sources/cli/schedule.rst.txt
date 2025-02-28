@@ -1,0 +1,6 @@
+schedule
+========
+
+.. click:: honeybee_radiance.cli.schedule:schedule
+   :prog: honeybee-radiance schedule
+   :show-nested:
