@@ -65,12 +65,18 @@ def translate():
     'is set and the model has no views, an explicit error will be raised.',
     default=True, show_default=True)
 @click.option(
+    '--create-grids', '-cg', default=False, show_default=True, is_flag=True,
+    help='Flag to note whether sensor grids should be created if none exists. '
+    'This will only create sensor grids for rooms if there are no sensor grids '
+    'in the model.'
+)
+@click.option(
     '--log-file', help='Optional log file to output the path of the radiance '
     'folder generated from the model. By default this will be printed '
     'to stdout', type=click.File('w'), default='-')
 def model_to_rad_folder_cli(
         model_file, folder, view, grid, full_match, config_file, minimal,
-        no_grid_check, no_view_check, log_file):
+        no_grid_check, no_view_check, create_grids, log_file):
     """Translate a Model file into a Radiance Folder.
 
     \b
@@ -85,7 +91,7 @@ def model_to_rad_folder_cli(
         view_check = not no_view_check
         model_to_rad_folder(
             model_file, folder, view, grid, full_match, config_file,
-            minimal, grid_check, view_check, log_file)
+            minimal, grid_check, view_check, log_file, create_grids=create_grids)
     except Exception as e:
         _logger.exception('Model translation failed.\n{}'.format(e))
         sys.exit(1)
@@ -96,7 +102,8 @@ def model_to_rad_folder_cli(
 def model_to_rad_folder(
         model_file, folder=None, view=None, grid=None, full_match=False, config_file=None,
         minimal=False, grid_check=False, view_check=False, log_file=None,
-        no_full_match=True, maximal=True, no_grid_check=False, no_view_check=False):
+        no_full_match=True, maximal=True, no_grid_check=False, no_view_check=False,
+        create_grids=False):
     """Translate a Model file into a Radiance Folder.
 
     Args:
@@ -153,6 +160,25 @@ def model_to_rad_folder(
             raise ValueError('Model contains no sensor grids. These are required.')
         if view_check and len(model.properties.radiance.views) == 0:
             raise ValueError('Model contains no views These are required.')
+
+        if create_grids:
+            if not model.properties.radiance.has_sensor_grids:
+                sensor_grids = []
+                unit_conversion = {
+                    'Meters': 1,
+                    'Millimeters': 0.001,
+                    'Feet': 0.3048,
+                    'Inches': 0.0254,
+                    'Centimeters': 0.01
+                }
+                grid_size = 24 * 0.0254 / unit_conversion.get(model.units, 1)
+                offset = 30 * 0.0254 / unit_conversion.get(model.units, 1)
+                wall_offset = 12 * 0.0254 / unit_conversion.get(model.units, 1)
+                for room in model.rooms:
+                    sensor_grids.append(room.properties.radiance.generate_sensor_grid(
+                        grid_size, offset=offset, wall_offset=wall_offset))
+                model.properties.radiance.sensor_grids = sensor_grids
+                model.to_hbjson('model_grids', '.')
 
         # translate the model to a radiance folder
         rad_fold = model.to.rad_folder(
