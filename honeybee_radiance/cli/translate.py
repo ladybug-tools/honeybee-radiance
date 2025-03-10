@@ -156,10 +156,6 @@ def model_to_rad_folder(
     else:
         # re-serialize the Model and perform any checks
         model = Model.from_file(model_file)
-        if grid_check and len(model.properties.radiance.sensor_grids) == 0:
-            raise ValueError('Model contains no sensor grids. These are required.')
-        if view_check and len(model.properties.radiance.views) == 0:
-            raise ValueError('Model contains no views These are required.')
 
         if create_grids:
             if not model.properties.radiance.has_sensor_grids:
@@ -178,13 +174,20 @@ def model_to_rad_folder(
                     sensor_grids.append(room.properties.radiance.generate_sensor_grid(
                         grid_size, offset=offset, wall_offset=wall_offset))
                 model.properties.radiance.sensor_grids = sensor_grids
-                model.to_hbjson('model_grids', '.')
+
+        if grid_check and len(model.properties.radiance.sensor_grids) == 0:
+            raise ValueError('Model contains no sensor grids. These are required.')
+        if view_check and len(model.properties.radiance.views) == 0:
+            raise ValueError('Model contains no views These are required.')
 
         # translate the model to a radiance folder
         rad_fold = model.to.rad_folder(
             model, folder, config_file, minimal, views=view, grids=grid,
             full_match=full_match
         )
+
+        model.to_hbjson('output_model', '.')
+
         if log_file is None:
             return rad_fold
         else:
