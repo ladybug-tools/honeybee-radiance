@@ -160,16 +160,26 @@ def model_to_rad_folder(
         if create_grids:
             if not model.properties.radiance.has_sensor_grids:
                 sensor_grids = []
+                si_units = {'Meters', 'Millimeters', 'Centimeters'}
+                ip_units = {'Feet', 'Inches'}
+
                 unit_conversion = {
                     'Meters': 1,
                     'Millimeters': 0.001,
+                    'Centimeters': 0.01,
                     'Feet': 0.3048,
-                    'Inches': 0.0254,
-                    'Centimeters': 0.01
+                    'Inches': 0.0254
                 }
-                grid_size = 24 * 0.0254 / unit_conversion.get(model.units, 1)
-                offset = 30 * 0.0254 / unit_conversion.get(model.units, 1)
-                wall_offset = 12 * 0.0254 / unit_conversion.get(model.units, 1)
+
+                if model.units in si_units:
+                    grid_size = 0.5 / unit_conversion[model.units]
+                    offset = 0.76 / unit_conversion[model.units]
+                    wall_offset = 0.5 / unit_conversion[model.units]
+                else:  # assume IP units
+                    grid_size = 2 * 0.3048 / unit_conversion[model.units]
+                    offset = 2.5 * 0.3048 / unit_conversion[model.units]
+                    wall_offset = 1 * 0.3048 / unit_conversion[model.units]
+
                 for room in model.rooms:
                     sensor_grids.append(room.properties.radiance.generate_sensor_grid(
                         grid_size, offset=offset, wall_offset=wall_offset))
