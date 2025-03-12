@@ -5,6 +5,7 @@ import os
 import logging
 import json
 import zipfile
+import shutil
 
 from ladybug.commandutil import process_content_to_output
 from honeybee_radiance.reader import string_to_dicts
@@ -160,8 +161,6 @@ def model_to_rad_folder(
         if create_grids:
             if not model.properties.radiance.has_sensor_grids:
                 sensor_grids = []
-                si_units = {'Meters', 'Millimeters', 'Centimeters'}
-                ip_units = {'Feet', 'Inches'}
 
                 unit_conversion = {
                     'Meters': 1,
@@ -171,10 +170,10 @@ def model_to_rad_folder(
                     'Inches': 0.0254
                 }
 
-                if model.units in si_units:
+                if model.units in ['Meters', 'Millimeters', 'Centimeters']:
                     grid_size = 0.5 / unit_conversion[model.units]
                     offset = 0.76 / unit_conversion[model.units]
-                    wall_offset = 0.5 / unit_conversion[model.units]
+                    wall_offset = 0.3 / unit_conversion[model.units]
                 else:  # assume IP units
                     grid_size = 2 * 0.3048 / unit_conversion[model.units]
                     offset = 2.5 * 0.3048 / unit_conversion[model.units]
@@ -184,6 +183,10 @@ def model_to_rad_folder(
                     sensor_grids.append(room.properties.radiance.generate_sensor_grid(
                         grid_size, offset=offset, wall_offset=wall_offset))
                 model.properties.radiance.sensor_grids = sensor_grids
+                model.to_hbjson('output_model', '.')
+        else:
+            file_extension = os.path.splitext(model_file)[1]
+            shutil.copy(model_file, 'output_model' + file_extension)
 
         if grid_check and len(model.properties.radiance.sensor_grids) == 0:
             raise ValueError('Model contains no sensor grids. These are required.')
@@ -195,8 +198,6 @@ def model_to_rad_folder(
             model, folder, config_file, minimal, views=view, grids=grid,
             full_match=full_match
         )
-
-        model.to_hbjson('output_model', '.')
 
         if log_file is None:
             return rad_fold
