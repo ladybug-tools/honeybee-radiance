@@ -294,14 +294,14 @@ def cluster_orientation(room_apertures, apertures, room_based=True, vertical_tol
             ap_groups[room_id] = {}
             for ap in data['apertures']:
                 # check if normal is already in list
-                n_bools = [ap.normal.is_equivalent(n, tolerance=0.01)
+                n_bools = [ap.normal.is_equivalent(n, tolerance=0.05)
                            for n in _normal_list]
                 if not any(n_bools):
                     _normal_list.append(ap.normal)
                     # append empty list for new group
                     grouped_apertures.append([])
                 for idx, n in enumerate(_normal_list):
-                    if n.is_equivalent(ap.normal, tolerance=0.01):
+                    if n.is_equivalent(ap.normal, tolerance=0.05):
                         group_index = idx
                 grouped_apertures[group_index].append(ap)
             if vertical_tolerance:
@@ -329,14 +329,14 @@ def cluster_orientation(room_apertures, apertures, room_based=True, vertical_tol
         grouped_apertures = []
         for ap in apertures:
             # check if normal is already in list
-            n_bools = [ap.normal.is_equivalent(n, tolerance=0.01)
+            n_bools = [ap.normal.is_equivalent(n, tolerance=0.05)
                        for n in _normal_list]
             if not any(n_bools):
                 _normal_list.append(ap.normal)
                 # append empty list for new group
                 grouped_apertures.append([])
             for idx, n in enumerate(_normal_list):
-                if n.is_equivalent(ap.normal, tolerance=0.01):
+                if n.is_equivalent(ap.normal, tolerance=0.05):
                     group_index = idx
             grouped_apertures[group_index].append(ap)
         ap_groups = grouped_apertures
