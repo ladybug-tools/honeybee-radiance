@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.glass module
+=================================================
+
+.. automodule:: honeybee_radiance.modifier.material.glass
+   :members:
+   :undoc-members:
+   :show-inheritance:
