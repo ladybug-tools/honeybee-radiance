@@ -1,0 +1,7 @@
+honeybee\_radiance.properties.aperture module
+=============================================
+
+.. automodule:: honeybee_radiance.properties.aperture
+   :members:
+   :undoc-members:
+   :show-inheritance:
