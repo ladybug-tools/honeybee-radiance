@@ -160,8 +160,8 @@ def create_view_factor_modifiers(
                     mod_name = '%s_mod' % poly_id
                     mod_names.append(mod_name)
                     white_plastic.identifier = mod_name
-                    base_geo = white_plastic.identifier + ' polygon {} 0 0 9 {}'
-                    geo_str = base_geo.format(poly_id, ' '.join(coords))
+                    base_geo = white_plastic.identifier + ' polygon {} 0 0 {} {}'
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
                     geo_strs.append(geo_str)
                     mod_strs.append(white_plastic.to_radiance(True, False, False))
         else:
@@ -173,14 +173,14 @@ def create_view_factor_modifiers(
                 geo_strs.append(rad_poly.to_radiance(False, False, False))
             for shade_mesh in model.shade_meshes:
                 shade_mesh.properties.radiance.modifier = white_plastic
-                base_geo = white_plastic.identifier + ' polygon {} 0 0 9 {}'
+                base_geo = white_plastic.identifier + ' polygon {} 0 0 {} {}'
                 shd_id = shade_mesh.identifier
                 str_vertices = tuple(tuple(str(v) for v in pt.to_array())
                                     for pt in shade_mesh.vertices)
                 for fi, f_geo in enumerate(shade_mesh.faces):
                     coords = tuple(v for pt in f_geo for v in str_vertices[pt])
                     poly_id = '{}_{}'.format(shd_id, fi)
-                    geo_str = base_geo.format(poly_id, ' '.join(coords))
+                    geo_str = base_geo.format(poly_id, len(coords), ' '.join(coords))
                     geo_strs.append(geo_str)
 
         # add the ground and sky domes if requested
