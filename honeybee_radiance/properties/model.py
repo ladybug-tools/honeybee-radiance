@@ -593,8 +593,43 @@ class ModelRadianceProperties(object):
         msgs.append(self.host.check_rooms_solid(tol, ang_tol, False, detailed))
 
         # perform checks that are specific to Radiance
-        msgs.append(self.check_duplicate_modifier_identifiers(False, detailed))
-        msgs.append(self.check_duplicate_modifier_set_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_sensor_grid_identifiers(False, detailed))
+        msgs.append(self.check_duplicate_view_identifiers(False, detailed))
+        msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
+        msgs.append(self.check_view_rooms_in_model(False, detailed))
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_generic(self, raise_exception=True, detailed=False):
+        """Check generic of the aspects of the Model radiance properties.
+
+        This includes checks for everything except duplicate identifiers for
+        modifiers and modifier sets. Typically, these checks just add to the
+        validation time without providing useful information since extension
+        objects with duplicate IDs are lost during HBJSON serialization. Checks
+        for duplicate sensor grid and view IDs are still performed.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any errors are found. If False, this method will simply
+                return a text string with all errors that were found.
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        msgs = []
+        # perform checks for specific radiance simulation rules
         msgs.append(self.check_duplicate_sensor_grid_identifiers(False, detailed))
         msgs.append(self.check_duplicate_view_identifiers(False, detailed))
         msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
@@ -625,13 +660,44 @@ class ModelRadianceProperties(object):
         # set up defaults to ensure the method runs correctly
         detailed = False if raise_exception else detailed
         msgs = []
-        # perform checks for key honeybee model schema rules
+        # perform checks for duplicate identifiers
+        msgs.append(self.check_all_duplicate_identifiers(False, detailed))
+        # perform checks for specific radiance simulation rules
+        msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
+        msgs.append(self.check_view_rooms_in_model(False, detailed))
+        # output a final report of errors or raise an exception
+        full_msgs = [msg for msg in msgs if msg]
+        if detailed:
+            return [m for msg in full_msgs for m in msg]
+        full_msg = '\n'.join(full_msgs)
+        if raise_exception and len(full_msgs) != 0:
+            raise ValueError(full_msg)
+        return full_msg
+
+    def check_all_duplicate_identifiers(self, raise_exception=True, detailed=False):
+        """Check that there are no duplicate identifiers for any radiance objects.
+
+        This includes Modifiers, ModifierSets, SensorGrids, and Views.
+
+        Args:
+            raise_exception: Boolean to note whether a ValueError should be raised
+                if any duplicate identifiers are found. If False, this method will simply
+                return a text string with all errors that were found. (Default: True).
+            detailed: Boolean for whether the returned object is a detailed list of
+                dicts with error info or a string with a message. (Default: False).
+
+        Returns:
+            A text string with all errors that were found or a list if detailed is True.
+            This string (or list) will be empty if no errors were found.
+        """
+        # set up defaults to ensure the method runs correctly
+        detailed = False if raise_exception else detailed
+        msgs = []
+        # perform checks for duplicate identifiers
         msgs.append(self.check_duplicate_modifier_identifiers(False, detailed))
         msgs.append(self.check_duplicate_modifier_set_identifiers(False, detailed))
         msgs.append(self.check_duplicate_sensor_grid_identifiers(False, detailed))
         msgs.append(self.check_duplicate_view_identifiers(False, detailed))
-        msgs.append(self.check_sensor_grid_rooms_in_model(False, detailed))
-        msgs.append(self.check_view_rooms_in_model(False, detailed))
         # output a final report of errors or raise an exception
         full_msgs = [msg for msg in msgs if msg]
         if detailed:
