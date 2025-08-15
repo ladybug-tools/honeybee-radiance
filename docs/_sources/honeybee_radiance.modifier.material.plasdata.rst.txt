@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.plasdata module
+====================================================
+
+.. automodule:: honeybee_radiance.modifier.material.plasdata
+   :members:
+   :undoc-members:
+   :show-inheritance:
