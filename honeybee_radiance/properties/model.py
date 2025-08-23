@@ -46,6 +46,14 @@ class ModelRadianceProperties(object):
         * has_sensor_grids
         * has_views
     """
+    ERROR_MAP = {
+        '010001': 'check_duplicate_modifier_identifiers',
+        '010002': 'check_duplicate_modifier_set_identifiers',
+        '010003': 'check_duplicate_sensor_grid_identifiers',
+        '010004': 'check_duplicate_view_identifiers',
+        '010005': 'check_sensor_grid_rooms_in_model',
+        '010006': 'check_view_rooms_in_model'
+    }
 
     def __init__(self, host, sensor_grids=None, views=None):
         """Initialize Model radiance properties."""
