@@ -18,13 +18,20 @@ def dcglare():
 
 @dcglare.command('two-phase')
 @click.argument(
-    'dc-direct', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+    'dc-direct',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
 @click.argument(
-    'dc-total', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+    'dc-total',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
 @click.argument(
-    'sky-mtx', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
+    'sky-mtx',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
+)
 @click.argument(
-    'view-rays', type=click.Path(exists=True, dir_okay=False, resolve_path=True)
+    'view-rays',
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, resolve_path=True)
 )
 @click.option(
     '--glare-limit', '-l', type=float,
@@ -51,7 +58,8 @@ def dcglare():
     '--glare-limit (or -l) is specified.'
 )
 @click.option(
-    '--output', '-o', help='Path to output file. If a relative path is provided it '
+    '--output', '-o', default='output.dgp',
+    help='Path to output file. If a relative path is provided it '
     'should be relative to project folder.'
 )
 @click.option(
@@ -85,7 +93,10 @@ def two_phase_command(
         if occupancy_schedule:
             options.sf = occupancy_schedule
 
-        # create command.
+        # create command
+        out_dir = os.path.dirname(output)
+        if not os.path.isdir(out_dir):
+            os.makedirs(out_dir)
         dcglare = Dcglare(
             options=options, output=output,
             dc_direct=dc_direct, dc_total=dc_total, sky_matrix=sky_mtx
