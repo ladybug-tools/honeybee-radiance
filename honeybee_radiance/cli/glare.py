@@ -92,10 +92,9 @@ def two_phase_command(
             options.b = threshold_factor
         if occupancy_schedule:
             options.sf = occupancy_schedule
-
         # create command
         out_dir = os.path.dirname(output)
-        if not os.path.isdir(out_dir):
+        if out_dir and not os.path.isdir(out_dir):
             os.makedirs(out_dir)
         dcglare = Dcglare(
             options=options, output=output,
