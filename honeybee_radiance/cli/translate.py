@@ -184,6 +184,9 @@ def model_to_rad_folder(
                         grid_size, offset=offset, wall_offset=wall_offset))
                 model.properties.radiance.sensor_grids = sensor_grids
                 model.to_hbjson('output_model', '.')
+            else:
+                file_extension = os.path.splitext(model_file)[1]
+                shutil.copy(model_file, 'output_model' + file_extension)
         else:
             file_extension = os.path.splitext(model_file)[1]
             shutil.copy(model_file, 'output_model' + file_extension)
