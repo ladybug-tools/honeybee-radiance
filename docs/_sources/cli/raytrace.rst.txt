@@ -1,0 +1,6 @@
+raytrace
+========
+
+.. click:: honeybee_radiance.cli.raytrace:raytrace
+   :prog: honeybee-radiance raytrace
+   :show-nested:
