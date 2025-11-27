@@ -21,12 +21,15 @@ def study():
 @click.argument(
     'wea', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @click.argument('timestep', type=click.INT)
+@click.option(
+    '--study-type', '-st', help='Type of study, e.g., annual-daylight or annual-irradiance',
+    default='annual-daylight', show_default=True)
 @click.option('--folder', '-f', help='Output folder.', default='.', show_default=True)
 @click.option(
     '--name', '-n', help='Output file name study info.',
     type=click.STRING, default='study_info', show_default=True
 )
-def study_info(wea, timestep, folder, name):
+def study_info(wea, timestep, study_type, folder, name):
     """Create a study info file.
 
     This command generates a study info file with the timestep and the hoys of
@@ -50,6 +53,7 @@ def study_info(wea, timestep, folder, name):
         wea = Wea.from_file(wea, timestep=timestep)
         study_info['timestep'] = timestep
         study_info['study_hours'] = wea.hoys
+        study_info['study_type'] = study_type
 
         if not os.path.isdir(folder):
             os.makedirs(folder)
