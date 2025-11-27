@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.sunpath module
+=====================================
+
+.. automodule:: honeybee_radiance.cli.sunpath
+   :members:
+   :undoc-members:
+   :show-inheritance:
