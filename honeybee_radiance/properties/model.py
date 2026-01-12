@@ -14,6 +14,7 @@ from ..mutil import dict_to_modifier  # imports all modifiers classes
 from ..modifier.material import aBSDF, BSDF
 from ..lib.modifiers import black, generic_context
 from ..lib.modifiersets import generic_modifier_set_visible
+from ..luminaire import Luminaire
 
 try:
     from itertools import izip as zip  # python 2
@@ -45,6 +46,7 @@ class ModelRadianceProperties(object):
         * subface_group_identifiers
         * has_sensor_grids
         * has_views
+        * luminaires
     """
     ERROR_MAP = {
         '010001': 'check_duplicate_modifier_identifiers',
@@ -55,11 +57,12 @@ class ModelRadianceProperties(object):
         '010006': 'check_view_rooms_in_model'
     }
 
-    def __init__(self, host, sensor_grids=None, views=None):
+    def __init__(self, host, sensor_grids=None, views=None, luminaires=None):
         """Initialize Model radiance properties."""
         self._host = host
         self.sensor_grids = sensor_grids
         self.views = views
+        self.luminaires = luminaires
 
     @property
     def host(self):
@@ -278,6 +281,25 @@ class ModelRadianceProperties(object):
         """Get a boolean for whether there are views assigned to the model."""
         return len(self._views) != 0
 
+    @property
+    def luminaires(self):
+        """Get luminaires."""
+        return self._luminaires
+
+    @luminaires.setter
+    def luminaires(self, value):
+        if value:
+            try:
+                self._luminaires = list(value)
+                for obj in self._luminaires:
+                    assert isinstance(obj, Luminaire), 'Expected Luminaire for Model' \
+                        ' luminaire. Got {}.'.format(type(value))
+            except (ValueError, TypeError):
+                raise TypeError(
+                    'Model luminaire must be an array. Got {}.'.format(type(value)))
+        else:
+            self._luminaires = []
+
     def remove_sensor_grids(self):
         """Remove all sensor grids from the model."""
         self._sensor_grids = []
@@ -305,6 +327,16 @@ class ModelRadianceProperties(object):
         assert isinstance(view, View), 'Expected View. Got {}.'.format(type(view))
         self._views.append(view)
 
+    def add_luminaire(self, luminaire):
+        """Add a Luminaire to this model.
+
+        Args:
+            luminaire: A Luminaire to add to this model.
+        """
+        assert isinstance(luminaire, Luminaire), \
+            'Expected Luminaire. Got {}'.format(type(luminaire))
+        self._luminaires.append(luminaire)
+
     def add_sensor_grids(self, sensor_grids):
         """Add a list of SensorGrids to this model."""
         for grid in sensor_grids:
@@ -314,6 +346,11 @@ class ModelRadianceProperties(object):
         """Add a list of Views to this model."""
         for view in views:
             self.add_view(view)
+
+    def add_luminaires(self, luminaires):
+        """Add a list of Luminaires to this model."""
+        for luminaire in luminaires:
+            self.add_luminaire(luminaire)
 
     def faces_by_blk(self):
         """Get all Faces in the model separated by their blk property.
@@ -959,6 +996,9 @@ class ModelRadianceProperties(object):
         if 'views' in rad_data and rad_data['views'] is not None:
             self.views = [View.from_dict(view) for view in rad_data['views']]
 
+        if 'luminaires' in rad_data and rad_data['luminaires'] is not None:
+            self.luminaires = [Luminaire.from_dict(luminaire) for luminaire in rad_data['luminaires']]
+
     def to_dict(self):
         """Return Model radiance properties as a dictionary."""
         base = {'radiance': {'type': 'ModelRadianceProperties'}}
@@ -995,6 +1035,10 @@ class ModelRadianceProperties(object):
                 [grid.to_dict() for grid in self._sensor_grids]
         if len(self._views) != 0:
             base['radiance']['views'] = [view.to_dict() for view in self._views]
+
+        if len(self._luminaires) != 0:
+            base['radiance']['luminaires'] = \
+                [luminaire.to_dict() for luminaire in self._luminaires]
 
         return base
 
