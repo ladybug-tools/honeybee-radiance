@@ -430,6 +430,13 @@ def model_to_rad_folder(
     _write_views(view_dir, model, views, full_match)
 
     model_folder.combined_receivers(auto_mtx_path=False)
+
+    # write the assinged luminaires into the correct folder
+    if model.properties.radiance.luminaires:
+        ies_folder = model_folder.ies_folder(full=False)
+        for luminaire in model.properties.radiance.luminaires:
+            luminaire.xform(prefdir=ies_folder)
+
     return folder
 
 

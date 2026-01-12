@@ -98,13 +98,10 @@ def create_octree_from_folder(
                 pass  # no shade groups available in the model
         if include_ies:
             try:
-                ies_folder = model_folder.ies_folder()
-                ies_files = [os.path.join(ies_folder, fp)
-                             for fp in os.listdir(ies_folder)
-                             if fp.endswith('rad')]
+                ies_files = model_folder.ies_files()
                 scene_files += ies_files
             except Exception:
-                pass  # no aperture groups available in the model
+                pass  # no luminaires available in the model
         if add_after:
             scene_files += list(add_after)
         if add_before:
