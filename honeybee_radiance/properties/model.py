@@ -996,6 +996,7 @@ class ModelRadianceProperties(object):
         if 'views' in rad_data and rad_data['views'] is not None:
             self.views = [View.from_dict(view) for view in rad_data['views']]
 
+        # apply the luminaires if they are in the data
         if 'luminaires' in rad_data and rad_data['luminaires'] is not None:
             self.luminaires = [Luminaire.from_dict(luminaire) for luminaire in rad_data['luminaires']]
 
@@ -1036,6 +1037,7 @@ class ModelRadianceProperties(object):
         if len(self._views) != 0:
             base['radiance']['views'] = [view.to_dict() for view in self._views]
 
+        # add the luminaires to the dictionary
         if len(self._luminaires) != 0:
             base['radiance']['luminaires'] = \
                 [luminaire.to_dict() for luminaire in self._luminaires]
