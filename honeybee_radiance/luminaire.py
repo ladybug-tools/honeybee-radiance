@@ -39,6 +39,7 @@ class Luminaire(object):
         * ies_path
         * ies_content
         * identifier
+        * full_identifier
         * luminaire_zone
         * custom_lamp
         * light_loss_factor
@@ -132,7 +133,7 @@ class Luminaire(object):
         if isinstance(ies_input, str):
             text = ies_input.lstrip()
             if text.upper().startswith('IESNA'):
-                self._ies_path = None
+                self._ies_path = ies_input
                 self._ies_content = ies_input
                 return
 
@@ -168,6 +169,15 @@ class Luminaire(object):
                 value = 'luminaire'
 
         self._identifier = value
+
+    @property
+    def full_identifier(self):
+        """Get full identifier of the luminaire.
+
+        This is identical to identifier, but full_identifier makes certain
+        honeybee-radiance functions reusable for this object.
+        """
+        return self.identifier
 
     @property
     def luminaire_zone(self):
@@ -339,9 +349,9 @@ class Luminaire(object):
             'ft': 'f',
             'foot': 'f',
             'feet': 'f',
-            'in': 'f/12',
-            'inch': 'f/12',
-            'inches': 'f/12'
+            'in': 'i',
+            'inch': 'i',
+            'inches': 'i'
         }
         if units not in unit_map:
             raise ValueError(
@@ -737,6 +747,93 @@ class Luminaire(object):
 
         return None
 
+    def move(self, moving_vec):
+        """Move this luminaire along a vector.
+
+        Please note that this method only moves the positions of luminaire
+        instances in the luminaire zone. It does not modify the photometric data
+        itself.
+
+        Args:
+            moving_vec: A ladybug_geometry Vector3D with the direction and distance
+                to move the sensor.
+        """
+        for instance in self.luminaire_zone.instances:
+            instance.point = instance.point.move(moving_vec)
+
+    def rotate(self, axis, angle, origin):
+        """Rotate this luminaire by a certain angle around an axis and origin.
+
+        Please note that this method only rotates the positions of luminaire
+        instances in the luminaire zone. It does not modify the photometric data
+        itself.
+
+        Args:
+            axis: Rotation axis as a Vector3D.
+            angle: An angle for rotation in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for instance in self.luminaire_zone.instances:
+            instance.point = instance.point.rotate(axis, math.radians(angle), origin)
+
+    def rotate_xy(self, angle, origin):
+        """Rotate this luminaire counterclockwise in the world XY plane by an angle.
+
+        Please note that this method only rotates the positions of luminaire
+        instances in the luminaire zone. It does not modify the photometric data
+        itself.
+
+        Args:
+            angle: An angle in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        for instance in self.luminaire_zone.instances:
+            instance.point = instance.point.rotate_xy(math.radians(angle), origin)
+            instance.rotation = instance.rotation + angle
+
+    def reflect(self, plane):
+        """Reflect this luminaire across a plane.
+
+        Please note that this method only reflects the positions of luminaire
+        instances in the luminaire zone. It does not modify the photometric data
+        itself.
+
+        Args:
+            plane: A ladybug_geometry Plane across which the object will
+                be reflected.
+        """
+        for instance in self.luminaire_zone.instances:
+            instance.point = instance.point.reflect(plane.n, plane.o)
+
+    def scale(self, factor, origin=None):
+        """Scale this luminaire by a factor from an origin point.
+
+        Please note that this method only scales the positions of luminaire
+        instances in the luminaire zone. It does not modify the photometric data
+        itself.
+
+        Args:
+            factor: A number representing how much the object should be scaled.
+            origin: A ladybug_geometry Point3D representing the origin from which
+                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+        """
+        for instance in self.luminaire_zone.instances:
+            instance.point = instance.point.scale(factor, origin=origin)
+
+    def duplicate(self):
+        """Duplicate the luminaire."""
+        new_obj = Luminaire(
+            self.ies_path, self.identifier, light_loss_factor=self.light_loss_factor,
+            candela_multiplier=self.candela_multiplier)
+        if self.luminaire_zone:
+            new_obj.luminaire_zone = self.luminaire_zone.duplicate()
+        if self.custom_lamp:
+            new_obj.custom_lamp = self.custom_lamp.duplicate()
+
+        return new_obj
+
     def to_dict(self):
         """Return Luminaire as a dictionary."""
         base = {
@@ -847,6 +944,12 @@ class LuminaireZone(object):
     def __iter__(self):
         return iter(self._instances)
 
+    def duplicate(self):
+        """Duplicate the luminaire zone."""
+        instances = [i.duplicate() for i in self.instances]
+        new_obj = LuminaireZone(instances)
+        return new_obj
+
     def to_dict(self):
         """Return LuminaireZone as a dictionary."""
         return {
@@ -882,9 +985,8 @@ class LuminaireInstance(object):
         point: Location of the luminaire instance. Can be a Ladybug Geometry Point3D
             or a list/tuple of three numeric values [x, y, z].
         spin: Rotation about the local vertical axis (degrees). Default: 0.
-        tilt: Tilt angle away from the negative Z axis (degrees). Default: 0.
-        rotation: Rotation in the horizontal plane about the C0 axis (degrees).
-            Default: 0.
+        tilt: Tilt angle around the Y axis (degrees). Default: 0.
+        rotation: Rotation angle around the Z axis (degrees). Default: 0.
 
     Properties:
         * point
@@ -996,6 +1098,13 @@ class LuminaireInstance(object):
     @rotation.setter
     def rotation(self, value):
         self._rotation = float(value)
+
+    def duplicate(self):
+        """Duplicate the luminaire instance."""
+        new_obj = LuminaireInstance(
+            point=self.point.duplicate(), spin=self.spin, tilt=self.tilt,
+            rotation=self.rotation)
+        return new_obj
 
     def to_dict(self):
         """Return LuminaireInstance as a dictionary."""
@@ -1328,6 +1437,15 @@ class CustomLamp(object):
     def metadata(self):
         """Return lamp metadata."""
         return getattr(self, "_metadata", None)
+
+    def duplicate(self):
+        """Duplicate the custom lamp."""
+        new_obj = CustomLamp(name=self.name, depreciation_factor=self.depreciation_factor,
+                             candela_multiplier=self.candela_multiplier, rgb=self.rgb,
+                             white_xy=self.white_xy, color_temperature=self.color_temperature)
+        if hasattr(self, "_metadata"):
+            new_obj._metadata = self._metadata.copy()
+        return new_obj
 
     def to_dict(self):
         """Convert CustomLamp to dictionary."""
