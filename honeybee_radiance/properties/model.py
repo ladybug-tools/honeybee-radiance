@@ -468,6 +468,8 @@ class ModelRadianceProperties(object):
             grid.move(moving_vec)
         for view in self._views:
             view.move(moving_vec)
+        for luminaire in self._luminaires:
+            luminaire.move(moving_vec)
 
     def rotate(self, axis, angle, origin):
         """Rotate all sensor_grid and view geometry.
@@ -482,6 +484,8 @@ class ModelRadianceProperties(object):
             grid.rotate(axis, angle, origin)
         for view in self._views:
             view.rotate(axis, angle, origin)
+        for luminaire in self._luminaires:
+            luminaire.rotate(axis, angle, origin)
 
     def rotate_xy(self, angle, origin):
         """Rotate all sensor_grids and views counterclockwise in the world XY plane.
@@ -495,6 +499,8 @@ class ModelRadianceProperties(object):
             grid.rotate_xy(angle, origin)
         for view in self._views:
             view.rotate_xy(angle, origin)
+        for luminaire in self._luminaires:
+            luminaire.rotate_xy(angle, origin)        
 
     def reflect(self, plane):
         """Reflect all sensor_grid and view geometry across a plane.
@@ -507,6 +513,8 @@ class ModelRadianceProperties(object):
             grid.reflect(plane)
         for view in self._views:
             view.reflect(plane)
+        for luminaire in self._luminaires:
+            luminaire.reflect(plane)
 
     def scale(self, factor, origin=None):
         """Scale all sensor_grid and view geometry by a factor.
@@ -520,6 +528,8 @@ class ModelRadianceProperties(object):
             grid.scale(factor, origin)
         for view in self._views:
             view.scale(factor, origin)
+        for luminaire in self._luminaires:
+            luminaire.scale(factor, origin)
 
     def generate_exterior_face_sensor_grid(
             self, dimension, offset=0.1, face_type='Wall', punched_geometry=False):
@@ -1053,7 +1063,8 @@ class ModelRadianceProperties(object):
         _host = new_host or self._host
         new_grids = [sg.duplicate() for sg in self._sensor_grids]
         new_views = [vw.duplicate() for vw in self._views]
-        return ModelRadianceProperties(_host, new_grids, new_views)
+        new_luminaires = [lum.duplicate() for lum in self._luminaires]
+        return ModelRadianceProperties(_host, new_grids, new_views, new_luminaires)
 
     @staticmethod
     def load_properties_from_dict(data):
