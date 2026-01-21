@@ -297,13 +297,20 @@ class Luminaire(object):
         self._ensure_parsed()
         return self.height * self.unit_scale
 
-    def ies2rad(self, libdir=None, prefdir=None, outname=None):
+    def ies2rad(self, libdir=None, prefdir=None, outname=None, units=None):
         """Executes ies2rad.
         
         Args:
             libdir: Set the library directory.
             prefdir: Set the library subdirectory.
             outname: Output file name root.
+            units: Units for the output. Choose from:
+                * 'm', 'meter', 'meters'
+                * 'mm', 'millimeter', 'millimeters'
+                * 'cm', 'centimeter', 'centimeters'
+                * 'ft', 'foot', 'feet'
+                * 'in', 'inch', 'inches'
+                If None, meters are used (default in ies2rad).
 
         Returns:
             Radiance scene description (rad file).
@@ -316,7 +323,33 @@ class Luminaire(object):
         outname = outname or self.identifier
         options.o = outname
 
-        options.d = 'm'
+        if units is None:
+            units = 'm'
+        units = str(units).strip().lower()
+        unit_map = {
+            'm': 'm',
+            'meter': 'm',
+            'meters': 'm',
+            'mm': 'm/1000',
+            'millimeter': 'm/1000',
+            'millimeters': 'm/1000',
+            'cm': 'm/100',
+            'centimeter': 'm/100',
+            'centimeters': 'm/100',
+            'ft': 'f',
+            'foot': 'f',
+            'feet': 'f',
+            'in': 'f/12',
+            'inch': 'f/12',
+            'inches': 'f/12'
+        }
+        if units not in unit_map:
+            raise ValueError(
+                "Invalid units '{}'. Valid options are: {}"
+                .format(units, ', '.join(sorted(unit_map.keys())))
+            )
+
+        options.d = unit_map[units]
 
         multiplier = self.light_loss_factor * self.candela_multiplier
 
@@ -377,7 +410,7 @@ class Luminaire(object):
 
         return rad_path
 
-    def generate_scene(self, libdir=None, prefdir=None):
+    def generate_scene(self, libdir=None, prefdir=None, units=None):
         """Create a combined scene description of LuminaireZone and Luminaire.
 
         This method will create a scene description where there scene from ies2rad
@@ -386,6 +419,13 @@ class Luminaire(object):
         Args:
             libdir: Set the library directory.
             prefdir: Set the library subdirectory.
+            units: Units for the output. Choose from:
+                * 'm', 'meter', 'meters'
+                * 'mm', 'millimeter', 'millimeters'
+                * 'cm', 'centimeter', 'centimeters'
+                * 'ft', 'foot', 'feet'
+                * 'in', 'inch', 'inches'
+                If None, meters are used (default in ies2rad).
 
         Return:
             Combined Radiance scene description of LuminaireZone and Luminaire.
@@ -394,7 +434,8 @@ class Luminaire(object):
         luminaire_rad_path = self.ies2rad(
             libdir=libdir,
             prefdir=prefdir,
-            outname='__{}__'.format(self.identifier)
+            outname='__{}__'.format(self.identifier),
+            units=units
         )
 
         scene_dir = os.path.dirname(luminaire_rad_path) or '.'

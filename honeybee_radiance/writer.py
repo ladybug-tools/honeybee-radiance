@@ -435,7 +435,7 @@ def model_to_rad_folder(
     if model.properties.radiance.luminaires:
         ies_folder = model_folder.ies_folder(full=False)
         for luminaire in model.properties.radiance.luminaires:
-            luminaire.generate_scene(libdir=folder, prefdir=ies_folder)
+            luminaire.generate_scene(libdir=folder, prefdir=ies_folder, units=model.units)
 
     return folder
 
