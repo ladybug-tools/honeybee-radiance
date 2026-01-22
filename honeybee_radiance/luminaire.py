@@ -761,7 +761,7 @@ class Luminaire(object):
         for instance in self.luminaire_zone.instances:
             instance.point = instance.point.move(moving_vec)
 
-    def rotate(self, axis, angle, origin):
+    def rotate(self, axis, angle, origin=None):
         """Rotate this luminaire by a certain angle around an axis and origin.
 
         Please note that this method only rotates the positions of luminaire
@@ -772,12 +772,13 @@ class Luminaire(object):
             axis: Rotation axis as a Vector3D.
             angle: An angle for rotation in degrees.
             origin: A ladybug_geometry Point3D for the origin around which the
-                object will be rotated.
+                object will be rotated. If None, it will be rotated around
+                origin (0, 0, 0).
         """
         for instance in self.luminaire_zone.instances:
-            instance.point = instance.point.rotate(axis, math.radians(angle), origin)
+            instance.rotate(axis, angle, origin)
 
-    def rotate_xy(self, angle, origin):
+    def rotate_xy(self, angle, origin=None):
         """Rotate this luminaire counterclockwise in the world XY plane by an angle.
 
         Please note that this method only rotates the positions of luminaire
@@ -787,11 +788,11 @@ class Luminaire(object):
         Args:
             angle: An angle in degrees.
             origin: A ladybug_geometry Point3D for the origin around which the
-                object will be rotated.
+                object will be rotated. If None, it will be rotated around
+                origin (0, 0, 0).
         """
         for instance in self.luminaire_zone.instances:
-            instance.point = instance.point.rotate_xy(math.radians(angle), origin)
-            instance.rotation = instance.rotation + angle
+            instance.rotate_xy(angle, origin)
 
     def reflect(self, plane):
         """Reflect this luminaire across a plane.
@@ -817,7 +818,7 @@ class Luminaire(object):
         Args:
             factor: A number representing how much the object should be scaled.
             origin: A ladybug_geometry Point3D representing the origin from which
-                to scale. If None, it will be scaled from the World origin (0, 0, 0).
+                to scale. If None, it will be scaled from origin (0, 0, 0).
         """
         for instance in self.luminaire_zone.instances:
             instance.point = instance.point.scale(factor, origin=origin)
@@ -1039,25 +1040,25 @@ class LuminaireInstance(object):
 
         pt_vec = pt_vec.normalize()
 
-        C0_vec = Vector3D(1, 0, 0)
-        G0_vec = Vector3D(0, 0, -1)
+        c0_vec = Vector3D(1, 0, 0)
+        g0_vec = Vector3D(0, 0, -1)
 
-        angle_G0 = math.degrees(pt_vec.angle(G0_vec))
-        angle_G0 = 360 - angle_G0
+        angle_g0 = math.degrees(pt_vec.angle(g0_vec))
+        angle_g0 = 360 - angle_g0
 
         proj = Vector3D(pt_vec.x, pt_vec.y, 0)
 
         if proj.magnitude == 0:
-            angle_C0 = 0
+            angle_c0 = 0
         else:
             proj = proj.normalize()
-            angle_C0 = math.degrees(C0_vec.angle(proj))
+            angle_c0 = math.degrees(c0_vec.angle(proj))
 
-            if C0_vec.cross(proj).z < 0:
-                angle_C0 = 360 - angle_C0
+            if c0_vec.cross(proj).z < 0:
+                angle_c0 = 360 - angle_c0
 
-        tilt = angle_G0 + tilt
-        rotation = angle_C0 + rotation
+        tilt = angle_g0 + tilt
+        rotation = angle_c0 + rotation
 
         return cls(point, spin=spin, tilt=tilt, rotation=rotation)
 
@@ -1098,6 +1099,127 @@ class LuminaireInstance(object):
     @rotation.setter
     def rotation(self, value):
         self._rotation = float(value)
+
+    @property
+    def c0_axis(self):
+        """Get the C0 axis as a world-space Vector3D.
+
+        This is the luminaire "up" direction after applying:
+        spin (Z) -> tilt (Y) -> rotation (Z)
+        """
+        v = Vector3D(1, 0, 0)  # default C0
+        v = self._rotate_z(v, self.spin)
+        v = self._rotate_y(v, self.tilt)
+        v = self._rotate_z(v, self.rotation)
+        return v.normalize()
+
+    @property
+    def g0_axis(self):
+        """Get the G0 axis as a world-space Vector3D.
+
+        This is the luminaire "forward" direction after applying:
+        spin (Z) -> tilt (Y) -> rotation (Z)
+        """
+        v = Vector3D(0, 0, -1)  # default G0
+        v = self._rotate_z(v, self.spin)
+        v = self._rotate_y(v, self.tilt)
+        v = self._rotate_z(v, self.rotation)
+        return v.normalize()
+
+    def rotate(self, axis, angle, origin=None):
+        """Rotate this luminaire instance by a certain angle around an axis and origin.
+
+        Args:
+            axis: Rotation axis as a Vector3D.
+            angle: An angle for rotation in degrees.
+            origin: A ladybug_geometry Point3D for the origin around which the
+                object will be rotated.
+        """
+        if origin is None:
+            origin = Point3D(0, 0, 0)
+        self.point = self.point.rotate(axis, math.radians(angle), origin)
+        c0_axis = self.c0_axis.rotate(axis, math.radians(angle))
+        g0_axis = self.g0_axis.rotate(axis, math.radians(angle))
+        self.set_from_axes(c0_axis, g0_axis)
+
+    def rotate_xy(self, angle, origin=None):
+        """Rotate the luminaire around the world Z axis (XY plane).
+
+        Args:
+            angle: Rotation angle in degrees.
+            origin: Optional Point3D to rotate around. Defaults to (0,0,0).
+        """
+        if origin is None:
+            origin = Point3D(0, 0, 0)
+
+        # Rotate position
+        self.point = self.point.rotate(Vector3D(0, 0, 1), math.radians(angle), origin)
+
+        # Rotate the axes
+        c0_rotated = self._rotate_z(self.c0_axis, angle)
+        g0_rotated = self._rotate_z(self.g0_axis, angle)
+
+        # Update spin, tilt, rotation from new axes
+        self.set_from_axes(c0_rotated, g0_rotated)
+
+    @staticmethod
+    def _rotate_z(v, angle_deg):
+        a = math.radians(angle_deg)
+        c = math.cos(a)
+        s = math.sin(a)
+        return Vector3D(
+            v.x * c - v.y * s,
+            v.x * s + v.y * c,
+            v.z
+        )
+
+    @staticmethod
+    def _rotate_y(v, angle_deg):
+        a = math.radians(angle_deg)
+        c = math.cos(a)
+        s = math.sin(a)
+        return Vector3D(
+            v.x * c + v.z * s,
+            v.y,
+            -v.x * s + v.z * c
+        )
+
+    def set_from_axes(self, c0_axis, g0_axis):
+        """Set spin, tilt, rotation from C0 and G0 axes.
+        
+        Args:
+            c0_axis: A Vector3D representing the C0 axis.
+            g0_axis: A Vector3D representing the G0 axis.
+        """
+        c0 = c0_axis.normalize()
+        g0 = g0_axis.normalize()
+
+        # Extract final rotation (about world Z)
+        g0_xy = Vector3D(g0.x, g0.y, 0)
+
+        if g0_xy.magnitude == 0:
+            rotation = 0.0
+        else:
+            g0_xy = g0_xy.normalize()
+            rotation = math.degrees(math.atan2(g0_xy.y, g0_xy.x))
+
+        # Undo rotation
+        c1 = self._rotate_z(c0, -rotation)
+        g1 = self._rotate_z(g0, -rotation)
+
+        # Extract signed tilt
+        tilt = math.degrees(math.atan2(-g1.x, -g1.z))
+
+        # Undo tilt
+        c2 = self._rotate_y(c1, -tilt)
+
+        # Extract spin
+        spin = math.degrees(math.atan2(c2.y, c2.x))
+
+        # Set spin, tilt, rotation
+        self.spin = spin % 360
+        self.tilt = tilt % 360
+        self.rotation = rotation % 360
 
     def duplicate(self):
         """Duplicate the luminaire instance."""
