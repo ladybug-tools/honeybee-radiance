@@ -158,7 +158,7 @@ class Luminaire(object):
     @identifier.setter
     def identifier(self, value):
         if value is None:
-            if self._ies_path:
+            if self._ies_path and os.path.isfile(self._ies_path):
                 value = os.path.splitext(
                     os.path.basename(self._ies_path)
                 )[0]
