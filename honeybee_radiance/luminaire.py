@@ -3,6 +3,7 @@ import os
 import io
 import math
 
+from honeybee.typing import clean_rad_string
 from ladybug_geometry.geometry3d import Vector3D, Point3D
 from honeybee_radiance_command.ies2rad import Ies2rad, Ies2radOptions
 from honeybee_radiance.config import folders
@@ -39,6 +40,7 @@ class Luminaire(object):
         * ies_path
         * ies_content
         * identifier
+        * display_name
         * full_identifier
         * luminaire_zone
         * custom_lamp
@@ -54,15 +56,16 @@ class Luminaire(object):
         * max_candela
         * unit_scale
     """
-    __slots__ = ('_ies_path', '_ies_content', '_identifier', '_luminaire_zone',
-                 '_custom_lamp', '_light_loss_factor', '_candela_multiplier',
-                 '_vertical_angles', '_horizontal_angles', '_candela_values',
-                 '_unit_type', '_width', '_length', '_height', '_max_candela',
-                 '_unit_scale')
+    __slots__ = ('_ies_path', '_ies_content', '_identifier', '_display_name',
+                 '_luminaire_zone', '_custom_lamp', '_light_loss_factor',
+                 '_candela_multiplier', '_vertical_angles', '_horizontal_angles',
+                 '_candela_values', '_unit_type', '_width', '_length', '_height',
+                 '_max_candela', '_unit_scale')
     def __init__(self, ies_path, identifier=None, luminaire_zone=None, custom_lamp=None,
                  light_loss_factor=1, candela_multiplier=1):
         self.ies_path = ies_path
         self.identifier = identifier
+        self._display_name = None
         self.luminaire_zone = luminaire_zone
         self.custom_lamp = custom_lamp
         self.light_loss_factor = light_loss_factor
@@ -167,8 +170,23 @@ class Luminaire(object):
 
             if not value:
                 value = 'luminaire'
+        value = clean_rad_string(value)
 
         self._identifier = value
+
+    @property
+    def display_name(self):
+        """Get or set the display name of the luminaire."""
+        if self._display_name is None:
+            return self._identifier
+        return self._display_name
+
+    @display_name.setter
+    def display_name(self, value):
+        try:
+            self._display_name = str(value)
+        except UnicodeEncodeError:  # Python 2 machine lacking the character set
+            self._display_name = value  # keep it as unicode
 
     @property
     def full_identifier(self):
