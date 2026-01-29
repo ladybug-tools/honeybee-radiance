@@ -327,6 +327,9 @@ class Luminaire(object):
 
     def ies2rad(self, libdir=None, prefdir=None, outname=None, units=None):
         """Executes ies2rad.
+
+        The cwd is set to libdir to ensure that any relative paths are correctly
+        resolved.
         
         Args:
             libdir: Set the library directory.
@@ -343,8 +346,8 @@ class Luminaire(object):
         Returns:
             Radiance scene description (rad file).
         """
-        ies_path = self._ensure_ies_file(folder=prefdir)
-
+        ies_folder = os.path.join(libdir or '.', prefdir or '').replace('\\', '/')
+        ies_path = self._ensure_ies_file(folder=ies_folder)
         command = Ies2rad(ies=ies_path)
         options = Ies2radOptions()
 
@@ -418,7 +421,6 @@ class Luminaire(object):
 
             if libdir and prefdir.startswith('./'):
                 prefdir = prefdir[2:]
-
             elif not libdir and not prefdir.startswith('.'):
                 prefdir = './' + prefdir
 
@@ -434,7 +436,7 @@ class Luminaire(object):
         command.options = options
 
         env = dict(os.environ, **folders.env) if folders.env else None
-        command.run(env=env)
+        command.run(env=env, cwd=libdir)
 
         return rad_path
 
@@ -466,10 +468,8 @@ class Luminaire(object):
             units=units
         )
 
-        scene_dir = os.path.dirname(luminaire_rad_path) or '.'
+        scene_dir = os.path.join(libdir or '.', prefdir or '').replace('\\', '/')
         scene_path = os.path.join(scene_dir, '{}.rad'.format(self.identifier)).replace('\\', '/')
-        if not scene_path.startswith('.'):
-            scene_path = './' + scene_path
 
         with open(scene_path, 'w') as f:
             for inst in self.luminaire_zone.instances:
@@ -484,9 +484,9 @@ class Luminaire(object):
     def write_ies(self, folder, filename=None):
         """Write the stored IES content back to disk."""
         filename = filename or '{}.ies'.format(self.identifier)
-        path = os.path.join(folder, filename)
+        path = os.path.join(folder, filename).replace('\\', '/')
 
-        with open(path, 'w', encoding='utf-8') as f:
+        with io.open(path, 'w', encoding='utf-8') as f:
             f.write(self._ies_content)
 
         return path
@@ -737,12 +737,8 @@ class Luminaire(object):
         if not os.path.isdir(folder):
             os.makedirs(folder)
 
-        path = os.path.join(folder, '{}.ies'.format(self.identifier))
+        path = self.write_ies(folder, filename='{}.ies'.format(self.identifier))
 
-        with io.open(path, 'w', encoding='utf-8') as f:
-            f.write(self._ies_content)
-
-        self._ies_path = path
         return path
 
     def _identifier_from_ies_content(self):
