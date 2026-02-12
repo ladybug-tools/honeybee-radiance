@@ -77,11 +77,6 @@ class Plastic(Material):
             self.specularity, self.roughness
         ]
 
-        if self.specularity > 0.1:
-            print("Warning: Specularity values above .1 is uncommon for plastic.")
-        if self.roughness > 0.2:
-            print("Warning: Roughness values above .2 is uncommon.")
-
     @property
     def r_reflectance(self):
         """Get or set the reflectance for red channel.
@@ -158,7 +153,8 @@ class Plastic(Material):
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.0, roughness=0.0,
-        modifier=None, dependencies=None):
+        modifier=None, dependencies=None
+    ):
         """Create Plastic material with single reflectance value.
 
         Args:

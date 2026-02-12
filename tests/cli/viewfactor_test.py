@@ -16,7 +16,6 @@ def test_view_factor():
     cmd_args = [input_model, '--include-sky', '--grouped-shades',
                 '--folder', output_folder]
     result = runner.invoke(create_view_factor_modifiers, cmd_args)
-    print(result.output)
     assert result.exit_code == 0
 
     oct_file = os.path.join(output_folder, 'scene.oct')

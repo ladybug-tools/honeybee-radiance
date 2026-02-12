@@ -7,7 +7,7 @@ from honeybee.door import Door
 
 def light_path_from_room(model, room_identifier, static_name='__static_apertures__'):
     """Get the dynamic aperture groups that need to be simulated for a room in a model.
-    
+
     Args:
         model: A honeybee Model object which will be used to identify the aperture
             groups that are needed to simulate a single room.
@@ -48,7 +48,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
 
         >> [['SouthWindow1'], ['__static_apertures__', 'NorthWindow2']]
     """
-    #TODO: Consider to modify light path if there are two consecutive
+    # TODO: Consider to modify light path if there are two consecutive
     #      items, such as ['__static_apertures__', '__static_apertures__'].
     def get_adjacent_room(face):
         """Get the adjacent Room of a Face.
@@ -66,10 +66,10 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
         return adj_room
 
     def trace_light_path(
-            s_face, s_light_path, parent_room, passed_rooms = set(),
+            s_face, s_light_path, parent_room, passed_rooms=None,
             static_name='__static_apertures__'):
         """Trace light path recursively.
-        
+
         This function will return the light path for a single face (Aperture,
         Door, or AirBoundary). The function will trace the light path
         recursively meaning that it will enter rooms adjacent to interior
@@ -92,11 +92,13 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 interior apertures.
             static_name: An optional name to be used to refer to static apertures
                 found within the model. (Default: '__static_apertures__').
-        
+
         Returns:
             A list of lists where each sub-list contains the identifiers of the
             ApertureGroups through which light is passing.
         """
+        if passed_rooms is None:
+            passed_rooms = set()
         passed_rooms.add(parent_room)
         s_face_light_path = []
         room = get_adjacent_room(s_face)
@@ -124,7 +126,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 if isinstance(adj_s_face.boundary_condition, Surface):
                     adj_room = get_adjacent_room(adj_s_face)
                     # check that adjacent room is not in passed_rooms
-                    if not adj_room in passed_rooms:
+                    if adj_room not in passed_rooms:
                         if isinstance(adj_s_face, (Aperture, Door)):
                             # do not append if face is an AirBoundary
                             if not s_light_path_duplicate:
@@ -137,7 +139,7 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                         )
                         s_face_light_path.extend(_s_face_light_path)
                 elif not isinstance(adj_s_face, (Aperture, Door)) and \
-                    isinstance(adj_s_face.boundary_condition, Outdoors):
+                        isinstance(adj_s_face.boundary_condition, Outdoors):
                     # if not Aperture or Door (i.e. AirBoundary), we just pass
                     # if the boundary condition is Outdoors
                     pass
@@ -192,13 +194,13 @@ def light_path_from_room(model, room_identifier, static_name='__static_apertures
                 if isinstance(s_face, Door):
                     break
                 # no boundary condition, tracing ends here
-                if not s_light_path in _light_path:
+                if s_light_path not in _light_path:
                     _light_path.append(s_light_path)
 
     # remove any duplicates
     light_path = []
     for lp in _light_path:
-        if not lp in light_path:
+        if lp not in light_path:
             light_path.append(lp)
 
     return light_path

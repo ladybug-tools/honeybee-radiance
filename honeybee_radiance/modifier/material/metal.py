@@ -64,15 +64,12 @@ class Metal(Plastic):
             self.r_reflectance, self.g_reflectance, self.b_reflectance,
             self.specularity, self.roughness
         ]
-        if self.specularity < 0.9:
-            print("Warning: Specularity of metals is usually .9 or greater.")
-        if self.roughness > 0.2:
-            print("Warning: Roughness values above .2 is uncommon.")
-    
+
     @classmethod
     def from_single_reflectance(
         cls, identifier, rgb_reflectance=0.0, specularity=0.9, roughness=0.0,
-        modifier=None, dependencies=None):
+        modifier=None, dependencies=None
+    ):
         """Create Metal material with single reflectance value.
 
         Args:
