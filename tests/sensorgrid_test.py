@@ -85,7 +85,6 @@ def test_from_positions_radial():
     assert len(list(sg.positions)) == 16
     assert len(list(sg.directions)) == 16
     assert len(sg.mesh.faces) == 16
-    print(sg.mesh)
 
 
 def test_from_file():

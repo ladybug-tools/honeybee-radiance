@@ -14,7 +14,6 @@ You can check the source code at:
 
 from __future__ import division
 import math
-from datetime import datetime
 import sys
 if (sys.version_info >= (3, 0)):
     xrange = range
@@ -90,7 +89,6 @@ def gendaylit(altitude, hoy, directirradiance, diffuseirradiance,
 
     # altitude correction if too close to zenith
     if altitude > 87.0:
-        print("warning - sun too close to zenith, reducing altitude to 87 degrees.")
         altitude = 87.0
 
     sunzenith = 90 - altitude
@@ -323,27 +321,27 @@ def check_parametrization(skyclearness, skybrightness):
         # #   limit sky clearness or sky brightness, 2009 11 13 by J. Wienold */
 
         if (skyclearness < skyclearinf):
-            # #  if (suppress_warnings==0)
-                    # print(stderr,"Range warning: sky clearness too low (%lf)\n",
-                    # skyclearness) */
+            # if (suppress_warnings==0)
+            #   print(stderr,"Range warning: sky clearness too low (%lf)\n",
+            #   skyclearness) */
             skyclearness = skyclearinf
 
         if (skyclearness > skyclearsup):
-            # #  if (suppress_warnings==0)
-            #     print(stderr,"Range warning: sky clearness too high (%lf)\n",
-            # skyclearness) */
+            # if (suppress_warnings==0)
+            #   print(stderr,"Range warning: sky clearness too high (%lf)\n",
+            #       skyclearness) */
             skyclearness = skyclearsup - 0.001
 
         if (skybrightness < skybriginf):
-            # #  if (suppress_warnings==0)
-            #     print(stderr,"Range warning: sky brightness too low (%lf)\n",
-            # skybrightness) */
+            # if (suppress_warnings==0)
+            #   print(stderr,"Range warning: sky brightness too low (%lf)\n",
+            #       skybrightness) */
             skybrightness = skybriginf
 
         if (skybrightness > skybrigsup):
-            # #  if (suppress_warnings==0)
-            # print(stderr,"Range warning: sky brightness too high (%lf)\n",
-            # skybrightness) */
+            # if (suppress_warnings==0)
+            #   print(stderr,"Range warning: sky brightness too high (%lf)\n",
+            #       skybrightness) */
             skybrightness = skybrigsup
 
     return skyclearness, skybrightness
@@ -418,11 +416,8 @@ def check_input_values(directilluminance, diffuseilluminance, altitude):
     """Validity of the direct and diffuse components."""
     solar_constant_l = 127500   # solar constant lux
     if directilluminance < 0:
-        print("Warning: direct illuminance < 0. Using 0.0\n")
         directilluminance = 0.0
-
     if diffuseilluminance < 0:
-        print("Warning: diffuse illuminance < 0. Using 0.0\n")
         diffuseilluminance = 0.0
 
     if directilluminance + diffuseilluminance == 0 and altitude > 0:

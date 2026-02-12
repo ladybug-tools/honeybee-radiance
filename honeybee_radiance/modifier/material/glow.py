@@ -147,7 +147,7 @@ class Glow(Material):
             print(sample_glow)
         """
         return cls(identifier, r_emittance=rgb, g_emittance=rgb, b_emittance=rgb,
-            max_radius=max_radius, modifier=modifier, dependencies=dependencies)
+                   max_radius=max_radius, modifier=modifier, dependencies=dependencies)
 
     @classmethod
     def from_primitive_dict(cls, primitive_dict):
