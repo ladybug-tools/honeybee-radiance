@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.glare module
+===================================
+
+.. automodule:: honeybee_radiance.cli.glare
+   :members:
+   :undoc-members:
+   :show-inheritance:
