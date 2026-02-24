@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.pattern.brightfunc module
+=====================================================
+
+.. automodule:: honeybee_radiance.modifier.pattern.brightfunc
+   :members:
+   :undoc-members:
+   :show-inheritance:

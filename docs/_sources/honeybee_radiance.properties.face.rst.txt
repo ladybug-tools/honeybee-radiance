@@ -1,0 +1,7 @@
+honeybee\_radiance.properties.face module
+=========================================
+
+.. automodule:: honeybee_radiance.properties.face
+   :members:
+   :undoc-members:
+   :show-inheritance:

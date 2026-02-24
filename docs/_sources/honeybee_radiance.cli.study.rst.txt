@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.study module
+===================================
+
+.. automodule:: honeybee_radiance.cli.study
+   :members:
+   :undoc-members:
+   :show-inheritance:

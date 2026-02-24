@@ -1,0 +1,6 @@
+multiphase
+==========
+
+.. click:: honeybee_radiance.cli.multiphase:multi_phase
+   :prog: honeybee-radiance multi_phase
+   :show-nested:
