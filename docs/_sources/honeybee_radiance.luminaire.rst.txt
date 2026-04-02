@@ -1,0 +1,7 @@
+honeybee\_radiance.luminaire module
+===================================
+
+.. automodule:: honeybee_radiance.luminaire
+   :members:
+   :undoc-members:
+   :show-inheritance:
