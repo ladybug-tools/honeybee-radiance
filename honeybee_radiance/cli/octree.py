@@ -547,6 +547,11 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     ' is provided it should be relative to project folder.'
 )
 @click.option(
+    '--include-ies/--exclude-ies', ' /-xi', default=False,
+    show_default=True,
+    help='Flag to note whether IES files should be included in the octree.'
+)
+@click.option(
     '--add-before', type=click.STRING, multiple=True, default=None, show_default=True,
     help='Path for a file to be added to octree before scene files.'
 )
@@ -559,7 +564,7 @@ def _generate_octrees_info(state, output_folder='octree', study='two_phase',
     help='A flag to show the command without running it.'
 )
 def create_static_octree_from_folder(
-    folder, output, add_before, add_after, dry_run
+    folder, output, include_ies, add_before, add_after, dry_run
 ):
     """Generate a static octree from a folder.
     
@@ -615,6 +620,12 @@ def create_static_octree_from_folder(
             scene_files += shd_g_files
         except Exception:
             pass  # no shade groups available in the model
+        if include_ies:
+            try:
+                ies_files = model_folder.ies_files()
+                scene_files += ies_files
+            except Exception:
+                pass  # no luminaires available in the model
         if add_after:
             scene_files += list(add_after)
         if add_before:
