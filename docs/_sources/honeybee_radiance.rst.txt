@@ -1,0 +1,45 @@
+honeybee\_radiance package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.cli
+   honeybee_radiance.dynamic
+   honeybee_radiance.geometry
+   honeybee_radiance.lib
+   honeybee_radiance.lightsource
+   honeybee_radiance.modifier
+   honeybee_radiance.postprocess
+   honeybee_radiance.properties
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.config
+   honeybee_radiance.dictutil
+   honeybee_radiance.lightpath
+   honeybee_radiance.luminaire
+   honeybee_radiance.modifierset
+   honeybee_radiance.mutil
+   honeybee_radiance.primitive
+   honeybee_radiance.putil
+   honeybee_radiance.reader
+   honeybee_radiance.sensor
+   honeybee_radiance.sensorgrid
+   honeybee_radiance.view
+   honeybee_radiance.writer
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance
+   :members:
+   :undoc-members:
+   :show-inheritance:
