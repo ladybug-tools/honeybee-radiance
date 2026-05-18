@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.schedule module
+======================================
+
+.. automodule:: honeybee_radiance.cli.schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:

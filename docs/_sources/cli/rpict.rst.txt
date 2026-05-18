@@ -1,0 +1,6 @@
+rpict
+=====
+
+.. click:: honeybee_radiance.cli.rpict:rpict
+   :prog: honeybee-radiance rpict
+   :show-nested:

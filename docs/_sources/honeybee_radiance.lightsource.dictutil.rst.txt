@@ -1,0 +1,7 @@
+honeybee\_radiance.lightsource.dictutil module
+==============================================
+
+.. automodule:: honeybee_radiance.lightsource.dictutil
+   :members:
+   :undoc-members:
+   :show-inheritance:
