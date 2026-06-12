@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.metal module
+=================================================
+
+.. automodule:: honeybee_radiance.modifier.material.metal
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+honeybee\_radiance.dynamic.stategeo module
+==========================================
+
+.. automodule:: honeybee_radiance.dynamic.stategeo
+   :members:
+   :undoc-members:
+   :show-inheritance:
