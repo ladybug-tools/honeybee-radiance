@@ -3,8 +3,13 @@ import click
 import sys
 import logging
 import os
+import json
 
 from ladybug.epw import EPW
+from ladybug.datacollection import HourlyContinuousCollection
+from ladybug.header import Header
+from ladybug.datatype.generic import GenericType
+from ladybug.analysisperiod import AnalysisPeriod
 
 
 _logger = logging.getLogger(__name__)
@@ -24,7 +29,7 @@ def schedule():
     type=click.STRING, default='daylight_hours', show_default=True
 )
 def epw_to_daylight_hours(epw, folder, name):
-    """Convert EPW to EN 17037 schedule as a CSV file.
+    """Convert EPW to EN 17037 schedule as a CSV file and JSON file (DataCollection).
 
     This command generates a valid schedule for EN 17037, also known as daylight hours.
     Rather than a typical occupancy schedule, the daylight hours is half the year with
@@ -48,6 +53,19 @@ def epw_to_daylight_hours(epw, folder, name):
         file_path = os.path.join(folder, '%s.csv' % name)
         with open(file_path, 'w') as fp:
             fp.write('\n'.join(values))
+
+        # write json
+        data_type = GenericType(
+            'Schedule: Daylight Hours', unit='Occupancy', min=0, max=1)
+        header = Header(
+            data_type=data_type, unit='Occupancy',
+            analysis_period=AnalysisPeriod())
+        values = [int(v) for v in values]
+        datacollection = HourlyContinuousCollection(header, values)
+
+        json_path = os.path.join(folder, '%s.json' % name)
+        with open(json_path, 'w') as fp:
+            json.dump(datacollection.to_dict(), fp, indent=4)
 
     except Exception:
         _logger.exception('Failed to generate daylight hours schedule.')
