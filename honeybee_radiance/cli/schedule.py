@@ -26,11 +26,14 @@ def schedule():
     'epw', type=click.Path(exists=True, dir_okay=False, resolve_path=True))
 @click.option('--folder', '-f', help='Output folder.', default='.', show_default=True)
 @click.option(
-    '--name', '-n', help='Output file name for schedule.',
+    '--name', '-n', help='Output file name for schedule and Wea file.',
     type=click.STRING, default='daylight_hours', show_default=True
 )
 def epw_to_daylight_hours(epw, folder, name):
     """Convert EPW or Wea to EN 17037 schedule as a CSV file and JSON file (DataCollection).
+
+    If the input file is an EPW, a Wea file will also be generated in the same folder
+    with the same name.
 
     This command generates a valid schedule for EN 17037, also known as daylight hours.
     Rather than a typical occupancy schedule, the daylight hours is half the year with
@@ -50,10 +53,14 @@ def epw_to_daylight_hours(epw, folder, name):
             wea: Wea = Wea.from_file(epw)
             global_horizontal_irradiance = wea.global_horizontal_irradiance
             _irradiance, indices = global_horizontal_irradiance.highest_values(4380)
+
+            wea_path = wea.write(os.path.join(folder, '%s.wea' % name))
         else:
-            epw_data = EPW(epw)
-            global_horizontal_illuminance = epw_data.global_horizontal_illuminance
+            epw = EPW(epw)
+            global_horizontal_illuminance = epw.global_horizontal_illuminance
             _illuminance, indices = global_horizontal_illuminance.highest_values(4380)
+
+            wea_path = epw.to_wea(os.path.join(folder, '%s.wea' % name))
 
         values = ['1' if i in indices else '0' for i in range(8760)]
 
