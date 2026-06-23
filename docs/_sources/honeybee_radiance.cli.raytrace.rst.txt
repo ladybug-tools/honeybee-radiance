@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.raytrace module
+======================================
+
+.. automodule:: honeybee_radiance.cli.raytrace
+   :members:
+   :undoc-members:
+   :show-inheritance:

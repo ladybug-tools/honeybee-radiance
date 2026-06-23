@@ -1,0 +1,7 @@
+honeybee\_radiance.lib.modifiersets module
+==========================================
+
+.. automodule:: honeybee_radiance.lib.modifiersets
+   :members:
+   :undoc-members:
+   :show-inheritance:

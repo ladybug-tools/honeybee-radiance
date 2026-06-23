@@ -1,0 +1,7 @@
+honeybee\_radiance.lightsource.sky.sunmatrix module
+===================================================
+
+.. automodule:: honeybee_radiance.lightsource.sky.sunmatrix
+   :members:
+   :undoc-members:
+   :show-inheritance:

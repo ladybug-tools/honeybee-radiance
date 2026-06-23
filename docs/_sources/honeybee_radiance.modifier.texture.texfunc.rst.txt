@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.texture.texfunc module
+==================================================
+
+.. automodule:: honeybee_radiance.modifier.texture.texfunc
+   :members:
+   :undoc-members:
+   :show-inheritance:

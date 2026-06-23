@@ -1,0 +1,6 @@
+sky
+===
+
+.. click:: honeybee_radiance.cli.sky:sky
+   :prog: honeybee-radiance sky
+   :show-nested:

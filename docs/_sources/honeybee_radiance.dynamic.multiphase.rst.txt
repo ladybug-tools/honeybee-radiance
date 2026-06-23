@@ -1,0 +1,7 @@
+honeybee\_radiance.dynamic.multiphase module
+============================================
+
+.. automodule:: honeybee_radiance.dynamic.multiphase
+   :members:
+   :undoc-members:
+   :show-inheritance:
