@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.antimatter module
+======================================================
+
+.. automodule:: honeybee_radiance.modifier.material.antimatter
+   :members:
+   :undoc-members:
+   :show-inheritance:

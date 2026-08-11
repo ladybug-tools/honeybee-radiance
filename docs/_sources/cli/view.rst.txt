@@ -1,0 +1,6 @@
+view
+====
+
+.. click:: honeybee_radiance.cli.view:view
+   :prog: honeybee-radiance view
+   :show-nested:

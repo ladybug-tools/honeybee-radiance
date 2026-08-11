@@ -1,0 +1,6 @@
+edit
+====
+
+.. click:: honeybee_radiance.cli.edit:edit
+   :prog: honeybee-radiance edit
+   :show-nested:

@@ -1,0 +1,7 @@
+honeybee\_radiance.geometry.geometrybase module
+===============================================
+
+.. automodule:: honeybee_radiance.geometry.geometrybase
+   :members:
+   :undoc-members:
+   :show-inheritance:
