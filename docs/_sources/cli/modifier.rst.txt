@@ -1,0 +1,6 @@
+modifier
+========
+
+.. click:: honeybee_radiance.cli.modifier:modifier
+   :prog: honeybee-radiance modifier
+   :show-nested:

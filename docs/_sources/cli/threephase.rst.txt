@@ -1,0 +1,6 @@
+threephase
+==========
+
+.. click:: honeybee_radiance.cli.threephase:three_phase
+   :prog: honeybee-radiance three_phase
+   :show-nested:

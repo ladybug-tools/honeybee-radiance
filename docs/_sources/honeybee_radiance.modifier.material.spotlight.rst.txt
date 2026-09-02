@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.spotlight module
+=====================================================
+
+.. automodule:: honeybee_radiance.modifier.material.spotlight
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.pattern.colorpict module
+====================================================
+
+.. automodule:: honeybee_radiance.modifier.pattern.colorpict
+   :members:
+   :undoc-members:
+   :show-inheritance:

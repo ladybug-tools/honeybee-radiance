@@ -1,0 +1,6 @@
+lib
+===
+
+.. click:: honeybee_radiance.cli.lib:lib
+   :prog: honeybee-radiance lib
+   :show-nested:

@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.sky module
+=================================
+
+.. automodule:: honeybee_radiance.cli.sky
+   :members:
+   :undoc-members:
+   :show-inheritance:
