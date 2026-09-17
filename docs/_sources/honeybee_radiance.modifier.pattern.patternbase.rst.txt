@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.pattern.patternbase module
+======================================================
+
+.. automodule:: honeybee_radiance.modifier.pattern.patternbase
+   :members:
+   :undoc-members:
+   :show-inheritance:

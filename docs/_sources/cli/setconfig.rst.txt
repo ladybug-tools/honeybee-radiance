@@ -1,0 +1,6 @@
+setconfig
+=========
+
+.. click:: honeybee_radiance.cli.setconfig:set_config
+   :prog: honeybee-radiance set-config
+   :show-nested:
