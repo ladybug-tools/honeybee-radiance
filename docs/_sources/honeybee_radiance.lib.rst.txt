@@ -1,0 +1,19 @@
+honeybee\_radiance.lib package
+==============================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.lib.modifiers
+   honeybee_radiance.lib.modifiersets
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.lib
+   :members:
+   :undoc-members:
+   :show-inheritance:

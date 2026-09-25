@@ -1,0 +1,7 @@
+honeybee\_radiance.postprocess.annualglare module
+=================================================
+
+.. automodule:: honeybee_radiance.postprocess.annualglare
+   :members:
+   :undoc-members:
+   :show-inheritance:

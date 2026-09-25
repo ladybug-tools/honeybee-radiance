@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.translate module
+=======================================
+
+.. automodule:: honeybee_radiance.cli.translate
+   :members:
+   :undoc-members:
+   :show-inheritance:
