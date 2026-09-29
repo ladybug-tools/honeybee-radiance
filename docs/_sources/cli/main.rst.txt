@@ -1,0 +1,7 @@
+main
+====
+
+.. click:: honeybee_radiance.cli.__init__:radiance
+   :prog: honeybee-radiance
+   :show-nested:
+   :commands: config

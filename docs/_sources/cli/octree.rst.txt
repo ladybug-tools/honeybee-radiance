@@ -1,0 +1,6 @@
+octree
+======
+
+.. click:: honeybee_radiance.cli.octree:octree
+   :prog: honeybee-radiance octree
+   :show-nested:

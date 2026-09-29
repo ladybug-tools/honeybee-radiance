@@ -1,0 +1,7 @@
+honeybee\_radiance.dynamic.group module
+=======================================
+
+.. automodule:: honeybee_radiance.dynamic.group
+   :members:
+   :undoc-members:
+   :show-inheritance:
