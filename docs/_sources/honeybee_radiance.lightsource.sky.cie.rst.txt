@@ -1,0 +1,7 @@
+honeybee\_radiance.lightsource.sky.cie module
+=============================================
+
+.. automodule:: honeybee_radiance.lightsource.sky.cie
+   :members:
+   :undoc-members:
+   :show-inheritance:

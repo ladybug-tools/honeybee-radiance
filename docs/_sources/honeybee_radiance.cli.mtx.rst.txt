@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.mtx module
+=================================
+
+.. automodule:: honeybee_radiance.cli.mtx
+   :members:
+   :undoc-members:
+   :show-inheritance:
