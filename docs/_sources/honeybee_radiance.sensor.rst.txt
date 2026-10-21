@@ -1,0 +1,7 @@
+honeybee\_radiance.sensor module
+================================
+
+.. automodule:: honeybee_radiance.sensor
+   :members:
+   :undoc-members:
+   :show-inheritance:
