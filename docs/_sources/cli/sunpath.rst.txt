@@ -1,0 +1,6 @@
+sunpath
+=======
+
+.. click:: honeybee_radiance.cli.sunpath:sunpath
+   :prog: honeybee-radiance sunpath
+   :show-nested:

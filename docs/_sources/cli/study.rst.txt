@@ -1,0 +1,6 @@
+study
+=====
+
+.. click:: honeybee_radiance.cli.study:study
+   :prog: honeybee-radiance study
+   :show-nested:

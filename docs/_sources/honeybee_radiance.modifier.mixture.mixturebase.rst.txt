@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.mixture.mixturebase module
+======================================================
+
+.. automodule:: honeybee_radiance.modifier.mixture.mixturebase
+   :members:
+   :undoc-members:
+   :show-inheritance:

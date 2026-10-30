@@ -1,0 +1,7 @@
+honeybee\_radiance.lightsource.sky.skydome module
+=================================================
+
+.. automodule:: honeybee_radiance.lightsource.sky.skydome
+   :members:
+   :undoc-members:
+   :show-inheritance:

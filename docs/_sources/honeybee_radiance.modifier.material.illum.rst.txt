@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.illum module
+=================================================
+
+.. automodule:: honeybee_radiance.modifier.material.illum
+   :members:
+   :undoc-members:
+   :show-inheritance:

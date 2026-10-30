@@ -1,0 +1,7 @@
+honeybee\_radiance.sensorgrid module
+====================================
+
+.. automodule:: honeybee_radiance.sensorgrid
+   :members:
+   :undoc-members:
+   :show-inheritance:
