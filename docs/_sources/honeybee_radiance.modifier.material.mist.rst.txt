@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.mist module
+================================================
+
+.. automodule:: honeybee_radiance.modifier.material.mist
+   :members:
+   :undoc-members:
+   :show-inheritance:
