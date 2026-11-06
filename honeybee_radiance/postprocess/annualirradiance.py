@@ -38,7 +38,7 @@ def annual_irradiance_to_folder(folder, wea, timestep=1, sub_folder='metrics'):
         str -- Path to results folder.
     """
     # get the time length of the Wea and the list of grids
-    wea_len = Wea.count_timesteps(wea) * timestep
+    wea_len = Wea.count_timesteps(wea)
     grids = [g.replace('.ill', '') for g in os.listdir(folder) if g.endswith('.ill')]
     grid_info = os.path.join(folder, 'grids_info.json')
 
