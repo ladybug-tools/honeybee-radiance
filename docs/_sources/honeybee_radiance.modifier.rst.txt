@@ -1,0 +1,29 @@
+honeybee\_radiance.modifier package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.modifier.material
+   honeybee_radiance.modifier.mixture
+   honeybee_radiance.modifier.pattern
+   honeybee_radiance.modifier.texture
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.modifier.modifierbase
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.modifier
+   :members:
+   :undoc-members:
+   :show-inheritance:

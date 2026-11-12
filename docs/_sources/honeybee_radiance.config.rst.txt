@@ -1,0 +1,7 @@
+honeybee\_radiance.config module
+================================
+
+.. automodule:: honeybee_radiance.config
+   :members:
+   :undoc-members:
+   :show-inheritance:

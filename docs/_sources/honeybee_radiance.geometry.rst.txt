@@ -1,0 +1,29 @@
+honeybee\_radiance.geometry package
+===================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.geometry.bubble
+   honeybee_radiance.geometry.cone
+   honeybee_radiance.geometry.cup
+   honeybee_radiance.geometry.cylinder
+   honeybee_radiance.geometry.geometrybase
+   honeybee_radiance.geometry.instance
+   honeybee_radiance.geometry.mesh
+   honeybee_radiance.geometry.polygon
+   honeybee_radiance.geometry.ring
+   honeybee_radiance.geometry.source
+   honeybee_radiance.geometry.sphere
+   honeybee_radiance.geometry.tube
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.geometry
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,6 @@
+glare
+=====
+
+.. click:: honeybee_radiance.cli.glare:dcglare
+   :prog: honeybee-radiance dcglare
+   :show-nested:
