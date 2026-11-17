@@ -1,0 +1,7 @@
+honeybee\_radiance.cli.setconfig module
+=======================================
+
+.. automodule:: honeybee_radiance.cli.setconfig
+   :members:
+   :undoc-members:
+   :show-inheritance:

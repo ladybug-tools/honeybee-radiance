@@ -1,0 +1,7 @@
+honeybee\_radiance.lightpath module
+===================================
+
+.. automodule:: honeybee_radiance.lightpath
+   :members:
+   :undoc-members:
+   :show-inheritance:

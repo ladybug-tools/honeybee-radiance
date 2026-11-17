@@ -1,0 +1,6 @@
+mtx
+===
+
+.. click:: honeybee_radiance.cli.mtx:mtxop
+   :prog: honeybee-radiance mtxop
+   :show-nested:

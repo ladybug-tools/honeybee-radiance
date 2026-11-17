@@ -1,0 +1,22 @@
+honeybee\_radiance.modifier.mixture package
+===========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   honeybee_radiance.modifier.mixture.mixdata
+   honeybee_radiance.modifier.mixture.mixfunc
+   honeybee_radiance.modifier.mixture.mixpict
+   honeybee_radiance.modifier.mixture.mixtext
+   honeybee_radiance.modifier.mixture.mixturebase
+
+Module contents
+---------------
+
+.. automodule:: honeybee_radiance.modifier.mixture
+   :members:
+   :undoc-members:
+   :show-inheritance:
