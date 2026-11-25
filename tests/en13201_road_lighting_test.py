@@ -5,10 +5,10 @@ import pytest
 from honeybee_radiance.dictutil import dict_to_object
 from honeybee_radiance.sensorgrid import SensorGrid
 from honeybee_radiance.postprocess.en13201 import (
-    ESC_FACIAL_HEIGHT_M,
+    ESC_OBSERVER_HEIGHT_M,
     LIGHTING_PRESETS,
     En13201RoadLightingSolver,
-    build_facial_recognition_sensor_grid,
+    build_semicylindrical_illuminance_grid,
     compute_lux_sensory_multiplier,
     compute_night_perceived_safety_impedance,
     create_en13201_sensor_grid_pair,
@@ -30,7 +30,7 @@ def test_en13201_lighting_presets_catalog():
         En13201RoadLightingSolver('NON_EXISTENT_PRESET')
 
 
-def test_honeybee_facial_recognition_sensor_grid_serialization():
+def test_honeybee_semicylindrical_illuminance_grid_serialization():
     """Test Honeybee SensorGrid generation at z = 1.5 m and dict round-trip."""
     eh_sg, esc_sg = create_en13201_sensor_grid_pair(
         identifier_prefix='woodhouse_crossing',
@@ -43,7 +43,7 @@ def test_honeybee_facial_recognition_sensor_grid_serialization():
     assert eh_sg.count == esc_sg.count == 15
 
     for pos, direction in zip(esc_sg.positions, esc_sg.directions):
-        assert pos[2] == pytest.approx(ESC_FACIAL_HEIGHT_M)
+        assert pos[2] == pytest.approx(ESC_OBSERVER_HEIGHT_M)
         assert tuple(direction) == pytest.approx((0.0, 1.0, 0.0))
 
     reconstructed = dict_to_object(esc_sg.to_dict())
@@ -102,4 +102,4 @@ def test_lux_sensory_multiplier_and_night_perceived_safety_impedance():
         walk_time_s=42.0, esc_lux=7.5, isolation_t=0.10, beta_dark=0.45
     )
     assert cost_dark_alley > cost_lit_street
-    assert build_facial_recognition_sensor_grid('single_pt', [0.0], [0.0]).count == 1
+    assert build_semicylindrical_illuminance_grid('single_pt', [0.0], [0.0]).count == 1

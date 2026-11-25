@@ -2,7 +2,7 @@
 """EN 13201 pedestrian & road lighting SensorGrid generation, rasters, and safety metrics.
 
 Implements European Standard EN 13201-2 / EN 13201-3 road and pedestrian lighting classes
-(horizontal illuminance E_h, semi-cylindrical facial-recognition illuminance E_sc at 1.5 m,
+(horizontal illuminance E_h, semi-cylindrical illuminance E_sc at 1.5 m eye height,
 longitudinal uniformity U_l, and disability glare Threshold Increment TI%) together with
 psychophysical night-time visual degradation and perceived-safety route impedance models.
 """
@@ -16,9 +16,9 @@ import numpy as np
 
 from ..sensorgrid import SensorGrid
 
-ESC_FACIAL_HEIGHT_M = 1.50
+ESC_OBSERVER_HEIGHT_M = 1.50
 
-# EN 13201-2 Table 3 (P-classes with facial recognition requirement: E_h_mean, E_h_min, E_sc_min)
+# EN 13201-2 Table 3 (P-classes with E_sc visibility requirement: E_h_mean, E_h_min, E_sc_min)
 EN13201_P_CLASS_REQUIREMENTS = {
     'P1': {'eh_mean_lux': 15.0, 'eh_min_lux': 3.0, 'esc_min_lux': 5.0, 'ti_max_pct': 20.0},
     'P2': {'eh_mean_lux': 10.0, 'eh_min_lux': 2.0, 'esc_min_lux': 3.0, 'ti_max_pct': 25.0},
@@ -113,14 +113,17 @@ LIGHTING_PRESETS = {
 }
 
 
-def build_facial_recognition_sensor_grid(
+def build_semicylindrical_illuminance_grid(
     identifier,
     xs,
     ys,
-    z_height_m=ESC_FACIAL_HEIGHT_M,
+    z_height_m=ESC_OBSERVER_HEIGHT_M,
     observer_direction=(0.0, 1.0, 0.0),
 ):
     """Create a Honeybee ``SensorGrid`` at ``z = 1.5 m`` for EN 13201 semi-cylindrical E_sc.
+
+    Used in EN 13201-2 P-class pedestrian lighting to evaluate how clearly a pedestrian
+    can perceive approaching people on a street at night.
 
     Args:
         identifier: Clean SensorGrid identifier string without spaces.
@@ -128,7 +131,7 @@ def build_facial_recognition_sensor_grid(
         ys: 1D sequence of Y coordinates in meters.
         z_height_m: Sensor elevation above ground in meters. Defaults to 1.5 m per EN 13201-2.
         observer_direction: Horizontal facing normal ``(dx, dy, dz)`` for semi-cylindrical
-            facial recognition evaluation.
+            pedestrian-visibility illuminance evaluation.
 
     Returns:
         A ``honeybee_radiance.sensorgrid.SensorGrid`` object.
@@ -140,7 +143,7 @@ def build_facial_recognition_sensor_grid(
     ]
     directions = [tuple(float(c) for c in observer_direction)] * len(positions)
     sg = SensorGrid.from_position_and_direction(identifier, positions, directions)
-    sg.display_name = 'EN 13201 Facial Recognition Esc Grid ({:.2f}m)'.format(z_height_m)
+    sg.display_name = 'EN 13201 Semi-Cylindrical Illuminance Esc Grid ({:.2f}m)'.format(z_height_m)
     return sg
 
 
@@ -148,7 +151,7 @@ def create_en13201_sensor_grid_pair(
     identifier_prefix='en13201_corridor',
     bounds_xy=(-30.0, -15.0, 30.0, 15.0),
     grid_res_m=2.0,
-    esc_height_m=ESC_FACIAL_HEIGHT_M,
+    esc_height_m=ESC_OBSERVER_HEIGHT_M,
     observer_direction=(0.0, 1.0, 0.0),
 ):
     """Create paired horizontal (z=0 m) and semi-cylindrical (z=1.5 m) Honeybee SensorGrids.
@@ -157,7 +160,7 @@ def create_en13201_sensor_grid_pair(
         identifier_prefix: Prefix for the ``_eh`` and ``_esc`` SensorGrid identifiers.
         bounds_xy: Tuple ``(xmin, ymin, xmax, ymax)`` in meters.
         grid_res_m: Grid point spacing in meters.
-        esc_height_m: Elevation for semi-cylindrical facial recognition sensors (1.5 m).
+        esc_height_m: Elevation for semi-cylindrical pedestrian eye-height sensors (1.5 m).
         observer_direction: Horizontal pedestrian travel axis normal.
 
     Returns:
@@ -174,7 +177,7 @@ def create_en13201_sensor_grid_pair(
     )
     eh_grid.display_name = 'EN 13201 Horizontal Illuminance Eh Grid'
 
-    esc_grid = build_facial_recognition_sensor_grid(
+    esc_grid = build_semicylindrical_illuminance_grid(
         '{}_esc'.format(identifier_prefix),
         xs,
         ys,
@@ -225,8 +228,8 @@ def compute_night_perceived_safety_impedance(
     """Compute night-time perceived-safety pedestrian route impedance .
 
     Penalizes street links whose semi-cylindrical illuminance ``E_sc`` at ``z = 1.5 m``
-    falls below the EN 13201 facial-recognition threshold ``E_ref = 5.0 lux``, modulated
-    by real-time pedestrian isolation ``isolation_t``.
+    falls below the EN 13201 P1 pedestrian-visibility threshold ``E_ref = 5.0 lux``,
+    modulated by real-time pedestrian isolation ``isolation_t``.
 
     Args:
         walk_time_s: Unimpeded link walking time in seconds.
@@ -234,7 +237,7 @@ def compute_night_perceived_safety_impedance(
         isolation_t: Social isolation index in ``[0, 1]`` (0 = lively street, 1 = deserted).
         beta_dark: Perceived-risk weight per lux deficit below ``e_ref_lux`` (default 0.45).
         beta_iso: Perceived-risk weight for social isolation (default 0.25).
-        e_ref_lux: EN 13201 P1 facial-recognition reference illuminance (default 5.0 lux).
+        e_ref_lux: EN 13201 P1 semi-cylindrical visibility reference illuminance (default 5.0 lux).
 
     Returns:
         Generalized perceived-safety travel impedance in equivalent seconds.
@@ -282,11 +285,11 @@ class En13201RoadLightingSolver(object):
         """Return a ``SensorGrid`` at ``z = 1.5 m`` covering the solved raster domain."""
         stride = max(1, int(sample_stride))
         ident = 'en13201_{}_esc'.format(self.preset.preset_name.lower())
-        return build_facial_recognition_sensor_grid(
+        return build_semicylindrical_illuminance_grid(
             ident,
             self.xs[::stride],
             self.ys[::stride],
-            z_height_m=ESC_FACIAL_HEIGHT_M,
+            z_height_m=ESC_OBSERVER_HEIGHT_M,
             observer_direction=observer_direction,
         )
 
@@ -313,7 +316,7 @@ class En13201RoadLightingSolver(object):
                 cos_theta = h_m / r_ground
                 eh += i0_cd * (cos_theta ** 3) / (h_m * h_m)
 
-                hz = max(0.75, h_m - ESC_FACIAL_HEIGHT_M)
+                hz = max(0.75, h_m - ESC_OBSERVER_HEIGHT_M)
                 d2_sc = dx * dx + dy * dy + hz * hz
                 horiz_r = np.sqrt(dx * dx + dy * dy) + 1e-6
                 sin_zenith = horiz_r / np.sqrt(d2_sc)
