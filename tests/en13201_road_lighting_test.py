@@ -54,11 +54,21 @@ def test_honeybee_semicylindrical_illuminance_grid_serialization():
 
 def test_en13201_rasters_uniformity_and_glare_invariants(tmp_path):
     """Verify Eh, Esc, Ul, and TI% physical ordering across M3, P2, P4, and High-Glare."""
-    day = En13201RoadLightingSolver('DAYLIGHT_CLEAR', bounds_xy=(-30.0, -20.0, 30.0, 20.0))
-    p2 = En13201RoadLightingSolver('NIGHT_EN13201_P2_UNIFORM', bounds_xy=(-30.0, -20.0, 30.0, 20.0))
-    m3 = En13201RoadLightingSolver('NIGHT_EN13201_M3', bounds_xy=(-30.0, -20.0, 30.0, 20.0))
-    p4 = En13201RoadLightingSolver('NIGHT_EN13201_P4_LOW_UNIFORMITY', bounds_xy=(-30.0, -20.0, 30.0, 20.0))
-    glare = En13201RoadLightingSolver('NIGHT_HIGH_GLARE_TI', bounds_xy=(-30.0, -20.0, 30.0, 20.0))
+    day = En13201RoadLightingSolver(
+        'DAYLIGHT_CLEAR', bounds_xy=(-30.0, -20.0, 30.0, 20.0)
+    )
+    p2 = En13201RoadLightingSolver(
+        'NIGHT_EN13201_P2_UNIFORM', bounds_xy=(-30.0, -20.0, 30.0, 20.0)
+    )
+    m3 = En13201RoadLightingSolver(
+        'NIGHT_EN13201_M3', bounds_xy=(-30.0, -20.0, 30.0, 20.0)
+    )
+    p4 = En13201RoadLightingSolver(
+        'NIGHT_EN13201_P4_LOW_UNIFORMITY', bounds_xy=(-30.0, -20.0, 30.0, 20.0)
+    )
+    glare = En13201RoadLightingSolver(
+        'NIGHT_HIGH_GLARE_TI', bounds_xy=(-30.0, -20.0, 30.0, 20.0)
+    )
 
     q_day = day.query_at(0.0, 0.0)
     q_p2 = p2.query_at(0.0, 0.0)
