@@ -1,0 +1,7 @@
+honeybee\_radiance.properties.shade module
+==========================================
+
+.. automodule:: honeybee_radiance.properties.shade
+   :members:
+   :undoc-members:
+   :show-inheritance:

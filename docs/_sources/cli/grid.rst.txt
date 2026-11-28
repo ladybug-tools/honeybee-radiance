@@ -1,0 +1,6 @@
+grid
+====
+
+.. click:: honeybee_radiance.cli.grid:grid
+   :prog: honeybee-radiance grid
+   :show-nested:

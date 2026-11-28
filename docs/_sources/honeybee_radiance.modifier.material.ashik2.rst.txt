@@ -1,0 +1,7 @@
+honeybee\_radiance.modifier.material.ashik2 module
+==================================================
+
+.. automodule:: honeybee_radiance.modifier.material.ashik2
+   :members:
+   :undoc-members:
+   :show-inheritance:

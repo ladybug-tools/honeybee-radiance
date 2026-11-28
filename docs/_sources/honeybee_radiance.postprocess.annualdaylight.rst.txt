@@ -1,0 +1,7 @@
+honeybee\_radiance.postprocess.annualdaylight module
+====================================================
+
+.. automodule:: honeybee_radiance.postprocess.annualdaylight
+   :members:
+   :undoc-members:
+   :show-inheritance:
